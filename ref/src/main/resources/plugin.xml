@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+   <extension point="com.change_vision.astah.ui.actionSets">
+      <actionSet
+            label="%action_set_label"
+            visible="true"
+            id="com.ref.ref.actionSet">
+         <menu
+               id="ref"
+               label="%menu_group"
+               path="tool/ref">
+         </menu>
+         <action
+			   label="%menu_label"
+               icon="icons/sample.gif"
+               class="com.ref.TemplateAction"
+               tooltip="%menu_tooltip"
+               menubarPath="tool/ref/"
+               id="ref">
+         </action>
+     </actionSet>
+   </extension>
+   <extension point="com.change_vision.astah.ui.view">
+        <view
+            id="com.ref.ui.RefinementView"
+            type="extraTab"
+            class="com.ref.ui.RefinementView" />
+   </extension>
+</plugin>
