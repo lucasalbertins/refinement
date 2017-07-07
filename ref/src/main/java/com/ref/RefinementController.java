@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.change_vision.jude.api.inf.AstahAPI;
+import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.ref.ui.FDR3LocationDialog;
@@ -48,12 +49,19 @@ public class RefinementController {
     private Class Machine;
     private Class Node;
     private Class ProcessName;
+    private SDParser parser;
 	
 	private RefinementController() {
+		loadFDR();
+	}
+
+
+	private void loadFDR() {
 		try {
 			Properties p = new Properties();
 			p.load(new FileInputStream(new File(FDR3LocationDialog.FDR3_PROPERTY_FILE)));
-			String filename = p.getProperty(FDR3LocationDialog.FDR3_LOCATION_PROPERTY);
+			String filename = p.getProperty(FDR3LocationDialog.FDR3_JAR_LOCATION_PROPERTY);
+			System.out.println(filename);
 			File f = new File(filename);
 			
 			loadFDRClasses(f);
@@ -70,10 +78,7 @@ public class RefinementController {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-	    
-	    
-
+		}
 	}
 	
 
@@ -117,16 +122,17 @@ public class RefinementController {
 
 	public static RefinementController getInstance() {
 		if (instance == null){
-			instance = new RefinementController();	
-			
+			instance = new RefinementController();
 		}
 		return instance;
 	}
 
-	public void checkRefinement(ISequenceDiagram seq1, ISequenceDiagram seq2) throws RefinementException {
+	public void checkRefinement(ISequenceDiagram seq1, ISequenceDiagram seq2) throws RefinementException, InvalidEditingException {
+		loadFDR();
 		if (seq1 != null && seq2 != null) {
-			String process = SDParser.parseSDs(seq1, seq2);
-			process = includeAssertions(process);
+			parser = new SDParser(seq1, seq2); 
+			String process = parser.parseSDs();
+			//process = includeAssertions(process);
 
 			try {
 				executeRefinement();
@@ -134,7 +140,7 @@ public class RefinementController {
 				throw new RefinementException("Error generating csp file.");
 			}
 
-			String filename = generateFile(process);
+			//String filename = generateFile(process);
 		} else {
 			throw new RefinementException("Could not recover sequence diagram.");
 		}

@@ -12,12 +12,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
+import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
@@ -39,6 +42,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 	 * 
 	 */
 	private static final long serialVersionUID = 8087206220395822235L;
+	private JRadioButton strictRefinementType;
+	private JRadioButton weakRefinementType;
 	private JComboBox<String> combo1;
 	private JComboBox<String> combo2;
 	private ProjectAccessor projectAccessor;
@@ -55,8 +60,14 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 
 	private void initComponents() {
 		setLayout(new GridBagLayout());
+		ButtonGroup group = new ButtonGroup();
+		strictRefinementType = new JRadioButton("Strict");
+		weakRefinementType = new JRadioButton("Weak");
+		group.add(strictRefinementType);
+		group.add(weakRefinementType);
 		combo1 = new JComboBox<String>();
 		combo2 = new JComboBox<String>();
+		JButton renameBut = new JButton("Rename messages");
 		JButton button = new JButton("Check");
 		updateComboBoxes();
 		
@@ -65,13 +76,21 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 		c.gridx = 0;
 		c.gridy = 0;
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
-
-		add(createLabelPane("Seq. Diagram: "), c);
+		add(createLabelPane("Refinement Type:"),c);
 		c.gridx = 1;
 		c.gridy = 0;
+		add(strictRefinementType,c);
+		c.gridx = 1;
+		c.gridy = 1;
+		add(weakRefinementType, c);
+		c.gridx = 0;
+		c.gridy = 2;
+		add(createLabelPane("Seq. Diagram: "), c);
+		c.gridx = 1;
+		c.gridy = 2;
 		add(combo1,c);
 		c.gridx = 0;
-		c.gridy = 1;
+		c.gridy = 3;
 		c.gridwidth = 2;
 		c.ipady = 20;
 
@@ -79,16 +98,19 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 		add(createLabelPane("is refined by"), c);
 		c.anchor = GridBagConstraints.FIRST_LINE_START;
 		c.gridx = 0;
-		c.gridy = 2;
+		c.gridy = 4;
 
 		add(createLabelPane("Seq. Diagram: "), c);
 		c.gridx = 1;
-		c.gridy = 2;
+		c.gridy = 4;
 
 		add(combo2, c);
 		c.gridx = 0;
-		c.gridy = 3;
-
+		c.gridy = 5;
+		add(renameBut, c);
+		c.gridx = 0;
+		c.gridy = 6;
+		c.gridwidth = 2;
 		add(button, c);
 		addProjectEventListener();
 		
@@ -133,6 +155,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 								} catch (RefinementException e1) {
 									e1.printStackTrace();
 									JOptionPane.showMessageDialog(getParent(), e1.getMessage(), "Refinement Error!", JOptionPane.ERROR_MESSAGE);
+								} catch (InvalidEditingException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
 								}
 							} else {
 								JOptionPane.showMessageDialog(getParent(), "Could not find sequence diagram.", "Refinement Error!", JOptionPane.ERROR_MESSAGE);

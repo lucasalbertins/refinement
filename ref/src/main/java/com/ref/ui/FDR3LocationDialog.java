@@ -33,6 +33,7 @@ public class FDR3LocationDialog extends JDialog {
 	
 	public static final String FDR3_PROPERTY_FILE = "ref.properties";
 	public static final String FDR3_LOCATION_PROPERTY = "fdr3_location";
+	public static final String FDR3_JAR_LOCATION_PROPERTY = "fdr3_jar_location";
 	
 	private JTextField tf;
 	private JButton findButton;
@@ -49,6 +50,7 @@ public class FDR3LocationDialog extends JDialog {
 			prop = new Properties(); 
 			prop.load(new FileInputStream(propertyFile));
 			prop.setProperty(FDR3_LOCATION_PROPERTY, "");
+			prop.setProperty(FDR3_JAR_LOCATION_PROPERTY, "");
 			prop.store(new FileOutputStream(propertyFile), null);
 		} else {
 			prop = new Properties();
@@ -124,7 +126,8 @@ public class FDR3LocationDialog extends JDialog {
 						if (!fdrlib.exists()) {
 							msg.setText("Library fdr.jar not found!");
 						} else {
-							prop.setProperty(FDR3_LOCATION_PROPERTY, filename);
+							prop.setProperty(FDR3_LOCATION_PROPERTY, tf.getText());
+							prop.setProperty(FDR3_JAR_LOCATION_PROPERTY, filename);
 							try {
 								prop.store(new FileOutputStream(new File(FDR3_PROPERTY_FILE)),null);
 							} catch (FileNotFoundException e1) {
