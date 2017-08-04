@@ -7,7 +7,7 @@ public class TemplateActionTest {
 	
 	@Test
 	public void testname() throws Exception {
-		
+		System.out.println();
 	}
 
 }
