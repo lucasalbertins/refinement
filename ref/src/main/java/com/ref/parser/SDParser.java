@@ -1,4 +1,4 @@
-package com.ref;
+package com.ref.parser;
 
 import java.util.Arrays;
 import java.util.HashSet;

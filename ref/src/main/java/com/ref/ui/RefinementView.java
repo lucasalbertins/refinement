@@ -21,9 +21,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
+import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
+import com.change_vision.jude.api.inf.presentation.INodePresentation;
+import com.change_vision.jude.api.inf.presentation.IPresentation;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.change_vision.jude.api.inf.project.ProjectAccessorFactory;
@@ -32,8 +35,10 @@ import com.change_vision.jude.api.inf.project.ProjectEvent;
 import com.change_vision.jude.api.inf.project.ProjectEventListener;
 import com.change_vision.jude.api.inf.ui.IPluginExtraTabView;
 import com.change_vision.jude.api.inf.ui.ISelectionListener;
-import com.ref.RefinementController;
+import com.ref.refinement.RefinementController;
 import com.refinement.exceptions.RefinementException;
+
+import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
 
 public class RefinementView extends JPanel implements IPluginExtraTabView,
 		ProjectEventListener {
@@ -118,6 +123,35 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				verifySequenceDiagramRefinement();
+//				try {
+//					INamedElement[] sds = findSequence();
+//					ISequenceDiagram seq1 = ((ISequenceDiagram)sds[0]);
+//					System.out.println(seq1.getName());
+//					IPresentation[] presentations = seq1.getPresentations();
+//					System.out.println("Vou Imprimir as apresentacoes");
+//					for (IPresentation presentation:  presentations) {
+//						System.out.println(presentation.getType());
+//						if (presentation.getType().equals("Message")) {
+//							if (presentation instanceof IMessagePresentation) {
+//								IMessagePresentation msgPrs = (IMessagePresentation) presentation;
+//								System.out.println("Name: " + msgPrs.getMessage().getNameString());
+//								
+//								
+//							}
+//						}
+//					}
+//					
+//				} catch (ProjectNotFoundException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (InvalidUsingException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+			}
+
+			private void verifySequenceDiagramRefinement() {
 				try {
 					Properties p = new Properties();
 					File propertyFile = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
@@ -172,13 +206,6 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
-				
-				
-							
-				
-				
-				
-				
 			}
 		});
 	}

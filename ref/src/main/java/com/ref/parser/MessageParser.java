@@ -1,4 +1,4 @@
-package com.ref;
+package com.ref.parser;
 
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.ILifeline;

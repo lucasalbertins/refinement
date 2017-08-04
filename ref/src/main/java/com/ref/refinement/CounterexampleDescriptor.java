@@ -1,4 +1,4 @@
-package com.ref;
+package com.ref.refinement;
 
 public class CounterexampleDescriptor {
 

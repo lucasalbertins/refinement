@@ -1,4 +1,4 @@
-package com.ref;
+package com.ref.refinement;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,8 +18,14 @@ import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
+import com.ref.parser.SDParser;
 import com.ref.ui.FDR3LocationDialog;
 import com.refinement.exceptions.RefinementException;
+
+import uk.ac.ox.cs.fdr.Assertion;
+import uk.ac.ox.cs.fdr.AssertionList;
+import uk.ac.ox.cs.fdr.Session;
+import uk.ac.ox.cs.fdr.fdr;
 
 public class RefinementController {
 	
@@ -61,7 +67,6 @@ public class RefinementController {
 			Properties p = new Properties();
 			p.load(new FileInputStream(new File(FDR3LocationDialog.FDR3_PROPERTY_FILE)));
 			String filename = p.getProperty(FDR3LocationDialog.FDR3_JAR_LOCATION_PROPERTY);
-			System.out.println(filename);
 			File f = new File(filename);
 			
 			loadFDRClasses(f);
@@ -131,7 +136,7 @@ public class RefinementController {
 		loadFDR();
 		if (seq1 != null && seq2 != null) {
 			parser = new SDParser(seq1, seq2); 
-			String process = parser.parseSDs();
+			//String process = parser.parseSDs();
 			//process = includeAssertions(process);
 
 			try {
@@ -162,6 +167,18 @@ public class RefinementController {
 			fw.append("assert Q [T= P");
 			fw.flush();
 			fw.close();
+			Session session = new Session();
+			session.loadFile(filename);
+			AssertionList assertions = session.assertions();
+			for (Assertion assertion : assertions) {
+				assertion.execute(null);
+				if (assertion.passed()) {
+					System.out.println(assertion.toString() + ": Passou");
+				} else {
+					System.out.println(assertion.toString() + ": Não Passou");
+				}
+			}
+			fdr.libraryExit();
 			Object sessionObject = sessionClass.newInstance();
 			invokeProperty(sessionClass, sessionObject, "loadFile", String.class, filename);
 			List list = (List)invokeProperty(sessionClass, sessionObject, "assertions", null, null);
