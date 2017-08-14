@@ -39,14 +39,16 @@ public class SDParser {
 
 	public String defineTypes() throws InvalidEditingException {
 		StringBuilder types = new StringBuilder();
-		int max = checkMaxIndex();
-		types.append("SDnat = {");
-		for (int i = 1; i <= max; i++) {
-			types.append(i + ",");
-		}
-		types.append(getReplyIndexes());
-		types.deleteCharAt(types.length()-1);
-		types.append("}\n");
+//		int max = checkMaxIndex();
+//		types.append("SDnat = {"); //numero da msg
+//		for (int i = 1; i <= max; i++) {
+//			System.out.println("adicionou "+ i);
+//			types.append(i + ",");
+//		}
+//		types.append(getReplyIndexes());
+//		types.deleteCharAt(types.length()-1);
+//		types.append("}\n");
+		
 		types.append("datatype COM = s | r\n");
 		Set<IClass> blocks = new HashSet<IClass>();
 
@@ -80,11 +82,13 @@ public class SDParser {
 		for (IMessage msg : seq1.getInteraction().getMessages()) {
 			if (msg.isSynchronous()) {
 				sb.append(msg.getIndex()).append("r,");
+				System.out.println("seq 1 adicionou "+ msg.getIndex());
 			}
 		}
 		for (IMessage msg : seq2.getInteraction().getMessages()) {
 			if (msg.isSynchronous()) {
 				sb.append(msg.getIndex()).append("r,");
+				System.out.println("seq 2 adicionou "+ msg.getIndex());
 			}
 		}
 		sb.deleteCharAt(sb.length()-1);
@@ -195,7 +199,7 @@ public class SDParser {
 
 	public String parseChannels() {
 		StringBuilder channelsSTR = new StringBuilder();
-		channelsSTR.append("channel beginInteration,endInteraction: ID_SD\n");
+		channelsSTR.append("channel beginInteration,endInteraction\n");//ID_SD
 		Set<IClass> blocks = new HashSet<IClass>();
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			blocks.add(lifeline.getBase());
@@ -224,12 +228,14 @@ public class SDParser {
 			}
 			if (hasOperation) {
 				channelsSTR.append("channel ").append(block.getName());
-				channelsSTR.append("_mOP: COM.SDNat.ID.ID.").append(block.getName());
+				//channelsSTR.append("_mOP: COM.SDNat.ID.ID.").append(block.getName());
+				channelsSTR.append("_mOP: COM.ID.ID.").append(block.getName());
 				channelsSTR.append("_OPS\n");
 			}
 			if (hasSignal) {
 				channelsSTR.append("channel ").append(block.getName());
-				channelsSTR.append("_mSIG: COM.SDNat.ID.ID.").append(block.getName());
+				//channelsSTR.append("_mSIG: COM.SDNat.ID.ID.").append(block.getName());
+				channelsSTR.append("_mSIG: COM.ID.ID.").append(block.getName());
 				channelsSTR.append("_SIG\n");
 			}
 		}
@@ -249,7 +255,7 @@ public class SDParser {
 		}
 		//Generate MessagesBuffer Process
 		process.append(MessageParser.getInstance().translateMessagesBuffer(seq1));
-		System.out.println(process.toString());
+		//System.out.println(process.toString());
 		return process.toString();
 	}
 
