@@ -2,11 +2,10 @@ package com.ref.parser;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
-import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.IClass;
 import com.change_vision.jude.api.inf.model.ICombinedFragment;
 import com.change_vision.jude.api.inf.model.IInteractionUse;
@@ -16,7 +15,6 @@ import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.IOperation;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.model.IStateInvariant;
-import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 
 public class SDParser {
 
@@ -88,7 +86,6 @@ public class SDParser {
 		for (IMessage msg : seq2.getInteraction().getMessages()) {
 			if (msg.isSynchronous()) {
 				sb.append(msg.getIndex()).append("r,");
-				System.out.println("seq 2 adicionou "+ msg.getIndex());
 			}
 		}
 		sb.deleteCharAt(sb.length()-1);
@@ -162,7 +159,7 @@ public class SDParser {
 		Set<IMessage> messages = new HashSet<IMessage>();
 		messages.addAll(Arrays.asList(seq1.getInteraction().getMessages()));
 		messages.addAll(Arrays.asList(seq2.getInteraction().getMessages()));
-		
+				
 		Set<IMessage> ret = new HashSet<IMessage>();
 		
 		for (IOperation operation : block.getOperations()) {
@@ -192,9 +189,97 @@ public class SDParser {
 		return false;
 	}
 
-	private void treatArguments(StringBuilder types, String argument) {
-		// TODO Auto-generated method stub
+	private String treatArguments(StringBuilder types, String argument) {
+		
+		Set<IMessage> messages = new HashSet<IMessage>();
+		messages.addAll(Arrays.asList(seq1.getInteraction().getMessages()));
+		messages.addAll(Arrays.asList(seq2.getInteraction().getMessages()));
+		
+		for (IMessage iMessage : messages) {
+			//System.out.println(iMessage);
+		}
+		
+		return "";
+	}
+	
+	public String defineArguments(){
 
+		Set<IMessage> messages = new HashSet<IMessage>();
+		messages.addAll(Arrays.asList(seq1.getInteraction().getMessages()));
+		//messages.addAll(Arrays.asList(seq2.getInteraction().getMessages()));
+		
+		StringBuilder parametros = new StringBuilder();
+		String integers = "IntParams = {";
+		String doubles = "DoubleParams = {";
+		String chars = "CharParams = {";
+		
+		boolean hasInt = false;
+		boolean hasDouble = false;
+		boolean hasChar = false;
+		
+		for (IMessage iMessage : messages) {
+			String argument = iMessage.getArgument();
+			if(argument.contains(":")){
+				String[] arguments = argument.split(",");
+				for(int i = 0; i< arguments.length;i++){
+					if(arguments[i].contains(":")){
+						String[]aux = arguments[i].split(":");
+						parametros.append("My" + aux[1] + " ={");
+						if(aux[1].equals("Integer")){
+							parametros.append("0,1,2,3,4,5,6,7,8,9}\n");
+						}else if(aux[1].equals("String")){
+							parametros.append("teste}\n");
+						}
+					}
+					else{
+						if(isInteger(arguments[i])){
+							integers += arguments[i];
+							hasInt = true;
+						}else if(isDouble(arguments[i])){
+							doubles += arguments[i];
+							hasDouble = true;
+						}else{
+							chars+=arguments[i];
+							hasChar = true;
+						}
+					}
+				}
+			}
+		}
+		if(hasInt){
+			integers+="}\n";
+			parametros.append(integers);
+		}
+		if(hasDouble){
+			doubles +="}\n";
+			parametros.append(doubles);
+		}
+		if(hasChar){
+			chars += "}\n";
+			parametros.append(chars);
+		}
+		
+		System.out.println(parametros.toString());
+		
+		return "";
+	}
+	
+	private boolean isInteger(String param){	
+		try{
+			Integer.parseInt(param);
+		}catch(NumberFormatException nfe){
+			return false;
+		}
+		return true;
+	}
+	
+	private boolean isDouble(String param){
+		try{
+			Double.parseDouble(param);
+		}catch(NumberFormatException nfe){
+			return false;
+		}
+		return true;
 	}
 
 	public String parseChannels() {
