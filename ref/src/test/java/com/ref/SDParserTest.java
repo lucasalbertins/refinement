@@ -93,17 +93,19 @@ public class SDParserTest {
 		expected.append("}\n");
 		expected.append("ID_SD = {<").append(seq1.getId()).append(">,<");
 		expected.append(seq2.getId()).append(">}\n");
-		expected.append("datatype B_OPS = m0_I | m0_O\n");
+		expected.append("MyInteger ={0,1,2,3,4,5,6,7,8,9}\n");
+		expected.append("MyString ={\"teste\"}\n");
+		expected.append("IntParams = {3}\n");
+		expected.append("DoubleParams = {2.5}\n");
+		expected.append("CharParams = {'a'}\n");
+		expected.append("datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O\n");
 		expected.append("datatype A_SIG = m1\n");
-		 assertEquals(expected.toString(),actual);
+		System.out.println(actual);
+		assertEquals(expected.toString(),actual);
 		//System.out.println(expected.toString());
 		//System.out.println(actual);
 	}
 
-	@Test
-	public void testArguments(){
-		String actual = parser.defineArguments();
-	}
 	
 	@Test
 	public void testParseChannels() {
