@@ -100,7 +100,7 @@ public class SDParserTest {
 		expected.append("CharParams = {'a'}\n");
 		expected.append("datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O\n");
 		expected.append("datatype A_SIG = m1\n");
-		System.out.println(actual);
+		//System.out.println(actual);
 		assertEquals(expected.toString(),actual);
 		//System.out.println(expected.toString());
 		//System.out.println(actual);
@@ -120,7 +120,7 @@ public class SDParserTest {
 	@Test
 	public void testParseSD1() {
 		String actual = parser.parseSD1();
-		//System.out.println(actual);
+		System.out.println(actual);
 		ILifeline lif1 = seq1.getInteraction().getLifelines()[0];
 		ILifeline lif2 = seq1.getInteraction().getLifelines()[1];
 
