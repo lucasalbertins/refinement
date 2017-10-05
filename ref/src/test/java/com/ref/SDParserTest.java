@@ -73,9 +73,10 @@ public class SDParserTest {
 	public void tearDown() throws Exception {
 	}
 
-	@Test // TODO Messages with parameters
+	
+	@Test 
 	public void testDefineTypes() throws InvalidEditingException {
-		 String actual = parser.defineTypes();
+		String actual = parser.defineTypes();
 		StringBuilder expected = new StringBuilder();
 		//expected.append("SDnat = {1,2,1r}\n");
 		expected.append("datatype COM = s | r\n");
@@ -98,15 +99,18 @@ public class SDParserTest {
 		expected.append("IntParams = {3}\n");
 		expected.append("DoubleParams = {2.5}\n");
 		expected.append("CharParams = {'a'}\n");
-		expected.append("datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O\n");
 		expected.append("datatype A_SIG = m1\n");
-		//System.out.println(actual);
+		expected.append("datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O\n");
+		expected.append("get_id(m0_I._._._._._) = m0_I\n");
+		expected.append("get_id(m0_O) = m0_O\n");
+		System.out.println(actual);
+		//System.out.println(expected);
 		assertEquals(expected.toString(),actual);
 		//System.out.println(expected.toString());
 		//System.out.println(actual);
 	}
 
-	
+	@Ignore
 	@Test
 	public void testParseChannels() {
 		String actual = parser.parseChannels();
@@ -115,6 +119,7 @@ public class SDParserTest {
 		expected.append("channel B_mOP: COM.ID.ID.B_OPS\n");
 		expected.append("channel A_mSIG: COM.ID.ID.A_SIG\n");
 		assertEquals(expected.toString(), actual);
+		System.out.println(actual);
 	}
 	
 	@Test

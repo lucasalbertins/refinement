@@ -1,5 +1,6 @@
 package com.ref.parser;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -20,12 +21,24 @@ public class SDParser {
 
 	private ISequenceDiagram seq1;
 	private ISequenceDiagram seq2;
+	private static List<String> auxiliar;
+	private static List<String> auxiliar2;
 
 	public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
+		auxiliar = new ArrayList<String>();
+		auxiliar2 = new ArrayList<String>();
 	}
 
+	public static void addList(String elem){
+		auxiliar.add(elem);
+	}
+	
+	public static void addList2(String elem){
+		auxiliar2.add(elem);
+	}
+	
 	public String parseSDs() throws InvalidEditingException {
 		StringBuilder process = new StringBuilder();
 		process.append(defineTypes());
@@ -120,23 +133,32 @@ public class SDParser {
 		Set<IMessage> messages = getBlockMessages(block);
 		StringBuilder operations = new StringBuilder();
 		StringBuilder signals = new StringBuilder();
+		StringBuilder getters = new StringBuilder();
 		for (IMessage message : messages) {
 			if (message.isAsynchronous()) {
 				signals.append(message.getName());
 				if (!"".equals(message.getArgument())) {
 					treatArguments(signals, message.getArgument());
+					treatGetterArguments(getters, message.getArgument());
 				}
 				signals.append(" | ");
 			} else if (message.isSynchronous()) {
 				operations.append(message.getName() + "_I");
+				getters.append("get_id(").append(message.getName()).append("_I");
 				if (!"".equals(message.getArgument())) {
 					treatArguments(operations, message.getArgument());
+					treatGetterArguments(getters, message.getArgument());
 				}
+				getters.append(") = ").append(message.getName()).append("_I\n");
+				
 				operations.append(" | ");
 				operations.append(message.getName() + "_O");
+				getters.append("get_id(").append(message.getName()).append("_O");
 				if (!"".equals(message.getReturnValueVariable())) {
 					treatArguments(operations, message.getReturnValueVariable());
+					treatGetterArguments(getters, message.getArgument());
 				}
+				getters.append(") = ").append(message.getName()).append("_O\n"); 
 				operations.append(" | ");
 			}
 
@@ -151,6 +173,8 @@ public class SDParser {
 			types.append("datatype ").append(block.getName());
 			types.append("_OPS = ").append(operations.toString()).append("\n");
 		}
+		
+		types.append(getters.toString());
 	}
 
 	private Set<IMessage> getBlockMessages(IClass block) {
@@ -208,6 +232,15 @@ public class SDParser {
 			}
 		}
 		types.append(aux.toString());
+	}
+	
+	private void treatGetterArguments(StringBuilder sb, String argument){
+		if(argument.contains(":")){
+			String[] arguments = argument.split(",");
+			for(int i = 0; i< arguments.length;i++){
+				sb.append("._");
+			}
+		}
 	}
 
 	public String defineArguments() {
@@ -366,6 +399,7 @@ public class SDParser {
 
 	public String parseSD1() {
 		StringBuilder process = new StringBuilder();
+		
 		// Generate processes for lifelines
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			process.append(translateLifeline(lifeline));
@@ -375,21 +409,40 @@ public class SDParser {
 			process.append(MessageParser.getInstance().translateMessageForProcess(iMessage, seq1));
 		}
 		// Generate MessagesBuffer Process
-		process.append(MessageParser.getInstance().translateMessagesBuffer(seq1));
+		process.append(MessageParser.getInstance().translateMessagesBuffer(seq1)).append("\n");
+		process.append(auxiliar());
 		// System.out.println(process.toString());
 		return process.toString();
+	}
+	
+	private String auxiliar(){
+		StringBuilder aux = new StringBuilder();
+		aux.append("Parte1(sd_id,lf1_id,lf2_id) = ");
+		aux.append(auxiliar.get(0));
+		aux.append("[ {|");
+		aux.append(auxiliar2.get(0));
+		aux.append("|} || {|");
+		aux.append(auxiliar2.get(1));
+		aux.append("|} ]");
+		aux.append(auxiliar.get(1));
+		return aux.toString();
 	}
 
 	private String translateLifeline(ILifeline lifeline) {
 		StringBuilder process = new StringBuilder();
+		StringBuilder aux = new StringBuilder();
 		process.append(seq1.getName()).append("_").append(lifeline.getBase());
-		process.append("(sd_id");
-		process.append(") = ");
+		aux.append(seq1.getName()).append("_").append(lifeline.getBase());
+		//process.append("(sd_id");
+		process.append("(sd_id,lf1_id,lf2_id) = ");
+		aux.append("(sd_id,lf1_id,lf2_id)");
+		//INSERE NOME DA LIFELINE
 		for (INamedElement fragment : lifeline.getFragments()) {
 			process.append(translateFragment(fragment, lifeline, seq1));
 		}
 		process.deleteCharAt(process.length() - 1);
 		process.append("\n");
+		auxiliar.add(aux.toString());
 		return process.toString();
 	}
 
