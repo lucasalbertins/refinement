@@ -41,7 +41,7 @@ public class MessageParser {
 			sb.append("lf1_id.").append("lf2_id");
 			aux.append("lf1_id.").append("lf2_id");
 			sb.append("?x");
-			aux.append("?x");
+			//aux.append("?x");
 			SDParser.addList2(aux.toString());
 			aux =  new StringBuilder();
 			sb.append(" -> ");
@@ -53,7 +53,7 @@ public class MessageParser {
 			aux.append("lf1_id.").append("lf2_id");
 			sb.append("!x -> ").append(seq.getName()).append("_").append(msg.getName());
 			//aux.append("!x -> ").append(seq.getName()).append("_").append(msg.getName());
-			aux.append("!x");
+			//aux.append("!x");
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
 			sb.append(seq.getName()).append("_").append(msg.getName());
 			sb.append("(sd_id, lf1_id, lf2_id)");
@@ -65,7 +65,7 @@ public class MessageParser {
 			sb.append("lf1_id.").append("lf2_id");
 			aux.append("lf1_id.").append("lf2_id");
 			sb.append("?x ->");
-			aux.append("?x");
+			//aux.append("?x");
 			SDParser.addList2(aux.toString());
 			aux = new StringBuilder();
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r.");
@@ -75,7 +75,7 @@ public class MessageParser {
 			sb.append("lf1_id.").append("lf2_id");
 			aux.append("lf1_id.").append("lf2_id");
 			sb.append("!x -> ");
-			aux.append("!x");
+			//aux.append("!x");
 			sb.append(seq.getName()).append("_").append(msg.getName());
 			//aux.append(seq.getName()).append("_").append(msg.getName());
 		} else if (msg.isReturnMessage()) {
@@ -99,7 +99,7 @@ public class MessageParser {
 			sb.append("lf1_id.").append("lf2_id");
 			aux.append("lf1_id.").append("lf2_id");
 			sb.append("?x -> ");
-			aux.append("?x");
+			//aux.append("?x");
 			SDParser.addList2(aux.toString());
 			aux = new StringBuilder();
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
@@ -109,7 +109,7 @@ public class MessageParser {
 			sb.append("lf1_id.").append("lf2_id");
 			aux.append("lf1_id.").append("lf2_id");
 			sb.append("!x -> ");
-			aux.append("!x");
+			//aux.append("!x");
 			sb.append(seq.getName()).append("_").append(syncMsg.getName()).append("_r");
 			//aux.append(seq.getName()).append("_").append(syncMsg.getName()).append("_r");
 		}
@@ -269,7 +269,7 @@ public class MessageParser {
 					String[] temp = arguments[i].split(":");
 					aux.append("?" + temp[0]).append(":{" + temp[0]).append("|" + temp[0]).append("<-My" + temp[1]+"}");
 				} else {
-					aux.append("."+ arguments[i]);
+					aux.append("!"+ arguments[i]);
 				}
 			}
 		}
@@ -278,7 +278,7 @@ public class MessageParser {
 
 	public String translateMessagesBuffer(ISequenceDiagram seq1) {
 		StringBuilder process = new StringBuilder();
-		process.append(seq1.getName()).append("_MessagesBuffer = ");
+		process.append(seq1.getName()).append("_MessagesBuffer(sd_id, lf1_id, lf2_id) = ");
 		process.append("(");
 		for (IMessage msg : seq1.getInteraction().getMessages()) {
 			if (msg.isReturnMessage()) {
