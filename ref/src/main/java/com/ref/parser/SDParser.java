@@ -3,6 +3,7 @@ package com.ref.parser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +64,7 @@ public class SDParser {
 		// types.append("}\n");
 
 		types.append("datatype COM = s | r\n");
-		Set<IClass> blocks = new HashSet<IClass>();
+		List<IClass> blocks = new LinkedList<IClass>();
 
 		types.append("ID1 = {");
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
@@ -189,6 +190,7 @@ public class SDParser {
 
 		for (IOperation operation : block.getOperations()) {
 			for (IMessage iMessage : messages) {
+
 				if (iMessage.getOperation() != null && iMessage.getOperation().getOwner() != null
 						&& iMessage.getOperation().getOwner().equals(block)
 						&& iMessage.getOperation().getName().equals(operation.getName())
@@ -197,6 +199,7 @@ public class SDParser {
 				}
 			}
 		}
+		System.out.println();
 		return ret;
 	}
 
@@ -204,7 +207,8 @@ public class SDParser {
 		for (IMessage iMessage : ret) {
 			if (iMessage.getOperation() != null && iMessage.getOperation().getOwner() != null
 					&& iMessage.getOperation().getOwner() == mes.getOperation().getOwner()
-					&& iMessage.getName().equals(mes.getName())) {
+					&& iMessage.getName().equals(mes.getName()) &&
+					iMessage.getArgument().equals(mes.getArgument())) {
 				return true;
 			}
 		}
@@ -349,11 +353,12 @@ public class SDParser {
 		else
 			return false;
 	}
-
+	
+	//TODO: Adicionar nome da referência junto com a classe da lifeline
 	public String parseChannels() {
 		StringBuilder channelsSTR = new StringBuilder();
 		channelsSTR.append("channel beginInteration,endInteraction\n");// ID_SD
-		Set<IClass> blocks = new HashSet<IClass>();
+		List<IClass> blocks = new ArrayList<IClass>();
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			blocks.add(lifeline.getBase());
 		}
