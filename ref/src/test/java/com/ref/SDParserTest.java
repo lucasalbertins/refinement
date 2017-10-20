@@ -110,14 +110,13 @@ public class SDParserTest {
 		//System.out.println(actual);
 	}
 
-	@Ignore
 	@Test
 	public void testParseChannels() {
 		String actual = parser.parseChannels();
 		StringBuilder expected = new StringBuilder();
 		expected.append("channel beginInteration,endInteraction\n");
-		expected.append("channel B_mOP: COM.ID.ID.B_OPS\n");
 		expected.append("channel A_mSIG: COM.ID.ID.A_SIG\n");
+		expected.append("channel B_mOP: COM.ID.ID.B_OPS\n");
 		assertEquals(expected.toString(), actual);
 		System.out.println(actual);
 	}

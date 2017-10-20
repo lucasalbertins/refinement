@@ -1,0 +1,32 @@
+
+datatype COM = s | r
+ID1 = {1lfp-3b3385fe4b5f7947dff1ac61354e976d,1m8o-3b3385fe4b5f7947dff1ac61354e976d}
+ID2 = {25vz-3b3385fe4b5f7947dff1ac61354e976d,28a6-3b3385fe4b5f7947dff1ac61354e976d}
+ID_SD = {<1ldc-3b3385fe4b5f7947dff1ac61354e976d>,<25re-3b3385fe4b5f7947dff1ac61354e976d>}
+MyInteger ={0,1,2,3,4,5,6,7,8,9}
+MyString ={"teste"}
+IntParams = {3}
+DoubleParams = {2.5}
+CharParams = {'a'}
+datatype A_SIG = m1
+datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O
+get_id(m0_I._._._._._) = m0_I
+get_id(m0_O) = m0_O
+
+channel beginInteration,endInteraction
+channel A_mSIG: COM.ID.ID.A_SIG
+channel B_mOP: COM.ID.ID.B_OPS
+
+Seq0_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I?x:{x|x<-MyInteger}? y:{ y| y<-MyString}!(3)!(2.5)!('a') -> SKIP);(B_mOP.r!lf1_id!lf2_id?out:{x | x <-B_OPS,(x == m0_O)} -> SKIP)
+
+Seq0_B(sd_id,lf1_id,lf2_id) =(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(x == m0_I)} -> SKIP);(B_mOP.s!lf1_id!lf2_idm0_O -> SKIP)
+
+Seq0_m0(sd_id,lf1_id,lf2_id) = B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf2_id.lf1_id!x -> Seq0_m0
+
+Seq0_m0_r (sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-A_OPS,get_id(x) == m0_I} -> B_mOP.r.lf2_id.lf1_id!x -> Seq0_m0_r
+
+Seq0_MessagesBuffer(sd_id,lf1_id,lf2_id) = (Seq0_m0,lf1_id,lf2_id) ||| Seq0_m0_r,lf1_id,lf2_id) )/\endInteraction -> SKIP
+
+AlphaParallel(sd_id,lf1_id,lf2_id) = Seq0_A(sd_id,lf1_id,lf2_id)[ {|B_mOP.s.lf1_id.lf2_id|} || {|B_mOP.r.lf2_id.lf1_id|} ]Seq0_B(sd_id,lf1_id,lf2_id)
+
+SD(sd_id,lf1_id,lf2_id) = beginInteraction ->((AlphaParallel(sd_id,lf1_id,lf2_id); endinteraction -> SKIP)[|{|B_mOP.s.lf1_id.lf2_id,B_mOP.r.lf2_id.lf1_id,B_mOP.s.lf2_id.lf1_id,B_mOP.r.lf2_id.lf1_id]|}|Seq0_MessagesBuffer(sd_id,lf1_id,lf2_id))
