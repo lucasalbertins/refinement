@@ -100,7 +100,9 @@ public class SDParserTest {
 		expected.append("DoubleParams = {2.5}\n");
 		expected.append("CharParams = {'a'}\n");
 		expected.append("datatype A_SIG = m1\n");
-		expected.append("datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O\n");
+		expected.append("datatype B_OPS = m0_I | m0_O | m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams\n");
+		expected.append("get_id(m0_I) = m0_I\n");
+		expected.append("get_id(m0_O) = m0_O\n");
 		expected.append("get_id(m0_I._._._._._) = m0_I\n");
 		expected.append("get_id(m0_O) = m0_O\n");
 		System.out.println(actual);
@@ -113,12 +115,12 @@ public class SDParserTest {
 	@Test
 	public void testParseChannels() {
 		String actual = parser.parseChannels();
+		System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("channel beginInteration,endInteraction\n");
 		expected.append("channel A_mSIG: COM.ID.ID.A_SIG\n");
 		expected.append("channel B_mOP: COM.ID.ID.B_OPS\n");
 		assertEquals(expected.toString(), actual);
-		System.out.println(actual);
 	}
 	
 	@Test

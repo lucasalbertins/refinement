@@ -27,11 +27,23 @@ public class SDParser {
 	private String paralel;
 	private int numLife;
 
+	// LISTAS AUXILIARES PARA EVITAR REPETICAO
+	private List<String> channels;
+	private List<String> datatypes;
+	private List<String> getters;
+	private List<String> op;
+	private List<String> sig;
+
 	public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
 		processos = new ArrayList<String>();
 		alfabeto = new ArrayList<String>();
+		channels = new ArrayList<String>();
+		datatypes = new ArrayList<String>();
+		getters = new ArrayList<String>();
+		op = new ArrayList<String>();
+		sig = new ArrayList<String>();
 	}
 
 	public static void addProcesso(String elem) {
@@ -134,50 +146,91 @@ public class SDParser {
 	private void defineBlockMessages(StringBuilder types, IClass block) {
 
 		Set<IMessage> messages = getBlockMessages(block);
+		StringBuilder auxiliar = new StringBuilder();
+		StringBuilder operationsAux = new StringBuilder();
+		StringBuilder gettersAux;
+		StringBuilder signalsAux = new StringBuilder();
+		
+		StringBuilder finalGetters = new StringBuilder();
 		StringBuilder operations = new StringBuilder();
 		StringBuilder signals = new StringBuilder();
-		StringBuilder getters = new StringBuilder();
+		
 		for (IMessage message : messages) {
+			gettersAux = new StringBuilder();
+			operationsAux = new StringBuilder();
+			signalsAux = new StringBuilder();
+			
 			if (message.isAsynchronous()) {
-				signals.append(message.getName());
+				signalsAux.append(message.getName());
 				if (!"".equals(message.getArgument())) {
-					treatArguments(signals, message.getArgument());
-					treatGetterArguments(getters, message.getArgument());
+					treatArguments(signalsAux, message.getArgument());
+					treatGetterArguments(gettersAux, message.getArgument());
 				}
-				signals.append(" | ");
+				if(!sig.contains(signalsAux.toString())){
+					signals.append(signalsAux.toString());
+					sig.add(signalsAux.toString());
+					signals.append(" | ");
+				}
+				
 			} else if (message.isSynchronous()) {
-				operations.append(message.getName() + "_I");
-				getters.append("get_id(").append(message.getName()).append("_I");
+				operationsAux.append(message.getName() + "_I");
+				gettersAux.append("get_id(").append(message.getName()).append("_I");
 				if (!"".equals(message.getArgument())) {
-					treatArguments(operations, message.getArgument());
-					treatGetterArguments(getters, message.getArgument());
+					treatArguments(operationsAux, message.getArgument());
+					treatGetterArguments(gettersAux, message.getArgument());
 				}
-				getters.append(") = ").append(message.getName()).append("_I\n");
-
-				operations.append(" | ");
-				operations.append(message.getName() + "_O");
-				getters.append("get_id(").append(message.getName()).append("_O");
+				gettersAux.append(") = ").append(message.getName()).append("_I\n");
+				
+				if(!op.contains(operationsAux.toString())){
+					operations.append(operationsAux.toString());
+					op.add(operationsAux.toString());
+					operations.append(" | ");
+				}
+				
+				operationsAux = new StringBuilder();
+				
+				operationsAux.append(message.getName() + "_O");
+				gettersAux.append("get_id(").append(message.getName()).append("_O");
 				if (!"".equals(message.getReturnValueVariable())) {
-					treatArguments(operations, message.getReturnValueVariable());
-					treatGetterArguments(getters, message.getArgument());
+					treatArguments(operationsAux, message.getReturnValueVariable());
+					treatGetterArguments(gettersAux, message.getArgument());
 				}
-				getters.append(") = ").append(message.getName()).append("_O\n");
-				operations.append(" | ");
+				gettersAux.append(") = ").append(message.getName()).append("_O\n");
+				
+				if(!op.contains(operationsAux.toString())){
+					operations.append(operationsAux.toString());
+					op.add(operationsAux.toString());
+					operations.append(" | ");
+				}
+				
 			}
-
+			if(!this.getters.contains(gettersAux.toString())){
+				finalGetters.append(gettersAux.toString());
+				getters.add(gettersAux.toString());
+			}
+			
 		}
 		if (!signals.toString().isEmpty()) {
 			signals.delete(signals.length() - 3, signals.length());
-			types.append("datatype ").append(block.getName());
-			types.append("_SIG = ").append(signals.toString()).append("\n");
+			auxiliar.append("datatype ").append(block.getName());
+			auxiliar.append("_SIG = ").append(signals.toString()).append("\n");
+			if (!datatypes.contains(auxiliar.toString())) {
+				types.append(auxiliar.toString());
+				datatypes.add(auxiliar.toString());
+			}
 		}
 		if (!operations.toString().isEmpty()) {
+			auxiliar = new StringBuilder();
 			operations.delete(operations.length() - 3, operations.length());
-			types.append("datatype ").append(block.getName());
-			types.append("_OPS = ").append(operations.toString()).append("\n");
+			auxiliar.append("datatype ").append(block.getName());
+			auxiliar.append("_OPS = ").append(operations.toString()).append("\n");
+			if(!datatypes.contains(auxiliar.toString())){
+				types.append(auxiliar.toString());
+				datatypes.add(auxiliar.toString());
+			}
 		}
 
-		types.append(getters.toString());
+		types.append(finalGetters.toString());
 	}
 
 	private Set<IMessage> getBlockMessages(IClass block) {
@@ -207,8 +260,7 @@ public class SDParser {
 		for (IMessage iMessage : ret) {
 			if (iMessage.getOperation() != null && iMessage.getOperation().getOwner() != null
 					&& iMessage.getOperation().getOwner() == mes.getOperation().getOwner()
-					&& iMessage.getName().equals(mes.getName()) &&
-					iMessage.getArgument().equals(mes.getArgument())) {
+					&& iMessage.getName().equals(mes.getName()) && iMessage.getArgument().equals(mes.getArgument())) {
 				return true;
 			}
 		}
@@ -353,10 +405,11 @@ public class SDParser {
 		else
 			return false;
 	}
-	
-	//TODO: Adicionar nome da referência junto com a classe da lifeline
+
+	// TODO: Adicionar nome da referência junto com a classe da lifeline
 	public String parseChannels() {
 		StringBuilder channelsSTR = new StringBuilder();
+		StringBuilder auxChannel = new StringBuilder();
 		channelsSTR.append("channel beginInteration,endInteraction\n");// ID_SD
 		List<IClass> blocks = new ArrayList<IClass>();
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
@@ -367,6 +420,7 @@ public class SDParser {
 		}
 
 		for (IClass block : blocks) {
+			auxChannel = new StringBuilder();
 			Set<IMessage> blockMessages = getBlockMessages(block);
 			boolean hasSignal = false;
 			boolean hasOperation = false;
@@ -385,18 +439,22 @@ public class SDParser {
 				}
 			}
 			if (hasOperation) {
-				channelsSTR.append("channel ").append(block.getName());
+				auxChannel.append("channel ").append(block.getName());
 				// channelsSTR.append("_mOP:
 				// COM.SDNat.ID.ID.").append(block.getName());
-				channelsSTR.append("_mOP: COM.ID.ID.").append(block.getName());
-				channelsSTR.append("_OPS\n");
+				auxChannel.append("_mOP: COM.ID.ID.").append(block.getName());
+				auxChannel.append("_OPS\n");
 			}
 			if (hasSignal) {
-				channelsSTR.append("channel ").append(block.getName());
+				auxChannel.append("channel ").append(block.getName());
 				// channelsSTR.append("_mSIG:
 				// COM.SDNat.ID.ID.").append(block.getName());
-				channelsSTR.append("_mSIG: COM.ID.ID.").append(block.getName());
-				channelsSTR.append("_SIG\n");
+				auxChannel.append("_mSIG: COM.ID.ID.").append(block.getName());
+				auxChannel.append("_SIG\n");
+			}
+			if (!channels.contains(auxChannel.toString())) {
+				channelsSTR.append(auxChannel.toString());
+				channels.add(auxChannel.toString());
 			}
 		}
 
@@ -419,24 +477,22 @@ public class SDParser {
 		process.append(auxiliar());
 		process.append("\n");
 		process.append("SD(sd_id");
-		
-		for(int i = 1; i<= numLife;i++){
+
+		for (int i = 1; i <= numLife; i++) {
 			process.append(",lf" + i + "_id");
 		}
 		process.append(") = beginInteraction ->((");
 		process.append(paralel);
 		process.append("; endinteraction -> SKIP)");
 		process.append("[|{|");
-		
+
 		for (String alfa : alfabeto) {
 			process.append(alfa + ",");
 		}
 		process.deleteCharAt(process.length() - 1);
 		process.append("]|}|");
 		process.append(MessageParser.getInstance().getMsgBuffer() + ")");
-		
-		
-		
+
 		return process.toString();
 	}
 
@@ -451,32 +507,32 @@ public class SDParser {
 		aux.append(")");
 		paralel = aux.toString();
 		aux.append(" = ");
-		numLife = i-1;
-		//i-1 = numero de lifelines
-		
+		numLife = i - 1;
+		// i-1 = numero de lifelines
+
 		StringBuilder sb = new StringBuilder();
 		sb.append(alfabeto.get(0));
-		
-		for(int x = 2; x < i-1; x++){
+
+		for (int x = 2; x < i - 1; x++) {
 			aux.append("(");
 		}
-		
-		for(int j = 0; j < i-2;j++){
-			
-			if(j%2 == 0)
+
+		for (int j = 0; j < i - 2; j++) {
+
+			if (j % 2 == 0)
 				aux.append(processos.get(j));
 			else
 				aux.append(")");
-			
+
 			aux.append("[ {|");
 			aux.append(sb.toString());
 			aux.append("|} || {|");
-			aux.append(alfabeto.get(j+1));
-			sb.append(", "+ alfabeto.get(j+1));
+			aux.append(alfabeto.get(j + 1));
+			sb.append(", " + alfabeto.get(j + 1));
 			aux.append("|} ]");
-			aux.append(processos.get(j+1));
+			aux.append(processos.get(j + 1));
 		}
-		
+
 		return aux.toString();
 	}
 
