@@ -25,26 +25,37 @@ public class MessageParser {
 		return instance;
 	}
 
-	private void addIDS(int numLF, StringBuilder sb, StringBuilder aux) {
+	private void addIDS(String lf1, String lf2, StringBuilder sb,StringBuilder aux) {
 
-		int i = numLF - 1;
-		for (int j = 1; j <= i; j++) {
-			sb.append(".lf" + j + "_id");
-			aux.append(".lf" + j + "_id");
-		}
+		sb.append(".").append(SDParser.getNome(lf1));
+		aux.append(".").append(SDParser.getNome(lf1));
+		sb.append(".").append(SDParser.getNome(lf2));
+		aux.append(".").append(SDParser.getNome(lf2));
+		
+//		int i = numLF - 1;
+//		for (int j = 1; j <= i; j++) {
+//			sb.append(".lf" + j + "_id");
+//			aux.append(".lf" + j + "_id");
+//		}
 
 	}
 	
-	private void addIDSr(int numLF, StringBuilder sb, StringBuilder aux){
+	private void addIDSr(String lf1, String lf2, StringBuilder sb, StringBuilder aux){
 		
-		int i = numLF - 1;
-		for (int j = i; j >=1; j--) {
-			sb.append(".lf" + j + "_id");
-			aux.append(".lf" + j + "_id");
-		}
+		
+//		int i = numLF - 1;
+//		for (int j = i; j >=1; j--) {
+//			sb.append(".lf" + j + "_id");
+//			aux.append(".lf" + j + "_id");
+//		}
 	}
 
 	public String translateMessageForProcess(IMessage msg, ISequenceDiagram seq) {
+		ILifeline lifeline1 = (ILifeline) msg.getSource();
+		ILifeline lifeline2 = (ILifeline) msg.getTarget();
+		String base1 = lifeline1.getBase().toString();
+		String base2 = lifeline2.getBase().toString();
+		
 		if (msg == null) {
 			throw new NullPointerException("Message cannot be null.");
 		}
@@ -57,25 +68,21 @@ public class MessageParser {
 		if (msg.isSynchronous()) {
 			sb.append(seq.getName()).append("_").append(msg.getName());
 			sb.append("(sd_id");
-
-			int i = 1;
-			for (ILifeline lifelines : seq.getInteraction().getLifelines()) {
-				sb.append(",lf" + i + "_id");
-				i++;
-			}
+			sb.append(",").append(SDParser.getNome(base1));
+			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(") =");
 			
-			sb.append(") = ");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 			// sb/* .append(msg.getIndex()).append(".")
 			// */.append(msg.getSource().getId());
 			// sb.append(".").append(msg.getTarget().getId())
 
-			addIDS(i, sb, aux);
+			addIDS(base1,base2,sb, aux);
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
-			sb.append(",get_id(x) == m0_I}");
+			sb.append(",get_id(x) == ").append(msg.getName()).append("_I}");
 			SDParser.addAlfabeto(aux.toString());
 			aux = new StringBuilder();
 			sb.append(" -> ");
@@ -85,17 +92,13 @@ public class MessageParser {
 			// */.append(msg.getSource().getId());
 			// sb.append(".").append(msg.getTarget().getId());
 
-			addIDSr(i, sb, aux);
+			addIDS(base1, base2, sb, aux);
 			sb.append("!x -> ").append(seq.getName()).append("_").append(msg.getName());
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
 			sb.append(seq.getName()).append("_").append(msg.getName());
 			sb.append("(sd_id");
-
-			int i = 1;
-			for (ILifeline lifelines : seq.getInteraction().getLifelines()) {
-				sb.append(",lf" + 1 + "_id");
-				i++;
-			}
+			sb.append(",").append(SDParser.getNome(base1));
+			sb.append(",").append(SDParser.getNome(base2));
 			
 			sb.append(") = ");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
@@ -104,7 +107,7 @@ public class MessageParser {
 			// */.append(msg.getSource().getId());
 			// sb.append(".").append(msg.getTarget().getId())
 			
-			addIDS(i, sb, aux);
+			addIDS(base1, base2, sb, aux);
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
@@ -112,13 +115,13 @@ public class MessageParser {
 			sb.append(" -> ");
 			SDParser.addAlfabeto(aux.toString());
 			aux = new StringBuilder();
-			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r.");
-			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r.");
+			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r");
+			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r");
 			// sb/* .append(msg.getIndex()).append(".")
 			// */.append(msg.getSource().getId());
 			// sb.append(".").append(msg.getTarget().getId());
 			
-			addIDS(i, sb, aux);
+			addIDS(base1, base2, sb, aux);
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_").append(msg.getName());
 		} else if (msg.isReturnMessage()) {
@@ -133,14 +136,12 @@ public class MessageParser {
 			sb.append("_r ");
 			sb.append("(sd_id");
 			
-			int i = 1;
-			for (ILifeline lifelines : seq.getInteraction().getLifelines()) {
-				i++;
-			}
+			sb.append(",").append(SDParser.getNome(base1));
+			sb.append(",").append(SDParser.getNome(base2));
 			
-			for (int j = i-1; j >=1; j--) {
-				sb.append(",lf"+j+"_id");
-			}
+//			for (int j = i-1; j >=1; j--) {
+//				sb.append(",lf"+j+"_id");
+//			}
 			sb.append(") = ");
 			
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
@@ -150,7 +151,7 @@ public class MessageParser {
 			 * getSource().getId());
 			 */
 			// sb.append(".").append(syncMsg.getTarget().getId())
-			addIDSr(i, sb, aux);
+			addIDSr(base1, base2, sb, aux);
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
@@ -163,7 +164,7 @@ public class MessageParser {
 			// sb/* .append(syncMsg.getIndex()).append("r.")
 			// */.append(syncMsg.getSource().getId());
 			// sb.append(".").append(syncMsg.getTarget().getId())
-			addIDSr(i, sb, aux);
+			addIDSr(base1, base2, sb, aux);
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_").append(syncMsg.getName()).append("_r");
 		}
@@ -173,6 +174,11 @@ public class MessageParser {
 	}
 
 	public String translateMessageForLifeline(IMessage msg, ILifeline lifeline, ISequenceDiagram seq) {
+		ILifeline lifeline1 = (ILifeline) msg.getSource();
+		ILifeline lifeline2 = (ILifeline) msg.getTarget();
+		String base1 = lifeline1.getBase().toString();
+		String base2 = lifeline2.getBase().toString();
+		
 		if (msg == null) {
 			throw new NullPointerException("Message cannot be null.");
 		}
@@ -193,9 +199,11 @@ public class MessageParser {
 				// sb/* .append(msg.getIndex()).append(".")
 				// */.append(lifeline.getId());
 				// sb.append(".").append(msg.getTarget().getId()).append(".");
-				sb.append("!lf1_id").append("!lf2_id.");
+				//sb.append("!lf1_id").append("!lf2_id.");
+				sb.append("!").append(SDParser.getNome(base1));
+				sb.append("!").append(SDParser.getNome(base2));
 				// aux.append(".lf1_id").append(".lf2_id.");
-				sb.append(msg.getName()).append("_I");
+				//sb.append(msg.getName()).append("_I");
 				treatArguments(sb, msg.getArgument());
 				treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
@@ -205,7 +213,9 @@ public class MessageParser {
 				// sb/* .append(msg.getIndex()).append(".")
 				// */.append(msg.getSource().getId());
 				// sb.append(".").append(msg.getTarget().getId());
-				sb.append("!lf1_id").append("!lf2_id");
+				//sb.append("!lf1_id").append("!lf2_id");
+				sb.append("!").append(SDParser.getNome(base1));
+				sb.append("!").append(SDParser.getNome(base2));
 				// aux.append(".lf1_id").append(".lf2_id");
 				sb.append("?oper:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
 				// aux.append("?oper:{x | x <- ").append(((ILifeline)
@@ -223,7 +233,9 @@ public class MessageParser {
 				// sb/* .append(msg.getIndex()).append(".")
 				// */.append(lifeline.getId());
 				// sb.append(".").append(msg.getTarget().getId()).append(".");
-				sb.append("!lf1_id").append("!lf2_id.");
+				//sb.append("!lf1_id").append("!lf2_id.");
+				sb.append("!").append(SDParser.getNome(base1));
+				sb.append("!").append(SDParser.getNome(base2));
 				// aux.append(".lf1_id").append(".lf2_id.");
 				sb.append(msg.getName()).append("_S");
 				// aux.append(msg.getName()).append("_S");
@@ -236,7 +248,9 @@ public class MessageParser {
 				// sb/* .append(msg.getIndex()).append(".")
 				// */.append(msg.getSource().getId());
 				// sb.append(".").append(msg.getTarget().getId());
-				sb.append("!lf1_id").append("!lf2_id");
+				//sb.append("!lf1_id").append("!lf2_id");
+				sb.append("!").append(SDParser.getNome(base1));
+				sb.append("!").append(SDParser.getNome(base2));
 				// aux.append(".lf1_id").append(".lf2_id.");
 				sb.append("?signal:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
 				// aux.append("?signal:{x | x <- ").append(((ILifeline)
@@ -261,7 +275,9 @@ public class MessageParser {
 				// sb/* .append(syncMsg.getIndex()).append("r.")
 				// */.append(syncMsg.getSource().getId());
 				// sb.append(".").append(syncMsg.getTarget().getId())
-				sb.append("!lf1_id").append("!lf2_id");
+				//sb.append("!lf1_id").append("!lf2_id");
+				sb.append("!").append(SDParser.getNome(base1));
+				sb.append("!").append(SDParser.getNome(base2));
 				// aux.append(".lf1_id").append(".lf2_id.");
 				sb.append("?out:");
 				// aux.append("?out:");
@@ -279,7 +295,9 @@ public class MessageParser {
 				// sb/* .append(syncMsg.getIndex()).append("r.")
 				// */.append(syncMsg.getSource().getId());
 				// sb.append(".").append(syncMsg.getTarget().getId()).append(".");
-				sb.append("!lf1_id").append("!lf2_id");
+				//sb.append("!lf1_id").append("!lf2_id");
+				sb.append("!").append(SDParser.getNome(base1));
+				sb.append("!").append(SDParser.getNome(base2));
 				// aux.append(".lf1_id").append(".lf2_id.");
 				sb.append(syncMsg.getName()).append("_O");
 				// aux.append(syncMsg.getName()).append("_O");

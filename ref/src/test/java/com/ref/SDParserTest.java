@@ -42,6 +42,7 @@ public class SDParserTest {
 				seq2 = (ISequenceDiagram) findSequence[0];
 			}
 			parser = new SDParser(seq1, seq2);
+			parser.carregaLifelines();
 		} catch (ProjectNotFoundException e) {
 			System.out.println("aqui");
 			e.printStackTrace();
@@ -80,30 +81,20 @@ public class SDParserTest {
 		StringBuilder expected = new StringBuilder();
 		//expected.append("SDnat = {1,2,1r}\n");
 		expected.append("datatype COM = s | r\n");
-		expected.append("ID1 = {");
-		for (ILifeline lif : seq1.getInteraction().getLifelines()) {
-			expected.append(lif.getId()).append(",");
-		}
-		expected.deleteCharAt(expected.length() - 1);
-		expected.append("}\n");
-		expected.append("ID2 = {");
-		for (ILifeline lif : seq2.getInteraction().getLifelines()) {
-			expected.append(lif.getId()).append(",");
-		}
-		expected.deleteCharAt(expected.length() - 1);
-		expected.append("}\n");
-		expected.append("ID_SD = {<").append(seq1.getId()).append(">,<");
-		expected.append(seq2.getId()).append(">}\n");
+		expected.append("ID1 = {lf1_id,lf2_id}\n");
+		expected.append("ID2 = {lf1_id,lf2_id}\n");
+		expected.append("ID_SD = {<").append("sd1_id").append(">,<");
+		expected.append("sd2_id").append(">}\n");
 		expected.append("MyInteger ={0,1,2,3,4,5,6,7,8,9}\n");
 		expected.append("MyString ={\"teste\"}\n");
 		expected.append("IntParams = {3}\n");
 		expected.append("DoubleParams = {2.5}\n");
 		expected.append("CharParams = {'a'}\n");
 		expected.append("datatype A_SIG = m1\n");
-		expected.append("datatype B_OPS = m0_I | m0_O | m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams\n");
-		expected.append("get_id(m0_I) = m0_I\n");
-		expected.append("get_id(m0_O) = m0_O\n");
+		expected.append("datatype B_OPS = m0_I.MyInteger.MyString.IntParams.DoubleParams.CharParams | m0_O | m0_I\n");
 		expected.append("get_id(m0_I._._._._._) = m0_I\n");
+		expected.append("get_id(m0_O) = m0_O\n");
+		expected.append("get_id(m0_I) = m0_I\n");
 		expected.append("get_id(m0_O) = m0_O\n");
 		System.out.println(actual);
 		//System.out.println(expected);
