@@ -142,7 +142,7 @@ public class SDParser {
 		for (IMessage msg : seq1.getInteraction().getMessages()) {
 			if (msg.isSynchronous()) {
 				sb.append(msg.getIndex()).append("r,");
-				System.out.println("seq 1 adicionou " + msg.getIndex());
+				//System.out.println("seq 1 adicionou " + msg.getIndex());
 			}
 		}
 		for (IMessage msg : seq2.getInteraction().getMessages()) {
@@ -182,7 +182,7 @@ public class SDParser {
 
 	private void defineBlockMessages(StringBuilder types, IClass block) {
 
-		Set<IMessage> messages = getBlockMessages(block);
+		List<IMessage> messages = getBlockMessages(block);
 		StringBuilder auxiliar = new StringBuilder();
 		StringBuilder operationsAux = new StringBuilder();
 		StringBuilder gettersAux;
@@ -193,6 +193,9 @@ public class SDParser {
 		StringBuilder signals = new StringBuilder();
 
 		for (IMessage message : messages) {
+			
+			//System.out.println(message.getName());
+			
 			gettersAux = new StringBuilder();
 			operationsAux = new StringBuilder();
 			signalsAux = new StringBuilder();
@@ -270,21 +273,22 @@ public class SDParser {
 		types.append(finalGetters.toString());
 	}
 
-	private Set<IMessage> getBlockMessages(IClass block) {
+	private List<IMessage> getBlockMessages(IClass block) {
 
-		Set<IMessage> messages = new HashSet<IMessage>();
+		List<IMessage> messages = new ArrayList<IMessage>();
 		messages.addAll(Arrays.asList(seq1.getInteraction().getMessages()));
 		messages.addAll(Arrays.asList(seq2.getInteraction().getMessages()));
 
-		Set<IMessage> ret = new HashSet<IMessage>();
+		List<IMessage> ret = new ArrayList<IMessage>();
 
 		for (IOperation operation : block.getOperations()) {
 			for (IMessage iMessage : messages) {
-
+				//System.out.println("MSG " + iMessage.getName() + " bloco " + block.getName() + " OP " + operation.getName());
 				if (iMessage.getOperation() != null && iMessage.getOperation().getOwner() != null
 						&& iMessage.getOperation().getOwner().equals(block)
 						&& iMessage.getOperation().getName().equals(operation.getName())
 						&& !existMessage(ret, iMessage)) {
+					//System.out.println("Adicionou " + iMessage.getName());
 					ret.add(iMessage);
 				}
 			}
@@ -292,7 +296,7 @@ public class SDParser {
 		return ret;
 	}
 
-	private boolean existMessage(Set<IMessage> ret, IMessage mes) {
+	private boolean existMessage(List<IMessage> ret, IMessage mes) {
 		for (IMessage iMessage : ret) {
 			if (iMessage.getOperation() != null && iMessage.getOperation().getOwner() != null
 					&& iMessage.getOperation().getOwner() == mes.getOperation().getOwner()
@@ -457,7 +461,7 @@ public class SDParser {
 
 		for (IClass block : blocks) {
 			auxChannel = new StringBuilder();
-			Set<IMessage> blockMessages = getBlockMessages(block);
+			List<IMessage> blockMessages = getBlockMessages(block);
 			boolean hasSignal = false;
 			boolean hasOperation = false;
 			for (IMessage iMessage : blockMessages) {
@@ -534,7 +538,7 @@ public class SDParser {
 
 	private String auxiliar() {
 		StringBuilder aux = new StringBuilder();
-		aux.append("AlphaParallel(sd_id");
+		aux.append(seq1.getName()).append("Parallel(sd_id");
 		int i = 1;
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			aux.append(",");
@@ -582,13 +586,29 @@ public class SDParser {
 		aux.append("(sd_id");
 
 		int i = 1;
-		for (ILifeline lifelines : seq1.getInteraction().getLifelines()) {
-			//process.append(",lf" + i + "_id");
-			//aux.append(",lf" + i + "_id");
-			
-			process.append(",").append(getLifelineBase(lifelines));
-			aux.append(",").append(getLifelineBase(lifelines));
-			i++;
+		
+		
+//		for (ILifeline lifelines : seq1.getInteraction().getLifelines()) {
+//			process.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
+//			aux.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
+//			i++;
+//		}
+		
+		List<String> lfs = new ArrayList<String>(); 
+		
+		for(INamedElement fragment : lifeline.getFragments()){
+			IMessage msg =(IMessage) fragment;
+			ILifeline life1 = (ILifeline) msg.getSource();
+			ILifeline life2 = (ILifeline) msg.getTarget();
+			if(!lfs.contains(lifelines.get(life1.getBase().toString())))
+				lfs.add(lifelines.get(life1.getBase().toString()));
+			if(!lfs.contains(lifelines.get(life2.getBase().toString())))
+				lfs.add(lifelines.get(life2.getBase().toString()));
+		}
+		
+		for(String life : lfs){
+			process.append(",").append(life);
+			aux.append(",").append(life);
 		}
 
 		process.append(") =");

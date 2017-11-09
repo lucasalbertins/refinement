@@ -155,7 +155,7 @@ public class MessageParser {
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
-			sb.append(",get_id(x) == m0_I}");
+			sb.append(",get_id(x) == m0_O}");
 			sb.append(" -> ");
 			SDParser.addAlfabeto(aux.toString());
 			aux = new StringBuilder();
@@ -353,7 +353,7 @@ public class MessageParser {
 			for (int i = 0; i < arguments.length; i++) {
 				if (arguments[i].contains(":")) {
 					String[] temp = arguments[i].split(":");
-					aux.append("?" + temp[0]).append(":{" + temp[0]).append("|" + temp[0])
+					aux.append("?" + temp[0].trim()).append(":{" + temp[0]).append("|" + temp[0])
 							.append("<-My" + temp[1] + "}");
 				} else {
 					aux.append("!(" + arguments[i] + ")");
