@@ -15,6 +15,7 @@ public class MessageParser {
 		return msgBuffer;
 	}
 	
+	
 	private MessageParser() {
 	}
 
@@ -32,12 +33,6 @@ public class MessageParser {
 		sb.append(".").append(SDParser.getNome(lf2));
 		aux.append(".").append(SDParser.getNome(lf2));
 		
-//		int i = numLF - 1;
-//		for (int j = 1; j <= i; j++) {
-//			sb.append(".lf" + j + "_id");
-//			aux.append(".lf" + j + "_id");
-//		}
-
 	}
 	
 	private void addIDSr(String lf1, String lf2, StringBuilder sb, StringBuilder aux){
@@ -74,26 +69,46 @@ public class MessageParser {
 			
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
-			// sb/* .append(msg.getIndex()).append(".")
-			// */.append(msg.getSource().getId());
-			// sb.append(".").append(msg.getTarget().getId())
 
 			addIDS(base1,base2,sb, aux);
+			sb.append("!"+msg.getName()+"_I");
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
 			sb.append(",get_id(x) == ").append(msg.getName()).append("_I}");
 			SDParser.addAlfabeto(aux.toString());
+			
+			if(SDParser.alfabets.containsKey(base1)){
+				String alfa = SDParser.alfabets.get(base1);
+				alfa += ","+aux.toString();
+				SDParser.alfabets.put(base1,alfa);
+			}else{
+				SDParser.alfabets.put(base1,aux.toString());
+			}
+			
+			
 			aux = new StringBuilder();
 			sb.append(" -> ");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.r");
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.r");
-			// sb/* .append(msg.getIndex()).append(".")
-			// */.append(msg.getSource().getId());
-			// sb.append(".").append(msg.getTarget().getId());
 
 			addIDS(base1, base2, sb, aux);
+			sb.append("!"+msg.getName()+"_I");
 			sb.append("!x -> ").append(seq.getName()).append("_").append(msg.getName());
+			sb.append("(sd_id");
+			sb.append(",").append(SDParser.getNome(base1));
+			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(")");
+			
+			if(SDParser.alfabets.containsKey(base2)){
+				String alfa = SDParser.alfabets.get(base2);
+				alfa += ", "+aux.toString();
+				SDParser.alfabets.put(base2,alfa);
+			}else{
+				SDParser.alfabets.put(base2,aux.toString());
+			}
+			
+			
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
 			sb.append(seq.getName()).append("_").append(msg.getName());
 			sb.append("(sd_id");
@@ -103,27 +118,46 @@ public class MessageParser {
 			sb.append(") = ");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
-			// sb/* .append(msg.getIndex()).append(".")
-			// */.append(msg.getSource().getId());
-			// sb.append(".").append(msg.getTarget().getId())
 			
 			addIDS(base1, base2, sb, aux);
+			sb.append("!"+msg.getName());
 			sb.append("?x");
 			sb.append(":{x | x<-");
-			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
-			sb.append(",get_id(x) == m0_I}");
+			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
+			sb.append(",get_id(x) == ").append(msg.getName()+"}");
 			sb.append(" -> ");
 			SDParser.addAlfabeto(aux.toString());
+			
+			if(SDParser.alfabets.containsKey(base1)){
+				String alfa = SDParser.alfabets.get(base1);
+				alfa += ", "+aux.toString();
+				SDParser.alfabets.put(base1,alfa);
+			}else{
+				SDParser.alfabets.put(base1,aux.toString());
+			}
+			
 			aux = new StringBuilder();
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r");
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r");
-			// sb/* .append(msg.getIndex()).append(".")
-			// */.append(msg.getSource().getId());
-			// sb.append(".").append(msg.getTarget().getId());
 			
 			addIDS(base1, base2, sb, aux);
+			sb.append("!"+msg.getName());
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_").append(msg.getName());
+			sb.append("(sd_id");
+			sb.append(",").append(SDParser.getNome(base1));
+			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(")");
+			
+			if(SDParser.alfabets.containsKey(base2)){
+				String alfa = SDParser.alfabets.get(base2);
+				alfa += ", "+aux.toString();
+				SDParser.alfabets.put(base2,alfa);
+			}else{
+				SDParser.alfabets.put(base2,aux.toString());
+			}
+			
+			
 		} else if (msg.isReturnMessage()) {
 			IMessage syncMsg = null;
 			try {
@@ -139,37 +173,53 @@ public class MessageParser {
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
 			
-//			for (int j = i-1; j >=1; j--) {
-//				sb.append(",lf"+j+"_id");
-//			}
 			sb.append(") = ");
 			
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 			aux.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
-			/*
-			 * sb.append(syncMsg.getIndex()).append("r.").append(syncMsg.
-			 * getSource().getId());
-			 */
-			// sb.append(".").append(syncMsg.getTarget().getId())
-			addIDSr(base1, base2, sb, aux);
+			addIDS(base1, base2, sb, aux);
+			sb.append("!"+syncMsg.getName()+"_O");
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
-			sb.append(",get_id(x) == m0_O}");
+			sb.append(",get_id(x) == ").append(syncMsg.getName() + "_O}");
 			sb.append(" -> ");
 			SDParser.addAlfabeto(aux.toString());
+			
+			if(SDParser.alfabets.containsKey(base1)){
+				String alfa = SDParser.alfabets.get(base1);
+				alfa +=", " + aux.toString();
+				SDParser.alfabets.put(base1,alfa);
+			}else{
+				SDParser.alfabets.put(base1,aux.toString());
+			}
+			
 			aux = new StringBuilder();
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
 			aux.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
-			// sb/* .append(syncMsg.getIndex()).append("r.")
-			// */.append(syncMsg.getSource().getId());
-			// sb.append(".").append(syncMsg.getTarget().getId())
-			addIDSr(base1, base2, sb, aux);
+			addIDS(base1, base2, sb, aux);
+			sb.append("!"+msg.getName()+"_O");
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_").append(syncMsg.getName()).append("_r");
+			sb.append("(sd_id");
+			sb.append(",").append(SDParser.getNome(base1));
+			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(")");
+			
+			if(SDParser.alfabets.containsKey(base2)){
+				String alfa = SDParser.alfabets.get(base2);
+				alfa += ", " + aux.toString();
+				SDParser.alfabets.put(base2,alfa);
+			}else{
+				SDParser.alfabets.put(base2,aux.toString());
+			}
+			
 		}
 		sb.append("\n");
-		SDParser.addAlfabeto(aux.toString());
+//		SDParser.addAlfabeto(aux.toString());
+//		
+		
+		
 		return sb.toString();
 	}
 
@@ -193,70 +243,39 @@ public class MessageParser {
 		if (msg.isSynchronous()) {
 			if (msg.getSource().getId().equals(lifeline.getId())) {
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
-				// aux.append(((ILifeline)
-				// msg.getTarget()).getBase()).append("_mOP.s");
-				// COLOCA O ENVIO
-				// sb/* .append(msg.getIndex()).append(".")
-				// */.append(lifeline.getId());
-				// sb.append(".").append(msg.getTarget().getId()).append(".");
-				//sb.append("!lf1_id").append("!lf2_id.");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				// aux.append(".lf1_id").append(".lf2_id.");
-				//sb.append(msg.getName()).append("_I");
+				sb.append("!"+msg.getName()+"_I");
 				treatArguments(sb, msg.getArgument());
 				treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			} else if (msg.getTarget().getId().equals(lifeline.getId())) {
 				sb.append(lifeline.getBase()).append("_mOP.r");
-				// aux.append(lifeline.getBase()).append("_mOP.r");
-				// sb/* .append(msg.getIndex()).append(".")
-				// */.append(msg.getSource().getId());
-				// sb.append(".").append(msg.getTarget().getId());
-				//sb.append("!lf1_id").append("!lf2_id");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				// aux.append(".lf1_id").append(".lf2_id");
+				sb.append("!"+msg.getName()+"_I");
 				sb.append("?oper:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
-				// aux.append("?oper:{x | x <- ").append(((ILifeline)
-				// msg.getTarget()).getBase()).append("_OPS");
 				sb.append(",(x == ").append(msg.getName()).append("_I)}");
-				// aux.append(",(x == ").append(msg.getName()).append("_I)}");
 				sb.append(" -> SKIP");
 			}
 
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
 			if (msg.getSource().getId().equals(lifeline.getId())) {
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
-				// aux.append(((ILifeline)
-				// msg.getTarget()).getBase()).append("_mSIG.s");
-				// sb/* .append(msg.getIndex()).append(".")
-				// */.append(lifeline.getId());
-				// sb.append(".").append(msg.getTarget().getId()).append(".");
-				//sb.append("!lf1_id").append("!lf2_id.");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				// aux.append(".lf1_id").append(".lf2_id.");
-				sb.append(msg.getName()).append("_S");
-				// aux.append(msg.getName()).append("_S");
+				sb.append("!"+msg.getName());
 				treatArguments(sb, msg.getArgument());
 				treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			} else {
 				sb.append(lifeline.getBase()).append("_mSIG.r");
-				// aux.append(lifeline.getBase()).append("_mSIG.r");
-				// sb/* .append(msg.getIndex()).append(".")
-				// */.append(msg.getSource().getId());
-				// sb.append(".").append(msg.getTarget().getId());
-				//sb.append("!lf1_id").append("!lf2_id");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				// aux.append(".lf1_id").append(".lf2_id.");
+				sb.append("!"+msg.getName());
 				sb.append("?signal:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
-				// aux.append("?signal:{x | x <- ").append(((ILifeline)
-				// msg.getTarget()).getBase()).append("_SIG");
-				sb.append(",(x == ").append(msg.getName()).append("_S)}");
-				aux.append(",(x == ").append(msg.getName()).append("_S)}");
+				sb.append(",(x == ").append(msg.getName()).append("}");
+				aux.append(",(x == ").append(msg.getName()).append("}");
 				sb.append(" -> SKIP");
 			}
 		} else if (msg.isReturnMessage()) {
@@ -270,43 +289,22 @@ public class MessageParser {
 
 			if (msg.getTarget().getId().equals(lifeline.getId())) {
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
-				// aux.append(((ILifeline)
-				// syncMsg.getTarget()).getBase()).append("_mOP.r");
-				// sb/* .append(syncMsg.getIndex()).append("r.")
-				// */.append(syncMsg.getSource().getId());
-				// sb.append(".").append(syncMsg.getTarget().getId())
-				//sb.append("!lf1_id").append("!lf2_id");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				// aux.append(".lf1_id").append(".lf2_id.");
+				sb.append("!"+msg.getName()+"_O");
 				sb.append("?out:");
-				// aux.append("?out:");
 				sb.append("{x | x <-").append(((ILifeline) syncMsg.getTarget()).getBase()).append("_OPS");
-				// aux.append("{x | x <-").append(((ILifeline)
-				// syncMsg.getTarget()).getBase()).append("_OPS");
 				sb.append(",(x == ").append(syncMsg.getName()).append("_O)}");
-				// aux.append(",(x ==
-				// ").append(syncMsg.getName()).append("_O)}");
 				sb.append(" -> SKIP");
 			} else if (msg.getSource().getId().equals(lifeline.getId())) {
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
-				// aux.append(((ILifeline)
-				// syncMsg.getTarget()).getBase()).append("_mOP.s");
-				// sb/* .append(syncMsg.getIndex()).append("r.")
-				// */.append(syncMsg.getSource().getId());
-				// sb.append(".").append(syncMsg.getTarget().getId()).append(".");
-				//sb.append("!lf1_id").append("!lf2_id");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				// aux.append(".lf1_id").append(".lf2_id.");
 				sb.append(syncMsg.getName()).append("_O");
-				// aux.append(syncMsg.getName()).append("_O");
 				treatArguments(sb, msg.getArgument());
-				// treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			}
 		}
-		// SDParser.addList(aux.toString());
 		return sb.toString();
 	}
 
@@ -381,22 +379,27 @@ public class MessageParser {
 				try {
 					syncMsg = getPreviousMessage(msg, seq1);
 				} catch (InvalidUsingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				process.append(seq1.getName()).append("_").append(syncMsg.getName()).append("_r");
-				//process.append("(sd_id, lf1_id, lf2_id)");
 			} else {
 				process.append(seq1.getName()).append("_").append(msg.getName());
-				//process.append("(sd_id, lf1_id, lf2_id)");
 			}
-			for(int j = 1; j<=i-1;j++){
-				process.append(",lf" + j + "_id");
-			}
+			process.append("(");
+			process.append("sd_id,");
+			
+			ILifeline life = (ILifeline) msg.getSource();
+			process.append(SDParser.getNome(life.getBase().toString()));
+			process.append(",");
+			life = (ILifeline) msg.getTarget();
+			process.append(SDParser.getNome(life.getBase().toString()));
+			//			for(int j = 1; j<=i-1;j++){
+//				process.append("lf" + j + "_id,");
+//			}
 			process.append(")");
 			process.append(" ||| ");
 		}
-		process.delete(process.length() - 5, process.length() - 1);
+		process.delete(process.length() - 5, process.length());
 		process.append(")");
 		process.append("/").append("\\").append("endInteraction -> SKIP");
 		return process.toString();

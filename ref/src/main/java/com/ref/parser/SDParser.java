@@ -36,6 +36,7 @@ public class SDParser {
 	private List<String> op;
 	private List<String> sig;
 	private static Map<String, String> lifelines;
+	public static Map<String, String> alfabets;
 
 	public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
 		this.seq1 = seq1;
@@ -48,6 +49,7 @@ public class SDParser {
 		op = new ArrayList<String>();
 		sig = new ArrayList<String>();
 		lifelines = new HashMap<String, String>();
+		alfabets = new HashMap<String, String>();
 	}
 
 	public static String getNome(String key) {
@@ -66,12 +68,7 @@ public class SDParser {
 
 		int aux = 1;
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
-			// types.append(getLifelineId(lifeline));
-			// types.append(",");
 			lifelines.put(getLifelineBase(lifeline), "lf" + aux + "_id");
-			// types.append("lf" + aux + "_id");
-			// types.append(",");
-			// blocks.add(lifeline.getBase());
 			aux++;
 		}
 
@@ -108,26 +105,28 @@ public class SDParser {
 		types.append("datatype COM = s | r\n");
 		List<IClass> blocks = new LinkedList<IClass>();
 
-		types.append("ID1 = {");
-		
+		types.append("datatype ID = ");
+
+		List<String> added = new ArrayList<String>();
+
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			types.append(lifelines.get(getLifelineBase(lifeline)));
-			types.append(",");
+			added.add(lifelines.get(getLifelineBase(lifeline)));
+			types.append("|");
 			blocks.add(lifeline.getBase());
 		}
-
 		types.deleteCharAt(types.length() - 1);
-		types.append("}\n");
-		types.append("ID2 = {");
 		for (ILifeline lifeline : seq2.getInteraction().getLifelines()) {
-			types.append(lifelines.get(getLifelineBase(lifeline)));
-			types.append(",");
-			blocks.add(lifeline.getBase());
+			if (!added.contains(lifelines.get(getLifelineBase(lifeline)))) {
+				types.append(lifelines.get(getLifelineBase(lifeline)));
+				types.append("|");
+				blocks.add(lifeline.getBase());
+			}
 		}
 
-		types.deleteCharAt(types.length() - 1);
-		types.append("}\n");
-		types.append("ID_SD = {<").append("sd1_id").append(">,<").append("sd2_id").append(">}\n");
+		//types.deleteCharAt(types.length() - 1);
+		types.append("\n");
+		types.append("datatype ID_SD = ").append("sd1_id").append("|").append("sd2_id").append("\n");
 
 		types.append(defineArguments());
 
@@ -142,7 +141,7 @@ public class SDParser {
 		for (IMessage msg : seq1.getInteraction().getMessages()) {
 			if (msg.isSynchronous()) {
 				sb.append(msg.getIndex()).append("r,");
-				//System.out.println("seq 1 adicionou " + msg.getIndex());
+				// System.out.println("seq 1 adicionou " + msg.getIndex());
 			}
 		}
 		for (IMessage msg : seq2.getInteraction().getMessages()) {
@@ -193,9 +192,9 @@ public class SDParser {
 		StringBuilder signals = new StringBuilder();
 
 		for (IMessage message : messages) {
-			
-			//System.out.println(message.getName());
-			
+
+			// System.out.println(message.getName());
+
 			gettersAux = new StringBuilder();
 			operationsAux = new StringBuilder();
 			signalsAux = new StringBuilder();
@@ -281,18 +280,33 @@ public class SDParser {
 
 		List<IMessage> ret = new ArrayList<IMessage>();
 
-		for (IOperation operation : block.getOperations()) {
-			for (IMessage iMessage : messages) {
-				//System.out.println("MSG " + iMessage.getName() + " bloco " + block.getName() + " OP " + operation.getName());
-				if (iMessage.getOperation() != null && iMessage.getOperation().getOwner() != null
-						&& iMessage.getOperation().getOwner().equals(block)
-						&& iMessage.getOperation().getName().equals(operation.getName())
-						&& !existMessage(ret, iMessage)) {
-					//System.out.println("Adicionou " + iMessage.getName());
-					ret.add(iMessage);
-				}
+		for (IMessage msg : seq1.getInteraction().getMessages()) {
+			ILifeline life = (ILifeline) msg.getTarget();
+			if (!msg.isReturnMessage() && life.getBase().equals(block) && !existMessage(ret, msg)) {
+				ret.add(msg);
 			}
 		}
+
+		for (IMessage msg : seq2.getInteraction().getMessages()) {
+			ILifeline life = (ILifeline) msg.getTarget();
+			if (!msg.isReturnMessage() && life.getBase().equals(block) && !ret.contains(msg)) {
+				ret.add(msg);
+			}
+		}
+
+		// for (IOperation operation : block.getOperations()) {
+		// for (IMessage iMessage : messages) {
+		// // System.out.println("MSG " + iMessage.getName());
+		// if (iMessage.getOperation() != null &&
+		// iMessage.getOperation().getOwner() != null
+		// && iMessage.getOperation().getOwner().equals(block)
+		// && iMessage.getOperation().getName().equals(operation.getName())
+		// && !existMessage(ret, iMessage)) {
+		// //System.out.println("Adicionou " + iMessage.getName());
+		// ret.add(iMessage);
+		// }
+		// }
+		// }
 		return ret;
 	}
 
@@ -450,7 +464,7 @@ public class SDParser {
 	public String parseChannels() {
 		StringBuilder channelsSTR = new StringBuilder();
 		StringBuilder auxChannel = new StringBuilder();
-		channelsSTR.append("channel beginInteration,endInteraction\n");// ID_SD
+		channelsSTR.append("channel beginInteraction,endInteraction\n");// ID_SD
 		List<IClass> blocks = new ArrayList<IClass>();
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			blocks.add(lifeline.getBase());
@@ -480,15 +494,11 @@ public class SDParser {
 			}
 			if (hasOperation) {
 				auxChannel.append("channel ").append(block.getName());
-				// channelsSTR.append("_mOP:
-				// COM.SDNat.ID.ID.").append(block.getName());
 				auxChannel.append("_mOP: COM.ID.ID.").append(block.getName());
 				auxChannel.append("_OPS\n");
 			}
 			if (hasSignal) {
 				auxChannel.append("channel ").append(block.getName());
-				// channelsSTR.append("_mSIG:
-				// COM.SDNat.ID.ID.").append(block.getName());
 				auxChannel.append("_mSIG: COM.ID.ID.").append(block.getName());
 				auxChannel.append("_SIG\n");
 			}
@@ -523,7 +533,7 @@ public class SDParser {
 		}
 		process.append(") = beginInteraction ->((");
 		process.append(paralel);
-		process.append("; endinteraction -> SKIP)");
+		process.append("; endInteraction -> SKIP)");
 		process.append("[|{|");
 
 		for (String alfa : alfabeto) {
@@ -533,17 +543,23 @@ public class SDParser {
 		process.append("|}|]");
 		process.append(MessageParser.getInstance().getMsgBuffer() + ")");
 
+		// System.out.println("Alfa A :" + alfabets.get("A"));
+		// System.out.println("Alfa B :" + alfabets.get("B"));
+		// System.out.println("Alfa C :" + alfabets.get("C"));
+
 		return process.toString();
 	}
 
 	private String auxiliar() {
 		StringBuilder aux = new StringBuilder();
 		aux.append(seq1.getName()).append("Parallel(sd_id");
+		List<String> bases = new ArrayList<String>();
 		int i = 1;
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			aux.append(",");
 			aux.append(lifelines.get(getLifelineBase(lifeline)));
 			i++;
+			bases.add(lifeline.getBase().toString());
 		}
 		aux.append(")");
 		paralel = aux.toString();
@@ -552,7 +568,8 @@ public class SDParser {
 		// i-1 = numero de lifelines
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(alfabeto.get(0));
+		// sb.append(alfabeto.get(0));
+		sb.append(alfabets.get(bases.get(0)));
 
 		for (int x = 2; x < i - 1; x++) {
 			aux.append("(");
@@ -567,9 +584,11 @@ public class SDParser {
 
 			aux.append("[ {|");
 			aux.append(sb.toString());
+			// aux.append(alfabeto.get(j));
+			// sb.append(", " + alfabets.get(bases.get(j)));
 			aux.append("|} || {|");
-			aux.append(alfabeto.get(j + 1));
-			sb.append(", " + alfabeto.get(j + 1));
+			aux.append(alfabets.get(bases.get(j + 1)));
+			sb.append(", " + alfabets.get(bases.get(j + 1)));
 			aux.append("|} ]");
 			aux.append(processos.get(j + 1));
 		}
@@ -586,27 +605,26 @@ public class SDParser {
 		aux.append("(sd_id");
 
 		int i = 1;
-		
-		
-//		for (ILifeline lifelines : seq1.getInteraction().getLifelines()) {
-//			process.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
-//			aux.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
-//			i++;
-//		}
-		
-		List<String> lfs = new ArrayList<String>(); 
-		
-		for(INamedElement fragment : lifeline.getFragments()){
-			IMessage msg =(IMessage) fragment;
+
+		// for (ILifeline lifelines : seq1.getInteraction().getLifelines()) {
+		// process.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
+		// aux.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
+		// i++;
+		// }
+
+		List<String> lfs = new ArrayList<String>();
+
+		for (INamedElement fragment : lifeline.getFragments()) {
+			IMessage msg = (IMessage) fragment;
 			ILifeline life1 = (ILifeline) msg.getSource();
 			ILifeline life2 = (ILifeline) msg.getTarget();
-			if(!lfs.contains(lifelines.get(life1.getBase().toString())))
+			if (!lfs.contains(lifelines.get(life1.getBase().toString())))
 				lfs.add(lifelines.get(life1.getBase().toString()));
-			if(!lfs.contains(lifelines.get(life2.getBase().toString())))
+			if (!lfs.contains(lifelines.get(life2.getBase().toString())))
 				lfs.add(lifelines.get(life2.getBase().toString()));
 		}
-		
-		for(String life : lfs){
+
+		for (String life : lfs) {
 			process.append(",").append(life);
 			aux.append(",").append(life);
 		}
