@@ -35,7 +35,9 @@ public class SDParser {
 	private List<String> getters;
 	private List<String> op;
 	private List<String> sig;
+	private List<String> mensagens;
 	private static Map<String, String> lifelines;
+	private static Map<String, String> lifelines2;
 	public static Map<String, String> alfabets;
 
 	public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
@@ -48,7 +50,9 @@ public class SDParser {
 		getters = new ArrayList<String>();
 		op = new ArrayList<String>();
 		sig = new ArrayList<String>();
+		mensagens = new ArrayList<String>();
 		lifelines = new HashMap<String, String>();
+		lifelines2 = new HashMap<String, String>();
 		alfabets = new HashMap<String, String>();
 	}
 
@@ -69,12 +73,14 @@ public class SDParser {
 		int aux = 1;
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			lifelines.put(getLifelineBase(lifeline), "lf" + aux + "_id");
+			lifelines2.put(getLifelineBase(lifeline), "lf" + aux + "id");
 			aux++;
 		}
 
 		for (ILifeline lifeline : seq2.getInteraction().getLifelines()) {
 			if (!lifelines.containsKey(getLifelineBase(lifeline))) {
 				lifelines.put(getLifelineBase(lifeline), "lf" + aux + "_id");
+				lifelines2.put(getLifelineBase(lifeline), "lf" + aux + "id");
 				aux++;
 			}
 		}
@@ -110,15 +116,15 @@ public class SDParser {
 		List<String> added = new ArrayList<String>();
 
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
-			types.append(lifelines.get(getLifelineBase(lifeline)));
-			added.add(lifelines.get(getLifelineBase(lifeline)));
+			types.append(lifelines2.get(getLifelineBase(lifeline)));
+			added.add(lifelines2.get(getLifelineBase(lifeline)));
 			types.append("|");
 			blocks.add(lifeline.getBase());
 		}
 		types.deleteCharAt(types.length() - 1);
 		for (ILifeline lifeline : seq2.getInteraction().getLifelines()) {
-			if (!added.contains(lifelines.get(getLifelineBase(lifeline)))) {
-				types.append(lifelines.get(getLifelineBase(lifeline)));
+			if (!added.contains(lifelines2.get(getLifelineBase(lifeline)))) {
+				types.append(lifelines2.get(getLifelineBase(lifeline)));
 				types.append("|");
 				blocks.add(lifeline.getBase());
 			}
@@ -126,13 +132,27 @@ public class SDParser {
 
 		//types.deleteCharAt(types.length() - 1);
 		types.append("\n");
-		types.append("datatype ID_SD = ").append("sd1_id").append("|").append("sd2_id").append("\n");
+		types.append("datatype ID_SD = ").append("sd1id").append("|").append("sd2id").append("\n");
 
 		types.append(defineArguments());
 
+		StringBuilder typesAux = new StringBuilder();
 		for (IClass block : blocks) {
-			defineBlockMessages(types, block);
+			defineBlockMessages(typesAux, block);
 		}
+		
+		types.append("datatype MSG = ");
+		for(String msg : mensagens){
+			types.append(msg).append("|");
+		}
+		types.deleteCharAt(types.length()-1);
+		types.append("\n");
+		types.append(typesAux.toString());
+		for(String get : getters){
+			types.append(get);
+		}
+		
+		
 		return types.toString();
 	}
 
@@ -190,7 +210,7 @@ public class SDParser {
 		StringBuilder finalGetters = new StringBuilder();
 		StringBuilder operations = new StringBuilder();
 		StringBuilder signals = new StringBuilder();
-
+		
 		for (IMessage message : messages) {
 
 			// System.out.println(message.getName());
@@ -201,11 +221,14 @@ public class SDParser {
 
 			if (message.isAsynchronous()) {
 				signalsAux.append(message.getName());
+				gettersAux.append("get_id(").append(message.getName());
 				if (!"".equals(message.getArgument())) {
-					treatArguments(signalsAux, message.getArgument());
-					treatGetterArguments(gettersAux, message.getArgument());
+					//treatArguments(signalsAux, message.getArgument());
+					//treatGetterArguments(gettersAux, message.getArgument());
 				}
+				gettersAux.append(") = ").append(message.getName()).append("\n");
 				if (!sig.contains(signalsAux.toString())) {
+					mensagens.add(signalsAux.toString());
 					signals.append(signalsAux.toString());
 					sig.add(signalsAux.toString());
 					signals.append(" | ");
@@ -215,12 +238,13 @@ public class SDParser {
 				operationsAux.append(message.getName() + "_I");
 				gettersAux.append("get_id(").append(message.getName()).append("_I");
 				if (!"".equals(message.getArgument())) {
-					treatArguments(operationsAux, message.getArgument());
-					treatGetterArguments(gettersAux, message.getArgument());
+					//treatArguments(operationsAux, message.getArgument());
+					//treatGetterArguments(gettersAux, message.getArgument());
 				}
 				gettersAux.append(") = ").append(message.getName()).append("_I\n");
 
 				if (!op.contains(operationsAux.toString())) {
+					mensagens.add(operationsAux.toString());
 					operations.append(operationsAux.toString());
 					op.add(operationsAux.toString());
 					operations.append(" | ");
@@ -231,12 +255,13 @@ public class SDParser {
 				operationsAux.append(message.getName() + "_O");
 				gettersAux.append("get_id(").append(message.getName()).append("_O");
 				if (!"".equals(message.getReturnValueVariable())) {
-					treatArguments(operationsAux, message.getReturnValueVariable());
-					treatGetterArguments(gettersAux, message.getArgument());
+					//treatArguments(operationsAux, message.getReturnValueVariable());
+					//treatGetterArguments(gettersAux, message.getArgument());
 				}
 				gettersAux.append(") = ").append(message.getName()).append("_O\n");
 
 				if (!op.contains(operationsAux.toString())) {
+					mensagens.add(operationsAux.toString());
 					operations.append(operationsAux.toString());
 					op.add(operationsAux.toString());
 					operations.append(" | ");
@@ -249,9 +274,11 @@ public class SDParser {
 			}
 
 		}
+		
+		
 		if (!signals.toString().isEmpty()) {
 			signals.delete(signals.length() - 3, signals.length());
-			auxiliar.append("datatype ").append(block.getName());
+			auxiliar.append("subtype ").append(block.getName());
 			auxiliar.append("_SIG = ").append(signals.toString()).append("\n");
 			if (!datatypes.contains(auxiliar.toString())) {
 				types.append(auxiliar.toString());
@@ -261,7 +288,7 @@ public class SDParser {
 		if (!operations.toString().isEmpty()) {
 			auxiliar = new StringBuilder();
 			operations.delete(operations.length() - 3, operations.length());
-			auxiliar.append("datatype ").append(block.getName());
+			auxiliar.append("subtype ").append(block.getName());
 			auxiliar.append("_OPS = ").append(operations.toString()).append("\n");
 			if (!datatypes.contains(auxiliar.toString())) {
 				types.append(auxiliar.toString());
@@ -269,7 +296,7 @@ public class SDParser {
 			}
 		}
 
-		types.append(finalGetters.toString());
+		//types.append(finalGetters.toString());
 	}
 
 	private List<IMessage> getBlockMessages(IClass block) {
@@ -540,6 +567,7 @@ public class SDParser {
 			process.append(alfa + ",");
 		}
 		process.deleteCharAt(process.length() - 1);
+		process.append(",endInteraction");
 		process.append("|}|]");
 		process.append(MessageParser.getInstance().getMsgBuffer() + ")");
 
