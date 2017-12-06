@@ -3,11 +3,9 @@ package com.ref.parser;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.IClass;
@@ -16,7 +14,6 @@ import com.change_vision.jude.api.inf.model.IInteractionUse;
 import com.change_vision.jude.api.inf.model.ILifeline;
 import com.change_vision.jude.api.inf.model.IMessage;
 import com.change_vision.jude.api.inf.model.INamedElement;
-import com.change_vision.jude.api.inf.model.IOperation;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.model.IStateInvariant;
 
@@ -91,23 +88,14 @@ public class SDParser {
 		StringBuilder process = new StringBuilder();
 		process.append(defineTypes());
 		process.append(parseChannels());
-		process.append(parseSD1());
-		// process.append(parseSD2());
+		process.append(parseSD(seq1));
+		process.append(parseSD(seq2));
 		return process.toString();
 	}
 
 	public String defineTypes() throws InvalidEditingException {
 		StringBuilder types = new StringBuilder();
-		// int max = checkMaxIndex();
-		// types.append("SDnat = {"); //numero da msg
-		// for (int i = 1; i <= max; i++) {
-		// System.out.println("adicionou "+ i);
-		// types.append(i + ",");
-		// }
-		// types.append(getReplyIndexes());
-		// types.deleteCharAt(types.length()-1);
-		// types.append("}\n");
-
+		
 		types.append("datatype COM = s | r\n");
 		List<IClass> blocks = new LinkedList<IClass>();
 
@@ -156,48 +144,48 @@ public class SDParser {
 		return types.toString();
 	}
 
-	private String getReplyIndexes() {
-		StringBuilder sb = new StringBuilder();
-		for (IMessage msg : seq1.getInteraction().getMessages()) {
-			if (msg.isSynchronous()) {
-				sb.append(msg.getIndex()).append("r,");
-				// System.out.println("seq 1 adicionou " + msg.getIndex());
-			}
-		}
-		for (IMessage msg : seq2.getInteraction().getMessages()) {
-			if (msg.isSynchronous()) {
-				sb.append(msg.getIndex()).append("r,");
-			}
-		}
-		sb.deleteCharAt(sb.length() - 1);
-		return sb.toString();
-	}
+//	private String getReplyIndexes() {
+//		StringBuilder sb = new StringBuilder();
+//		for (IMessage msg : seq1.getInteraction().getMessages()) {
+//			if (msg.isSynchronous()) {
+//				sb.append(msg.getIndex()).append("r,");
+//				// System.out.println("seq 1 adicionou " + msg.getIndex());
+//			}
+//		}
+//		for (IMessage msg : seq2.getInteraction().getMessages()) {
+//			if (msg.isSynchronous()) {
+//				sb.append(msg.getIndex()).append("r,");
+//			}
+//		}
+//		sb.deleteCharAt(sb.length() - 1);
+//		return sb.toString();
+//	}
 
-	private String getLifelineId(ILifeline lifeline) {
-		return lifeline.getId();// lifeline.getName() != null ?
-		// lifeline.getName()+"_"+lifeline.getBase()+"_id":
-		// lifeline.getBase()+"_id";
-	}
+//	private String getLifelineId(ILifeline lifeline) {
+//		return lifeline.getId();// lifeline.getName() != null ?
+//		// lifeline.getName()+"_"+lifeline.getBase()+"_id":
+//		// lifeline.getBase()+"_id";
+//	}
 
 	private String getLifelineBase(ILifeline lifeline) {
 		return lifeline.getBase().toString();
 	}
 
-	private int checkMaxIndex() {
-		int idx1 = 0;
-		int idx2 = 0;
-		for (IMessage msg : seq1.getInteraction().getMessages()) {
-			if (!msg.isReturnMessage() && !msg.isCreateMessage() && !msg.isDestroyMessage()) {
-				idx1++;
-			}
-		}
-		for (IMessage msg : seq2.getInteraction().getMessages()) {
-			if (!msg.isReturnMessage() && !msg.isCreateMessage() && !msg.isDestroyMessage()) {
-				idx2++;
-			}
-		}
-		return Math.max(idx1, idx2);
-	}
+//	private int checkMaxIndex() {
+//		int idx1 = 0;
+//		int idx2 = 0;
+//		for (IMessage msg : seq1.getInteraction().getMessages()) {
+//			if (!msg.isReturnMessage() && !msg.isCreateMessage() && !msg.isDestroyMessage()) {
+//				idx1++;
+//			}
+//		}
+//		for (IMessage msg : seq2.getInteraction().getMessages()) {
+//			if (!msg.isReturnMessage() && !msg.isCreateMessage() && !msg.isDestroyMessage()) {
+//				idx2++;
+//			}
+//		}
+//		return Math.max(idx1, idx2);
+//	}
 
 	private void defineBlockMessages(StringBuilder types, IClass block) {
 
@@ -212,8 +200,6 @@ public class SDParser {
 		StringBuilder signals = new StringBuilder();
 		
 		for (IMessage message : messages) {
-
-			// System.out.println(message.getName());
 
 			gettersAux = new StringBuilder();
 			operationsAux = new StringBuilder();
@@ -348,39 +334,39 @@ public class SDParser {
 		return false;
 	}
 
-	private void treatArguments(StringBuilder types, String argument) {
-		StringBuilder aux = new StringBuilder();
+//	private void treatArguments(StringBuilder types, String argument) {
+//		StringBuilder aux = new StringBuilder();
+//
+//		if (argument.contains(":")) {
+//			String[] arguments = argument.split(",");
+//			for (int i = 0; i < arguments.length; i++) {
+//				if (arguments[i].contains(":")) {
+//					String[] temp = arguments[i].split(":");
+//					aux.append(".My" + temp[1]);
+//				} else {
+//					if (isInteger(arguments[i])) {
+//						aux.append(".IntParams");
+//					} else if (isDouble(arguments[i])) {
+//						aux.append(".DoubleParams");
+//					} else if (isChar(arguments[i])) {
+//						aux.append(".CharParams");
+//					} else if (isString(arguments[i])) {
+//						aux.append(".StringParams");
+//					}
+//				}
+//			}
+//		}
+//		types.append(aux.toString());
+//	}
 
-		if (argument.contains(":")) {
-			String[] arguments = argument.split(",");
-			for (int i = 0; i < arguments.length; i++) {
-				if (arguments[i].contains(":")) {
-					String[] temp = arguments[i].split(":");
-					aux.append(".My" + temp[1]);
-				} else {
-					if (isInteger(arguments[i])) {
-						aux.append(".IntParams");
-					} else if (isDouble(arguments[i])) {
-						aux.append(".DoubleParams");
-					} else if (isChar(arguments[i])) {
-						aux.append(".CharParams");
-					} else if (isString(arguments[i])) {
-						aux.append(".StringParams");
-					}
-				}
-			}
-		}
-		types.append(aux.toString());
-	}
-
-	private void treatGetterArguments(StringBuilder sb, String argument) {
-		if (argument.contains(":")) {
-			String[] arguments = argument.split(",");
-			for (int i = 0; i < arguments.length; i++) {
-				sb.append("._");
-			}
-		}
-	}
+//	private void treatGetterArguments(StringBuilder sb, String argument) {
+//		if (argument.contains(":")) {
+//			String[] arguments = argument.split(",");
+//			for (int i = 0; i < arguments.length; i++) {
+//				sb.append("._");
+//			}
+//		}
+//	}
 
 	public String defineArguments() {
 
@@ -487,7 +473,6 @@ public class SDParser {
 			return false;
 	}
 
-	// TODO: Adicionar nome da referência junto com a classe da lifeline
 	public String parseChannels() {
 		StringBuilder channelsSTR = new StringBuilder();
 		StringBuilder auxChannel = new StringBuilder();
@@ -538,20 +523,20 @@ public class SDParser {
 		return channelsSTR.toString();
 	}
 
-	public String parseSD1() {
+	public String parseSD(ISequenceDiagram seq) {
 		StringBuilder process = new StringBuilder();
 
 		// Generate processes for lifelines
-		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
-			process.append(translateLifeline(lifeline));
+		for (ILifeline lifeline : seq.getInteraction().getLifelines()) {
+			process.append(translateLifeline(lifeline,seq));
 		}
 		// Generate processes for Messages
-		for (IMessage iMessage : seq1.getInteraction().getMessages()) {
-			process.append(MessageParser.getInstance().translateMessageForProcess(iMessage, seq1));
+		for (IMessage iMessage : seq.getInteraction().getMessages()) {
+			process.append(MessageParser.getInstance().translateMessageForProcess(iMessage, seq));
 		}
 		// Generate MessagesBuffer Process
-		process.append(MessageParser.getInstance().translateMessagesBuffer(seq1)).append("\n");
-		process.append(auxiliar());
+		process.append(MessageParser.getInstance().translateMessagesBuffer(seq)).append("\n");
+		process.append(auxiliar(seq));
 		process.append("\n");
 		process.append("SD(sd_id");
 
@@ -571,19 +556,15 @@ public class SDParser {
 		process.append("|}|]");
 		process.append(MessageParser.getInstance().getMsgBuffer() + ")");
 
-		// System.out.println("Alfa A :" + alfabets.get("A"));
-		// System.out.println("Alfa B :" + alfabets.get("B"));
-		// System.out.println("Alfa C :" + alfabets.get("C"));
-
 		return process.toString();
 	}
 
-	private String auxiliar() {
+	private String auxiliar(ISequenceDiagram seq) {
 		StringBuilder aux = new StringBuilder();
-		aux.append(seq1.getName()).append("Parallel(sd_id");
+		aux.append(seq.getName()).append("Parallel(sd_id");
 		List<String> bases = new ArrayList<String>();
 		int i = 1;
-		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
+		for (ILifeline lifeline : seq.getInteraction().getLifelines()) {
 			aux.append(",");
 			aux.append(lifelines.get(getLifelineBase(lifeline)));
 			i++;
@@ -624,21 +605,13 @@ public class SDParser {
 		return aux.toString();
 	}
 
-	private String translateLifeline(ILifeline lifeline) {
+	private String translateLifeline(ILifeline lifeline,ISequenceDiagram seq) {
 		StringBuilder process = new StringBuilder();
 		StringBuilder aux = new StringBuilder();
-		process.append(seq1.getName()).append("_").append(lifeline.getBase());
-		aux.append(seq1.getName()).append("_").append(lifeline.getBase());
+		process.append(seq.getName()).append("_").append(lifeline.getBase());
+		aux.append(seq.getName()).append("_").append(lifeline.getBase());
 		process.append("(sd_id");
 		aux.append("(sd_id");
-
-		int i = 1;
-
-		// for (ILifeline lifelines : seq1.getInteraction().getLifelines()) {
-		// process.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
-		// aux.append(",").append(this.lifelines.get(getLifelineBase(lifelines)));
-		// i++;
-		// }
 
 		List<String> lfs = new ArrayList<String>();
 
@@ -661,7 +634,7 @@ public class SDParser {
 		aux.append(")");
 
 		for (INamedElement fragment : lifeline.getFragments()) {
-			process.append(translateFragment(fragment, lifeline, seq1));
+			process.append(translateFragment(fragment, lifeline, seq));
 		}
 
 		process.deleteCharAt(process.length() - 1);

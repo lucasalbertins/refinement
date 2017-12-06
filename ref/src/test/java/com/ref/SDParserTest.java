@@ -114,11 +114,12 @@ public class SDParserTest {
 		expected.append("channel C_mSIG: COM.ID.ID.C_SIG\n");
 		assertEquals(expected.toString(), actual);
 	}
-
+	
+	@Ignore
 	@Test
 	public void testParseSD1() {
-		String actual = parser.parseSD1();
-		System.out.println(actual);
+		String actual = parser.parseSD(seq1);
+		//System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("Seq0_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);");
 		expected.append("(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP)\n");
@@ -146,26 +147,31 @@ public class SDParserTest {
 		assertEquals(expected.toString(), actual);
 	}
 
-	@Ignore
+	
 	@Test
 	public void testParseSD2() {
-		String actual = parser.parseSD1();
-		ILifeline lif1 = seq1.getInteraction().getLifelines()[0];
-		ILifeline lif2 = seq1.getInteraction().getLifelines()[1];
-
+		String actual = parser.parseSD(seq2);
+		System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
-		expected.append("Seq1_A(sd_id) = ");
-		expected.append("(B_mOP.s.1." + lif1.getId() + "." + lif2.getId() + ".m0_I -> SKIP);");
-		expected.append(
-				"(B_mOP.r.1." + lif1.getId() + "." + lif2.getId() + "?out:{x | x <-B_OPS,(x == m0_O)} -> SKIP);");
-		expected.append(
-				"(A_mSIG.r.2." + lif2.getId() + "." + lif1.getId() + "?signal:{x | x <- A_SIG,(x == m1_S)} -> SKIP)\n");
-		expected.append("Seq1_B(sd_id) = ");
-		expected.append(
-				"(B_mOP.r.1." + lif1.getId() + "." + lif2.getId() + "?oper:{x | x <- B_OPS,(x == m0_I)} -> SKIP);");
-		expected.append("(B_mOP.s.1." + lif1.getId() + "." + lif2.getId() + ".m0_O -> SKIP);");
-		expected.append("(A_mSIG.s.2." + lif2.getId() + "." + lif1.getId() + ".m1_S -> SKIP)\n");
+		expected.append("Seq1_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);");
+		expected.append("(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP);(A_mSIG.r!lf2_id!lf1_id?signal:{x | x <- A_SIG,(get_id(x) == m1)} -> SKIP)\n");
 
+		expected.append("Seq1_B(sd_id,lf1_id,lf2_id) =(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);");
+		expected.append("(B_mOP.s!lf2_id!lf1_id.m0_O -> SKIP);(A_mSIG.s!lf2_id!lf1_id.m1 -> SKIP)\n");
+
+		expected.append("Seq1_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq1_m0(sd_id,lf1_id,lf2_id)\n");
+		
+		expected.append("Seq1_m1(sd_id,lf2_id,lf1_id) = A_mSIG.s.lf2_id.lf1_id?x:{x | x<-A_SIG,get_id(x) == m1} -> A_mSIG.r.lf2_id.lf1_id!x -> Seq1_m1(sd_id,lf2_id,lf1_id)\n");
+		
+		expected.append("Seq1_m0_r(sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-B_OPS,get_id(x) == m0_O} -> B_mOP.r.lf2_id.lf1_id!x -> Seq1_m0_r(sd_id,lf2_id,lf1_id)\n");
+
+		expected.append("Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id) = (Seq1_m0(sd_id,lf1_id,lf2_id) ||| Seq1_m1(sd_id,lf2_id,lf1_id) ||| Seq1_m0_r(sd_id,lf2_id,lf1_id))/\\endInteraction -> SKIP\n");
+
+		expected.append("Seq1Parallel(sd_id,lf1_id,lf2_id) = Seq1_A(sd_id,lf1_id,lf2_id)[ {|B_mOP.s.lf1_id.lf2_id, A_mSIG.r.lf2_id.lf1_id, B_mOP.r.lf2_id.lf1_id|}");
+		expected.append(" || {|B_mOP.r.lf1_id.lf2_id, A_mSIG.s.lf2_id.lf1_id, B_mOP.s.lf2_id.lf1_id|} ]Seq1_B(sd_id,lf1_id,lf2_id)\n");
+	
+		expected.append("SD(sd_id,lf1_id,lf2_id) = beginInteraction ->((Seq1Parallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)");
+		expected.append("[|{|B_mOP.s.lf1_id.lf2_id,B_mOP.r.lf1_id.lf2_id,A_mSIG.s.lf2_id.lf1_id,A_mSIG.r.lf2_id.lf1_id,B_mOP.s.lf2_id.lf1_id,B_mOP.r.lf2_id.lf1_id,endInteraction|}|]Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id))");
 		assertEquals(expected.toString(), actual);
 	}
 

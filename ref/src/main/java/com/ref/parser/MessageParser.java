@@ -35,16 +35,6 @@ public class MessageParser {
 		
 	}
 	
-	private void addIDSr(String lf1, String lf2, StringBuilder sb, StringBuilder aux){
-		
-		
-//		int i = numLF - 1;
-//		for (int j = i; j >=1; j--) {
-//			sb.append(".lf" + j + "_id");
-//			aux.append(".lf" + j + "_id");
-//		}
-	}
-
 	public String translateMessageForProcess(IMessage msg, ISequenceDiagram seq) {
 		ILifeline lifeline1 = (ILifeline) msg.getSource();
 		ILifeline lifeline2 = (ILifeline) msg.getTarget();
