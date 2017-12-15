@@ -538,7 +538,7 @@ public class SDParser {
 		process.append(MessageParser.getInstance().translateMessagesBuffer(seq)).append("\n");
 		process.append(auxiliar(seq));
 		process.append("\n");
-		process.append("SD(sd_id");
+		process.append("SD_"+seq.getName()+"(sd_id");
 
 		for (int i = 1; i <= numLife; i++) {
 			process.append(",lf" + i + "_id");
@@ -555,7 +555,10 @@ public class SDParser {
 		process.append(",endInteraction");
 		process.append("|}|]");
 		process.append(MessageParser.getInstance().getMsgBuffer() + ")");
-
+		
+		alfabeto.clear();;
+		paralel = "";
+		
 		return process.toString();
 	}
 
@@ -575,11 +578,13 @@ public class SDParser {
 		aux.append(" = ");
 		numLife = i - 1;
 		// i-1 = numero de lifelines
+		
 
 		StringBuilder sb = new StringBuilder();
 		// sb.append(alfabeto.get(0));
 		sb.append(alfabets.get(bases.get(0)));
 
+		
 		for (int x = 2; x < i - 1; x++) {
 			aux.append("(");
 		}
@@ -601,7 +606,9 @@ public class SDParser {
 			aux.append("|} ]");
 			aux.append(processos.get(j + 1));
 		}
-
+		processos.clear();
+		alfabets.clear();
+		
 		return aux.toString();
 	}
 

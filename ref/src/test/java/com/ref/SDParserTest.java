@@ -115,7 +115,6 @@ public class SDParserTest {
 		assertEquals(expected.toString(), actual);
 	}
 	
-	@Ignore
 	@Test
 	public void testParseSD1() {
 		String actual = parser.parseSD(seq1);
@@ -142,7 +141,7 @@ public class SDParserTest {
 		expected.append("[ {|B_mOP.s.lf1_id.lf2_id, B_mOP.r.lf2_id.lf1_id, B_mOP.r.lf1_id.lf2_id, B_mOP.s.lf2_id.lf1_id, C_mSIG.s.lf2_id.lf3_id|}");
 		expected.append(" || {|C_mSIG.r.lf2_id.lf3_id|} ]Seq0_C(sd_id,lf2_id,lf3_id)\n");
 
-		expected.append("SD(sd_id,lf1_id,lf2_id,lf3_id) = beginInteraction ->((Seq0Parallel(sd_id,lf1_id,lf2_id,lf3_id); endInteraction -> SKIP)");
+		expected.append("SD_Seq0(sd_id,lf1_id,lf2_id,lf3_id) = beginInteraction ->((Seq0Parallel(sd_id,lf1_id,lf2_id,lf3_id); endInteraction -> SKIP)");
 		expected.append("[|{|B_mOP.s.lf1_id.lf2_id,B_mOP.r.lf1_id.lf2_id,B_mOP.s.lf2_id.lf1_id,B_mOP.r.lf2_id.lf1_id,C_mSIG.s.lf2_id.lf3_id,C_mSIG.r.lf2_id.lf3_id,endInteraction|}|]Seq0_MessagesBuffer(sd_id,lf1_id,lf2_id,lf3_id))");
 		assertEquals(expected.toString(), actual);
 	}
@@ -170,7 +169,7 @@ public class SDParserTest {
 		expected.append("Seq1Parallel(sd_id,lf1_id,lf2_id) = Seq1_A(sd_id,lf1_id,lf2_id)[ {|B_mOP.s.lf1_id.lf2_id, A_mSIG.r.lf2_id.lf1_id, B_mOP.r.lf2_id.lf1_id|}");
 		expected.append(" || {|B_mOP.r.lf1_id.lf2_id, A_mSIG.s.lf2_id.lf1_id, B_mOP.s.lf2_id.lf1_id|} ]Seq1_B(sd_id,lf1_id,lf2_id)\n");
 	
-		expected.append("SD(sd_id,lf1_id,lf2_id) = beginInteraction ->((Seq1Parallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)");
+		expected.append("SD_Seq1(sd_id,lf1_id,lf2_id) = beginInteraction ->((Seq1Parallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)");
 		expected.append("[|{|B_mOP.s.lf1_id.lf2_id,B_mOP.r.lf1_id.lf2_id,A_mSIG.s.lf2_id.lf1_id,A_mSIG.r.lf2_id.lf1_id,B_mOP.s.lf2_id.lf1_id,B_mOP.r.lf2_id.lf1_id,endInteraction|}|]Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id))");
 		assertEquals(expected.toString(), actual);
 	}
