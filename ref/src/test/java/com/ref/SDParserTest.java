@@ -6,13 +6,14 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;
+import com.change_vision.jude.api.inf.editor.SequenceDiagramEditor;
+import com.change_vision.jude.api.inf.editor.TransactionManager;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
+import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
-import com.change_vision.jude.api.inf.model.ILifeline;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.project.ModelFinder;
@@ -34,6 +35,8 @@ public class SDParserTest {
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/testRef3.asta");
 			INamedElement[] findSequence = findSequence(projectAccessor);
+			createSD(projectAccessor);
+			
 			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
 				seq1 = (ISequenceDiagram) findSequence[0];
 				seq2 = (ISequenceDiagram) findSequence[1];
@@ -59,6 +62,25 @@ public class SDParserTest {
 			}
 		});
 		return foundElements;
+	}
+	
+	private static void createSD(ProjectAccessor projectAccessor) throws InvalidUsingException, InvalidEditingException, ProjectNotFoundException {
+
+		TransactionManager.beginTransaction();
+
+		SequenceDiagramEditor sde = projectAccessor.getDiagramEditorFactory().getSequenceDiagramEditor();
+		System.out.println(projectAccessor.getProject().getName());
+		ISequenceDiagram sd = sde.createSequenceDiagram(projectAccessor.get, "CE_SD");
+		System.out.println(sde.getDiagram() != null ? "criou": "nao criou");
+//	    TransactionManager.endTransaction();
+		
+//		ClassDiagramEditor sde = projectAccessor.getDiagramEditorFactory().getClassDiagramEditor();
+//		System.out.println(projectAccessor.getProject().getName());
+//		IClassDiagram sd = sde.createClassDiagram(projectAccessor.getProject(), "CE_SD");
+		
+	    TransactionManager.endTransaction();
+		
+
 	}
 
 	@AfterClass
@@ -173,5 +195,7 @@ public class SDParserTest {
 		expected.append("[|{|B_mOP.s.lf1_id.lf2_id,B_mOP.r.lf1_id.lf2_id,A_mSIG.s.lf2_id.lf1_id,A_mSIG.r.lf2_id.lf1_id,B_mOP.s.lf2_id.lf1_id,B_mOP.r.lf2_id.lf1_id,endInteraction|}|]Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id))");
 		assertEquals(expected.toString(), actual);
 	}
+	
+	
 
 }
