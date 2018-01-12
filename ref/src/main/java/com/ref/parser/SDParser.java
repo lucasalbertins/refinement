@@ -36,6 +36,10 @@ public class SDParser {
 	private static Map<String, String> lifelines;
 	private static Map<String, String> lifelines2;
 	public static Map<String, String> alfabets;
+	
+	public List<String> alfabetosd1;
+	public List<String> alfabetosd2;
+	
 
 	public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
 		this.seq1 = seq1;
@@ -51,6 +55,9 @@ public class SDParser {
 		lifelines = new HashMap<String, String>();
 		lifelines2 = new HashMap<String, String>();
 		alfabets = new HashMap<String, String>();
+		
+//		alfabetosd1 = new ArrayList<String>();
+//		alfabetosd2 = new ArrayList<String>();
 	}
 
 	public static String getNome(String key) {
@@ -556,6 +563,12 @@ public class SDParser {
 		process.append("|}|]");
 		process.append(MessageParser.getInstance().getMsgBuffer() + ")");
 		
+		if(seq.equals(seq1)){
+			alfabetosd1 = new ArrayList<String>(alfabeto);
+		}else{
+			alfabetosd2 = new ArrayList<String>(alfabeto);
+		}
+		
 		alfabeto.clear();;
 		paralel = "";
 		
@@ -662,6 +675,40 @@ public class SDParser {
 			return null;
 		}
 		return null;
+	}
+
+	public String refinementAssertion() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("assert ");
+		sb.append("SD_" + seq1.getName());
+		sb.append("(sd1id");
+		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
+			sb.append("," + lifelines2.get(getLifelineBase(lifeline)));
+		}
+		sb.append(") [T= ");
+		sb.append("SD_" + seq2.getName());
+		sb.append("(sd2id");
+		for (ILifeline lifeline : seq2.getInteraction().getLifelines()) {
+			sb.append("," + lifelines2.get(getLifelineBase(lifeline)));
+		}
+		sb.append(")");
+		sb.append("// {" + eventosDiferentes() +"}");
+		return sb.toString();
+	}
+
+	private String eventosDiferentes() {
+		StringBuilder sb = new StringBuilder();
+		
+		for (String evento : alfabetosd2) {
+			if(!alfabetosd1.contains(evento)){
+				sb.append(evento).append(",");
+			}
+		}
+		
+		sb.deleteCharAt(sb.length()-1);
+		
+		return sb.toString();
 	}
 
 }
