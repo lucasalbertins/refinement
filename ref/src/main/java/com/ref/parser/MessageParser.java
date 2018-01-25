@@ -66,6 +66,7 @@ public class MessageParser {
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
 			sb.append(",get_id(x) == ").append(msg.getName()).append("_I}");
+			aux.append(".").append(msg.getName()).append("_I");
 			SDParser.addAlfabeto(aux.toString());
 			
 			if(SDParser.alfabets.containsKey(base1)){
@@ -89,6 +90,7 @@ public class MessageParser {
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
 			sb.append(")");
+			aux.append(".").append(msg.getName()).append("_I");
 			SDParser.addAlfabeto(aux.toString());
 			
 			if(SDParser.alfabets.containsKey(base2)){
@@ -117,6 +119,7 @@ public class MessageParser {
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
 			sb.append(",get_id(x) == ").append(msg.getName()+"}");
 			sb.append(" -> ");
+			aux.append(".").append(msg.getName());
 			SDParser.addAlfabeto(aux.toString());
 			
 			if(SDParser.alfabets.containsKey(base1)){
@@ -139,6 +142,7 @@ public class MessageParser {
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
 			sb.append(")");
+			aux.append(".").append(msg.getName());
 			
 			SDParser.addAlfabeto(aux.toString());
 			if(SDParser.alfabets.containsKey(base2)){
@@ -176,6 +180,7 @@ public class MessageParser {
 			sb.append(((ILifeline) msg.getSource()).getBase()).append("_OPS");
 			sb.append(",get_id(x) == ").append(syncMsg.getName() + "_O}");
 			sb.append(" -> ");
+			aux.append(".").append(syncMsg.getName()).append("_O");
 			SDParser.addAlfabeto(aux.toString());
 			
 			if(SDParser.alfabets.containsKey(base1)){
@@ -197,6 +202,7 @@ public class MessageParser {
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
 			sb.append(")");
+			aux.append(".").append(syncMsg.getName()).append("_O");
 			SDParser.addAlfabeto(aux.toString());
 			if(SDParser.alfabets.containsKey(base2)){
 				String alfa = SDParser.alfabets.get(base2);
