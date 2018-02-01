@@ -697,7 +697,7 @@ public class SDParser {
 			sb.append("," + lifelines2.get(getLifelineBase(lifeline)));
 		}
 		sb.append(")");
-		sb.append("\\{" + eventosDiferentes() + "}\n");
+		sb.append("\\{|" + eventosDiferentes() + "|}\n");
 		return sb.toString();
 	}
 

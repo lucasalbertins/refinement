@@ -39,8 +39,8 @@ public class FdrTest {
 	@Before
 	public void setUpBeforeClass() throws Exception {
 		try {
-			fw = new FileWriter(new File("resultado.csp"));
-			bw = new BufferedWriter(fw);
+			//fw = new FileWriter(new File("resultado.csp"));
+			//bw = new BufferedWriter(fw);
 			fr = new FileReader("result.csp");
 			br = new BufferedReader(fr);
 
@@ -73,7 +73,7 @@ public class FdrTest {
 		parser.parseChannels();
 		parser.parseSDs();
 		String actual = parser.refinementAssertion();
-		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id,lf3id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1}\n";
+		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id,lf3id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n";
 		assertEquals(expected, actual);
 	}
 
@@ -91,16 +91,7 @@ public class FdrTest {
 		br.close();
 		fr.close();
 
-		// StringBuffer actual = new StringBuffer();
-
 		String actual = "";
-		// actual.append(parser.defineTypes());
-		// actual.append("\n");
-		// actual.append(parser.parseChannels());
-		// actual.append("\n");
-		// actual.append(parser.parseSD(seq1));
-		// actual.append("\n");
-		// actual.append(parser.parseSD(seq2));
 		actual += parser.defineTypes();
 		actual += parser.parseChannels();
 		actual += parser.parseSD(seq1) + "\n";
@@ -113,6 +104,9 @@ public class FdrTest {
 	@Test
 	public void gerarArquivo() throws InvalidEditingException, IOException {
 
+		fw = new FileWriter(new File("resultado.csp"));
+		bw = new BufferedWriter(fw);
+		
 		String actual = parser.defineTypes();
 		bw.write(actual);
 		//bw.newLine();
@@ -123,33 +117,56 @@ public class FdrTest {
 		bw.write(actual);
 		//bw.newLine();
 		//bw.newLine();
+		bw.newLine();
 		actual = parser.parseSD(seq2);
+		bw.write(actual);
 		//bw.write(actual);
-
+		bw.newLine();
+		actual = parser.refinementAssertion();
+		bw.write(actual);
+		
 		bw.close();
 		fw.close();
-
-//		FileReader fr = new FileReader("resultado.csp");
-//		BufferedReader br = new BufferedReader(fr);
-//		StringBuilder sb1 = new StringBuilder();
-//
-//		String linha = br.readLine();
-//		while (linha != null) {
-//			sb1.append(linha);
-//			if(linha.contains("\n"))
-//				sb1.append("\n");
-//			linha = br.readLine();
-//		}
-//
-//		System.out.println(sb1.toString());
-//
-//		br.close();
-//		fr.close();
-
-		// assertEquals(sb2.toString(), sb1.toString());
-
+		
+		assertEquals(true, new File("resultado.csp").exists());
 	}
 
+	@Test
+	public void compararArquivos() throws IOException{
+		StringBuilder sb1 = new StringBuilder();
+		StringBuilder sb2 = new StringBuilder();
+		
+		String linha = br.readLine();
+
+		//result
+		while (linha != null) {
+			sb1.append(linha);
+			sb1.append("\n");
+			linha = br.readLine();
+		}
+		br.close();
+		fr.close();
+		
+	
+		FileReader fr2 = new FileReader("resultado.csp");
+		BufferedReader br2 = new BufferedReader(fr2);
+
+		String linha2 = br2.readLine();
+		
+		//resultado
+		while (linha2 != null) {
+			sb2.append(linha2);
+			sb2.append("\n");
+			linha2 = br2.readLine();
+		}
+		
+		br2.close();
+		fr2.close();
+
+		assertEquals(sb1.toString(), sb2.toString());
+		
+	}
+	
 	@Ignore
 	@Test
 	public void fdrTest() {
