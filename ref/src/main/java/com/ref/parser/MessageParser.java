@@ -1,5 +1,8 @@
 package com.ref.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.ILifeline;
 import com.change_vision.jude.api.inf.model.IMessage;
@@ -51,12 +54,23 @@ public class MessageParser {
 		StringBuilder aux = new StringBuilder();
 
 		if (msg.isSynchronous()) {
-			sb.append(seq.getName()).append("_").append(msg.getName());
+			sb.append(seq.getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getBase());
+			sb.append("_").append(msg.getName());
+			
+			if(SDParser.procs.contains(sb.toString())){
+				return "";
+			}
+			else
+				SDParser.procs.add(sb.toString());
+				
 			sb.append("(sd_id");
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
 			sb.append(") =");
 			
+
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 
@@ -85,7 +99,10 @@ public class MessageParser {
 
 			addIDS(base1, base2, sb, aux);
 			//sb.append("!"+msg.getName()+"_I");
-			sb.append("!x -> ").append(seq.getName()).append("_").append(msg.getName());
+			sb.append("!x -> ").append(seq.getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getBase());
+			sb.append("_").append(msg.getName());
 			sb.append("(sd_id");
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
@@ -103,7 +120,17 @@ public class MessageParser {
 			
 			
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
-			sb.append(seq.getName()).append("_").append(msg.getName());
+			sb.append(seq.getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getBase());
+			sb.append("_").append(msg.getName());
+			
+			if(SDParser.procs.contains(sb.toString())){
+				return "";
+			}
+			else
+				SDParser.procs.add(sb.toString());
+			
 			sb.append("(sd_id");
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
@@ -137,7 +164,10 @@ public class MessageParser {
 			addIDS(base1, base2, sb, aux);
 			//sb.append("!"+msg.getName());
 			sb.append("!x -> ");
-			sb.append(seq.getName()).append("_").append(msg.getName());
+			sb.append(seq.getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getName()).append("_");
+			sb.append(((ILifeline) msg.getSource()).getBase());
+			sb.append("_").append(msg.getName());
 			sb.append("(sd_id");
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
@@ -162,8 +192,18 @@ public class MessageParser {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			sb.append(seq.getName()).append("_").append(syncMsg.getName());
+			sb.append(seq.getName()).append("_");
+			sb.append(((ILifeline) syncMsg.getTarget()).getName()).append("_");
+			sb.append(((ILifeline) syncMsg.getTarget()).getBase());
+			sb.append("_").append(syncMsg.getName());
 			sb.append("_r");
+			
+			if(SDParser.procs.contains(sb.toString())){
+				return "";
+			}
+			else
+				SDParser.procs.add(sb.toString());
+			
 			sb.append("(sd_id");
 			
 			sb.append(",").append(SDParser.getNome(base1));
@@ -171,6 +211,7 @@ public class MessageParser {
 			
 			sb.append(") = ");
 			
+
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 			aux.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 			addIDS(base1, base2, sb, aux);
@@ -197,7 +238,10 @@ public class MessageParser {
 			addIDS(base1, base2, sb, aux);
 			//sb.append("!"+msg.getName()+"_O");
 			sb.append("!x -> ");
-			sb.append(seq.getName()).append("_").append(syncMsg.getName()).append("_r");
+			sb.append(seq.getName()).append("_");
+			sb.append(((ILifeline) syncMsg.getTarget()).getName()).append("_");
+			sb.append(((ILifeline) syncMsg.getTarget()).getBase());
+			sb.append("_").append(syncMsg.getName()).append("_r");
 			sb.append("(sd_id");
 			sb.append(",").append(SDParser.getNome(base1));
 			sb.append(",").append(SDParser.getNome(base2));
@@ -240,6 +284,8 @@ public class MessageParser {
 		StringBuilder aux = new StringBuilder();
 		if (msg.isSynchronous()) {
 			if (msg.getSource().getId().equals(lifeline.getId())) {
+//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
+//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -248,6 +294,8 @@ public class MessageParser {
 				//treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			} else if (msg.getTarget().getId().equals(lifeline.getId())) {
+//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
+//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(lifeline.getBase()).append("_mOP.r");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -259,6 +307,8 @@ public class MessageParser {
 
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
 			if (msg.getSource().getId().equals(lifeline.getId())) {
+//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
+//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -267,6 +317,8 @@ public class MessageParser {
 				treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			} else {
+//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
+//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(lifeline.getBase()).append("_mSIG.r");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -286,6 +338,8 @@ public class MessageParser {
 			}
 
 			if (msg.getTarget().getId().equals(lifeline.getId())) {
+//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
+//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -295,6 +349,8 @@ public class MessageParser {
 				sb.append(",(get_id(x) == ").append(syncMsg.getName()).append("_O)}");
 				sb.append(" -> SKIP");
 			} else if (msg.getSource().getId().equals(lifeline.getId())) {
+//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
+//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -361,6 +417,7 @@ public class MessageParser {
 
 	public String translateMessagesBuffer(ISequenceDiagram seq1) {
 		StringBuilder process = new StringBuilder();
+		StringBuilder aux = new StringBuilder();
 		process.append(seq1.getName()).append("_MessagesBuffer(sd_id");
 		int i = 1;
 		for (ILifeline lifelines : seq1.getInteraction().getLifelines()) {
@@ -371,7 +428,12 @@ public class MessageParser {
 		msgBuffer = process.toString();
 		process.append(" = ");
 		process.append("(");
+		
+		List<String>added = new ArrayList<String>();
+		
+		
 		for (IMessage msg : seq1.getInteraction().getMessages()) {
+			aux = new StringBuilder();
 			if (msg.isReturnMessage()) {
 				IMessage syncMsg = null;
 				try {
@@ -379,23 +441,37 @@ public class MessageParser {
 				} catch (InvalidUsingException e) {
 					e.printStackTrace();
 				}
-				process.append(seq1.getName()).append("_").append(syncMsg.getName()).append("_r");
+//				process.append(seq1.getName()).append("_").append(syncMsg.getName()).append("_r");
+				aux.append(seq1.getName()).append("_");
+				aux.append(((ILifeline) syncMsg.getTarget()).getName()).append("_");
+				aux.append(((ILifeline) syncMsg.getTarget()).getBase());
+				aux.append("_").append(syncMsg.getName()).append("_r");
 			} else {
-				process.append(seq1.getName()).append("_").append(msg.getName());
+//				process.append(seq1.getName()).append("_").append(msg.getName());
+				aux.append(seq1.getName()).append("_");
+				aux.append(((ILifeline) msg.getSource()).getName()).append("_");
+				aux.append(((ILifeline) msg.getSource()).getBase());
+				aux.append("_").append(msg.getName());
 			}
-			process.append("(");
-			process.append("sd_id,");
-			
-			ILifeline life = (ILifeline) msg.getSource();
-			process.append(SDParser.getNome(life.getBase().toString()));
-			process.append(",");
-			life = (ILifeline) msg.getTarget();
-			process.append(SDParser.getNome(life.getBase().toString()));
-			//			for(int j = 1; j<=i-1;j++){
+			if(added.contains(aux.toString())){
+				
+			}else{
+				added.add(aux.toString());
+				process.append(aux.toString());
+				process.append("(");
+				process.append("sd_id,");
+				
+				ILifeline life = (ILifeline) msg.getSource();
+				process.append(SDParser.getNome(life.getBase().toString()));
+				process.append(",");
+				life = (ILifeline) msg.getTarget();
+				process.append(SDParser.getNome(life.getBase().toString()));
+				//			for(int j = 1; j<=i-1;j++){
 //				process.append("lf" + j + "_id,");
 //			}
-			process.append(")");
-			process.append(" ||| ");
+				process.append(")");
+				process.append(" ||| ");				
+			}
 		}
 		process.delete(process.length() - 5, process.length());
 		process.append(")");

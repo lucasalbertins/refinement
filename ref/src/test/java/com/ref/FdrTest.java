@@ -73,7 +73,8 @@ public class FdrTest {
 		parser.parseChannels();
 		parser.parseSDs();
 		String actual = parser.refinementAssertion();
-		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id,lf3id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n";
+		System.out.println(actual);
+		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n";
 		assertEquals(expected, actual);
 	}
 
@@ -171,7 +172,7 @@ public class FdrTest {
 	@Test
 	public void fdrTest() {
 		FdrManager fdr = new FdrManager();
-		fdr.verify("result");
+		fdr.verify("result.csp");
 	}
 
 	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {

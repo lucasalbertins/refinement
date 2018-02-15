@@ -37,7 +37,8 @@ public class SDParser {
 	private static Map<String, String> lifelines;
 	private static Map<String, String> lifelines2;
 	public static Map<String, String> alfabets;
-
+	public static List<String> procs;
+	
 	public List<String> alfabetosd1;
 	public List<String> alfabetosd2;
 
@@ -55,7 +56,8 @@ public class SDParser {
 		lifelines = new HashMap<String, String>();
 		lifelines2 = new HashMap<String, String>();
 		alfabets = new HashMap<String, String>();
-
+		procs = new ArrayList<String>(); {
+		};
 		// alfabetosd1 = new ArrayList<String>();
 		// alfabetosd2 = new ArrayList<String>();
 	}
