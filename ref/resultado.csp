@@ -17,17 +17,17 @@ channel A_mSIG: COM.ID.ID.A_SIG
 channel B_mOP: COM.ID.ID.B_OPS
 Seq0_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP)
 Seq0_B(sd_id,lf1_id,lf2_id) =(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);(B_mOP.s!lf2_id!lf1_id.m0_O -> SKIP)
-Seq0_t_A_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq0_t_A_m0(sd_id,lf1_id,lf2_id)
-Seq0_u_B_m0_r(sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-B_OPS,get_id(x) == m0_O} -> B_mOP.r.lf2_id.lf1_id!x -> Seq0_u_B_m0_r(sd_id,lf2_id,lf1_id)
-Seq0_MessagesBuffer(sd_id,lf1_id,lf2_id) = (Seq0_t_A_m0(sd_id,lf1_id,lf2_id) ||| Seq0_u_B_m0_r(sd_id,lf2_id,lf1_id))/\endInteraction -> SKIP
+Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id)
+Seq0_u_B_t_A_m0_r(sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-B_OPS,get_id(x) == m0_O} -> B_mOP.r.lf2_id.lf1_id!x -> Seq0_u_B_t_A_m0_r(sd_id,lf2_id,lf1_id)
+Seq0_MessagesBuffer(sd_id,lf1_id,lf2_id) = (Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id) ||| Seq0_u_B_t_A_m0_r(sd_id,lf2_id,lf1_id))/\endInteraction -> SKIP
 Seq0Parallel(sd_id,lf1_id,lf2_id) = Seq0_A(sd_id,lf1_id,lf2_id)[ {|B_mOP.s.lf1_id.lf2_id.m0_I, B_mOP.r.lf2_id.lf1_id.m0_O|} || {|B_mOP.r.lf1_id.lf2_id.m0_I, B_mOP.s.lf2_id.lf1_id.m0_O|} ]Seq0_B(sd_id,lf1_id,lf2_id)
 SD_Seq0(sd_id,lf1_id,lf2_id) = beginInteraction ->((Seq0Parallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)[|{|B_mOP.s.lf1_id.lf2_id.m0_I,B_mOP.r.lf1_id.lf2_id.m0_I,B_mOP.s.lf2_id.lf1_id.m0_O,B_mOP.r.lf2_id.lf1_id.m0_O,endInteraction|}|]Seq0_MessagesBuffer(sd_id,lf1_id,lf2_id))
 Seq1_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP);(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);(A_mSIG.r!lf2_id!lf1_id?signal:{x | x <- A_SIG,(get_id(x) == m1)} -> SKIP)
 Seq1_B(sd_id,lf1_id,lf2_id) =(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);(B_mOP.s!lf2_id!lf1_id.m0_O -> SKIP);(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);(A_mSIG.s!lf2_id!lf1_id.m1 -> SKIP)
-Seq1_x_A_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq1_x_A_m0(sd_id,lf1_id,lf2_id)
-Seq1_y_B_m1(sd_id,lf2_id,lf1_id) = A_mSIG.s.lf2_id.lf1_id?x:{x | x<-A_SIG,get_id(x) == m1} -> A_mSIG.r.lf2_id.lf1_id!x -> Seq1_y_B_m1(sd_id,lf2_id,lf1_id)
-Seq1_y_B_m0_r(sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-B_OPS,get_id(x) == m0_O} -> B_mOP.r.lf2_id.lf1_id!x -> Seq1_y_B_m0_r(sd_id,lf2_id,lf1_id)
-Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id) = (Seq1_x_A_m0(sd_id,lf1_id,lf2_id) ||| Seq1_y_B_m1(sd_id,lf2_id,lf1_id) ||| Seq1_y_B_m0_r(sd_id,lf2_id,lf1_id))/\endInteraction -> SKIP
+Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id)
+Seq1_y_B_x_A_m1(sd_id,lf2_id,lf1_id) = A_mSIG.s.lf2_id.lf1_id?x:{x | x<-A_SIG,get_id(x) == m1} -> A_mSIG.r.lf2_id.lf1_id!x -> Seq1_y_B_x_A_m1(sd_id,lf2_id,lf1_id)
+Seq1_y_B_x_A_m0_r(sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-B_OPS,get_id(x) == m0_O} -> B_mOP.r.lf2_id.lf1_id!x -> Seq1_y_B_x_A_m0_r(sd_id,lf2_id,lf1_id)
+Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id) = (Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id) ||| Seq1_y_B_x_A_m1(sd_id,lf2_id,lf1_id) ||| Seq1_y_B_x_A_m0_r(sd_id,lf2_id,lf1_id))/\endInteraction -> SKIP
 Seq1Parallel(sd_id,lf1_id,lf2_id) = Seq1_A(sd_id,lf1_id,lf2_id)[ {|B_mOP.s.lf1_id.lf2_id.m0_I, A_mSIG.r.lf2_id.lf1_id.m1, B_mOP.r.lf2_id.lf1_id.m0_O|} || {|B_mOP.r.lf1_id.lf2_id.m0_I, A_mSIG.s.lf2_id.lf1_id.m1, B_mOP.s.lf2_id.lf1_id.m0_O|} ]Seq1_B(sd_id,lf1_id,lf2_id)
 SD_Seq1(sd_id,lf1_id,lf2_id) = beginInteraction ->((Seq1Parallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)[|{|B_mOP.s.lf1_id.lf2_id.m0_I,B_mOP.r.lf1_id.lf2_id.m0_I,A_mSIG.s.lf2_id.lf1_id.m1,A_mSIG.r.lf2_id.lf1_id.m1,B_mOP.s.lf2_id.lf1_id.m0_O,B_mOP.r.lf2_id.lf1_id.m0_O,endInteraction|}|]Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id))
 assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}
