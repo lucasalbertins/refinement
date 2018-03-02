@@ -634,8 +634,14 @@ public class SDParser {
 	private String translateLifeline(ILifeline lifeline, ISequenceDiagram seq) {
 		StringBuilder process = new StringBuilder();
 		StringBuilder aux = new StringBuilder();
-		process.append(seq.getName()).append("_").append(lifeline.getBase());
-		aux.append(seq.getName()).append("_").append(lifeline.getBase());
+		process.append(seq.getName());
+		aux.append(seq.getName());
+		if(lifeline.getName() != ""){
+			process.append("_").append(lifeline.getName());
+			aux.append("_").append(lifeline.getName());
+		}
+		process.append("_").append(lifeline.getBase());
+		aux.append("_").append(lifeline.getBase());
 		process.append("(sd_id");
 		aux.append("(sd_id");
 
