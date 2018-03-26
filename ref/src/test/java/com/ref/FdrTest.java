@@ -171,8 +171,7 @@ public class FdrTest {
 	@Ignore
 	@Test
 	public void fdrTest() {
-		FdrManager fdr = new FdrManager();
-		fdr.verify("result.csp");
+		
 	}
 
 	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
