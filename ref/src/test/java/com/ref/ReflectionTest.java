@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import com.ref.fdr.FdrWrapper;
+import com.ref.fdr.FdrWrapper2;
 
 public class ReflectionTest {
 
@@ -48,4 +49,21 @@ public class ReflectionTest {
 			fail(e.getMessage());
 		}
 	}
+	
+	//Testes no FdrWrapper2
+	
+	@Test
+	public void RefinementTest(){
+		FdrWrapper2 wrapper = new FdrWrapper2();
+		try {
+			List<String> result = wrapper.fdrRefinement("result.csp");
+			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(0));//Especificação
+			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(1));
+		} catch (Exception e) {
+			fail(e.getMessage());
+		}
+	}
+	
 }
