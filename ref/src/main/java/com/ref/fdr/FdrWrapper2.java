@@ -19,7 +19,7 @@ import uk.ac.ox.cs.fdr.TraceCounterexample;
 import uk.ac.ox.cs.fdr.fdr; 
 
 public class FdrWrapper2 {
-
+	
 	public List<String> fdrRefinement(String filename) throws Exception {
 		PrintStream out = System.out;
 		List<String> result = new ArrayList<String>();

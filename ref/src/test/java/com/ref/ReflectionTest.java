@@ -37,6 +37,7 @@ public class ReflectionTest {
 		classes.add("uk.ac.ox.cs.fdr.TraceBehaviour");
 		classes.add("uk.ac.ox.cs.fdr.Node");
 		classes.add("uk.ac.ox.cs.fdr.ProcessName");
+		classes.add("uk.ac.ox.cs.fdr.Canceller");
 		try {
 			wrapper.loadClasses();
 			List<String> actual = wrapper.getClasses();
@@ -49,11 +50,26 @@ public class ReflectionTest {
 			fail(e.getMessage());
 		}
 	}
+	@Test
+	public void refinementTest1(){
+		FdrWrapper wrapper = new FdrWrapper();
+		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		try {
+			wrapper.loadClasses();
+			wrapper.verify();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	//Testes no FdrWrapper2
 	
 	@Test
-	public void RefinementTest(){
+	public void refinementTest2(){
 		FdrWrapper2 wrapper = new FdrWrapper2();
 		try {
 			List<String> result = wrapper.fdrRefinement("result.csp");
