@@ -7,6 +7,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ref.fdr.FdrWrapper;
@@ -30,6 +31,8 @@ public class ReflectionTest {
 		classes.add("uk.ac.ox.cs.fdr.Session");
 		classes.add("uk.ac.ox.cs.fdr.Assertion");
 		classes.add("uk.ac.ox.cs.fdr.Counterexample");
+		classes.add("uk.ac.ox.cs.fdr.CompiledEventList");
+		classes.add("uk.ac.ox.cs.fdr.IrrelevantBehaviour");
 		classes.add("uk.ac.ox.cs.fdr.TraceCounterexample");
 		classes.add("uk.ac.ox.cs.fdr.DebugContext");
 		classes.add("uk.ac.ox.cs.fdr.RefinementCounterexample");
@@ -50,24 +53,31 @@ public class ReflectionTest {
 			fail(e.getMessage());
 		}
 	}
+	
 	@Test
 	public void refinementTest1(){
 		FdrWrapper wrapper = new FdrWrapper();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
 			wrapper.loadClasses();
-			wrapper.verify();
+			List<String> result = wrapper.verify();
+			assertEquals("B_mOP.s.lf1id.lf2id.m0_I", result.get(0));
+			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(1));//Especificação
+			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(2));
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			fail(e.getMessage());
+		} catch (Throwable e) {
+			fail(e.getMessage());
 		}
 	}
 	
 	//Testes no FdrWrapper2
 	
+	@Ignore
 	@Test
 	public void refinementTest2(){
 		FdrWrapper2 wrapper = new FdrWrapper2();
