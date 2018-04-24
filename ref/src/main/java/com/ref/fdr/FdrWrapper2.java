@@ -64,6 +64,7 @@ public class FdrWrapper2 {
 
 			for (Long event : trace.specificationBehaviour().trace()) {
 				if (event == fdr.INVALIDEVENT) {
+					System.out.println(fdr.INVALIDEVENT);
 					out.print("-, ");
 					stb.append("-, ");
 				} else {

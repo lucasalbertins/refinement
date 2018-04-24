@@ -165,14 +165,14 @@ public class FdrWrapper {
 
 	}
 
-	public List<String> verify() throws Exception {
+	public List<String> verify(String filename) throws Exception {
 
 		List<String> result = null;
 		try {
 
 			Object session = sessionClass.newInstance();
 
-			invokeProperty(session.getClass(), session, "loadFile", String.class, "result.csp");
+			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
 			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
 
@@ -189,7 +189,7 @@ public class FdrWrapper {
 			}
 
 		} catch (Exception e) {
-			throw new Exception(e.getMessage());
+			e.printStackTrace();
 		}
 
 		return result;
@@ -218,16 +218,26 @@ public class FdrWrapper {
 				behaviour = h1.invoke(counterExample);
 				MethodHandle h2 = lkp.findSpecial(behaviourClass, "trace",MethodType.methodType(compiledEventListClass), irrelevantBehaviourClass);
 				for (Long event : (Iterable<Long>) h2.invoke(behaviour)) {
-					sb.append(invokeProperty(sessionClass,session, "uncompileEvent", long.class, event).toString() + ", ");
+					if(event == 1 || event == 0){
+						sb.append("-, ");
+					}else{
+						sb.append(invokeProperty(sessionClass,session, "uncompileEvent", long.class, event).toString() + ", ");						
+					}
+//					System.out.println(invokeProperty(sessionClass,session, "uncompileEvent", long.class, event).toString() + ", ");
 				}
 			} catch (Throwable e) {
-				throw new Exception(e.getMessage());
+				e.printStackTrace();
 			}
 
 			Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
 			
-			result.add(invokeProperty(sessionClass, session, "uncompileEvent", long.class,(Long)error).toString());
-			result.add(sb.toString());
+			if((Long)error == 1 || (Long)error == 0){
+				
+			}else{
+				result.add(invokeProperty(sessionClass, session, "uncompileEvent", long.class,(Long)error).toString());
+				result.add(sb.toString());				
+			}
+			
 		}
 
 		Constructor[] constructors = debugContextClass.getConstructors();
@@ -257,8 +267,14 @@ public class FdrWrapper {
 		StringBuilder sb = new StringBuilder();
 
 		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-			sb.append(result.toString() + ", ");
+			
+			if(event == 1 || event == 0){
+				sb.append("-, ");
+			}else{
+				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
+				System.out.println(result.toString());
+				sb.append(result.toString() + ", ");				
+			}
 		}
 
 		return sb.toString();
@@ -286,6 +302,7 @@ public class FdrWrapper {
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new Exception(e.getMessage());
 		}
 

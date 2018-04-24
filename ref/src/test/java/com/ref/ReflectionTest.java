@@ -23,7 +23,7 @@ public class ReflectionTest {
 	}
 
 	@Test
-	public void loadClasses(){
+	public void loadClasses() {
 		FdrWrapper wrapper = new FdrWrapper();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		List<String> classes = new ArrayList<String>();
@@ -44,52 +44,71 @@ public class ReflectionTest {
 		try {
 			wrapper.loadClasses();
 			List<String> actual = wrapper.getClasses();
-			for(String classe : actual){
+			for (String classe : actual) {
 				assertEquals(true, classes.contains(classe));
-			}			
+			}
 		} catch (MalformedURLException e) {
 			fail(e.getMessage());
 		} catch (ClassNotFoundException e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
+	@Ignore
 	@Test
-	public void refinementTest1(){
+	public void refinementTest1() {
 		FdrWrapper wrapper = new FdrWrapper();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
 			wrapper.loadClasses();
-			List<String> result = wrapper.verify();
+			List<String> result = wrapper.verify("result.csp");
 			assertEquals("B_mOP.s.lf1id.lf2id.m0_I", result.get(0));
 			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
-					result.get(1));//Especificação
-			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(1));// Especificação
+			assertEquals(
+					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
 					result.get(2));
-		} catch (MalformedURLException e) {
-			fail(e.getMessage());
-		} catch (ClassNotFoundException e) {
-			fail(e.getMessage());
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
-	//Testes no FdrWrapper2
-	
+
+
+	@Test
+	public void refinementTest2() {
+		FdrWrapper wrapper = new FdrWrapper();
+		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		try {
+			wrapper.loadClasses();
+			List<String> result = wrapper.verify("resultado2.csp");
+			assertEquals("endInteraction", result.get(0));
+			assertEquals("beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
+					result.get(1));// Especificação
+			assertEquals(
+					"beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
+					result.get(2));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Testes no FdrWrapper2
+
 	@Ignore
 	@Test
-	public void refinementTest2(){
+	public void refinementTestWrapper2() {
 		FdrWrapper2 wrapper = new FdrWrapper2();
 		try {
 			List<String> result = wrapper.fdrRefinement("result.csp");
-			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
-					result.get(0));//Especificação
-			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+			assertEquals(
+					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(0));// Especificação
+			assertEquals(
+					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
 					result.get(1));
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 	}
-	
+
 }
