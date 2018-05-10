@@ -691,53 +691,86 @@ public class SDParser {
 
 	public String refinementAssertion() {
 
+		StringBuilder sb = buildAssertions(seq1, seq2,0);
+		sb.append(buildAssertions(seq2, seq1, 1).toString());
+		return sb.toString();
+	}
+
+	private StringBuilder buildAssertions(ISequenceDiagram seq1, ISequenceDiagram seq2,int aux){
 		StringBuilder sb = new StringBuilder();
 		sb.append("assert ");
 		sb.append("SD_" + seq1.getName());
-		sb.append("(sd1id");
+		
+		if(seq1.getName().equals("Seq0")){
+			sb.append("(sd1id");			
+		}else
+			sb.append("(sd2id");
+		
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			sb.append("," + lifelines2.get(getLifelineBase(lifeline)));
 		}
-		sb.append(") [T= ");
+		sb.append(")");
+		if(aux == 1){
+			sb.append("\\{|" + eventosDiferentes() + "|}");
+		}
+		sb.append(" [T= ");
 		sb.append("SD_" + seq2.getName());
-		sb.append("(sd2id");
+
+		if(seq2.getName().equals("Seq1")){
+			sb.append("(sd2id");			
+		}else
+			sb.append("(sd1id");
+
 		for (ILifeline lifeline : seq2.getInteraction().getLifelines()) {
 			sb.append("," + lifelines2.get(getLifelineBase(lifeline)));
 		}
 		sb.append(")");
-		sb.append("\\{|" + eventosDiferentes() + "|}\n");
-		return sb.toString();
+		if(aux == 0){
+			String diferentes = eventosDiferentes();
+			if(!diferentes.equals("")){
+				sb.append("\\{|" + diferentes + "|}\n");				
+			}
+			else
+				sb.append("\n");
+		}
+		
+		return sb;
 	}
 
 	private String eventosDiferentes() {
 		StringBuilder sb = new StringBuilder();
-
+		boolean adicionou = false;
+		
 		for (String evento : alfabetosd2) {
 			if (!alfabetosd1.contains(evento)) {
 				sb.append(evento).append(",");
+				adicionou = true;
 			}
 		}
 		
-		ArrayList<String> elementos1 = new ArrayList<String>();
-		for (Map.Entry<String, String> entry : lifelines.entrySet()) {
-			//System.out.println(entry.getKey() + "/" + entry.getValue());
-			elementos1.add(entry.getValue());
+		if(adicionou){
+			ArrayList<String> elementos1 = new ArrayList<String>();
+			for (Map.Entry<String, String> entry : lifelines.entrySet()) {
+				//System.out.println(entry.getKey() + "/" + entry.getValue());
+				elementos1.add(entry.getValue());
+			}
+			
+			ArrayList<String> elementos2 = new ArrayList<String>();
+			for (Map.Entry<String, String> entry : lifelines2.entrySet()) {
+				//System.out.println(entry.getKey() + "/" + entry.getValue());
+				elementos2.add(entry.getValue());
+			}
+			
+			
+			String resultado = sb.deleteCharAt(sb.length() - 1).toString();
+			
+			for(int i = 0; i < elementos1.size();i++){
+				resultado = resultado.replaceAll(elementos1.get(i), elementos2.get(i));			
+			}
+			
+			return resultado;			
 		}
-
-		ArrayList<String> elementos2 = new ArrayList<String>();
-		for (Map.Entry<String, String> entry : lifelines2.entrySet()) {
-			//System.out.println(entry.getKey() + "/" + entry.getValue());
-			elementos2.add(entry.getValue());
-		}
-
-		
-		String resultado = sb.deleteCharAt(sb.length() - 1).toString();
-
-		for(int i = 0; i < elementos1.size();i++){
-			resultado = resultado.replaceAll(elementos1.get(i), elementos2.get(i));			
-		}
-
-		return resultado;
+		return "";
 	}
 
 }

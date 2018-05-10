@@ -165,30 +165,32 @@ public class FdrWrapper {
 
 	}
 
-	public List<String> verify(String filename) throws Exception {
+	public List<String> verify(String filename, int assertNum) throws Exception {
 
 		List<String> result = null;
+		int iteration = 0;
 		try {
 
 			Object session = sessionClass.newInstance();
 
 			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
-			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
+			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,null)) {
 
-					null)) {
-
-				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
-				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-
-						"counterexamples", null, null)) {
-
-					result = describeCounterExample(session, counterExample);
+				if(iteration == assertNum){ //verifica qual asserção vai rodar
+					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+					
+					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,"counterexamples", null, null)) {
+						
+						result = describeCounterExample(session, counterExample);
+					}					
 				}
+				iteration++;
 			}
-
-		} catch (Exception e) {
+			
+		} catch (NullPointerException e) {
+			return null;
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 

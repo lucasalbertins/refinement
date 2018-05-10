@@ -2,6 +2,7 @@ package com.ref;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNull;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
@@ -61,7 +62,7 @@ public class ReflectionTest {
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
 			wrapper.loadClasses();
-			List<String> result = wrapper.verify("result.csp");
+			List<String> result = wrapper.verify("result.csp",0);
 			assertEquals("B_mOP.s.lf1id.lf2id.m0_I", result.get(0));
 			assertEquals("beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
 					result.get(1));// Especificação
@@ -80,13 +81,14 @@ public class ReflectionTest {
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
 			wrapper.loadClasses();
-			List<String> result = wrapper.verify("resultado2.csp");
-			assertEquals("endInteraction", result.get(0));
-			assertEquals("beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
-					result.get(1));// Especificação
-			assertEquals(
-					"beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
-					result.get(2));
+			List<String> result = wrapper.verify("resultado2.csp",0);
+			assertNull(result);
+			//assertEquals("endInteraction", result.get(0));
+			//assertEquals("beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
+			//		result.get(1));// Especificação
+			//assertEquals(
+			//		"beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
+		//			result.get(2));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

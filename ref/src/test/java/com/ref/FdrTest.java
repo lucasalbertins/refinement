@@ -49,7 +49,7 @@ public class FdrTest {
 			INamedElement[] findSequence = findSequence(projectAccessor);
 			// createSD(projectAccessor);
 
-			if (((ISequenceDiagram) findSequence[0]).getName().equals("Sequence0")) {
+			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
 				seq1 = (ISequenceDiagram) findSequence[0];
 				seq2 = (ISequenceDiagram) findSequence[1];
 			} else {
@@ -75,7 +75,8 @@ public class FdrTest {
 		parser.parseSDs();
 		String actual = parser.refinementAssertion();
 		System.out.println(actual);
-		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n";
+		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n"
+				+ "assert SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|} [T= SD_Seq0(sd1id,lf1id,lf2id)";
 		assertEquals(expected, actual);
 	}
 
