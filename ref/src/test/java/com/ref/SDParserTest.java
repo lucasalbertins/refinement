@@ -155,11 +155,11 @@ public class SDParserTest {
 		expected.append("datatype COM = s | r\n");
 		expected.append("datatype ID = lf1id|lf2id\n");
 		expected.append("datatype ID_SD = sd1id|sd2id\n");
-		expected.append("MyInteger ={0,1,2,3,4,5,6,7,8,9}\n");
-		expected.append("MyString ={\"teste\"}\n");
-		expected.append("IntParams = {3}\n");
-		expected.append("DoubleParams = {2.5}\n");
-		expected.append("CharParams = {'a'}\n");
+		//expected.append("MyInteger ={0,1,2,3,4,5,6,7,8,9}\n");
+		//expected.append("MyString ={\"teste\"}\n");
+		//expected.append("IntParams = {3}\n");
+		//expected.append("DoubleParams = {2.5}\n");
+		//expected.append("CharParams = {'a'}\n");
 		expected.append("datatype MSG = m1|m0_I|m0_O\n");
 		expected.append("subtype A_SIG = m1\n");
 		expected.append("subtype B_OPS = m0_I | m0_O\n");

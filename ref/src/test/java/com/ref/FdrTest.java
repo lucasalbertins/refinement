@@ -45,7 +45,7 @@ public class FdrTest {
 			br = new BufferedReader(fr);
 
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/testRef2.asta");
+			projectAccessor.open("src/test/resources/testRef3.asta");
 			INamedElement[] findSequence = findSequence(projectAccessor);
 			// createSD(projectAccessor);
 

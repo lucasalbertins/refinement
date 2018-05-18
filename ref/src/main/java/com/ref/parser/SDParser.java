@@ -36,6 +36,7 @@ public class SDParser {
 	private List<String> mensagens;
 	private static Map<String, String> lifelines;
 	private static Map<String, String> lifelines2;
+	private Map<String,String> lifelines3;
 	public static Map<String, String> alfabets;
 	public static List<String> procs;
 	
@@ -45,7 +46,7 @@ public class SDParser {
 	public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
 		this.seq1 = seq1;
 		this.seq2 = seq2;
-		processos = new ArrayList<String>();
+		processos = new ArrayList<String>(); 
 		alfabeto = new ArrayList<String>();
 		channels = new ArrayList<String>();
 		datatypes = new ArrayList<String>();
@@ -55,11 +56,26 @@ public class SDParser {
 		mensagens = new ArrayList<String>();
 		lifelines = new HashMap<String, String>();
 		lifelines2 = new HashMap<String, String>();
+		lifelines3 = new HashMap<>();
 		alfabets = new HashMap<String, String>();
 		procs = new ArrayList<String>(); {
 		};
 		// alfabetosd1 = new ArrayList<String>();
 		// alfabetosd2 = new ArrayList<String>();
+	}
+	
+	private String getLifelineBase(ILifeline lifeline) {
+		return lifeline.getBase().toString();
+	}
+	
+	public void lifelineMapping(ILifeline lifeline,int aux){
+		String base = getLifelineBase(lifeline);
+		String instance = lifeline.getName().toString();
+		lifelines3.put("lf"+aux+"id", base+"_"+instance);
+	}
+	
+	public Map<String, String> getLifelineMapping(){
+		return lifelines3;
 	}
 
 	public static String getNome(String key) {
@@ -84,6 +100,7 @@ public class SDParser {
 		for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
 			lifelines.put(getLifelineBase(lifeline), "lf" + aux + "_id");
 			lifelines2.put(getLifelineBase(lifeline), "lf" + aux + "id");
+			lifelineMapping(lifeline,aux);
 			aux++;
 		}
 
@@ -91,6 +108,7 @@ public class SDParser {
 			if (!lifelines.containsKey(getLifelineBase(lifeline))) {
 				lifelines.put(getLifelineBase(lifeline), "lf" + aux + "_id");
 				lifelines2.put(getLifelineBase(lifeline), "lf" + aux + "id");
+				lifelineMapping(lifeline,aux);
 				aux++;
 			}
 		}
@@ -179,9 +197,6 @@ public class SDParser {
 	// // lifeline.getBase()+"_id";
 	// }
 
-	private String getLifelineBase(ILifeline lifeline) {
-		return lifeline.getBase().toString();
-	}
 
 	// private int checkMaxIndex() {
 	// int idx1 = 0;
