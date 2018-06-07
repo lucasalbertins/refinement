@@ -2,6 +2,9 @@ package com.ref;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -13,6 +16,7 @@ import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.fdr.FdrWrapper;
 import com.ref.refinement.CounterexampleDescriptor;
 
 public class SDGeneratorTest {
@@ -22,8 +26,13 @@ public class SDGeneratorTest {
 	@BeforeClass
 	public static void setup() {
 		try {
+			FdrWrapper wrapper = new FdrWrapper();
 			CounterexampleDescriptor descript = new CounterexampleDescriptor();
-			String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ";
+			//String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, B_mOP.s.lf1id.lf2id.m0_I, ";
+			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+			wrapper.loadClasses();
+			Map<Integer, List<String>> result = wrapper.verify("result.csp");
+			List<String> entrada = result.get(0);
 			descript.createSD("SDteste.asta", entrada);
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("SDteste.asta");
@@ -50,11 +59,10 @@ public class SDGeneratorTest {
 	@Test
 	public void lifelineTest(){
 		ILifeline[] lifelines = ((ISequenceDiagram)findSequence[0]).getInteraction().getLifelines();
-		assertEquals("u", lifelines[0].getName());
-		assertEquals("B", lifelines[0].getBase().getName());
-		assertEquals("t", lifelines[1].getName());
-		assertEquals("A", lifelines[1].getBase().getName());
-		
+		assertEquals("t", lifelines[0].getName());
+		assertEquals("A", lifelines[0].getBase().getName());	
+		assertEquals("u", lifelines[1].getName());
+		assertEquals("B", lifelines[1].getBase().getName());
 	}
 	
 	@Test

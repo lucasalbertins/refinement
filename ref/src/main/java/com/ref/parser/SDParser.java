@@ -56,7 +56,7 @@ public class SDParser {
 		mensagens = new ArrayList<String>();
 		lifelines = new HashMap<String, String>();
 		lifelines2 = new HashMap<String, String>();
-		lifelines3 = new HashMap<>();
+		lifelines3 = new HashMap<String,String>();
 		alfabets = new HashMap<String, String>();
 		procs = new ArrayList<String>(); {
 		};

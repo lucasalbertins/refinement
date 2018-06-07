@@ -35,10 +35,9 @@ import com.change_vision.jude.api.inf.project.ProjectEvent;
 import com.change_vision.jude.api.inf.project.ProjectEventListener;
 import com.change_vision.jude.api.inf.ui.IPluginExtraTabView;
 import com.change_vision.jude.api.inf.ui.ISelectionListener;
-import com.ref.refinement.RefinementController;
 import com.refinement.exceptions.RefinementException;
 
-import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
+//import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
 
 public class RefinementView extends JPanel implements IPluginExtraTabView,
 		ProjectEventListener {
@@ -152,60 +151,49 @@ public class RefinementView extends JPanel implements IPluginExtraTabView,
 			}
 
 			private void verifySequenceDiagramRefinement() {
-				try {
-					Properties p = new Properties();
-					File propertyFile = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
-					if (!propertyFile.exists()) {
-						JOptionPane.showMessageDialog(combo1.getParent().getParent(), "FDR3 location not set!", "Error", JOptionPane.ERROR_MESSAGE);
-					} else {
-						p.load(new FileInputStream(propertyFile));
-						String property = p.getProperty(FDR3LocationDialog.FDR3_LOCATION_PROPERTY);
-						if (property == null || property.equals("")) {
-							JOptionPane.showMessageDialog(combo1.getParent().getParent(), "FDR3 location not set!", "Error", JOptionPane.ERROR_MESSAGE);
-						} else {
-							ISequenceDiagram seq1 = null;
-							ISequenceDiagram seq2 = null;
-							INamedElement[] findSequence;
-							try {
-								findSequence = findSequence();
-								for (int i = 0; i < findSequence.length; i++) {
-									if (seq1 != null && seq2 != null) {
-										break;
-									}
-									if (findSequence[i].getName().equals(combo1.getSelectedItem())) {
-										seq1 = (ISequenceDiagram)findSequence[i];
-									} else if (findSequence[i].getName().equals(combo2.getSelectedItem())) {
-										seq2 = (ISequenceDiagram)findSequence[i];
-									}
-								}
-							} catch (ProjectNotFoundException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							if (seq1 != null && seq2 != null) {
-								RefinementController controller = RefinementController.getInstance();
-								try {
-									controller.checkRefinement(seq1,seq2);
-								} catch (RefinementException e1) {
-									e1.printStackTrace();
-									JOptionPane.showMessageDialog(getParent(), e1.getMessage(), "Refinement Error!", JOptionPane.ERROR_MESSAGE);
-								} catch (InvalidEditingException e1) {
-									// TODO Auto-generated catch block
-									e1.printStackTrace();
-								}
-							} else {
-								JOptionPane.showMessageDialog(getParent(), "Could not find sequence diagram.", "Refinement Error!", JOptionPane.ERROR_MESSAGE);
-							}
-						}
-					}
-					
-				} catch (FileNotFoundException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					// TODO Auto-generated catch block
-					e2.printStackTrace();
-				}
+//				try {
+//					Properties p = new Properties();
+//					File propertyFile = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
+//					if (!propertyFile.exists()) {
+//						JOptionPane.showMessageDialog(combo1.getParent().getParent(), "FDR3 location not set!", "Error", JOptionPane.ERROR_MESSAGE);
+//					} else {
+//						p.load(new FileInputStream(propertyFile));
+//						String property = p.getProperty(FDR3LocationDialog.FDR3_LOCATION_PROPERTY);
+//						if (property == null || property.equals("")) {
+//							JOptionPane.showMessageDialog(combo1.getParent().getParent(), "FDR3 location not set!", "Error", JOptionPane.ERROR_MESSAGE);
+//						} else {
+//							ISequenceDiagram seq1 = null;
+//							ISequenceDiagram seq2 = null;
+//							INamedElement[] findSequence;
+//							try {
+//								findSequence = findSequence();
+//								for (int i = 0; i < findSequence.length; i++) {
+//									if (seq1 != null && seq2 != null) {
+//										break;
+//									}
+//									if (findSequence[i].getName().equals(combo1.getSelectedItem())) {
+//										seq1 = (ISequenceDiagram)findSequence[i];
+//									} else if (findSequence[i].getName().equals(combo2.getSelectedItem())) {
+//										seq2 = (ISequenceDiagram)findSequence[i];
+//									}
+//								}
+//							} catch (ProjectNotFoundException e1) {
+//								// TODO Auto-generated catch block
+//								e1.printStackTrace();
+//							}
+//							if (seq1 != null && seq2 != null) {
+//								//RefinementController controller = RefinementController.getInstance();
+//							
+//						}
+//					}
+//					
+//				} catch (FileNotFoundException e2) {
+//					// TODO Auto-generated catch block
+//					e2.printStackTrace();
+//				} catch (IOException e2) {
+//					// TODO Auto-generated catch block
+//					e2.printStackTrace();
+//				}
 			}
 		});
 	}

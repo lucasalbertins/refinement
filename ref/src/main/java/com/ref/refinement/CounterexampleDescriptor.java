@@ -2,6 +2,8 @@ package com.ref.refinement;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +19,7 @@ import com.change_vision.jude.api.inf.exception.ProjectLockedException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.IClass;
 import com.change_vision.jude.api.inf.model.ILifeline;
+import com.change_vision.jude.api.inf.model.IMessage;
 import com.change_vision.jude.api.inf.model.IModel;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.IOperation;
@@ -31,31 +34,8 @@ import com.ref.parser.SDParser;
 
 public class CounterexampleDescriptor {
 
-	public static void main(String[] args) {
-		try {
-			String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ";
-			CounterexampleDescriptor sg = new CounterexampleDescriptor();
-			sg.loadInfo();
-			sg.createSD("SDteste.asta", entrada);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (LicenseNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ProjectNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ProjectLockedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
 	private Map<String, String> lifelines;
+	private List<String> sortedLifelines;
 
 	private void loadInfo() {
 
@@ -79,6 +59,7 @@ public class CounterexampleDescriptor {
 			parser = new SDParser(seq1, seq2);
 			parser.carregaLifelines();
 			lifelines = parser.getLifelineMapping();
+			sortedLifelines = sortMap(lifelines);
 		} catch (ProjectNotFoundException e) {
 			System.out.println("aqui");
 			e.printStackTrace();
@@ -96,57 +77,83 @@ public class CounterexampleDescriptor {
 		return foundElements;
 	}
 
-	private String[] preProcess(String entrada) {
+	private List<String> preProcess(List<String> entrada) {
 
-		String resultado = entrada.replace("beginInteraction, ", "");
+		List<String> result = new ArrayList<String>();
+
+		for (String trace : entrada) {
+			//System.out.println(trace);
+			String newtrace = trace.replace("beginInteraction, ", "");
+			newtrace = newtrace.replaceAll(", endInteraction", "");
+			result.add(newtrace);
+		}
+
+		// String resultado = entrada.replace("beginInteraction, ", "");
 		// resultado = resultado.replace(", ", "|");
-		String[] split = resultado.split(", ");
+		// String[] split = resultado.split(", ");
 		// for(int i = 0; i < split.length; i++){
 		// System.out.println(split[i] + "\n");
 		// }
-
-		return split;
+		
+		return result;
 	}
 
-	private List<String> getClasses(String[] events) {
-		List<String> classes = new ArrayList<>();
+	private List<String> getClasses(List<String> events) {
+		System.out.println("CLASSES:");
+		List<String> classes = new ArrayList<String>();
 		String classe = "";
-		for (int i = 0; i < events.length; i++) {
-			classe = events[i].substring(0, 1);
-			if (!classes.contains(classe)) {
-				System.out.println(classe);
-				classes.add(classe);
+		for (int i = 0; i < events.size(); i++) {
+			List<String> messages = getMessages(events.get(i));
+			for (int j = 0; j < messages.size(); j++) {
+				if(!messages.get(j).equals("endInteraction") && !messages.get(j).equals("τ"))
+					classe = messages.get(j).substring(0, 1);
+				if (!classes.contains(classe)) {
+					System.out.println(classe);
+					classes.add(classe);
+				}
 			}
 		}
 
 		return classes;
 	}
 
-	private List<String> getOperations(String classe, String[] events) {
+	private List<String> getOperations(String classe, List<String> events) {
 
-		List<String> operations = new ArrayList<>();
+		List<String> operations = new ArrayList<String>();
 		String evento = "";
 		String[] parts = null;
 		String[] msg = null;
-		for (int i = 0; i < events.length; i++) {
-			if (events[i].substring(0, 1).equals(classe)) {
-				evento = events[i];
-				parts = evento.split("\\.");
-				msg = parts[4].split("\\_");
-				if (!operations.contains(msg[0]))
-					operations.add(msg[0]);
+		for (int i = 0; i < events.size(); i++) {
+			 List<String> messages = getMessages(events.get(i));
+			for (int j = 0; j < messages.size(); j++) {
+				if (messages.get(j).substring(0, 1).equals(classe)) {
+					evento = messages.get(j);
+					parts = evento.split("\\.");
+					msg = parts[4].split("\\_");
+					if (!operations.contains(msg[0]))
+						operations.add(msg[0]);
+				}
 			}
 		}
 
 		return operations;
 	}
 
-	public void createSD(String name, String entrada) throws ClassNotFoundException, LicenseNotFoundException,
+	private List<String> sortMap(Map<String, String> map) {
+
+		Collection<String> values = map.values();
+		List<String> nomes = new ArrayList<String>(values);
+		Collections.sort(nomes);
+		int iterator = 0;
+
+		return nomes;
+	}
+
+	public void createSD(String name, List<String> entrada) throws ClassNotFoundException, LicenseNotFoundException,
 			ProjectNotFoundException, IOException, ProjectLockedException {
 
 		loadInfo();
-		String[] events = preProcess(entrada);
-		
+		List<String> events = preProcess(entrada);
 		ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
 		try {
 			projectAccessor.create(name);
@@ -165,13 +172,13 @@ public class CounterexampleDescriptor {
 		}
 	}
 
-	private void createModels(String[] events)
+	private void createModels(List<String> events)
 			throws ProjectNotFoundException, ClassNotFoundException, InvalidEditingException {
 		ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
 		IModel project = projectAccessor.getProject();
 		BasicModelEditor bme = ModelEditorFactory.getBasicModelEditor();
 
-		List<String> classes = getClasses(events);
+		//List<String> classes = getClasses(events);
 		List<String> operations = null;
 
 		for (String lf : lifelines.keySet()) {
@@ -191,7 +198,7 @@ public class CounterexampleDescriptor {
 		// bme.createParameter(op, "param0", boundary);
 	}
 
-	private void createSequenceDiagram(String[] events) throws Exception {
+	private void createSequenceDiagram(List<String> events) throws Exception {
 
 		ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
 		IModel project = projectAccessor.getProject();
@@ -208,10 +215,12 @@ public class CounterexampleDescriptor {
 		ISequenceDiagram newDgm = de.createSequenceDiagram(project, "Sequence Diagram1");
 
 		// create lifelines
-		List<INodePresentation> myLifelines = new ArrayList<>();
+		List<INodePresentation> myLifelines = new ArrayList<INodePresentation>();
 		double position = 0;
-		for (String lf : lifelines.keySet()) {
-			String[] split = lifelines.get(lf).split("_");
+		for (String lf : sortedLifelines) {
+			// System.out.println(lf);
+			// System.out.println(lifelines.get(lf));
+			String[] split = lf.split("_");
 			IClass boundary = findNamedElement(project.getOwnedElements(), split[0], IClass.class);
 			INodePresentation objPs1 = de.createLifeline(split[1], position);
 			ILifeline lifeline1 = (ILifeline) objPs1.getModel();
@@ -223,22 +232,100 @@ public class CounterexampleDescriptor {
 		// create messages, combinedFragment, interactionUse, stateInvariant
 
 		INodePresentation framePs = (INodePresentation) findPresentationByType(newDgm, "Frame");
-		int[] ids = {-1,-1};
-		int msgPosition = 160;
-		for(String event : events){
-			String[] split = event.split("\\.");
-			if(!split[1].equals("r")){
-				ids = findLifeline(split[2],split[3],myLifelines);
-				if(ids[0] != -1 && ids[1] != -1){
-					//de.createMessage(split[4], framePs, myLifelines.get(id), 80);
-					String[] msgName = split[4].split("_");
-					if(!msgName[1].equals("O")){
-						ILinkPresentation msgPs = de.createMessage(msgName[0], myLifelines.get(ids[0]), myLifelines.get(ids[1]), msgPosition);					
-						msgPosition = msgPosition + 50;						
-					}
-				}			
-			}
+		List<ILinkPresentation> msgs = new ArrayList<ILinkPresentation>();
+
+		List<String> msgsSpecification = getMessages(events.get(1));
+		List<String> msgsImplementation;
+		
+		if (events.get(0).equals("endInteraction")) {
+			msgsImplementation = getMessages(events.get(2));
+		}else{
+			msgsSpecification.add(events.get(0));
+			msgsImplementation = null;
 		}
+
+			int[] ids = { -1, -1 };
+			int msgPosition = 160;
+			int msgType = 0;
+
+			for (int i = 0; i < msgsSpecification.size(); i++) {
+				System.out.println(msgsSpecification.get(i));
+				String[] split = msgsSpecification.get(i).split("\\.");
+
+				if (split[0].contains("SIG"))
+					msgType = 1;
+				else
+					msgType = 0;
+
+				if (!split[1].equals("r")) {
+					ids = findLifeline(split[2], split[3], myLifelines);
+					if (ids[0] != -1 && ids[1] != -1) {
+						// de.createMessage(split[4], framePs,
+						// myLifelines.get(id),
+						// 80);
+						String[] msgName = split[4].split("_");
+						if (msgName.length >= 1 && !split[4].contains("_O")) {
+							ILinkPresentation msg = de.createMessage(msgName[0], myLifelines.get(ids[0]),
+									myLifelines.get(ids[1]), msgPosition);
+
+							if (events.get(0).equals("endInteraction") && !msgsImplementation.contains(msgsSpecification.get(i))) {
+								msg.setProperty("line.color", "#FF0000");
+							}
+							
+							if(!events.get(0).equals("endInteraction") && i == msgsSpecification.size() - 1){
+								msg.setProperty("line.color", "#FF0000");
+							}
+
+							if (msgType == 1) {
+								IMessage m = (IMessage) msg.getModel();
+								m.setAsynchronous(true);
+							} else {
+								msgs.add(msg);
+							}
+
+							msgPosition = msgPosition + 50;
+						} else {
+							IMessage message;
+							for (ILinkPresentation msg : msgs) {
+								message = (IMessage) msg.getModel();
+								if (msgName[0].equals(message.getName())) {
+									de.createReturnMessage("", msg);
+									break;
+								}
+							}
+						}
+
+					}
+				}
+
+			}
+			
+
+		
+
+		// if (events[events.length - 1] != "endInteraction") {
+		// String[] split = events[events.length - 1].split("\\.");
+		// ids = findLifeline(split[2], split[3], myLifelines);
+		// if (ids[0] != -1 && ids[1] != -1) {
+		// // de.createMessage(split[4], framePs, myLifelines.get(id),
+		// // 80);
+		// System.out.println(split[4]);
+		// String[] msgName = split[4].split("_");
+		// if (!msgName[1].equals("O")) {
+		// ILinkPresentation msg = de.createMessage(msgName[0],
+		// myLifelines.get(ids[0]),
+		// myLifelines.get(ids[1]), msgPosition);
+		// msg.setProperty("line.color", "#FF0000");
+		// if (msgType == 1) {
+		// IMessage m = (IMessage) msg.getModel();
+		// m.setAsynchronous(true);
+		// } else {
+		// msgs.add(msg);
+		// }
+		//
+		// }
+		// }
+		// }
 
 		// msgPs.getSource().setProperty("fill.color", "#0000FF");
 		// IMessage msg = (IMessage) msgPs.getModel();
@@ -302,21 +389,31 @@ public class CounterexampleDescriptor {
 		// de.createNoteAnchor(notePs2, lostPs);
 	}
 
-	private int[] findLifeline(String lfsrcID,String lfdestID, List<INodePresentation> myLifelines) {
+	private List<String> getMessages(String string) {
+		List<String> msgs = new ArrayList<String>();
+		String[] split = string.split(", ");
+		for (int i = 0; i < split.length; i++) {
+			msgs.add(split[i]);
+		}
+		return msgs;
+	}
+
+	private int[] findLifeline(String lfsrcID, String lfdestID, List<INodePresentation> myLifelines) {
 		String lfName1 = lifelines.get(lfsrcID);
 		String lfName2 = lifelines.get(lfdestID);
 		String[] split1 = lfName1.split("_");
 		String[] split2 = lfName2.split("_");
 		int id = 0;
-		int[] result = {-1,-1};
+		int[] result = { -1, -1 };
 		ILifeline life;
-		
-		for(INodePresentation lf : myLifelines){
+
+		for (INodePresentation lf : myLifelines) {
 			life = (ILifeline) lf.getModel();
-			if(life.getName().equals(split1[1])){
-				result[0] = id; 
-			}if(life.getName().equals(split2[1])){
-				result[1] =id;
+			if (life.getName().equals(split1[1])) {
+				result[0] = id;
+			}
+			if (life.getName().equals(split2[1])) {
+				result[1] = id;
 			}
 			id++;
 		}

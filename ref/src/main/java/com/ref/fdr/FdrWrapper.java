@@ -6,13 +6,14 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FdrWrapper {
 
@@ -46,6 +47,12 @@ public class FdrWrapper {
 
 	private Class<?> Canceller;
 
+	private Class<?> Machine;
+
+	private Class<?> TransitionList;
+
+	private Class<?> Transition;
+
 	private File fdrJar;
 
 	private List<String> classes;
@@ -53,37 +60,6 @@ public class FdrWrapper {
 	public boolean loadFDR(String path) {
 
 		File file = new File(path);
-
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libboost_date_time-mgw53-mt-1_60.dll");
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libboost_filesystem-mgw53-mt-1_60.dll");
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libboost_iostreams-mgw53-mt-1_60.dll");
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libboost_program_options-mgw53-mt-1_60.dll");
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libboost_serialization-mgw53-mt-1_60.dll");
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libboost_system-mgw53-mt-1_60.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libcsp_operators.dll");
-		// System.load("C:\\Program
-		// Files\\FDR\\bin\\libcspm_process_compiler.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libfdr.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libfdr_java.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libgcc_s_seh-1.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libprocess_compiler.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\librefines.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\librefines_gui.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\librefines_licensing.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libssp-0.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libstdc++-6.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\libwinpthread-1.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\qt5core.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\qt5gui.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\qt5widgets.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\qt5winextras.dll");
-		// System.load("C:\\Program Files\\FDR\\bin\\winsparkle.dll");
 
 		if (file.exists()) {
 
@@ -129,6 +105,12 @@ public class FdrWrapper {
 
 		ProcessName = urlCl.loadClass("uk.ac.ox.cs.fdr.ProcessName");
 
+		Machine = urlCl.loadClass("uk.ac.ox.cs.fdr.Machine");
+
+		TransitionList = urlCl.loadClass("uk.ac.ox.cs.fdr.TransitionList");
+
+		Transition = urlCl.loadClass("uk.ac.ox.cs.fdr.Transition");
+
 		classes.add(fdrClass.getName());
 
 		classes.add(sessionClass.getName());
@@ -151,6 +133,10 @@ public class FdrWrapper {
 
 		classes.add(ProcessName.getName());
 
+		classes.add(TransitionList.getName());
+
+		classes.add(Transition.getName());
+
 		// Classes extras que são usadas como parametro
 
 		Canceller = urlCl.loadClass("uk.ac.ox.cs.fdr.Canceller");
@@ -165,9 +151,10 @@ public class FdrWrapper {
 
 	}
 
-	public List<String> verify(String filename, int assertNum) throws Exception {
+	public Map<Integer, List<String>> verify(String filename) throws Exception {
 
-		List<String> result = null;
+		Map<Integer, List<String>> resultado = new HashMap<Integer, List<String>>();
+		List<String> resultParcial = null;
 		int iteration = 0;
 		try {
 
@@ -175,26 +162,28 @@ public class FdrWrapper {
 
 			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
-			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,null)) {
+			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
+					null)) {
 
-				if(iteration == assertNum){ //verifica qual asserção vai rodar
-					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-					
-					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,"counterexamples", null, null)) {
-						
-						result = describeCounterExample(session, counterExample);
-					}					
+				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+
+				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+						"counterexamples", null, null)) {
+
+					resultParcial = describeCounterExample(session, counterExample);
+					resultado.put(iteration, resultParcial);
+
 				}
 				iteration++;
 			}
-			
+
 		} catch (NullPointerException e) {
 			return null;
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return result;
+		return resultado;
 	}
 
 	public List<String> describeCounterExample(Object session, Object counterExample) throws Exception {
@@ -203,63 +192,66 @@ public class FdrWrapper {
 
 		List<String> result = new ArrayList<String>();
 
-		if (counterExample.getClass().getName().equals(traceCounterexampleClass.getName())) {
+		// Adiciona o evento que gerou erro
+		Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
+		String errorEvent = "";
+		if ((Long) error == 1 || (Long) error == 0) {
 
-			Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+		} else {
+			errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) error).toString();
+			result.add(errorEvent);
+		}
 
-			IMPL_LOOKUP.setAccessible(true);
+		// Adiciona o trace do contraExemplo
+		if (errorEvent.equals("endInteraction")) {
+			//System.out.println("Entrou");
+			if (counterExample.getClass().getName().equals(traceCounterexampleClass.getName())) {
 
-			MethodHandles.Lookup lkp = (MethodHandles.Lookup) IMPL_LOOKUP.get(null);
+				Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
 
-			MethodHandle h1 = lkp.findSpecial(refinementCounterexampleClass, "specificationBehaviour",
-					MethodType.methodType(behaviourClass), traceCounterexampleClass);
+				IMPL_LOOKUP.setAccessible(true);
 
-			Object behaviour = null;
-			
-			try {
-				behaviour = h1.invoke(counterExample);
-				MethodHandle h2 = lkp.findSpecial(behaviourClass, "trace",MethodType.methodType(compiledEventListClass), irrelevantBehaviourClass);
-				for (Long event : (Iterable<Long>) h2.invoke(behaviour)) {
-					if(event == 1 || event == 0){
-						sb.append("-, ");
-					}else{
-						sb.append(invokeProperty(sessionClass,session, "uncompileEvent", long.class, event).toString() + ", ");						
-					}
-//					System.out.println(invokeProperty(sessionClass,session, "uncompileEvent", long.class, event).toString() + ", ");
+				MethodHandles.Lookup lkp = (MethodHandles.Lookup) IMPL_LOOKUP.get(null);
+
+				MethodHandle h1 = lkp.findSpecial(refinementCounterexampleClass, "specificationBehaviour",
+						MethodType.methodType(behaviourClass), traceCounterexampleClass);
+
+				Object behaviour = null;
+
+				try {
+					behaviour = h1.invoke(counterExample);
+					traceBehaviour(behaviour, sb, session);
+					result.add(sb.toString());
+					sb = new StringBuilder();
+					h1 = lkp.findSpecial(refinementCounterexampleClass, "implementationBehaviour",
+							MethodType.methodType(behaviourClass), traceCounterexampleClass);
+					behaviour = h1.invoke(counterExample);
+					traceBehaviour(behaviour, sb, session);
+					result.add(sb.toString());
+				} catch (Throwable e) {
+					e.printStackTrace();
 				}
-			} catch (Throwable e) {
-				e.printStackTrace();
+
+			}
+		} else {
+
+			Constructor[] constructors = debugContextClass.getConstructors();
+			Constructor constructor = null;
+			for (int i = 0; i < constructors.length; i++) {
+				Class[] parameters = constructors[i].getParameterTypes();
+				if (parameters[0].getName().equals(refinementCounterexampleClass.getName())) {
+					constructor = constructors[i];
+				}
 			}
 
-			Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
-			
-			if((Long)error == 1 || (Long)error == 0){
-				
-			}else{
-				result.add(invokeProperty(sessionClass, session, "uncompileEvent", long.class,(Long)error).toString());
-				result.add(sb.toString());				
-			}
-			
-		}
-
-		Constructor[] constructors = debugContextClass.getConstructors();
-		// System.out.println(parameters[0].getName());
-		Constructor constructor = null;
-		for (int i = 0; i < constructors.length; i++) {
-			Class[] parameters = constructors[i].getParameterTypes();
-			if (parameters[0].getName().equals(refinementCounterexampleClass.getName())) {
-				constructor = constructors[i];
+			Object debugContext = constructor.newInstance(counterExample, true);
+			invokeProperty(debugContextClass, debugContext, "initialise", Canceller, null);
+			for (Object behaviour : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "rootBehaviours",
+					null, null)) {
+				result.add(describeBehaviour(session, behaviour));
+				break;
 			}
 		}
-
-		Object debugContext = constructor.newInstance(counterExample, true);
-		invokeProperty(debugContextClass, debugContext, "initialise", Canceller, null);
-		for (Object behaviour : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "rootBehaviours", null,
-				null)) {
-			result.add(describeBehaviour(session, behaviour));
-			break;
-		}
-
 		return result;
 
 	}
@@ -269,17 +261,37 @@ public class FdrWrapper {
 		StringBuilder sb = new StringBuilder();
 
 		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-			
-			if(event == 1 || event == 0){
-				sb.append("-, ");
-			}else{
+
+			if (event == 1 || event == 0) {
+				// sb.append("-, ");
+			} else {
 				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-				System.out.println(result.toString());
-				sb.append(result.toString() + ", ");				
+				// System.out.println(result.toString());
+				sb.append(result.toString() + ", ");
 			}
 		}
 
 		return sb.toString();
+	}
+
+	public void traceBehaviour(Object behaviour, StringBuilder sb, Object session) throws Exception {
+		Object machine = invokeProperty(behaviourClass, behaviour, "machine", null, null);
+		Object node = invokeProperty(Machine, machine, "rootNode", null, null);
+		Object transitionList;
+		while (true) {
+			transitionList = invokeProperty(Machine, machine, "transitions", Node, node);
+			Object evento = invokeProperty(TransitionList, transitionList, "get", int.class, 0);
+			Object eventID = invokeProperty(Transition, evento, "event", null, null);
+			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) eventID);
+			//System.out.println(result.toString());
+			if(!result.equals("τ")){
+				sb.append(result.toString());				
+			}
+			if (result.toString().equals("endInteraction"))
+				break;
+			sb.append(", ");
+			node = invokeProperty(Transition, evento, "destination", null, null);
+		}
 	}
 
 	private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass,
