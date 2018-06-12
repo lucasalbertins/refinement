@@ -2,17 +2,12 @@ package com.ref;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;

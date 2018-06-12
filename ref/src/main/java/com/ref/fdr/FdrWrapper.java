@@ -204,7 +204,7 @@ public class FdrWrapper {
 
 		// Adiciona o trace do contraExemplo
 		if (errorEvent.equals("endInteraction")) {
-			//System.out.println("Entrou");
+			System.out.println("Entrou");
 			if (counterExample.getClass().getName().equals(traceCounterexampleClass.getName())) {
 
 				Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
@@ -222,6 +222,7 @@ public class FdrWrapper {
 					behaviour = h1.invoke(counterExample);
 					traceBehaviour(behaviour, sb, session);
 					result.add(sb.toString());
+					System.out.println(sb.toString());
 					sb = new StringBuilder();
 					h1 = lkp.findSpecial(refinementCounterexampleClass, "implementationBehaviour",
 							MethodType.methodType(behaviourClass), traceCounterexampleClass);

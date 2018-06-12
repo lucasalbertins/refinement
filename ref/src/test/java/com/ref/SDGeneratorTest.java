@@ -17,6 +17,7 @@ import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.fdr.FdrWrapper;
+import com.ref.parser.SDParser;
 import com.ref.refinement.CounterexampleDescriptor;
 
 public class SDGeneratorTest {
@@ -31,9 +32,10 @@ public class SDGeneratorTest {
 			//String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, B_mOP.s.lf1id.lf2id.m0_I, ";
 			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 			wrapper.loadClasses();
-			Map<Integer, List<String>> result = wrapper.verify("result.csp");
+			Map<Integer, List<String>> result = wrapper.verify("result - Copia.csp");
 			List<String> entrada = result.get(0);
-			descript.createSD("SDteste.asta", entrada);
+			loadInfo(descript);
+			descript.createSD("SDteste.asta", entrada,null);
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("SDteste.asta");
 			findSequence = findSequence(projectAccessor);
@@ -41,6 +43,37 @@ public class SDGeneratorTest {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void loadInfo(CounterexampleDescriptor descript) {
+
+		SDParser parser = null;
+		try {
+			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/testRef3.asta");
+			INamedElement[] findSequence = findSequence(projectAccessor);
+			// createSD(projectAccessor);
+
+			ISequenceDiagram seq1;
+			ISequenceDiagram seq2;
+
+			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
+				seq1 = (ISequenceDiagram) findSequence[0];
+				seq2 = (ISequenceDiagram) findSequence[1];
+			} else {
+				seq1 = (ISequenceDiagram) findSequence[1];
+				seq2 = (ISequenceDiagram) findSequence[0];
+			}
+			parser = new SDParser(seq1, seq2);
+			parser.carregaLifelines();
+			descript.init(parser.getLifelineMapping());
+		} catch (ProjectNotFoundException e) {
+			System.out.println("aqui");
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
 		INamedElement[] foundElements = projectAccessor.findElements(new ModelFinder() {

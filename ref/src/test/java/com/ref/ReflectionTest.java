@@ -1,7 +1,6 @@
 package com.ref;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 import java.net.MalformedURLException;
@@ -9,11 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ref.fdr.FdrWrapper;
-import com.ref.fdr.FdrWrapper2;
 
 public class ReflectionTest {
 
@@ -69,9 +66,11 @@ public class ReflectionTest {
 			assertEquals("endInteraction", result.get(0).get(0));
 			assertEquals(
 					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, "
-					+ "B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, A_mSIG.s.lf2id.lf1id.m1, A_mSIG.r.lf2id.lf1id.m1, endInteraction|"
-					+ "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, τ, endInteraction",
+					+ "B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, A_mSIG.s.lf2id.lf1id.m1, A_mSIG.r.lf2id.lf1id.m1, endInteraction",
 					result.get(0).get(1));// Especificação
+			assertEquals(
+					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, τ, endInteraction",
+					result.get(0).get(2));
 			// assertEquals("endInteraction", result.get(1).get(0));
 			// System.out.println(result.get(1).get(1));
 			assertEquals("B_mOP.s.lf1id.lf2id.m0_I",result.get(1).get(0));
@@ -105,22 +104,5 @@ public class ReflectionTest {
 	// }
 
 	// Testes no FdrWrapper2
-
-	@Ignore
-	@Test
-	public void refinementTestWrapper2() {
-		FdrWrapper2 wrapper = new FdrWrapper2();
-		try {
-			List<String> result = wrapper.fdrRefinement("result.csp");
-			assertEquals(
-					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
-					result.get(0));// Especificação
-			assertEquals(
-					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
-					result.get(1));
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
-	}
 
 }

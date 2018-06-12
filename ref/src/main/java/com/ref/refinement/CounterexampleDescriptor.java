@@ -37,37 +37,14 @@ public class CounterexampleDescriptor {
 	private Map<String, String> lifelines;
 	private List<String> sortedLifelines;
 
-	private void loadInfo() {
-
-		SDParser parser = null;
-		try {
-			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/testRef3.asta");
-			INamedElement[] findSequence = findSequence(projectAccessor);
-			// createSD(projectAccessor);
-
-			ISequenceDiagram seq1;
-			ISequenceDiagram seq2;
-
-			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
-				seq1 = (ISequenceDiagram) findSequence[0];
-				seq2 = (ISequenceDiagram) findSequence[1];
-			} else {
-				seq1 = (ISequenceDiagram) findSequence[1];
-				seq2 = (ISequenceDiagram) findSequence[0];
-			}
-			parser = new SDParser(seq1, seq2);
-			parser.carregaLifelines();
-			lifelines = parser.getLifelineMapping();
-			sortedLifelines = sortMap(lifelines);
-		} catch (ProjectNotFoundException e) {
-			System.out.println("aqui");
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	
+	public void init(Map<String,String> lifelines){
+		this.lifelines = lifelines;
+		this.sortedLifelines = sortMap(lifelines);
+		System.out.println("Setou as lifelines");
 	}
-
+	
+	
 	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
 		INamedElement[] foundElements = projectAccessor.findElements(new ModelFinder() {
 			public boolean isTarget(INamedElement namedElement) {
@@ -149,17 +126,20 @@ public class CounterexampleDescriptor {
 		return nomes;
 	}
 
-	public void createSD(String name, List<String> entrada) throws ClassNotFoundException, LicenseNotFoundException,
+	public void createSD(String name, List<String> entrada,ProjectAccessor projectAccessor) throws ClassNotFoundException, LicenseNotFoundException,
 			ProjectNotFoundException, IOException, ProjectLockedException {
 
-		loadInfo();
+		System.out.println("Entrou aqui");
+		
+		//loadInfo();
 		List<String> events = preProcess(entrada);
-		ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
+		if(projectAccessor == null)
+			 projectAccessor = ProjectAccessorFactory.getProjectAccessor();
 		try {
 			projectAccessor.create(name);
 			TransactionManager.beginTransaction();
-			createModels(events);
-			createSequenceDiagram(events);
+			createModels(events,projectAccessor);
+			createSequenceDiagram(events,projectAccessor);
 			TransactionManager.endTransaction();
 			projectAccessor.save();
 
@@ -168,13 +148,13 @@ public class CounterexampleDescriptor {
 			e.printStackTrace();
 		} finally {
 			TransactionManager.abortTransaction();
-			projectAccessor.close();
+			//projectAccessor.close();
 		}
 	}
 
-	private void createModels(List<String> events)
+	private void createModels(List<String> events, ProjectAccessor projectAccessor)
 			throws ProjectNotFoundException, ClassNotFoundException, InvalidEditingException {
-		ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
+		//ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
 		IModel project = projectAccessor.getProject();
 		BasicModelEditor bme = ModelEditorFactory.getBasicModelEditor();
 
@@ -198,9 +178,9 @@ public class CounterexampleDescriptor {
 		// bme.createParameter(op, "param0", boundary);
 	}
 
-	private void createSequenceDiagram(List<String> events) throws Exception {
+	private void createSequenceDiagram(List<String> events,ProjectAccessor projectAccessor) throws Exception {
 
-		ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
+		//ProjectAccessor projectAccessor = ProjectAccessorFactory.getProjectAccessor();
 		IModel project = projectAccessor.getProject();
 		// IClass cls1 = findNamedElement(project.getOwnedElements(), "Class1",
 		// IClass.class);
