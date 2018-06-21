@@ -120,6 +120,7 @@ public class SDParser {
 		process.append(defineTypes());
 		process.append(parseChannels());
 		process.append(parseSD(seq1));
+		process.append("\n");
 		process.append(parseSD(seq2));
 		return process.toString();
 	}

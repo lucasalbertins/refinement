@@ -7,11 +7,9 @@ subtype B_OPS = m0_I | m0_O
 get_id(m1) = m1
 get_id(m0_I) = m0_I
 get_id(m0_O) = m0_O
-
 channel beginInteraction,endInteraction
 channel A_mSIG: COM.ID.ID.A_SIG
 channel B_mOP: COM.ID.ID.B_OPS
-
 Seq0_t_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP)
 Seq0_u_B(sd_id,lf1_id,lf2_id) =(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);(B_mOP.s!lf2_id!lf1_id.m0_O -> SKIP)
 Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id)

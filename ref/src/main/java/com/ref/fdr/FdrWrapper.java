@@ -164,7 +164,7 @@ public class FdrWrapper {
 
 			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
 					null)) {
-
+				
 				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
 				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
@@ -204,7 +204,6 @@ public class FdrWrapper {
 
 		// Adiciona o trace do contraExemplo
 		if (errorEvent.equals("endInteraction")) {
-			System.out.println("Entrou");
 			if (counterExample.getClass().getName().equals(traceCounterexampleClass.getName())) {
 
 				Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");

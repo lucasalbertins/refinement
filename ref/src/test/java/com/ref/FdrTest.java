@@ -67,7 +67,7 @@ public class FdrTest {
 
 	}
 
-	@Ignore
+	
 	@Test
 	public void refinementAssertion() throws InvalidEditingException {
 		parser.defineTypes();
@@ -80,7 +80,7 @@ public class FdrTest {
 		assertEquals(expected, actual);
 	}
 
-	@Ignore
+	
 	@Test
 	public void verificarConteudo() throws IOException, InvalidEditingException {
 		StringBuffer sbArquivo = new StringBuffer();
@@ -136,7 +136,7 @@ public class FdrTest {
 		assertEquals(true, new File("resultado2.csp").exists());
 	}
 
-	@Ignore
+	
 	@Test
 	public void compararArquivos() throws IOException{
 		StringBuilder sb1 = new StringBuilder();

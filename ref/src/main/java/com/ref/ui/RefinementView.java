@@ -25,6 +25,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.INamedElement;
@@ -60,7 +61,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 
 	public RefinementView() {
 		try {
-			projectAccessor = ProjectAccessorFactory.getProjectAccessor();
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -129,33 +130,52 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				System.out.println("Fazer tradução dos diagramas");
-
 				try {
-					INamedElement[] sds = findSequence();
-					ISequenceDiagram seq1 = ((ISequenceDiagram) sds[0]);
-					ISequenceDiagram seq2 = ((ISequenceDiagram) sds[1]);
+					ISequenceDiagram seq1 = null;
+					ISequenceDiagram seq2 = null;
+
+					INamedElement[] sequence = findSequence();
+
+					for (int i = 0; i < sequence.length; i++) {
+						if (seq1 != null && seq2 != null)
+							break;
+						else {
+							if (sequence[i].getName().equals(combo1.getSelectedItem())) {
+								seq1 = (ISequenceDiagram) sequence[i];
+							} else if (sequence[i].getName().equals(combo2.getSelectedItem())) {
+								seq2 = (ISequenceDiagram) sequence[i];
+							}
+						}
+					}
+					
 					SDParser parser = new SDParser(seq1, seq2);
 					parser.carregaLifelines();
+					CounterexampleDescriptor cd = new CounterexampleDescriptor();
+					cd.init(parser.getLifelineMapping());
+
 					String resultado = parser.parseSDs();
+
 					System.out.println(resultado);
 					System.out.println("Criar arquivo CSP");
-//					FileWriter fw = new FileWriter("test.csp");
-//					BufferedWriter bw = new BufferedWriter(fw);
-//					bw.write(resultado);
-//					bw.close();
-//					fw.close();
+					File file = new File("C:\\Program Files\\Resultados\\test.csp");
+					System.out.println("PATH: " + file.getParent());
+					FileWriter fw = new FileWriter(file);
+					BufferedWriter bw = new BufferedWriter(fw);
+					bw.write(resultado);
+					bw.write("\n");
+					bw.write(parser.refinementAssertion());
+					bw.close();
+					fw.close();
 					System.out.println("Rodar o FDR");
 					FdrWrapper wrapper = new FdrWrapper();
 					wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 					wrapper.loadClasses();
-					
-					Map<Integer, List<String>> res = wrapper.verify("C:\\Users\\Daniel\\Git\\refinement\\ref\\result - Copia.csp");
+
+					Map<Integer, List<String>> res = wrapper
+							.verify("C:\\Program Files\\Resultados\\test.csp");
 					System.out.println("Gerar diagrama de contraExemplo");
-					CounterexampleDescriptor cd = new CounterexampleDescriptor();
-					cd.init(parser.getLifelineMapping());
-					System.out.println("Entrada :" + res.get(0));
-					cd.createSD("SD_result", res.get(1),projectAccessor);
+					System.out.println("Entrada :" + res.get(1));
+					cd.createSD("SD_result", res.get(1), projectAccessor);
 
 				} catch (Exception ex) {
 					// TODO: handle exception
