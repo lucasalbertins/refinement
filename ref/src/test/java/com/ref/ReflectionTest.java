@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.ref.fdr.FdrWrapper;
@@ -56,13 +57,16 @@ public class ReflectionTest {
 		}
 	}
 
+	@Ignore
 	@Test
-	public void refinementTest1() {
+	public void refinementTestSTRICT() {
 		FdrWrapper wrapper = new FdrWrapper();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
 			wrapper.loadClasses();
-			Map<Integer, List<String>> result = wrapper.verify("result - Copia.csp");
+			boolean hasCounterExample = wrapper.verify("result - Copia.csp","STRICT");
+			Map<Integer, List<String>> result = wrapper.getCounterExamples();
+			assertEquals(true, hasCounterExample);
 			assertEquals("endInteraction", result.get(0).get(0));
 			assertEquals(
 					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, "
@@ -82,27 +86,39 @@ public class ReflectionTest {
 		}
 	}
 
-	// @Test
-	// public void refinementTest2() {
-	// FdrWrapper wrapper = new FdrWrapper();
-	// wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
-	// try {
-	// wrapper.loadClasses();
-	// List<String> result = wrapper.verify("resultado2.csp",0);
-	// assertNull(result);
-	// //assertEquals("endInteraction", result.get(0));
-	// //assertEquals("beginInteraction, B_mSIG.s.lf1id.lf2id.m0,
-	// B_mSIG.r.lf1id.lf2id.m0, -, -, -, ",
-	// // result.get(1));// Especificação
-	// //assertEquals(
-	// // "beginInteraction, B_mSIG.s.lf1id.lf2id.m0, B_mSIG.r.lf1id.lf2id.m0,
-	// -, -, -, ",
-	// // result.get(2));
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
+	 @Ignore
+	 @Test
+	 public void refinementTestWEAK() {
+	 FdrWrapper wrapper = new FdrWrapper();
+	 wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+	 try{
+		 wrapper.loadClasses();
+		 boolean hasCounterExample = wrapper.verify("result - Copia.csp","WEAK");
+		 Map<Integer, List<String>> result = wrapper.getCounterExamples();
+		 assertEquals(true, hasCounterExample);
+		 assertEquals(null, result.get(0));
+		 assertEquals("B_mOP.s.lf1id.lf2id.m0_I",result.get(1).get(0));
+			assertEquals(
+					"beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, ",
+					result.get(1).get(1));
+		 
+	 }catch (Exception e) {
+		 fail(e.getMessage());
+	 }
+	 
+	 }
 
-	// Testes no FdrWrapper2
-
+	 @Test
+	 public void refinementSucess(){
+		 FdrWrapper wrapper = new FdrWrapper();
+		 wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		 try{
+			 wrapper.loadClasses();
+			 boolean hasCounterExample = wrapper.verify("resultado2.csp","WEAK");
+			 assertEquals(false, hasCounterExample);			 
+		 }catch (Exception e) {
+			 fail(e.getMessage());
+		 }
+	 }
+	 
 }

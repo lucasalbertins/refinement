@@ -194,7 +194,7 @@ public class CounterexampleDescriptor {
 		// ISequenceDiagram newDgm2 = de.createSequenceDiagram(op0, "Sequence
 		// Diagram2");
 		// newDgm2.getInteraction().setArgument("seq arg2");
-		ISequenceDiagram newDgm = de.createSequenceDiagram(project, "Sequence Diagram1");
+		ISequenceDiagram newDgm = de.createSequenceDiagram(project, "CounterExample");
 
 		// create lifelines
 		List<INodePresentation> myLifelines = new ArrayList<INodePresentation>();
@@ -232,6 +232,7 @@ public class CounterexampleDescriptor {
 
 		System.out.println("Specification possui: " + msgsSpecification.size());
 		for (int i = 0; i < msgsSpecification.size(); i++) {
+			System.out.println(msgsSpecification.get(i));
 			String[] split = msgsSpecification.get(i).split("\\.");
 
 			if (split[0].contains("SIG"))
@@ -373,7 +374,8 @@ public class CounterexampleDescriptor {
 		List<String> msgs = new ArrayList<String>();
 		String[] split = string.split(", ");
 		for (int i = 0; i < split.length; i++) {
-			msgs.add(split[i]);
+			if(!split[i].equals(""))
+				msgs.add(split[i]);
 		}
 		return msgs;
 	}

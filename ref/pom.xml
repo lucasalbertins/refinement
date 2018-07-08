@@ -7,7 +7,7 @@
 		<plugin.install>true</plugin.install>
 		<astah.version>6.7</astah.version>
 		<astah.edition>all</astah.edition>
-		<fdr.install>C:\Program Files\FDR\bin</fdr.install>
+		<astahPath>C:\Program Files\astah-professional</astahPath>
 	</properties>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.ref</groupId>
@@ -270,14 +270,14 @@
 			<artifactId>astah-api</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:\Program Files\astah-professional\astah-api.jar</systemPath>
+			<systemPath>${astahPath}\astah-api.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.change_vision.astah</groupId>
 			<artifactId>astah-api-pro</artifactId>
 			<version>${astah.version}</version>
 			<scope>system</scope>
-			<systemPath>C:\Program Files\astah-professional\astah-pro.jar</systemPath>
+			<systemPath>${astahPath}\astah-pro.jar</systemPath>
 		</dependency>
 		
 		<dependency>

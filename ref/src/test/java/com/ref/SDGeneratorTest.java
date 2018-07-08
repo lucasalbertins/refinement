@@ -32,7 +32,8 @@ public class SDGeneratorTest {
 			//String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, B_mOP.s.lf1id.lf2id.m0_I, ";
 			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 			wrapper.loadClasses();
-			Map<Integer, List<String>> result = wrapper.verify("result - Copia.csp");
+			wrapper.verify("result - Copia.csp","STRICT");
+			Map<Integer, List<String>> result = wrapper.getCounterExamples();
 			List<String> entrada = result.get(0);
 			loadInfo(descript);
 			descript.createSD("SDteste.asta", entrada,null);

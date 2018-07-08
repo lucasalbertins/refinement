@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -57,6 +58,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 	private JRadioButton weakRefinementType;
 	private JComboBox<String> combo1;
 	private JComboBox<String> combo2;
+	private FdrWrapper wrapper;
+	private CounterexampleDescriptor descriptor;
 	private ProjectAccessor projectAccessor;
 
 	public RefinementView() {
@@ -124,150 +127,100 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 		c.gridwidth = 2;
 		add(button, c);
 		addProjectEventListener();
-
+		
+		wrapper= FdrWrapper.getInstance();
+		
 		button.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
 				try {
-					ISequenceDiagram seq1 = null;
-					ISequenceDiagram seq2 = null;
-
-					INamedElement[] sequence = findSequence();
-
-					for (int i = 0; i < sequence.length; i++) {
-						if (seq1 != null && seq2 != null)
-							break;
-						else {
-							if (sequence[i].getName().equals(combo1.getSelectedItem())) {
-								seq1 = (ISequenceDiagram) sequence[i];
-							} else if (sequence[i].getName().equals(combo2.getSelectedItem())) {
-								seq2 = (ISequenceDiagram) sequence[i];
+					boolean result = true;
+					if (strictRefinementType.isSelected()) {
+						executeRefinement();
+						result = wrapper.verify("C:\\Users\\Daniel\\Git\\refinement\\ref\\resultados\\test.csp", "STRICT");
+						if (result) {
+							System.out.println("EXECUTANDO STRICTREF");
+							Map<Integer, List<String>> res = wrapper.getCounterExamples();
+							for (int i = 0; i <= 1; i++) {
+								System.out.println("Iteration " + i);
+								if (res.get(i) != null) {
+									System.out.println("Entrada :" + res.get(i));
+									descriptor.createSD("SD_result", res.get(i), projectAccessor);
+									break;
+								}
 							}
 						}
+					} else if (weakRefinementType.isSelected()) {
+						executeRefinement();
+						result = wrapper.verify("C:\\Program Files\\Resultados\\test.csp", "WEAK");
+						if (result) {
+							Map<Integer, List<String>> res = wrapper.getCounterExamples();
+							System.out.println("Entrada :" + res.get(1));
+							descriptor.createSD("SD_result", res.get(1), projectAccessor);
+						}
+					} else {
+						JOptionPane.showMessageDialog(null, "Select a type of Refinement!", "Error",
+								JOptionPane.WARNING_MESSAGE);
 					}
-					
-					SDParser parser = new SDParser(seq1, seq2);
-					parser.carregaLifelines();
-					CounterexampleDescriptor cd = new CounterexampleDescriptor();
-					cd.init(parser.getLifelineMapping());
 
-					String resultado = parser.parseSDs();
-
-					System.out.println(resultado);
-					System.out.println("Criar arquivo CSP");
-					File file = new File("C:\\Program Files\\Resultados\\test.csp");
-					System.out.println("PATH: " + file.getParent());
-					FileWriter fw = new FileWriter(file);
-					BufferedWriter bw = new BufferedWriter(fw);
-					bw.write(resultado);
-					bw.write("\n");
-					bw.write(parser.refinementAssertion());
-					bw.close();
-					fw.close();
-					System.out.println("Rodar o FDR");
-					FdrWrapper wrapper = new FdrWrapper();
-					wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
-					wrapper.loadClasses();
-
-					Map<Integer, List<String>> res = wrapper
-							.verify("C:\\Program Files\\Resultados\\test.csp");
-					System.out.println("Gerar diagrama de contraExemplo");
-					System.out.println("Entrada :" + res.get(1));
-					cd.createSD("SD_result", res.get(1), projectAccessor);
+					if (!result) {
+						JOptionPane.showMessageDialog(null, "No Counter Examples found !", "Result",
+								JOptionPane.INFORMATION_MESSAGE);
+					}
 
 				} catch (Exception ex) {
-					// TODO: handle exception
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 
-				// System.out.println("Rodar arquivo no FDR");
-				// System.out.println("Criar diagrama de contraExemplo");
-				//
-				// JOptionPane.showMessageDialog(null, "TESTE");
-				// verifySequenceDiagramRefinement();
-				// try {
-				// INamedElement[] sds = findSequence();
-				// System.out.println(seq1.getName());
-				// IPresentation[] presentations = seq1.getPresentations();
-				// System.out.println("Vou Imprimir as apresentacoes");
-				// for (IPresentation presentation : presentations) {
-				// System.out.println(presentation.getType());
-				// if (presentation.getType().equals("Message")) {
-				// if (presentation instanceof IMessagePresentation) {
-				// IMessagePresentation msgPrs = (IMessagePresentation)
-				// presentation;
-				// System.out.println("Name: " +
-				// msgPrs.getMessage().getNameString());
-				//
-				// }
-				// }
-				// }
-				//
-				// } catch (ProjectNotFoundException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// } catch (InvalidUsingException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// }
-				// }
-				//
-				// private void verifySequenceDiagramRefinement() {
-				// try {
-				// Properties p = new Properties();
-				// File propertyFile = new
-				// File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
-				// if (!propertyFile.exists()) {
-				// JOptionPane.showMessageDialog(combo1.getParent().getParent(),
-				// "FDR3 location not set!", "Error",
-				// JOptionPane.ERROR_MESSAGE);
-				// } else {
-				// p.load(new FileInputStream(propertyFile));
-				// String property =
-				// p.getProperty(FDR3LocationDialog.FDR3_LOCATION_PROPERTY);
-				// if (property == null || property.equals("")) {
-				// JOptionPane.showMessageDialog(combo1.getParent().getParent(),
-				// "FDR3 location not set!",
-				// "Error", JOptionPane.ERROR_MESSAGE);
-				// } else {
-				// ISequenceDiagram seq1 = null;
-				// ISequenceDiagram seq2 = null;
-				// INamedElement[] findSequence;
-				// try {
-				// findSequence = findSequence();
-				// for (int i = 0; i < findSequence.length; i++) {
-				// if (seq1 != null && seq2 != null) {
-				// break;
-				// }
-				// if
-				// (findSequence[i].getName().equals(combo1.getSelectedItem()))
-				// {
-				// seq1 = (ISequenceDiagram) findSequence[i];
-				// } else if
-				// (findSequence[i].getName().equals(combo2.getSelectedItem()))
-				// {
-				// seq2 = (ISequenceDiagram) findSequence[i];
-				// }
-				// }
-				// } catch (ProjectNotFoundException e1) {
-				// // TODO Auto-generated catch block
-				// e1.printStackTrace();
-				// }
-				// if (seq1 != null && seq2 != null) {
-				// // RefinementController controller =
-				// // RefinementController.getInstance();
-				//
-				// }
-				// }
-				// }
-				//
-				// } catch (Exception e2) {
-				// // TODO Auto-generated catch block
-				// e2.printStackTrace();
-				// }
 			}
 		});
+	}
+
+
+	private void executeRefinement() {
+		try {
+			ISequenceDiagram seq1 = null;
+			ISequenceDiagram seq2 = null;
+
+			INamedElement[] sequence = findSequence();
+
+			for (int i = 0; i < sequence.length; i++) {
+				if (seq1 != null && seq2 != null)
+					break;
+				else {
+					if (sequence[i].getName().equals(combo1.getSelectedItem())) {
+						seq1 = (ISequenceDiagram) sequence[i];
+					} else if (sequence[i].getName().equals(combo2.getSelectedItem())) {
+						seq2 = (ISequenceDiagram) sequence[i];
+					}
+				}
+			}
+
+			SDParser parser = new SDParser(seq1, seq2);
+			parser.carregaLifelines();
+			this.descriptor = new CounterexampleDescriptor();
+			descriptor.init(parser.getLifelineMapping());
+
+			String resultado = parser.parseSDs();
+
+			System.out.println(resultado);
+			System.out.println("Criar arquivo CSP");
+			File file = new File("C:\\Users\\Daniel\\Git\\refinement\\ref\\resultados\\test.csp");
+			System.out.println("PATH: " + file.getParent());
+			FileWriter fw = new FileWriter(file);
+			BufferedWriter bw = new BufferedWriter(fw);
+			bw.write(resultado);
+			bw.write("\n");
+			bw.write(parser.refinementAssertion());
+			bw.close();
+			fw.close();			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private INamedElement[] findSequence() throws ProjectNotFoundException {

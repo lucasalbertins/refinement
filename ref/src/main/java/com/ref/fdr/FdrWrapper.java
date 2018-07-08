@@ -17,6 +17,10 @@ import java.util.Map;
 
 public class FdrWrapper {
 
+	private static FdrWrapper instance;
+
+	private Map<Integer, List<String>> resultado;
+
 	private URLClassLoader urlCl;
 
 	private Class fdrClass;
@@ -71,6 +75,18 @@ public class FdrWrapper {
 
 			return false;
 
+	}
+
+	private FdrWrapper() {
+
+	}
+
+	public static FdrWrapper getInstance() {
+		if (instance == null) {
+			instance = new FdrWrapper();
+		}
+
+		return instance;
 	}
 
 	public void loadClasses() throws MalformedURLException, ClassNotFoundException {
@@ -151,39 +167,49 @@ public class FdrWrapper {
 
 	}
 
-	public Map<Integer, List<String>> verify(String filename) throws Exception {
+	public Map<Integer, List<String>> getCounterExamples() {
+		return this.resultado;
+	}
 
-		Map<Integer, List<String>> resultado = new HashMap<Integer, List<String>>();
+	public boolean verify(String filename, String refType) throws Exception{
+
+		this.resultado = new HashMap<Integer, List<String>>();
 		List<String> resultParcial = null;
 		int iteration = 0;
-		try {
+		boolean hasCounterExample = false;
 
-			Object session = sessionClass.newInstance();
-
-			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
-					null)) {
+			Object session;
+			try {
+				session = sessionClass.newInstance();
+				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 				
-				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
-				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-						"counterexamples", null, null)) {
-
-					resultParcial = describeCounterExample(session, counterExample);
-					resultado.put(iteration, resultParcial);
-
+				for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
+						null)) {
+					
+					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+					
+					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+							"counterexamples", null, null)) {
+						
+						if (refType.equals("STRICT") || (refType.equals("WEAK") && iteration == 1)) {
+							resultParcial = describeCounterExample(session, counterExample);
+							this.resultado.put(iteration, resultParcial);
+						}
+						
+						hasCounterExample = true;
+					}
+					iteration++;
 				}
-				iteration++;
+			} catch (InstantiationException e) {
+				throw new Exception("Set your fdr path 1");
+			} catch (IllegalAccessException e) {
+				throw new Exception("Set your fdr path 2");
+			} catch (Exception e) {
+				throw new Exception("Set your fdr path 3");
 			}
 
-		} catch (NullPointerException e) {
-			return null;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return resultado;
+   
+		return hasCounterExample;
 	}
 
 	public List<String> describeCounterExample(Object session, Object counterExample) throws Exception {
@@ -283,9 +309,9 @@ public class FdrWrapper {
 			Object evento = invokeProperty(TransitionList, transitionList, "get", int.class, 0);
 			Object eventID = invokeProperty(Transition, evento, "event", null, null);
 			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) eventID);
-			//System.out.println(result.toString());
-			if(!result.equals("τ")){
-				sb.append(result.toString());				
+			// System.out.println(result.toString());
+			if (!result.equals("τ")) {
+				sb.append(result.toString());
 			}
 			if (result.toString().equals("endInteraction"))
 				break;

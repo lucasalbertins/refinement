@@ -26,7 +26,7 @@ import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.SDParser;
 
-public class FdrTest {
+public class FileTest {
 
 	private static SDParser parser;
 	private static ISequenceDiagram seq1;
@@ -45,7 +45,7 @@ public class FdrTest {
 			br = new BufferedReader(fr);
 
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/testRef3.asta");
+			projectAccessor.open("src/test/resources/testRef2.asta");
 			INamedElement[] findSequence = findSequence(projectAccessor);
 			// createSD(projectAccessor);
 
@@ -67,7 +67,7 @@ public class FdrTest {
 
 	}
 
-	
+	@Ignore
 	@Test
 	public void refinementAssertion() throws InvalidEditingException {
 		parser.defineTypes();
@@ -80,7 +80,7 @@ public class FdrTest {
 		assertEquals(expected, actual);
 	}
 
-	
+	@Ignore
 	@Test
 	public void verificarConteudo() throws IOException, InvalidEditingException {
 		StringBuffer sbArquivo = new StringBuffer();
