@@ -119,9 +119,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 		c.gridy = 4;
 
 		add(combo2, c);
-		c.gridx = 0;
-		c.gridy = 5;
-		add(renameBut, c);
+		//c.gridx = 0;
+		//c.gridy = 5;
+		//add(renameBut, c);
 		c.gridx = 0;
 		c.gridy = 6;
 		c.gridwidth = 2;

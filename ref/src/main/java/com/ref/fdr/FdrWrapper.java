@@ -205,7 +205,7 @@ public class FdrWrapper {
 			} catch (IllegalAccessException e) {
 				throw new Exception("Set your fdr path 2");
 			} catch (Exception e) {
-				throw new Exception("Set your fdr path 3");
+				throw new Exception(e.getMessage());
 			}
 
    
