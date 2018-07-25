@@ -59,6 +59,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 	private JComboBox<String> combo1;
 	private JComboBox<String> combo2;
 	private FdrWrapper wrapper;
+	private File cspFile;
 	private CounterexampleDescriptor descriptor;
 	private ProjectAccessor projectAccessor;
 
@@ -105,8 +106,6 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 		add(combo1, c);
 		c.gridx = 0;
 		c.gridy = 3;
-		c.gridwidth = 2;
-		c.ipady = 20;
 
 		c.anchor = GridBagConstraints.CENTER;
 		add(createLabelPane("is refined by"), c);
@@ -119,8 +118,10 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 		c.gridy = 4;
 
 		add(combo2, c);
-		//c.gridx = 0;
-		//c.gridy = 5;
+		c.gridx = 0;
+		c.gridy = 4;
+		c.gridwidth = 2;
+		c.ipady = 20;
 		//add(renameBut, c);
 		c.gridx = 0;
 		c.gridy = 6;
@@ -139,14 +140,11 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 					boolean result = true;
 					if (strictRefinementType.isSelected()) {
 						executeRefinement();
-						result = wrapper.verify("C:\\Users\\Daniel\\Git\\refinement\\ref\\resultados\\test.csp", "STRICT");
+						result = wrapper.verify("test.csp", "STRICT");
 						if (result) {
-							System.out.println("EXECUTANDO STRICTREF");
 							Map<Integer, List<String>> res = wrapper.getCounterExamples();
 							for (int i = 0; i <= 1; i++) {
-								System.out.println("Iteration " + i);
 								if (res.get(i) != null) {
-									System.out.println("Entrada :" + res.get(i));
 									descriptor.createSD("SD_result", res.get(i), projectAccessor);
 									break;
 								}
@@ -154,10 +152,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 						}
 					} else if (weakRefinementType.isSelected()) {
 						executeRefinement();
-						result = wrapper.verify("C:\\Program Files\\Resultados\\test.csp", "WEAK");
+						result = wrapper.verify("test.csp", "WEAK");
 						if (result) {
 							Map<Integer, List<String>> res = wrapper.getCounterExamples();
-							System.out.println("Entrada :" + res.get(1));
 							descriptor.createSD("SD_result", res.get(1), projectAccessor);
 						}
 					} else {
@@ -169,6 +166,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 						JOptionPane.showMessageDialog(null, "No Counter Examples found !", "Result",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
+					
+					cspFile.delete();
 
 				} catch (Exception ex) {
 					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
@@ -206,11 +205,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 
 			String resultado = parser.parseSDs();
 
-			System.out.println(resultado);
-			System.out.println("Criar arquivo CSP");
-			File file = new File("C:\\Users\\Daniel\\Git\\refinement\\ref\\resultados\\test.csp");
-			System.out.println("PATH: " + file.getParent());
-			FileWriter fw = new FileWriter(file);
+			cspFile = new File("test.csp");
+			FileWriter fw = new FileWriter(cspFile);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(resultado);
 			bw.write("\n");

@@ -125,7 +125,6 @@ public class FDR3LocationDialog extends JDialog {
 					} else if (System.getProperty("os.name").contains("Win")) {
 						filename = tf.getText() + "\\bin\\fdr.jar";
 					}
-					System.out.println(filename);
 					File fdrlib = new File(filename);
 					if (!fdrlib.exists()) {
 						msg.setText("Library fdr.jar not found!");

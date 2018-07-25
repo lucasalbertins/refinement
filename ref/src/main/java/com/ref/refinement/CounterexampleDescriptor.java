@@ -40,7 +40,6 @@ public class CounterexampleDescriptor {
 	public void init(Map<String, String> lifelines) {
 		this.lifelines = lifelines;
 		this.sortedLifelines = sortMap(lifelines);
-		System.out.println("Setou as lifelines");
 	}
 
 	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
@@ -56,7 +55,6 @@ public class CounterexampleDescriptor {
 			throws ClassNotFoundException, LicenseNotFoundException, ProjectNotFoundException, IOException,
 			ProjectLockedException {
 
-		System.out.println("Entrou aqui");
 
 		// loadInfo();
 		List<String> events = preProcess(entrada);
@@ -71,7 +69,6 @@ public class CounterexampleDescriptor {
 			TransactionManager.endTransaction();
 			projectAccessor.save();
 
-			System.out.println("Create SeqSample.asta Project done.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -102,7 +99,6 @@ public class CounterexampleDescriptor {
 	}
 
 	private List<String> getClasses(List<String> events) {
-		System.out.println("CLASSES:");
 		List<String> classes = new ArrayList<String>();
 		String classe = "";
 		for (int i = 0; i < events.size(); i++) {
@@ -230,9 +226,7 @@ public class CounterexampleDescriptor {
 		int msgPosition = 160;
 		int msgType = 0;
 
-		System.out.println("Specification possui: " + msgsSpecification.size());
 		for (int i = 0; i < msgsSpecification.size(); i++) {
-			System.out.println(msgsSpecification.get(i));
 			String[] split = msgsSpecification.get(i).split("\\.");
 
 			if (split[0].contains("SIG"))
