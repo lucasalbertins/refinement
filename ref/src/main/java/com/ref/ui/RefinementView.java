@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -41,9 +42,11 @@ import com.change_vision.jude.api.inf.project.ProjectEventListener;
 import com.change_vision.jude.api.inf.ui.IPluginExtraTabView;
 import com.change_vision.jude.api.inf.ui.ISelectionListener;
 import com.ref.fdr.FdrWrapper;
+import com.ref.log.Logador;
 import com.ref.parser.SDParser;
 import com.ref.refinement.CounterexampleDescriptor;
 
+import JP.co.esm.caddies.jomt.jcontrol.L;
 import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
 
 //import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
@@ -59,6 +62,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 	private JComboBox<String> combo1;
 	private JComboBox<String> combo2;
 	private FdrWrapper wrapper;
+	private Logador logger;
 	private File cspFile;
 	private CounterexampleDescriptor descriptor;
 	private ProjectAccessor projectAccessor;
@@ -130,6 +134,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 		addProjectEventListener();
 		
 		wrapper= FdrWrapper.getInstance();
+		logger = Logador.getInstance();
 		
 		button.addActionListener(new ActionListener() {
 
@@ -139,8 +144,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 				try {
 					boolean result = true;
 					if (strictRefinementType.isSelected()) {
+						logger.log("iniciou");
 						executeRefinement();
-						result = wrapper.verify("test.csp", "STRICT");
+						result = wrapper.verify(cspFile.getAbsolutePath(), "STRICT");
 						if (result) {
 							Map<Integer, List<String>> res = wrapper.getCounterExamples();
 							for (int i = 0; i <= 1; i++) {
@@ -170,6 +176,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 					cspFile.delete();
 
 				} catch (Exception ex) {
+					for(StackTraceElement element :ex.getStackTrace()){
+						logger.log(element.toString());						
+					}
 					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -205,7 +214,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 
 			String resultado = parser.parseSDs();
 
-			cspFile = new File("test.csp");
+			cspFile = new File("C:\\log\\test.csp");
+			logger.log("LOGANDO PASTA DO USUÁRIO");
+			logger.log(System.getProperty("user.home"));
 			FileWriter fw = new FileWriter(cspFile);
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(resultado);

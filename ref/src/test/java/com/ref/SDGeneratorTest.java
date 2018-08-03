@@ -27,7 +27,7 @@ public class SDGeneratorTest {
 	@BeforeClass
 	public static void setup() {
 		try {
-			FdrWrapper wrapper = new FdrWrapper();
+			FdrWrapper wrapper = FdrWrapper.getInstance();
 			CounterexampleDescriptor descript = new CounterexampleDescriptor();
 			//String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, B_mOP.s.lf1id.lf2id.m0_I, ";
 			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");

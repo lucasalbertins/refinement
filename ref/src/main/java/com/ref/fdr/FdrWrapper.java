@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ref.log.Logador;
+
 public class FdrWrapper {
 
 	private static FdrWrapper instance;
@@ -205,6 +207,11 @@ public class FdrWrapper {
 			} catch (IllegalAccessException e) {
 				throw new Exception("Set your fdr path 2");
 			} catch (Exception e) {
+				Logador logger = Logador.getInstance();
+				logger.log("LOG FDRWRAPPER");
+				for(StackTraceElement element :e.getStackTrace()){
+					logger.log(element.toString());						
+				}
 				throw new Exception(e.getMessage());
 			}
 

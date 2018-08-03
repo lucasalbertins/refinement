@@ -17,14 +17,14 @@ public class ReflectionTest {
 
 	@Test
 	public void loadJar() {
-		FdrWrapper wrapper = new FdrWrapper();
+		FdrWrapper wrapper = FdrWrapper.getInstance();
 		boolean actual = wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		assertEquals(true, actual);
 	}
 
 	@Test
 	public void loadClasses() {
-		FdrWrapper wrapper = new FdrWrapper();
+		FdrWrapper wrapper = FdrWrapper.getInstance();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		List<String> classes = new ArrayList<String>();
 		classes.add("uk.ac.ox.cs.fdr.fdr");
@@ -60,7 +60,7 @@ public class ReflectionTest {
 	@Ignore
 	@Test
 	public void refinementTestSTRICT() {
-		FdrWrapper wrapper = new FdrWrapper();
+		FdrWrapper wrapper = FdrWrapper.getInstance();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
 			wrapper.loadClasses();
@@ -89,7 +89,7 @@ public class ReflectionTest {
 	 @Ignore
 	 @Test
 	 public void refinementTestWEAK() {
-	 FdrWrapper wrapper = new FdrWrapper();
+	 FdrWrapper wrapper = FdrWrapper.getInstance();
 	 wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 	 try{
 		 wrapper.loadClasses();
@@ -110,7 +110,7 @@ public class ReflectionTest {
 
 	 @Test
 	 public void refinementSucess(){
-		 FdrWrapper wrapper = new FdrWrapper();
+		 FdrWrapper wrapper = FdrWrapper.getInstance();
 		 wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		 try{
 			 wrapper.loadClasses();
