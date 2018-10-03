@@ -28,15 +28,14 @@ public class SDGeneratorTest {
 	public static void setup() {
 		try {
 			FdrWrapper wrapper = FdrWrapper.getInstance();
-			CounterexampleDescriptor descript = new CounterexampleDescriptor();
 			//String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, B_mOP.s.lf1id.lf2id.m0_I, ";
-			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+			wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 			wrapper.loadClasses();
 			wrapper.verify("result - Copia.csp","STRICT");
 			Map<Integer, List<String>> result = wrapper.getCounterExamples();
 			List<String> entrada = result.get(0);
-			loadInfo(descript);
-			descript.createSD("SDteste.asta", entrada,null);
+			CounterexampleDescriptor descript = loadInfo();
+			descript.buildCounterExample("SDteste.asta", entrada,null);
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("SDteste.asta");
 			findSequence = findSequence(projectAccessor);
@@ -45,14 +44,15 @@ public class SDGeneratorTest {
 		}
 	}
 	
-	public static void loadInfo(CounterexampleDescriptor descript) {
+	public static CounterexampleDescriptor loadInfo() {
 
 		SDParser parser = null;
+		CounterexampleDescriptor descript = null;
 		try {
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/testRef3.asta");
 			INamedElement[] findSequence = findSequence(projectAccessor);
-			// createSD(projectAccessor);
+			// buildCounterExample(projectAccessor);
 
 			ISequenceDiagram seq1;
 			ISequenceDiagram seq2;
@@ -66,13 +66,15 @@ public class SDGeneratorTest {
 			}
 			parser = new SDParser(seq1, seq2);
 			parser.carregaLifelines();
-			descript.init(parser.getLifelineMapping());
+			descript = new CounterexampleDescriptor(parser.getLifelineMapping());
+
 		} catch (ProjectNotFoundException e) {
 			System.out.println("aqui");
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return descript;
 	}
 
 

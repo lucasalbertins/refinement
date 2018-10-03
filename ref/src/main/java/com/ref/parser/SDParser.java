@@ -1,12 +1,6 @@
 package com.ref.parser;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.IClass;
@@ -56,7 +50,7 @@ public class SDParser {
 		mensagens = new ArrayList<String>();
 		lifelines = new HashMap<String, String>();
 		lifelines2 = new HashMap<String, String>();
-		lifelines3 = new HashMap<String,String>();
+		lifelines3 = new TreeMap<>();
 		alfabets = new HashMap<String, String>();
 		procs = new ArrayList<String>(); {
 		};
@@ -70,7 +64,7 @@ public class SDParser {
 	
 	public void lifelineMapping(ILifeline lifeline,int aux){
 		String base = getLifelineBase(lifeline);
-		String instance = lifeline.getName().toString();
+		String instance = lifeline.getName().toString();System.out.println("Adicionou " + base);
 		lifelines3.put("lf"+aux+"id", base+"_"+instance);
 	}
 	

@@ -47,7 +47,7 @@ public class FileTest {
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/testRef2.asta");
 			INamedElement[] findSequence = findSequence(projectAccessor);
-			// createSD(projectAccessor);
+			// buildCounterExample(projectAccessor);
 
 			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
 				seq1 = (ISequenceDiagram) findSequence[0];

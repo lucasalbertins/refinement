@@ -18,14 +18,14 @@ public class ReflectionTest {
 	@Test
 	public void loadJar() {
 		FdrWrapper wrapper = FdrWrapper.getInstance();
-		boolean actual = wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		boolean actual = wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 		assertEquals(true, actual);
 	}
 
 	@Test
 	public void loadClasses() {
 		FdrWrapper wrapper = FdrWrapper.getInstance();
-		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 		List<String> classes = new ArrayList<String>();
 		classes.add("uk.ac.ox.cs.fdr.fdr");
 		classes.add("uk.ac.ox.cs.fdr.Session");
@@ -61,7 +61,7 @@ public class ReflectionTest {
 	@Test
 	public void refinementTestSTRICT() {
 		FdrWrapper wrapper = FdrWrapper.getInstance();
-		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 		try {
 			wrapper.loadClasses();
 			boolean hasCounterExample = wrapper.verify("result - Copia.csp","STRICT");
@@ -90,7 +90,7 @@ public class ReflectionTest {
 	 @Test
 	 public void refinementTestWEAK() {
 	 FdrWrapper wrapper = FdrWrapper.getInstance();
-	 wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+	 wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 	 try{
 		 wrapper.loadClasses();
 		 boolean hasCounterExample = wrapper.verify("result - Copia.csp","WEAK");
@@ -111,7 +111,7 @@ public class ReflectionTest {
 	 @Test
 	 public void refinementSucess(){
 		 FdrWrapper wrapper = FdrWrapper.getInstance();
-		 wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+		 wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 		 try{
 			 wrapper.loadClasses();
 			 boolean hasCounterExample = wrapper.verify("resultado2.csp","WEAK");

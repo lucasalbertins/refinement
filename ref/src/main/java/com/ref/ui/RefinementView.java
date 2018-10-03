@@ -7,17 +7,10 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -28,14 +21,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import com.change_vision.jude.api.inf.AstahAPI;
-import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
-import com.change_vision.jude.api.inf.presentation.IPresentation;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.change_vision.jude.api.inf.project.ProjectAccessorFactory;
 import com.change_vision.jude.api.inf.project.ProjectEditUnit;
 import com.change_vision.jude.api.inf.project.ProjectEvent;
 import com.change_vision.jude.api.inf.project.ProjectEventListener;
@@ -45,9 +35,6 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.log.Logador;
 import com.ref.parser.SDParser;
 import com.ref.refinement.CounterexampleDescriptor;
-
-import JP.co.esm.caddies.jomt.jcontrol.L;
-import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
 
 //import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
 
@@ -151,7 +138,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 							Map<Integer, List<String>> res = wrapper.getCounterExamples();
 							for (int i = 0; i <= 1; i++) {
 								if (res.get(i) != null) {
-									descriptor.createSD("SD_result", res.get(i), projectAccessor);
+									descriptor.buildCounterExample("SD_result", res.get(i), projectAccessor);
 									break;
 								}
 							}
@@ -161,7 +148,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 						result = wrapper.verify("test.csp", "WEAK");
 						if (result) {
 							Map<Integer, List<String>> res = wrapper.getCounterExamples();
-							descriptor.createSD("SD_result", res.get(1), projectAccessor);
+							descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, "Select a type of Refinement!", "Error",
@@ -209,8 +196,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 
 			SDParser parser = new SDParser(seq1, seq2);
 			parser.carregaLifelines();
-			this.descriptor = new CounterexampleDescriptor();
-			descriptor.init(parser.getLifelineMapping());
+			this.descriptor = new CounterexampleDescriptor(parser.getLifelineMapping());
 
 			String resultado = parser.parseSDs();
 
