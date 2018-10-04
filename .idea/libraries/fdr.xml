@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="fdr">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/ref/lib/fdr/fdr/1.0/fdr.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

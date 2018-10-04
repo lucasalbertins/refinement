@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="ref/src/main/java"/>
+	<classpathentry kind="src" path="ref/src/test/java"/>
+	<classpathentry kind="lib" path="ref/lib/fdr/fdr/1.0/fdr.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="astah-api.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
