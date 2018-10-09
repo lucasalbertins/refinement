@@ -32,6 +32,7 @@ import com.change_vision.jude.api.inf.project.ProjectEventListener;
 import com.change_vision.jude.api.inf.ui.IPluginExtraTabView;
 import com.change_vision.jude.api.inf.ui.ISelectionListener;
 import com.ref.fdr.FdrWrapper;
+import com.ref.fdr.SDRefinementChecker;
 import com.ref.log.Logador;
 import com.ref.parser.SDParser;
 import com.ref.refinement.CounterexampleDescriptor;
@@ -41,7 +42,7 @@ import com.ref.refinement.CounterexampleDescriptor;
 public class RefinementView extends JPanel implements IPluginExtraTabView, ProjectEventListener {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 8087206220395822235L;
 	private JRadioButton strictRefinementType;
@@ -53,6 +54,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 	private File cspFile;
 	private CounterexampleDescriptor descriptor;
 	private ProjectAccessor projectAccessor;
+    private SDRefinementChecker sdchecker;
 
 	public RefinementView() {
 		try {
@@ -119,10 +121,11 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 		c.gridwidth = 2;
 		add(button, c);
 		addProjectEventListener();
-		
+
 		wrapper= FdrWrapper.getInstance();
 		logger = Logador.getInstance();
-		
+		sdchecker = new SDRefinementChecker();
+
 		button.addActionListener(new ActionListener() {
 
 			@Override
@@ -133,10 +136,12 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 					if (strictRefinementType.isSelected()) {
 						logger.log("iniciou");
 						executeRefinement();
-						result = wrapper.verify(cspFile.getAbsolutePath(), "STRICT");
+						sdchecker.checkRefinement(cspFile.getAbsolutePath());
+						//result = wrapper.verify(cspFile.getAbsolutePath(), "STRICT");
 						if (result) {
-							Map<Integer, List<String>> res = wrapper.getCounterExamples();
-							for (int i = 0; i <= 1; i++) {
+							//Map<Integer, List<String>> res = wrapper.getCounterExamples();
+                            Map<Integer, List<String>> res = sdchecker.describeCounterExample("strict");
+                            for (int i = 0; i <= 1; i++) {
 								if (res.get(i) != null) {
 									descriptor.buildCounterExample("SD_result", res.get(i), projectAccessor);
 									break;
@@ -145,10 +150,12 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 						}
 					} else if (weakRefinementType.isSelected()) {
 						executeRefinement();
-						result = wrapper.verify("test.csp", "WEAK");
-						if (result) {
-							Map<Integer, List<String>> res = wrapper.getCounterExamples();
-							descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
+//						result = wrapper.verify("test.csp", "WEAK");
+						sdchecker.checkRefinement(cspFile.getAbsolutePath());
+                        if (result) {
+//							Map<Integer, List<String>> res = wrapper.getCounterExamples();
+                            Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
+                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, "Select a type of Refinement!", "Error",
@@ -159,12 +166,12 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 						JOptionPane.showMessageDialog(null, "No Counter Examples found !", "Result",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
-					
+
 					cspFile.delete();
 
 				} catch (Exception ex) {
 					for(StackTraceElement element :ex.getStackTrace()){
-						logger.log(element.toString());						
+						logger.log(element.toString());
 					}
 					JOptionPane.showMessageDialog(null, ex.getMessage(), "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -209,7 +216,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 			bw.write("\n");
 			bw.write(parser.refinementAssertion());
 			bw.close();
-			fw.close();			
+			fw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

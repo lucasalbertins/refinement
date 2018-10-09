@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Map;
 
+import com.ref.fdr.SDRefinementChecker;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,9 +32,10 @@ public class SDGeneratorTest {
 			//String entrada = "beginInteraction, B_mOP.s.lf1id.lf2id.m0_I, B_mOP.r.lf1id.lf2id.m0_I, B_mOP.s.lf2id.lf1id.m0_O, B_mOP.r.lf2id.lf1id.m0_O, B_mOP.s.lf1id.lf2id.m0_I, ";
 			wrapper.loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
 			wrapper.loadClasses();
-			wrapper.verify("result - Copia.csp","STRICT");
-			Map<Integer, List<String>> result = wrapper.getCounterExamples();
-			List<String> entrada = result.get(0);
+            SDRefinementChecker sdchecker = new SDRefinementChecker();
+            sdchecker.checkRefinement("result - Copia.csp");
+            Map<Integer, List<String>> result = sdchecker.describeCounterExample("Strict");
+            List<String> entrada = result.get(0);
 			CounterexampleDescriptor descript = loadInfo();
 			descript.buildCounterExample("SDteste.asta", entrada,null);
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
@@ -43,7 +45,7 @@ public class SDGeneratorTest {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static CounterexampleDescriptor loadInfo() {
 
 		SDParser parser = null;
@@ -91,20 +93,20 @@ public class SDGeneratorTest {
 	public void diagramNameTest() {
 		assertEquals("Sequence Diagram1", ((ISequenceDiagram) findSequence[0]).getName());
 	}
-	
+
 	@Test
 	public void lifelineTest(){
 		ILifeline[] lifelines = ((ISequenceDiagram)findSequence[0]).getInteraction().getLifelines();
 		assertEquals("t", lifelines[0].getName());
-		assertEquals("A", lifelines[0].getBase().getName());	
+		assertEquals("A", lifelines[0].getBase().getName());
 		assertEquals("u", lifelines[1].getName());
 		assertEquals("B", lifelines[1].getBase().getName());
 	}
-	
+
 	@Test
 	public void messageTest(){
 		IMessage[] messages = ((ISequenceDiagram)findSequence[0]).getInteraction().getMessages();
 		assertEquals("m0", messages[0].getName());
 	}
-	
+
 }
