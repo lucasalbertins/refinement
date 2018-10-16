@@ -1,0 +1,33 @@
+contCn_ad2 = {1..2}
+contUpdate_ad2 = {1..2}
+contClear_ad2 = {1..2}
+limiteUpdate_ad2 = {(-2)..2}
+contLock_ad2 = {1..2}
+contLockList_ad2 = <1..2>
+contTokenList_ad2 = <1..2>
+channel startActivity_ad2
+channel endActivity_ad2
+channel cn_ad2: contCn_ad2
+channel clear_ad2: contClear_ad2
+channel update_ad2: contUpdate_ad2.limiteUpdate_ad2
+channel endDiagram_ad2
+channel lock_ad2: contLock_ad2.{0,1}
+channel get_value_ad2: {0,1}
+channel loop
+MAIN = ad2; LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_ad2 = endDiagram_ad2 -> SKIP
+ad2 = ((Internal_ad2 [|{|update_ad2,clear_ad2,get_value_ad2,endDiagram_ad2|}|] TokenManager_ad2_t(contTokenList_ad2,0,1)) [|{|lock_ad2,get_value_ad2,endDiagram_ad2|}|] Lock_ad2_t(contLockList_ad2,1,1))
+Internal_ad2 = StartActivity_ad2; Node_ad2; EndActivity_ad2
+StartActivity_ad2 = startActivity_ad2 -> update_ad2.1!1 -> SKIP
+EndActivity_ad2 = endActivity_ad2 -> SKIP
+Node_ad2 = ((init1_ad2 [{|cn_ad2.1|}||{|cn_ad2.1,lock_ad2.1,cn_ad2.2,update_ad2.2,endDiagram_ad2|}] act1_ad2_t) [{|cn_ad2.1,lock_ad2.1,cn_ad2.2,update_ad2.2,endDiagram_ad2|}||{|cn_ad2.2,lock_ad2.2,clear_ad2.1,endDiagram_ad2|}] fin1_ad2_t)
+init1_ad2 = cn_ad2.1 -> SKIP
+act1_ad2 = cn_ad2.1 -> lock_ad2.1.1 -> cn_ad2.2 -> update_ad2.2!(1-1) -> lock_ad2.1.0 -> act1_ad2
+act1_ad2_t = act1_ad2 /\ END_DIAGRAM_ad2
+fin1_ad2 = cn_ad2.2 -> lock_ad2.2.1 -> clear_ad2.1 -> lock_ad2.2.0 -> SKIP
+fin1_ad2_t = fin1_ad2 /\ END_DIAGRAM_ad2
+TokenManager_ad2(l,a,cont) = update_ad2.head(l)?b:limiteUpdate_ad2 -> a+b < 10 & a+b > -10 & TokenManager_ad2(l, a+b, 1) [] clear_ad2.head(l) -> endDiagram_ad2 -> SKIP [] a == 0 & get_value_ad2?x -> x == 1 & endDiagram_ad2 -> SKIP [] cont < length(l) & TokenManager_ad2((tail(l)^<head(l)>), a, cont+1)
+TokenManager_ad2_t(l,a,cont) = TokenManager_ad2(l, a, cont)
+Lock_ad2(l,x,cont) = x == 1 & lock_ad2.head(l).1 -> Lock_ad2(l,0,1) [] x == 0 & lock_ad2.head(l).0 -> Lock_ad2(l,1,1) [] get_value_ad2!x -> Lock_ad2(l,x,1) [] cont < length(l) & Lock_ad2((tail(l)^<head(l)>), x, cont+1)
+Lock_ad2_t(l,x,cont) = Lock_ad2(l,x,cont) /\ END_DIAGRAM_ad2
