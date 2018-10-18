@@ -1,0 +1,191 @@
+-- Adicionar contadores para cada tipo de elementos quando for implementar
+limite = {0..1}
+typeIn_ad1 = {0..2}
+typeOut_ad1 = {0..2}
+contGet_ad1 = {1..2}
+contSet_ad1 = {1..2}
+contCn_ad1 = {1..7}
+contUpdate_ad1 = {1..6}
+contClear_ad1 = {1..6} -- update e clear devem suportar a mesma quantidade de valores (maior)
+limiteUpdate_ad1 = {(-2)..2}
+contLock_ad1 = {1..7}
+contLockList_ad1 = <1..7>
+contMemList_ad1 = <1..2>
+contTokenList_ad1 = <1..6> 
+
+channel startActivity_ad1: typeIn_ad1
+channel endActivity_ad1: typeOut_ad1
+channel set_x_ad1, set_y_ad1: contSet_ad1.typeIn_ad1
+channel get_x_ad1, get_y_ad1: contGet_ad1.typeIn_ad1
+channel cn_ad1: contCn_ad1
+channel clear_ad1: contClear_ad1
+channel update_ad1: contUpdate_ad1.limiteUpdate_ad1
+channel endDiagram_ad1
+channel lock_ad1: contLock_ad1.{0,1}
+channel get_value_ad1: {0,1}
+channel loop
+
+MAIN = ad1;LOOP
+
+LOOP = loop -> LOOP
+
+END_DIAGRAM_ad1 = endDiagram_ad1 -> SKIP
+
+ad1 = ((((Internal_ad1 [|{|startActivity_ad2,endActivity_ad2|}|] ad2(contMemList_ad2))
+			[|{|get_x_ad1,set_x_ad1,get_y_ad1,set_y_ad1,endActivity_ad1|}|] Mem_ad1_t(0,0,contMemList_ad1,1))
+			[|{|update_ad1,clear_ad1,endDiagram_ad1,get_value_ad1|}|] TokenManager_ad1_t(contTokenList_ad1,0,1))
+			[|{|lock_ad1,get_value_ad1,endDiagram_ad1|}|] Lock_ad1_t(contLockList_ad1,1,1))
+					
+Internal_ad1 = StartActivity_ad1; Nodes_ad1; EndActivity_ad1
+
+StartActivity_ad1 = startActivity_ad1?x:limite ->set_x_ad1.1!x -> update_ad1.1!1 -> SKIP
+
+EndActivity_ad1 = get_y_ad1.1?y -> endActivity_ad1!y -> SKIP
+
+Nodes_ad1 = (((((((init1_ad1 [{|cn_ad1.1|}||{|cn_ad1.1,cn_ad1.2,endDiagram_ad1,update_ad1.2,lock_ad1.1|}] act1_ad1_t) 
+				[{|cn_ad1.1,cn_ad1.2,endDiagram_ad1,update_ad1.1,update_ad1.2,lock_ad1.1|}||{|cn_ad1.2,get_x_ad1.1,cn_ad1.3,cn_ad1.7,endDiagram_ad1,update_ad1.3,lock_ad1.2|}] dec1_ad1_t)
+				[{|cn_ad1.1,cn_ad1.2,get_x_ad1.1,cn_ad1.3,cn_ad1.7,endDiagram_ad1,update_ad1.1,update_ad1.2,update_ad1.3,lock_ad1.1,lock_ad1.2|}||{|cn_ad1.3,clear_ad1.1,endDiagram_ad1,lock_ad1.3|}] fin1_t)
+				[{|cn_ad1.1,cn_ad1.2,get_x_ad1.1,cn_ad1.3,cn_ad1.7,endDiagram_ad1,update_ad1.1,update_ad1.2,update_ad1.3,clear_ad1.1,lock_ad1.1,lock_ad1.2,lock_ad1.3|}||{|cn_ad1.7,get_x_ad1.2,set_y_ad1.1,cn_ad1.4,startActivity_ad2,endActivity_ad2,endDiagram_ad1,update_ad1.4,lock_ad1.4|}] CBAct1_ad1_t)
+				[{|cn_ad1.1,cn_ad1.2,get_x_ad1.1,get_x_ad1.2,cn_ad1.3,cn_ad1.7,endDiagram_ad1,set_y_ad1.1,cn_ad1.4,startActivity_ad2,endActivity_ad2,update_ad1.1,update_ad1.2,update_ad1.3,update_ad1.4,clear_ad1.1,lock_ad1.1,lock_ad1.2,lock_ad1.3,lock_ad1.4|}||{|cn_ad1.4,cn_ad1.5,endDiagram_ad1,update_ad1.5,lock_ad1.5|}] act2_ad1_t)
+				[{|cn_ad1.1,cn_ad1.2,get_x_ad1.1,get_x_ad1.2,cn_ad1.3,cn_ad1.7,endDiagram_ad1,set_y_ad1.1,cn_ad1.4,cn_ad1.5,startActivity_ad2,endActivity_ad2,update_ad1.1,update_ad1.2,update_ad1.3,update_ad1.4,update_ad1.5,clear_ad1.1,lock_ad1.1,lock_ad1.2,lock_ad1.3,lock_ad1.4,lock_ad1.5|}||{|cn_ad1.5,cn_ad1.6,endDiagram_ad1,update_ad1.6,lock_ad1.6|}] act3_ad1_t)
+				[{|cn_ad1.1,cn_ad1.2,get_x_ad1.1,get_x_ad1.2,cn_ad1.3,cn_ad1.7,endDiagram_ad1,set_y_ad1.1,cn_ad1.4,cn_ad1.5,cn_ad1.6,startActivity_ad2,endActivity_ad2,update_ad1,clear_ad1.1,lock_ad1.1,lock_ad1.2,lock_ad1.3,lock_ad1.4,lock_ad1.5,lock_ad1.6|}||{|cn_ad1.6,clear_ad1.2,endDiagram_ad1,lock_ad1.7|}] fin2_ad1_t)
+					
+init1_ad1 = cn_ad1.1 -> SKIP
+
+act1_ad1 = (cn_ad1.1 -> lock_ad1.1.1 -> cn_ad1.2 -> update_ad1.2!(1-1) -> lock_ad1.1.0 -> act1_ad1)
+act1_ad1_t = act1_ad1 /\ END_DIAGRAM_ad1
+
+dec1_ad1 = (cn_ad1.2 -> lock_ad1.2.1 -> get_x_ad1.1?x -> ((x > 10 & (cn_ad1.3 -> SKIP)) [] (x <= 10 & (cn_ad1.7 -> SKIP)));  update_ad1.3!(1-1) -> lock_ad1.2.0 -> dec1_ad1)
+dec1_ad1_t = dec1_ad1 /\ END_DIAGRAM_ad1
+
+fin1 = (cn_ad1.3 -> lock_ad1.3.1 -> clear_ad1.1 -> lock_ad1.3.0 -> fin1)
+fin1_t = fin1 /\ END_DIAGRAM_ad1
+
+CBAct1_ad1 = (cn_ad1.7 -> lock_ad1.4.1 -> get_x_ad1.2?x -> startActivity_ad2!x -> endActivity_ad2?y -> set_y_ad1.1!y -> cn_ad1.4 ->  update_ad1.4!(1-1) -> lock_ad1.4.0 -> CBAct1_ad1)
+CBAct1_ad1_t = CBAct1_ad1 /\ END_DIAGRAM_ad1
+
+act2_ad1 = (cn_ad1.4 -> lock_ad1.5.1 -> cn_ad1.5 -> update_ad1.5!(1-1) -> lock_ad1.5.0 -> act2_ad1)
+act2_ad1_t = act2_ad1 /\ END_DIAGRAM_ad1
+
+act3_ad1 = (cn_ad1.5 -> lock_ad1.6.1 -> cn_ad1.6 -> update_ad1.6!(1-1) -> lock_ad1.6.0 -> act3_ad1)
+act3_ad1_t = act3_ad1 /\ END_DIAGRAM_ad1
+
+fin2_ad1 = (cn_ad1.6 -> lock_ad1.7.1 -> clear_ad1.2 -> lock_ad1.7.0 -> fin2_ad1)
+fin2_ad1_t = fin2_ad1 /\ END_DIAGRAM_ad1
+
+Mem_ad1(x,y,l,cont) = get_x_ad1.head(l)!x -> Mem_ad1(x,y,l,1)
+				[] set_x_ad1.head(l)?x -> Mem_ad1(x,y,l,1)
+				[] get_y_ad1.head(l)!y -> Mem_ad1(x,y,l,1)
+				[] set_y_ad1.head(l)?y -> Mem_ad1(x,y,l,1)
+				[] cont < length(l) & Mem_ad1(x,y,(tail(l)^<head(l)>), cont+1)
+
+Mem_ad1_t(x,y,l,cont) = Mem_ad1(x,y,l,cont) /\ (endActivity_ad1?x -> SKIP)
+
+TokenManager_ad1(l,a,cont) = update_ad1.head(l)?b:limiteUpdate_ad1 -> a+b < 10 & a+b > -10 & TokenManager_ad1(l, a+b, 1)
+							[] clear_ad1.head(l) -> endDiagram_ad1 -> SKIP
+							[] a == 0 & get_value_ad1?x -> x == 1 & endDiagram_ad1 -> SKIP
+							[] cont < length(l) & TokenManager_ad1((tail(l)^<head(l)>), a, cont+1)
+						
+TokenManager_ad1_t(l,a,cont) = TokenManager_ad1(l, a, cont)	
+
+Lock_ad1(l,x,cont) = x == 1 & lock_ad1.head(l).1 -> Lock_ad1(l,0,1)
+					[] x == 0 & lock_ad1.head(l).0 -> Lock_ad1(l,1,1)
+					[] get_value_ad1!x -> Lock_ad1(l,x,1)
+					[] cont < length(l) & Lock_ad1((tail(l)^<head(l)>), x, cont+1)
+					
+Lock_ad1_t(l,x,cont) = Lock_ad1(l,x,cont) /\ END_DIAGRAM_ad1
+
+
+
+typeIn_ad2 = {0..2}
+typeOut_ad2 = {0..2}
+contGet_ad2 = {1..1}
+contSet_ad2 = {1..1}
+contCn_ad2 = {1..8}
+contUpdate_ad2 = {1..7}
+contClear_ad2 = {1..7}	 -- update e clear devem suportar a mesma quantidade de valores 
+limiteUpdate_ad2 = {(-2)..2}
+contLock_ad2 = {1..7}
+contMemList_ad2 = <1..1>
+contLockList_ad2 = <1..7>
+contTokenList_ad2 = <1..7> 
+
+channel startActivity_ad2: typeIn_ad2
+channel endActivity_ad2: typeOut_ad2
+channel set_x_ad2, set_y_ad2: contGet_ad2.typeIn_ad2
+channel get_x_ad2, get_y_ad2: contSet_ad2.typeIn_ad2
+channel cn_ad2: contCn_ad2
+channel clear_ad2: contClear_ad2
+channel update_ad2: contUpdate_ad2.limiteUpdate_ad2
+channel endDiagram_ad2
+channel lock_ad2: contLock_ad2.{0,1}
+channel get_value_ad2: {0,1}
+
+END_DIAGRAM_ad2 = endDiagram_ad2 -> SKIP
+
+ad2(contMemList_ad2) = (((Internal_ad2 [|{|get_x_ad2,set_x_ad2,get_y_ad2,set_y_ad2,endActivity_ad2|}|] Mem_ad2_t(0,0,contMemList_ad2,1))
+				[|{|update_ad2,clear_ad2,endDiagram_ad2,get_value_ad2|}|] TokenManager_ad2_t(contTokenList_ad2,0,1))
+				[|{|lock_ad2,get_value_ad2,endDiagram_ad2|}|] Lock_ad2_t(contLockList_ad2,1,1))
+						
+Internal_ad2 = StartActivity_ad2; Nodes_ad2; EndActivity_ad2
+
+StartActivity_ad2 = startActivity_ad2?x:limite -> set_x_ad2.1!x -> update_ad2.1!(1) -> SKIP
+
+EndActivity_ad2 = get_y_ad2.1?y -> endActivity_ad2!y -> SKIP
+
+Nodes_ad2 = (((((((init1_ad2 [{|cn_ad2.1|}||{|cn_ad2.1,cn_ad2.2,endDiagram_ad2,update_ad2.2,lock_ad2.1|}] act1_ad2_t)
+				[{|cn_ad2.1,cn_ad2.2,endDiagram_ad2,update_ad2.1,update_ad2.2,lock_ad2.1|}||{|cn_ad2.3,cn_ad2.4,cn_ad2.2,endDiagram_ad2,update_ad2.3,lock_ad2.2|}] fork1_ad2_t) 
+				[{|cn_ad2.3,cn_ad2.4,cn_ad2.1,cn_ad2.2,endDiagram_ad2,update_ad2.1,update_ad2.2,update_ad2.3,lock_ad2.1,lock_ad2.2|}||{|cn_ad2.3,cn_ad2.5,endDiagram_ad2,update_ad2.4,lock_ad2.3|}] act2_ad2_t)
+				[{|cn_ad2.3,cn_ad2.4,cn_ad2.5,cn_ad2.1,cn_ad2.2,endDiagram_ad2,update_ad2.1,update_ad2.2,update_ad2.3,update_ad2.4,lock_ad2.1,lock_ad2.2,lock_ad2.3|}||{|cn_ad2.4,cn_ad2.6,endDiagram_ad2,update_ad2.5,lock_ad2.4|}] act3_ad2_t)
+				[{|cn_ad2.3,cn_ad2.4,cn_ad2.5,cn_ad2.6,cn_ad2.1,cn_ad2.2,endDiagram_ad2,update_ad2.1,update_ad2.2,update_ad2.3,update_ad2.4,update_ad2.5,lock_ad2.1,lock_ad2.2,lock_ad2.3,lock_ad2.4|}||{|cn_ad2.5,cn_ad2.6,cn_ad2.7,endDiagram_ad2,update_ad2.6,lock_ad2.5|}] join1_ad2_t)
+				[{|cn_ad2.3,cn_ad2.4,cn_ad2.5,cn_ad2.6,cn_ad2.1,cn_ad2.2,cn_ad2.7,endDiagram_ad2,update_ad2.1,update_ad2.2,update_ad2.3,update_ad2.4,update_ad2.5,update_ad2.6,lock_ad2.1,lock_ad2.2,lock_ad2.3,lock_ad2.4,lock_ad2.5|}||{|cn_ad2.7,get_x_ad2,set_y_ad2,cn_ad2.8,endDiagram_ad2,update_ad2.7,lock_ad2.6|}] act4_ad2_t)
+				[{|cn_ad2.3,cn_ad2.4,cn_ad2.5,cn_ad2.6,cn_ad2.1,cn_ad2.2,cn_ad2.7,cn_ad2.8,get_x_ad2,set_y_ad2,endDiagram_ad2,update_ad2,lock_ad2.1,lock_ad2.2,lock_ad2.3,lock_ad2.4,lock_ad2.5,lock_ad2.6|}||{|cn_ad2.8,clear_ad2.1,endDiagram_ad2,lock_ad2.7|}] fin1_ad2_t)
+						
+init1_ad2 = cn_ad2.1 -> SKIP
+
+act1_ad2 = (cn_ad2.1 -> lock_ad2.1.1 -> cn_ad2.2 -> update_ad2.2!(1-1) -> lock_ad2.1.0 -> act1_ad2)
+act1_ad2_t = act1_ad2 /\ END_DIAGRAM_ad2
+
+fork1_ad2 = (cn_ad2.2 -> lock_ad2.2.1 -> (cn_ad2.3 -> SKIP ||| cn_ad2.4 -> SKIP); update_ad2.3!(2-1) -> lock_ad2.2.0 -> fork1_ad2)
+fork1_ad2_t = fork1_ad2  /\ END_DIAGRAM_ad2
+
+act2_ad2 = (cn_ad2.3 -> lock_ad2.3.1 -> cn_ad2.5 -> update_ad2.4!(1-1) -> lock_ad2.3.0 -> act2_ad2)
+act2_ad2_t = act2_ad2  /\ END_DIAGRAM_ad2
+
+act3_ad2 = (cn_ad2.4 -> lock_ad2.4.1 -> cn_ad2.6 -> update_ad2.5!(1-1) -> lock_ad2.4.0 -> act3_ad2)
+act3_ad2_t = act3_ad2  /\ END_DIAGRAM_ad2
+
+join1_ad2 = ((cn_ad2.5 -> SKIP ||| cn_ad2.6 -> SKIP); lock_ad2.5.1 -> cn_ad2.7 -> update_ad2.6!(1-2) -> lock_ad2.5.0 -> join1_ad2 )
+join1_ad2_t = join1_ad2  /\ END_DIAGRAM_ad2
+
+act4_ad2 = (cn_ad2.7 -> lock_ad2.6.1 -> get_x_ad2.1?x -> x <= 1 & set_y_ad2.1!(x+1) -> cn_ad2.8 -> update_ad2.7!(1-1) -> lock_ad2.6.0 -> act4_ad2)
+act4_ad2_t = act4_ad2  /\ END_DIAGRAM_ad2
+
+fin1_ad2 = (cn_ad2.8 -> lock_ad2.7.1 -> clear_ad2.1 -> lock_ad2.7.0 -> fin1_ad2)
+fin1_ad2_t = fin1_ad2  /\ END_DIAGRAM_ad2
+						
+Mem_ad2(x,y,l,cont) = get_x_ad2.head(l)!x -> Mem_ad2(x,y,l,1)
+				[] set_x_ad2.head(l)?x -> Mem_ad2(x,y,l,1)
+				[] get_y_ad2.head(l)!y -> Mem_ad2(x,y,l,1)
+				[] set_y_ad2.head(l)?y -> Mem_ad2(x,y,l,1)
+				[] cont < length(l) & Mem_ad2(x,y,(tail(l)^<head(l)>), cont+1)
+				
+Mem_ad2_t(x,y,l,cont) = Mem_ad2(x,y,l,cont) /\ (endActivity_ad2?x -> SKIP)					
+							
+TokenManager_ad2(l,a,cont) = update_ad2.head(l)?b:limiteUpdate_ad2 -> a+b < 10 & a+b > -10 & TokenManager_ad2(l, a+b, 1)
+							[] clear_ad2.head(l) -> endDiagram_ad2 -> SKIP
+							[] a == 0 & get_value_ad2?x -> x == 1 & endDiagram_ad2 -> SKIP
+							[] cont < length(l) & TokenManager_ad2((tail(l)^<head(l)>), a, cont+1)
+
+TokenManager_ad2_t(l,a,cont) = TokenManager_ad2(l, a, cont)								
+	
+Lock_ad2(l,x,cont) = x == 1 & lock_ad2.head(l).1 -> Lock_ad2(l,0,1)
+					[] x == 0 & lock_ad2.head(l).0 -> Lock_ad2(l,1,1)
+					[] get_value_ad2!x -> Lock_ad2(l,x,1)
+					[] cont < length(l) & Lock_ad2((tail(l)^<head(l)>), x, cont+1)
+
+Lock_ad2_t(l,x,cont) = Lock_ad2(l,x,cont) /\ END_DIAGRAM_ad2				
+
+
+
+assert MAIN :[deadlock free]

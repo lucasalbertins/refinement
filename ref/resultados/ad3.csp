@@ -1,0 +1,44 @@
+limite = {0..1}		
+typeIn_ad3 = {0..2}
+contGet_ad3 = {1..1}
+contSet_ad3 = {1..1}
+contCn_ad3 = {1..4}
+contUpdate_ad3 = {1..3}
+contClear_ad3 = {1..3} -- update e clear devem suportar a mesma quantidade de valores (maior)
+limiteUpdate_ad3 = {(-2)..2}
+contLock_ad3 = {1..3}
+contLockList_ad3 = <1..3>
+contMemList_ad3 = <1..1>
+contTokenList_ad3 = <1..3> 
+channel startActivity_ad3: typeIn_ad3
+channel endActivity_ad3
+channel set_x_ad3, set_y_ad3: contSet_ad3.typeIn_ad3
+channel get_x_ad3, get_y_ad3: contGet_ad3.typeIn_ad3
+channel cn_ad3: contCn_ad3
+channel clear_ad3: contClear_ad3
+channel update_ad3: contUpdate_ad3.limiteUpdate_ad3
+channel endDiagram_ad3
+channel lock_ad3: contLock_ad3.{0,1}
+channel get_value_ad3: {0,1}
+channel loop
+MAIN = ad3; LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_ad3 = endDiagram_ad3 -> SKIP
+ad3 = (((Internal_ad3 [|{|get_x_ad3,set_x_ad3,get_y_ad3,set_y_ad3,endActivity_ad3|}|] Mem_ad3_t(0,0,contMemList_ad3,1)) [|{|update_ad3,clear_ad3,get_value_ad3,endDiagram_ad3|}|] TokenManager_ad3_t(contTokenList_ad3,0,1)) [|{|lock_ad3,get_value_ad3,endDiagram_ad3|}|] Lock_ad3_t(contLockList_ad3,1,1))
+Internal_ad3 = StartActivity_ad3; Node_ad3; EndActivity_ad3
+StartActivity_ad3 = startActivity_ad3?x:limite -> set_x_ad3.1!x -> update_ad3.1!1 -> SKIP
+EndActivity_ad3 = endActivity_ad3 -> SKIP
+Node_ad3 = (((init1_ad3 [{|cn_ad3.1|}||{|cn_ad3.1,lock_ad3.1,get_x_ad3.1,cn_ad3.2,cn_ad3.3,update_ad3.2,endDiagram_ad3|}] dec1_ad3_t) [{|cn_ad3.1,lock_ad3.1,cn_ad3.2,get_x_ad3.1,cn_ad3.3,update_ad3.2,endDiagram_ad3|}||{|cn_ad3.2,lock_ad3.2,cn_ad3.4,update_ad3.3,endDiagram_ad3|}] act1_ad3_t) [{|cn_ad3.1,lock_ad3.1,cn_ad3.2,get_x_ad3.1,cn_ad3.3,update_ad3.2,update_ad3.3,endDiagram_ad3,lock_ad3.2,cn_ad3.4|}||{|cn_ad3.3,cn_ad3.4,lock_ad3.3,clear_ad3.1,endDiagram_ad3|}] fin1_ad3_t) 
+init1_ad3 = cn_ad3.1 -> SKIP
+dec1_ad3 = cn_ad3.1 -> lock_ad3.1.1 -> get_x_ad3.1?x -> (x == 1 & (cn_ad3.2 -> SKIP) [] x == 0 & (cn_ad3.3 -> SKIP)); update_ad3.2!(1-1) -> lock_ad3.1.0 -> dec1_ad3
+dec1_ad3_t = dec1_ad3 /\ END_DIAGRAM_ad3
+act1_ad3 = cn_ad3.2 -> lock_ad3.2.1 -> cn_ad3.4 -> update_ad3.3!(1-1) -> lock_ad3.2.0 -> act1_ad3
+act1_ad3_t = act1_ad3 /\ END_DIAGRAM_ad3
+fin1_ad3 = ((cn_ad3.3 -> SKIP) [] (cn_ad3.4 -> SKIP)); lock_ad3.3.1 -> clear_ad3.1 -> lock_ad3.3.0 -> SKIP
+fin1_ad3_t = fin1_ad3 /\ END_DIAGRAM_ad3
+Mem_ad3(x,y,l,cont) = get_x_ad3.head(l)!x -> Mem_ad3(x,y,l,1) [] set_x_ad3.head(l)?x -> Mem_ad3(x,y,l,1) [] get_y_ad3.head(l)!y -> Mem_ad3(x,y,l,1) [] set_y_ad3.head(l)?y -> Mem_ad3(x,y,l,1) [] cont < length(l) & Mem_ad3(x,y,(tail(l)^<head(l)>), cont+1)
+Mem_ad3_t(x,y,l,cont) = Mem_ad3(x,y,l,cont) /\ (endActivity_ad3 -> SKIP)												
+TokenManager_ad3(l,a,cont) = update_ad3.head(l)?b:limiteUpdate_ad3 -> a+b < 10 & a+b > -10 & TokenManager_ad3(l, a+b, 1) [] clear_ad3.head(l) -> endDiagram_ad3 -> SKIP [] a == 0 & get_value_ad3?x -> x == 1 & endDiagram_ad3 -> SKIP [] cont < length(l) & TokenManager_ad3((tail(l)^<head(l)>), a, cont+1)
+TokenManager_ad3_t(l,a,cont) = TokenManager_ad3(l, a, cont)						
+Lock_ad3(l,x,cont) = x == 1 & lock_ad3.head(l).1 -> Lock_ad3(l,0,1) [] x == 0 & lock_ad3.head(l).0 -> Lock_ad3(l,1,1) [] get_value_ad3!x -> Lock_ad3(l,x,1) [] cont < length(l) & Lock_ad3((tail(l)^<head(l)>), x, cont+1)
+Lock_ad3_t(l,x,cont) = Lock_ad3(l,x,cont) /\ END_DIAGRAM_ad3
