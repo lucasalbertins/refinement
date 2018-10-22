@@ -9,41 +9,40 @@ public class SDRefinementChecker {
 
     public boolean checkRefinement(String filename) {
         FdrWrapper.getInstance().loadFile(filename);
-        return FdrWrapper.getInstance().executeAssertions();
+        List<Object> assertions = FdrWrapper.getInstance().getAssertions();
+        System.out.println("Numero de assertions : " + assertions.size());
+
+        return FdrWrapper.getInstance().executeAssertions(assertions);
     }
 
     public Map<Integer,List<String>> describeCounterExample(String refinementType){
-
         List<Object> counterExamples = FdrWrapper.getInstance().getCounterExamples();
-        List<String> traces = new ArrayList<>();
         Map<Integer, List<String>> result = new HashMap<Integer,List<String>>();
 
         for(int i = 0; i < counterExamples.size(); i++){
             if(refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak") && i == 1)){
-                traces = new ArrayList<>();
-                buildCounterExample(counterExamples.get(i),traces);
-                result.put(i, traces);
+                result.put(i, buildCounterExample(counterExamples.get(i)));
+                System.out.println("Preencheu no id " + i);
             }
         }
         return result;
     }
 
-    private void buildCounterExample(Object counterExample, List<String> trace) {
+    private List<String> buildCounterExample(Object counterExample) {
+        List<String> trace = new ArrayList<>();
         String errorEvent = FdrWrapper.getInstance().getErrorEvent(counterExample);
-        trace.add(errorEvent);
         if(errorEvent.equals("endInteraction")){
             try {
-                FdrWrapper.getInstance().strictCounterExample(counterExample, trace);
+                trace.add(errorEvent);
+                trace.add(FdrWrapper.getInstance().getTraceSpecificationBehaviour(counterExample));
+                trace.add(FdrWrapper.getInstance().getTraceImplementationBehaviour(counterExample));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
-            FdrWrapper.getInstance().traceCounterExample(counterExample,trace);
+            trace = FdrWrapper.getInstance().traceCounterExample(counterExample);
+            trace.add(0, errorEvent);
         }
-
-        for(String event : trace){
-            System.out.println(event);
-        }
-
+        return trace;
     }
 }

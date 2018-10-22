@@ -202,7 +202,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 			}
 
 			SDParser parser = new SDParser(seq1, seq2);
-			parser.carregaLifelines();
+			//parser.carregaLifelines();
 			this.descriptor = new CounterexampleDescriptor(parser.getLifelineMapping());
 
 			String resultado = parser.parseSDs();
@@ -214,7 +214,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 			BufferedWriter bw = new BufferedWriter(fw);
 			bw.write(resultado);
 			bw.write("\n");
-			bw.write(parser.refinementAssertion());
+			bw.write(parser.getRefinementAssertion());
 			bw.close();
 			fw.close();
 		} catch (Exception e) {

@@ -57,7 +57,7 @@ public class FileTest {
 				seq2 = (ISequenceDiagram) findSequence[0];
 			}
 			parser = new SDParser(seq1, seq2);
-			parser.carregaLifelines();
+			//parser.carregaLifelines();
 		} catch (ProjectNotFoundException e) {
 			System.out.println("aqui");
 			e.printStackTrace();
@@ -70,10 +70,9 @@ public class FileTest {
 	@Ignore
 	@Test
 	public void refinementAssertion() throws InvalidEditingException {
-		parser.defineTypes();
-		parser.parseChannels();
+
 		parser.parseSDs();
-		String actual = parser.refinementAssertion();
+		String actual = parser.getRefinementAssertion();
 		System.out.println(actual);
 		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n"
 				+ "assert SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|} [T= SD_Seq0(sd1id,lf1id,lf2id)";
@@ -96,11 +95,11 @@ public class FileTest {
 		fr.close();
 
 		String actual = "";
-		actual += parser.defineTypes();
-		actual += parser.parseChannels();
+		actual += parser.getDefinedTypes();
+		actual += parser.getChannels();
 		actual += parser.parseSD(seq1) + "\n";
 		actual += parser.parseSD(seq2) + "\n";
-		actual += parser.refinementAssertion();
+		actual += parser.getRefinementAssertion();
 
 		assertEquals(sbArquivo.toString(), actual);
 	}
@@ -111,10 +110,10 @@ public class FileTest {
 		fw = new FileWriter(new File("resultado2.csp"));
 		bw = new BufferedWriter(fw);
 		
-		String actual = parser.defineTypes();
+		String actual = parser.getDefinedTypes();
 		bw.write(actual);
 		//bw.newLine();
-		actual = parser.parseChannels();
+		actual = parser.getChannels();
 		bw.write(actual);
 		//bw.newLine();
 		actual = parser.parseSD(seq1);
@@ -126,7 +125,7 @@ public class FileTest {
 		bw.write(actual);
 		//bw.write(actual);
 		bw.newLine();
-		actual = parser.refinementAssertion();
+		actual = parser.getRefinementAssertion();
 		System.out.println(actual);
 		bw.write(actual);
 		

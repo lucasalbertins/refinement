@@ -67,7 +67,7 @@ public class SDGeneratorTest {
 				seq2 = (ISequenceDiagram) findSequence[0];
 			}
 			parser = new SDParser(seq1, seq2);
-			parser.carregaLifelines();
+			//parser.carregaLifelines();
 			descript = new CounterexampleDescriptor(parser.getLifelineMapping());
 
 		} catch (ProjectNotFoundException e) {

@@ -4,11 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.editor.BasicModelEditor;
@@ -49,22 +45,23 @@ public class SDParserTest {
 			INamedElement[] findSequence = findSequence(projectAccessor);
 			// buildCounterExample(projectAccessor);
 
-			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
+			if ((findSequence[0]).getName().equals("Seq0")) {
 				seq1 = (ISequenceDiagram) findSequence[0];
 				seq2 = (ISequenceDiagram) findSequence[1];
 			} else {
 				seq1 = (ISequenceDiagram) findSequence[1];
 				seq2 = (ISequenceDiagram) findSequence[0];
 			}
+
 			parser = new SDParser(seq1, seq2);
-			parser.carregaLifelines();
+			parser.parseSDs();
+
 		} catch (ProjectNotFoundException e) {
-			System.out.println("aqui");
+			//System.out.println("aqui");
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
@@ -74,58 +71,6 @@ public class SDParserTest {
 			}
 		});
 		return foundElements;
-	}
-
-	private static void createSD(ProjectAccessor projectAccessor)
-			throws InvalidUsingException, InvalidEditingException, ProjectNotFoundException, ClassNotFoundException,
-			LicenseNotFoundException, IOException, ProjectLockedException {
-
-		TransactionManager.beginTransaction();
-
-		IModel project = projectAccessor.getProject();
-
-		BasicModelEditor bme = ModelEditorFactory.getBasicModelEditor();
-		IClass boundary = bme.createClass(project, "Boundary0");
-		boundary.addStereotype("boundary");
-
-		IClass cls1 = bme.createClass(project, "Class1");
-		IOperation op = bme.createOperation(cls1, "add", "void");
-		bme.createParameter(op, "param0", boundary);
-
-		SequenceDiagramEditor de = projectAccessor.getDiagramEditorFactory().getSequenceDiagramEditor();
-		// ISequenceDiagram newDgm2 = de.createSequenceDiagram(op, "Sequence
-		// Diagram2");
-		// newDgm2.getInteraction().setArgument("seq arg2");
-		ISequenceDiagram newDgm = de.createSequenceDiagram(project, "SD novo");
-
-		INodePresentation objPs1 = de.createLifeline("", 0);
-		INodePresentation objPs2 = de.createLifeline("object2", 150);
-		INodePresentation objPs3 = de.createLifeline("", 300);
-		INodePresentation objPs4 = de.createLifeline("object4", 450);
-		INodePresentation objPs5 = de.createLifeline("object5", 600);
-
-		// INodePresentation framePs = (INodePresentation)
-		// findPresentationByType(newDgm, "Frame");
-		// de.createMessage("beginMsg0", framePs, objPs1, 80);
-		// de.createCreateMessage("CreateMsg0", objPs1, objPs2, 100);
-		ILinkPresentation msg1 = de.createMessage("Messagem1", objPs1, objPs2, 100);
-		ILinkPresentation msgPs = de.createMessage("", objPs2, objPs3, 160);
-		msgPs.getSource().setProperty("fill.color", "#0000FF");
-		IMessage msg = (IMessage) msgPs.getModel();
-		msg.setAsynchronous(true);
-		msgPs.setProperty("parameter_visibility", "false");
-		TransactionManager.endTransaction();
-		projectAccessor.save();
-	}
-
-	private static IPresentation findPresentationByType(ISequenceDiagram dgm, String type)
-			throws InvalidUsingException {
-		for (IPresentation ps : dgm.getPresentations()) {
-			if (ps.getType().equals(type)) {
-				return ps;
-			}
-		}
-		return null;
 	}
 
 	@AfterClass
@@ -143,8 +88,8 @@ public class SDParserTest {
 
 	@Test
 	public void testDefineTypes() throws InvalidEditingException, IOException {
-		String actual = parser.defineTypes();
-		System.out.println(actual);
+		String actual = parser.getDefinedTypes();
+		//System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		// expected.append("SDnat = {1,2,1r}\n");
 		expected.append("datatype COM = s | r\n");
@@ -168,8 +113,8 @@ public class SDParserTest {
 
 	@Test
 	public void testParseChannels() throws IOException {
-		String actual = parser.parseChannels();
-		System.out.println(actual);
+		String actual = parser.getChannels();
+		//System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("channel beginInteraction,endInteraction\n");
 		expected.append("channel A_mSIG: COM.ID.ID.A_SIG\n");
@@ -178,10 +123,11 @@ public class SDParserTest {
 		assertEquals(expected.toString(), actual);
 	}
 
+
 	@Test
 	public void testParseSD1() throws IOException {
-		String actual = parser.parseSD(seq1);
-		System.out.println(actual);
+		String actual = parser.getSd1Parse();
+		//System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("Seq0_t_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);");
 		expected.append("(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP)\n");
@@ -222,8 +168,8 @@ public class SDParserTest {
 
 	@Test
 	public void testParseSD2() throws IOException {
-		String actual = parser.parseSD(seq2);
-		System.out.println(actual);
+		String actual = parser.getSd2Parse();
+		//System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("Seq1_x_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);");
 		expected.append(

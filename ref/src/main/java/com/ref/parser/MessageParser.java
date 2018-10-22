@@ -31,10 +31,10 @@ public class MessageParser {
 
 	private void addIDS(String lf1, String lf2, StringBuilder sb,StringBuilder aux) {
 
-		sb.append(".").append(SDParser.getNome(lf1));
-		aux.append(".").append(SDParser.getNome(lf1));
-		sb.append(".").append(SDParser.getNome(lf2));
-		aux.append(".").append(SDParser.getNome(lf2));
+		sb.append(".").append(SDParser.getLfsWithUnderscore().get(lf1));
+		aux.append(".").append(SDParser.getLfsWithUnderscore().get(lf1));
+		sb.append(".").append(SDParser.getLfsWithUnderscore().get(lf2));
+		aux.append(".").append(SDParser.getLfsWithUnderscore().get(lf2));
 		
 	}
 	
@@ -71,15 +71,15 @@ public class MessageParser {
 			addInstancesAndBases(sb, msg);
 			sb.append("_").append(msg.getName());
 			
-			if(SDParser.procs.contains(sb.toString())){
+			if(SDParser.getMsgProcesses().contains(sb.toString())){
 				return "";
 			}
 			else
-				SDParser.procs.add(sb.toString());
+				SDParser.getMsgProcesses().add(sb.toString());
 				
 			sb.append("(sd_id");
-			sb.append(",").append(SDParser.getNome(base1));
-			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base1));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base2));
 			sb.append(") =");
 			
 
@@ -93,17 +93,16 @@ public class MessageParser {
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
 			sb.append(",get_id(x) == ").append(msg.getName()).append("_I}");
 			aux.append(".").append(msg.getName()).append("_I");
-			SDParser.addAlfabeto(aux.toString());
+			SDParser.addToRefinementAlphabet(aux.toString());
 			
-			if(SDParser.alfabets.containsKey(base1)){
-				String alfa = SDParser.alfabets.get(base1);
+			if(SDParser.alphabetMapContains(base1)){
+				String alfa = SDParser.getAlphabetMapEntry(base1);
 				alfa += ","+aux.toString();
-				SDParser.alfabets.put(base1,alfa);
+				SDParser.addToAlphabetMap(base1,alfa);
 			}else{
-				SDParser.alfabets.put(base1,aux.toString());
+				SDParser.addToAlphabetMap(base1,aux.toString());
 			}
-			
-			
+
 			aux = new StringBuilder();
 			sb.append(" -> ");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.r");
@@ -115,18 +114,18 @@ public class MessageParser {
 			addInstancesAndBases(sb, msg);
 			sb.append("_").append(msg.getName());
 			sb.append("(sd_id");
-			sb.append(",").append(SDParser.getNome(base1));
-			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base1));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base2));
 			sb.append(")");
 			aux.append(".").append(msg.getName()).append("_I");
-			SDParser.addAlfabeto(aux.toString());
+			SDParser.addToRefinementAlphabet(aux.toString());
 			
-			if(SDParser.alfabets.containsKey(base2)){
-				String alfa = SDParser.alfabets.get(base2);
+			if(SDParser.alphabetMapContains(base2)){
+				String alfa = SDParser.getAlphabetMapEntry(base2);
 				alfa += ", "+aux.toString();
-				SDParser.alfabets.put(base2,alfa);
+				SDParser.addToAlphabetMap(base2,alfa);
 			}else{
-				SDParser.alfabets.put(base2,aux.toString());
+				SDParser.addToAlphabetMap(base2,aux.toString());
 			}
 			
 			
@@ -135,15 +134,15 @@ public class MessageParser {
 			addInstancesAndBases(sb, msg);
 			sb.append("_").append(msg.getName());
 			
-			if(SDParser.procs.contains(sb.toString())){
+			if(SDParser.getMsgProcesses().contains(sb.toString())){
 				return "";
 			}
 			else
-				SDParser.procs.add(sb.toString());
+				SDParser.getMsgProcesses().add(sb.toString());
 			
 			sb.append("(sd_id");
-			sb.append(",").append(SDParser.getNome(base1));
-			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base1));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base2));
 			
 			sb.append(") = ");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
@@ -157,14 +156,14 @@ public class MessageParser {
 			sb.append(",get_id(x) == ").append(msg.getName()+"}");
 			sb.append(" -> ");
 			aux.append(".").append(msg.getName());
-			SDParser.addAlfabeto(aux.toString());
+			SDParser.addToRefinementAlphabet(aux.toString());
 			
-			if(SDParser.alfabets.containsKey(base1)){
-				String alfa = SDParser.alfabets.get(base1);
+			if(SDParser.alphabetMapContains(base1)){
+				String alfa = SDParser.getAlphabetMapEntry(base1);
 				alfa += ", "+aux.toString();
-				SDParser.alfabets.put(base1,alfa);
+				SDParser.addToAlphabetMap(base1,alfa);
 			}else{
-				SDParser.alfabets.put(base1,aux.toString());
+				SDParser.addToAlphabetMap(base1,aux.toString());
 			}
 			
 			aux = new StringBuilder();
@@ -178,18 +177,18 @@ public class MessageParser {
 			addInstancesAndBases(sb, msg);
 			sb.append("_").append(msg.getName());
 			sb.append("(sd_id");
-			sb.append(",").append(SDParser.getNome(base1));
-			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base1));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base2));
 			sb.append(")");
 			aux.append(".").append(msg.getName());
 			
-			SDParser.addAlfabeto(aux.toString());
-			if(SDParser.alfabets.containsKey(base2)){
-				String alfa = SDParser.alfabets.get(base2);
+			SDParser.addToRefinementAlphabet(aux.toString());
+			if(SDParser.alphabetMapContains(base2)){
+				String alfa = SDParser.getAlphabetMapEntry(base2);
 				alfa += ", "+aux.toString();
-				SDParser.alfabets.put(base2,alfa);
+				SDParser.addToAlphabetMap(base2,alfa);
 			}else{
-				SDParser.alfabets.put(base2,aux.toString());
+				SDParser.addToAlphabetMap(base2,aux.toString());
 			}
 			
 			
@@ -214,16 +213,16 @@ public class MessageParser {
 			sb.append("_").append(syncMsg.getName());
 			sb.append("_r");
 			
-			if(SDParser.procs.contains(sb.toString())){
+			if(SDParser.getMsgProcesses().contains(sb.toString())){
 				return "";
 			}
 			else
-				SDParser.procs.add(sb.toString());
+				SDParser.getMsgProcesses().add(sb.toString());
 			
 			sb.append("(sd_id");
 			
-			sb.append(",").append(SDParser.getNome(base1));
-			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base1));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base2));
 			
 			sb.append(") = ");
 			
@@ -238,14 +237,14 @@ public class MessageParser {
 			sb.append(",get_id(x) == ").append(syncMsg.getName() + "_O}");
 			sb.append(" -> ");
 			aux.append(".").append(syncMsg.getName()).append("_O");
-			SDParser.addAlfabeto(aux.toString());
+			SDParser.addToRefinementAlphabet(aux.toString());
 			
-			if(SDParser.alfabets.containsKey(base1)){
-				String alfa = SDParser.alfabets.get(base1);
+			if(SDParser.alphabetMapContains(base1)){
+				String alfa = SDParser.getAlphabetMapEntry(base1);
 				alfa +=", " + aux.toString();
-				SDParser.alfabets.put(base1,alfa);
+				SDParser.addToAlphabetMap(base1,alfa);
 			}else{
-				SDParser.alfabets.put(base1,aux.toString());
+				SDParser.addToAlphabetMap(base1,aux.toString());
 			}
 			
 			aux = new StringBuilder();
@@ -267,25 +266,22 @@ public class MessageParser {
 
 			sb.append("_").append(syncMsg.getName()).append("_r");
 			sb.append("(sd_id");
-			sb.append(",").append(SDParser.getNome(base1));
-			sb.append(",").append(SDParser.getNome(base2));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base1));
+			sb.append(",").append(SDParser.getLfsWithUnderscore().get(base2));
 			sb.append(")");
 			aux.append(".").append(syncMsg.getName()).append("_O");
-			SDParser.addAlfabeto(aux.toString());
-			if(SDParser.alfabets.containsKey(base2)){
-				String alfa = SDParser.alfabets.get(base2);
+			SDParser.addToRefinementAlphabet(aux.toString());
+			if(SDParser.alphabetMapContains(base2)){
+				String alfa = SDParser.getAlphabetMapEntry(base2);
 				alfa += ", " + aux.toString();
-				SDParser.alfabets.put(base2,alfa);
+				SDParser.addToAlphabetMap(base2,alfa);
 			}else{
-				SDParser.alfabets.put(base2,aux.toString());
+				SDParser.addToAlphabetMap(base2,aux.toString());
 			}
 			
 		}
 		sb.append("\n");
-//		SDParser.addAlfabeto(aux.toString());
-//		
-		
-		
+//		SDParser.addToRefinementAlphabet(aux.toString());
 		return sb.toString();
 	}
 
@@ -311,8 +307,8 @@ public class MessageParser {
 //				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
 //				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
-				sb.append("!").append(SDParser.getNome(base1));
-				sb.append("!").append(SDParser.getNome(base2));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base1));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base2));
 				sb.append("."+msg.getName()+"_I");
 				//treatArguments(sb, msg.getArgument());
 				//treatArguments(aux, msg.getArgument());
@@ -321,8 +317,8 @@ public class MessageParser {
 //				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
 //				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(lifeline.getBase()).append("_mOP.r");
-				sb.append("!").append(SDParser.getNome(base1));
-				sb.append("!").append(SDParser.getNome(base2));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base1));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base2));
 				//sb.append("!"+msg.getName()+"_I");
 				sb.append("?oper:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
 				sb.append(",(get_id(x) == ").append(msg.getName()).append("_I)}");
@@ -334,8 +330,8 @@ public class MessageParser {
 //				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
 //				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
-				sb.append("!").append(SDParser.getNome(base1));
-				sb.append("!").append(SDParser.getNome(base2));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base1));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base2));
 				sb.append("."+msg.getName());
 				treatArguments(sb, msg.getArgument());
 				treatArguments(aux, msg.getArgument());
@@ -344,8 +340,8 @@ public class MessageParser {
 //				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
 //				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(lifeline.getBase()).append("_mSIG.r");
-				sb.append("!").append(SDParser.getNome(base1));
-				sb.append("!").append(SDParser.getNome(base2));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base1));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base2));
 				//sb.append("!"+msg.getName());
 				sb.append("?signal:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
 				sb.append(",(get_id(x) == ").append(msg.getName()).append(")}");
@@ -365,8 +361,8 @@ public class MessageParser {
 //				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
 //				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
-				sb.append("!").append(SDParser.getNome(base1));
-				sb.append("!").append(SDParser.getNome(base2));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base1));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base2));
 				//sb.append("!"+msg.getName()+"_O");
 				sb.append("?out:");
 				sb.append("{x | x <-").append(((ILifeline) syncMsg.getTarget()).getBase()).append("_OPS");
@@ -376,8 +372,8 @@ public class MessageParser {
 //				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
 //				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
-				sb.append("!").append(SDParser.getNome(base1));
-				sb.append("!").append(SDParser.getNome(base2));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base1));
+				sb.append("!").append(SDParser.getLfsWithUnderscore().get(base2));
 				sb.append("."+syncMsg.getName()).append("_O");
 				treatArguments(sb, msg.getArgument());
 				sb.append(" -> SKIP");
@@ -493,10 +489,10 @@ public class MessageParser {
 				process.append("sd_id,");
 				
 				ILifeline life = (ILifeline) msg.getSource();
-				process.append(SDParser.getNome(life.getBase().toString()));
+				process.append(SDParser.getLfsWithUnderscore().get(life.getBase().toString()));
 				process.append(",");
 				life = (ILifeline) msg.getTarget();
-				process.append(SDParser.getNome(life.getBase().toString()));
+				process.append(SDParser.getLfsWithUnderscore().get(life.getBase().toString()));
 				//			for(int j = 1; j<=i-1;j++){
 //				process.append("lf" + j + "_id,");
 //			}

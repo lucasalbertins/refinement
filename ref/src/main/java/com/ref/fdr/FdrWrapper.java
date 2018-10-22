@@ -180,14 +180,25 @@ public class FdrWrapper {
         }
     }
 
-    public boolean executeAssertions() {
+    public List<Object> getAssertions() {
+        List<Object> assertions = new ArrayList<>();
+        try {
+            for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), this.session, "assertions", null,
+                    null)) {
+                assertions.add(assertion);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return assertions;
+    }
+
+    public boolean executeAssertions(List<Object> assertions) {
         this.counterExamples = new ArrayList<>();
         boolean isRefinement = true;
         try {
-            for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
-                    null)) {
+            for (Object assertion : assertions) {
                 invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
                 for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
                         "counterexamples", null, null)) {
                     this.counterExamples.add(counterExample);
@@ -211,7 +222,7 @@ public class FdrWrapper {
         try {
             Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
             if ((Long) error != 1 && (Long) error != 0) {
-                errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) error).toString();
+                errorEvent = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, (Long) error).toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,36 +230,65 @@ public class FdrWrapper {
         return errorEvent;
     }
 
-    public List<String> strictCounterExample(Object counterExample, List<String> trace) throws Exception {
-        StringBuilder sb = new StringBuilder();
+    public String getTraceSpecificationBehaviour(Object counterExample) {
+        String result = "";
+        result = getBehaviour(counterExample, "specificationBehaviour");
 
-        // Adiciona o trace do contraExemplo
-        if (counterExample.getClass().getName().equals(traceCounterexampleClass.getName())) {
+        return result;
+    }
+
+    private String getBehaviour(Object counterExample, String type) {
+        try {
             Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
             IMPL_LOOKUP.setAccessible(true);
             MethodHandles.Lookup lkp = (MethodHandles.Lookup) IMPL_LOOKUP.get(null);
-            MethodHandle h1 = lkp.findSpecial(refinementCounterexampleClass, "specificationBehaviour",
+            MethodHandle h1 = lkp.findSpecial(refinementCounterexampleClass, type,
                     MethodType.methodType(behaviourClass), traceCounterexampleClass);
-            Object behaviour = null;
-            try {
-                behaviour = h1.invoke(counterExample);
-                traceBehaviour(behaviour, sb, session);
-                trace.add(sb.toString());
-                //System.out.println(sb.toString());
-                sb = new StringBuilder();
-                h1 = lkp.findSpecial(refinementCounterexampleClass, "implementationBehaviour",
-                        MethodType.methodType(behaviourClass), traceCounterexampleClass);
-                behaviour = h1.invoke(counterExample);
-                traceBehaviour(behaviour, sb, session);
-                trace.add(sb.toString());
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            Object behaviour = h1.invoke(counterExample);
+            type = traceBehaviour(behaviour);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
         }
-        return trace;
+        return type;
     }
 
-    public void traceCounterExample(Object counterExample, List<String> trace) {
+    public String getTraceImplementationBehaviour(Object counterExample) {
+        String result = "";
+        result = getBehaviour(counterExample, "implementationBehaviour");
+        return result;
+    }
+//
+//    public List<String> strictCounterExample(Object counterExample, List<String> trace) throws Exception {
+//        StringBuilder sb = new StringBuilder();
+//
+//        // Adiciona o trace do contraExemplo
+//        if (counterExample.getClass().getName().equals(traceCounterexampleClass.getName())) {
+//            Field IMPL_LOOKUP = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+//            IMPL_LOOKUP.setAccessible(true);
+//            MethodHandles.Lookup lkp = (MethodHandles.Lookup) IMPL_LOOKUP.get(null);
+//            MethodHandle h1 = lkp.findSpecial(refinementCounterexampleClass, "specificationBehaviour",
+//                    MethodType.methodType(behaviourClass), traceCounterexampleClass);
+//            Object behaviour = null;
+//            try {
+//                behaviour = h1.invoke(counterExample);
+//                traceBehaviour(behaviour, sb, session);
+//                trace.add(sb.toString());
+//                //System.out.println(sb.toString());
+//                sb = new StringBuilder();
+//                h1 = lkp.findSpecial(refinementCounterexampleClass, "implementationBehaviour",
+//                        MethodType.methodType(behaviourClass), traceCounterexampleClass);
+//                behaviour = h1.invoke(counterExample);
+//                traceBehaviour(behaviour);
+//                trace.add(sb.toString());
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//            }
+//        }
+//        return trace;
+//    }
+
+    public List<String> traceCounterExample(Object counterExample) {
+        List<String> trace = new ArrayList<>();
         try {
             Constructor[] constructors = debugContextClass.getConstructors();
             Constructor constructor = null;
@@ -262,32 +302,32 @@ public class FdrWrapper {
             invokeProperty(debugContextClass, debugContext, "initialise", Canceller, null);
             for (Object behaviour : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "rootBehaviours",
                     null, null)) {
-                trace.add(describeBehaviour(session, behaviour));
+                trace.add(describeBehaviour(behaviour));
                 break;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return trace;
     }
 
-    private String describeBehaviour(Object session, Object behaviour) throws Exception {
+    private String describeBehaviour(Object behaviour) throws Exception {
 
         StringBuilder sb = new StringBuilder();
 
         for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-
             if (event == 1 || event == 0) {
                 // sb.append("-, ");
             } else {
-                Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-                // System.out.println(result.toString());
+                Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
                 sb.append(result.toString() + ", ");
             }
         }
         return sb.toString();
     }
 
-    private void traceBehaviour(Object behaviour, StringBuilder sb, Object session) throws Exception {
+    private String traceBehaviour(Object behaviour) throws Exception {
+        StringBuilder sb = new StringBuilder();
         Object machine = invokeProperty(behaviourClass, behaviour, "machine", null, null);
         Object node = invokeProperty(Machine, machine, "rootNode", null, null);
         Object transitionList;
@@ -295,7 +335,7 @@ public class FdrWrapper {
             transitionList = invokeProperty(Machine, machine, "transitions", Node, node);
             Object evento = invokeProperty(TransitionList, transitionList, "get", int.class, 0);
             Object eventID = invokeProperty(Transition, evento, "event", null, null);
-            Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) eventID);
+            Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, (Long) eventID);
             // System.out.println(result.toString());
             if (!result.equals("τ")) {
                 sb.append(result.toString());
@@ -305,6 +345,7 @@ public class FdrWrapper {
             sb.append(", ");
             node = invokeProperty(Transition, evento, "destination", null, null);
         }
+        return sb.toString();
     }
 
     private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass,
