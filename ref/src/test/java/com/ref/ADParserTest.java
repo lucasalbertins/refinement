@@ -32,7 +32,7 @@ public class ADParserTest {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser = new ADParser(ad);
+			parser = new ADParser(ad.getActivity(), ad.getName());
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

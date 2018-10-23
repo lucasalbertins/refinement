@@ -3,8 +3,9 @@ package com.ref.parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
+import com.change_vision.jude.api.inf.model.IActivity;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.change_vision.jude.api.inf.model.IControlNode;
@@ -14,7 +15,7 @@ import javafx.util.Pair;
 
 public class ADParser {
 
-	private IActivityDiagram ad;
+	private IActivity ad;
 	
 	private int countGet_ad;
 	private int countSet_ad;
@@ -28,9 +29,11 @@ public class ADParser {
 	private HashMap<String, ArrayList<String>> alphabetNode;
 	private HashMap<Pair<String, String>, String> syncChannels; 
 	private ArrayList<IActivityNode> queueNode;
+	private ArrayList<IActivity> callBehaviorList;
 	
-	public ADParser(IActivityDiagram ad) {
-		this. ad = ad;
+	public ADParser(IActivity ad, String nameAD) {
+		this.ad = ad;
+		setName(nameAD);
 		this.countGet_ad = 1;
 		this.countSet_ad = 1;
 		this.countCn_ad = 1;
@@ -41,6 +44,15 @@ public class ADParser {
 		addCountCall();
 		syncChannels = new HashMap<>();
 		queueNode = new ArrayList<>();
+		callBehaviorList = new ArrayList<>();
+	}
+	
+	private void setName(String nameAD) {
+		try {
+			this.ad.setName(nameAD);
+		} catch (InvalidEditingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void addCountCall() {
@@ -54,7 +66,7 @@ public class ADParser {
 	
 	public String defineChannels() {
 		StringBuilder channels = new StringBuilder();
-		IActivityNode nodes[] =  ad.getActivity().getActivityNodes();
+		IActivityNode nodes[] =  ad.getActivityNodes();
 		boolean parameter = false;
 		int numCall = countCall.get(ad.getName());
 		
@@ -104,7 +116,7 @@ public class ADParser {
 		
 		channels.append("channel loop\n");
 		
-		//System.out.println(channels);
+		System.out.println(channels);
 		
 		return channels.toString();
 	}
@@ -114,30 +126,30 @@ public class ADParser {
 		int numCall = countCall.get(ad.getName());
 		
 		if (countGet_ad > 1) {
-			types.append("countGet_" + ad.getName() + "_" + numCall  + " = {1.." + --countGet_ad + "}\n");
+			types.append("countGet_" + ad.getName() + "_" + numCall  + " = {1.." + (countGet_ad - 1) + "}\n");
 		}
 		
 		if (countSet_ad > 1) {
-			types.append("countSet_" + ad.getName() + "_" + numCall  + " = {1.." + --countSet_ad + "}\n");
+			types.append("countSet_" + ad.getName() + "_" + numCall  + " = {1.." + (countSet_ad - 1) + "}\n");
 		}
 		
 		if (countCn_ad > 1) {
-			types.append("countCn_" + ad.getName() + "_" + numCall  + " = {1.." + --countCn_ad + "}\n");
+			types.append("countCn_" + ad.getName() + "_" + numCall  + " = {1.." + (countCn_ad - 1) + "}\n");
 		}
 		
-		types.append("countUpdate_" + ad.getName() + "_" + numCall  + " = {1.." + --countUpdate_ad + "}\n");
+		types.append("countUpdate_" + ad.getName() + "_" + numCall  + " = {1.." + (countUpdate_ad - 1) + "}\n");
 
 		if (countClear_ad > 1) {
-			types.append("countClear_" + ad.getName() + "_" + numCall  + " = {1.." + --countClear_ad + "}\n");
+			types.append("countClear_" + ad.getName() + "_" + numCall  + " = {1.." + (countClear_ad - 1) + "}\n");
 		}
 		
 		types.append("limiteUpdate_" + ad.getName() + "_" + numCall  + " = {(-2)..2}\n");	// valor fixo
 		
 		if (countLock_ad > 1) {
-			types.append("countLock_" + ad.getName() + "_" + numCall  + " = {1.." + --countLock_ad + "}\n");
+			types.append("countLock_" + ad.getName() + "_" + numCall  + " = {1.." + (countLock_ad - 1) + "}\n");
 		}
 		
-		//System.out.println(types);
+		System.out.println(types);
 		
 		return types.toString();
 	}
@@ -145,7 +157,7 @@ public class ADParser {
 	public String defineNodesActionAndControl() {
 		StringBuilder nodes = new StringBuilder();
 		
-		for (IActivityNode activityNode : ad.getActivity().getActivityNodes()) {
+		for (IActivityNode activityNode : ad.getActivityNodes()) {
 			if (activityNode instanceof IControlNode) {
 				if (((IControlNode) activityNode).isInitialNode()) {
 					queueNode.add(activityNode);
@@ -346,12 +358,12 @@ public class ADParser {
 
 		alphabetNode.put(activityNode.getName(), alphabet);
 		
+		callBehaviorList.add(((IAction) activityNode).getCallingActivity()); 	// add activity call behavior
+		
 		IFlow flow[] = activityNode.getOutgoings();
 		activityNode = flow[0].getTarget();	//set next action or control node
 		
 		nodes.append(callBehavior.toString());
-		
-		//### Ainda falta a chamada recursiva para criar o diagrama ###
 		
 		return activityNode;
 	}
