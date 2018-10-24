@@ -97,8 +97,8 @@ public class FileTest {
 		String actual = "";
 		actual += parser.getDefinedTypes();
 		actual += parser.getChannels();
-		actual += parser.parseSD(seq1) + "\n";
-		actual += parser.parseSD(seq2) + "\n";
+		actual += parser.getSd1Parse() + "\n";
+		actual += parser.getSd2Parse() + "\n";
 		actual += parser.getRefinementAssertion();
 
 		assertEquals(sbArquivo.toString(), actual);
@@ -116,12 +116,12 @@ public class FileTest {
 		actual = parser.getChannels();
 		bw.write(actual);
 		//bw.newLine();
-		actual = parser.parseSD(seq1);
+		actual = parser.getSd1Parse();
 		bw.write(actual);
 		//bw.newLine();
 		//bw.newLine();
 		bw.newLine();
-		actual = parser.parseSD(seq2);
+		actual = parser.getSd2Parse();
 		bw.write(actual);
 		//bw.write(actual);
 		bw.newLine();

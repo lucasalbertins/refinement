@@ -56,7 +56,7 @@ public class ParserUtilities {
     }
 
 
-    public String buildAssertions(ISequenceDiagram seq1, ISequenceDiagram seq2, int aux) {
+    public String buildAssertions(ISequenceDiagram seq1, ISequenceDiagram seq2, int aux, List<String> sd1Alphabet, List<String> sd2Alphabet) {
         StringBuilder sb = new StringBuilder();
         sb.append("assert ");
         sb.append("SD_").append(seq1.getName());
@@ -71,7 +71,7 @@ public class ParserUtilities {
         }
         sb.append(")");
         if (aux == 1) {
-            sb.append("\\{|").append(eventosDiferentes()).append("|}");
+            sb.append("\\{|").append(eventosDiferentes(sd1Alphabet,sd2Alphabet)).append("|}");
         }
         sb.append(" [T= ");
         sb.append("SD_").append(seq2.getName());
@@ -86,7 +86,7 @@ public class ParserUtilities {
         }
         sb.append(")");
         if (aux == 0) {
-            String diferentes = eventosDiferentes();
+            String diferentes = eventosDiferentes(sd1Alphabet, sd2Alphabet);
             if (!diferentes.equals("")) {
                 sb.append("\\{|").append(diferentes).append("|}\n");
             } else
@@ -96,12 +96,12 @@ public class ParserUtilities {
         return sb.toString();
     }
 
-    private String eventosDiferentes() {
+    private String eventosDiferentes(List<String> sd1Alphabet, List<String> sd2Alphabet) {
         StringBuilder sb = new StringBuilder();
         boolean adicionou = false;
 
-        for (String evento : SDParser.getSd2Alphabet()) {
-            if (!SDParser.getSd1Alphabet().contains(evento)) {
+        for (String evento : sd2Alphabet) {
+            if (!sd1Alphabet.contains(evento)) {
                 sb.append(evento).append(",");
                 adicionou = true;
             }
