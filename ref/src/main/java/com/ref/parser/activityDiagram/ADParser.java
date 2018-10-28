@@ -1,4 +1,4 @@
-package com.ref.parser;
+package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class ADParser {
 	private int countCn_ad;
 	private int countUpdate_ad;
 	private int countClear_ad;
-	private int countLock_ad;
+//	private int countLock_ad;
 	//limiteUpdate_ad = {(-2)..2}
 	
 	private static HashMap<String, Integer> countCall = new HashMap<>();
@@ -30,6 +30,7 @@ public class ADParser {
 	private HashMap<Pair<String, String>, String> syncChannels; 
 	private ArrayList<IActivityNode> queueNode;
 	private ArrayList<IActivity> callBehaviorList;
+	private ArrayList<String> eventChannel;
 	
 	public ADParser(IActivity ad, String nameAD) {
 		this.ad = ad;
@@ -37,14 +38,15 @@ public class ADParser {
 		this.countGet_ad = 1;
 		this.countSet_ad = 1;
 		this.countCn_ad = 1;
-		this.countUpdate_ad = 2;
+		this.countUpdate_ad = 1;
 		this.countClear_ad = 1;
-		this.countLock_ad = 1;
+//		this.countLock_ad = 1;
 		this.alphabetNode = new HashMap<>();
 		addCountCall();
 		syncChannels = new HashMap<>();
 		queueNode = new ArrayList<>();
 		callBehaviorList = new ArrayList<>();
+		eventChannel = new ArrayList<>();
 	}
 	
 	private void setName(String nameAD) {
@@ -88,11 +90,8 @@ public class ADParser {
 			channels.append("channel endActivity_" + ad.getName() + "_" + numCall  + "\n");
 		}
 		
-		if (countGet_ad > 1) {
+		if (countGet_ad > 1 || countSet_ad > 1) {
 			channels.append("channel set_x_" + ad.getName() + "_" + numCall  + ", set_y_" + ad.getName() + "_" + numCall  + ": countSet_" + ad.getName() + "_" + numCall  + ".typeIn_" + ad.getName() + "_" + numCall  + "\n");
-		}
-		
-		if (countSet_ad > 1) {
 			channels.append("channel get_x_" + ad.getName() + "_" + numCall  + ", get_y_" + ad.getName() + "_" + numCall  + ": countGet_" + ad.getName() + "_" + numCall  + ".typeIn_" + ad.getName() + "_" + numCall  + "\n");
 		}
 		
@@ -108,11 +107,15 @@ public class ADParser {
 		
 		channels.append("channel endDiagram_" + ad.getName() + "_" + numCall  + "\n");
 		
-		if (countLock_ad > 1) {
-			channels.append("channel lock_" + ad.getName() + "_" + numCall  + ": countLock_" + ad.getName() + "_" + numCall  + ".{0,1}\n");
-		}
+//		if (countLock_ad > 1) {
+//			channels.append("channel lock_" + ad.getName() + "_" + numCall  + ": countLock_" + ad.getName() + "_" + numCall  + ".{0,1}\n");
+//		}
+//		
+//		channels.append("channel get_value_" + ad.getName() + "_" + numCall  + "\n");
 		
-		channels.append("channel get_value_" + ad.getName() + "_" + numCall  + "\n");
+		for (String event : eventChannel) {
+			channels.append("channel " + event + "\n");
+		}
 		
 		channels.append("channel loop\n");
 		
@@ -125,14 +128,20 @@ public class ADParser {
 		StringBuilder types = new StringBuilder();
 		int numCall = countCall.get(ad.getName());
 		
-		if (countGet_ad > 1) {
-			types.append("countGet_" + ad.getName() + "_" + numCall  + " = {1.." + (countGet_ad - 1) + "}\n");
+		if (countGet_ad > 1 || countSet_ad > 1) {
+			if (countGet_ad == 1) {
+				types.append("countGet_" + ad.getName() + "_" + numCall  + " = {1.." + countGet_ad + "}\n");
+			} else {
+				types.append("countGet_" + ad.getName() + "_" + numCall  + " = {1.." + (countGet_ad - 1) + "}\n");
+			}
+			
+			if (countSet_ad == 1) {
+				types.append("countSet_" + ad.getName() + "_" + numCall  + " = {1.." + countSet_ad + "}\n");
+			} else {
+				types.append("countSet_" + ad.getName() + "_" + numCall  + " = {1.." + (countSet_ad - 1) + "}\n");
+			}
 		}
-		
-		if (countSet_ad > 1) {
-			types.append("countSet_" + ad.getName() + "_" + numCall  + " = {1.." + (countSet_ad - 1) + "}\n");
-		}
-		
+
 		if (countCn_ad > 1) {
 			types.append("countCn_" + ad.getName() + "_" + numCall  + " = {1.." + (countCn_ad - 1) + "}\n");
 		}
@@ -145,9 +154,9 @@ public class ADParser {
 		
 		types.append("limiteUpdate_" + ad.getName() + "_" + numCall  + " = {(-2)..2}\n");	// valor fixo
 		
-		if (countLock_ad > 1) {
-			types.append("countLock_" + ad.getName() + "_" + numCall  + " = {1.." + (countLock_ad - 1) + "}\n");
-		}
+//		if (countLock_ad > 1) {
+//			types.append("countLock_" + ad.getName() + "_" + numCall  + " = {1.." + (countLock_ad - 1) + "}\n");
+//		}
 		
 		System.out.println(types);
 		
@@ -160,25 +169,29 @@ public class ADParser {
 		for (IActivityNode activityNode : ad.getActivityNodes()) {
 			if (activityNode instanceof IControlNode) {
 				if (((IControlNode) activityNode).isInitialNode()) {
-					queueNode.add(activityNode);
+					if (!queueNode.contains(activityNode)) {
+						queueNode.add(activityNode);
+					}
 				}
 			}
 		}
+		
+		int input = 0;
 		
 		while (queueNode.size() != 0) {
 			IActivityNode activityNode = queueNode.get(0);
 			queueNode.remove(0);
 			
-			while (activityNode != null) {
+			while (activityNode != null && !alphabetNode.containsKey(activityNode.getName())	// Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
+					&& input == activityNode.getIncomings().length ) {
+				
 				if (activityNode instanceof IAction) {
 					if (((IAction) activityNode).isCallBehaviorAction()) {
 						activityNode = defineCallBehavior(activityNode, nodes);
 					} else {
 						activityNode = defineAction(activityNode, nodes);	// create action node and set next action node
 					}
-				}
-				
-				if (activityNode instanceof IControlNode) {
+				} else if (activityNode instanceof IControlNode) {
 					if (((IControlNode) activityNode).isFinalNode()) {
 						activityNode = defineFinalNode(activityNode, nodes); // create final node and set next action node
 					} else if (((IControlNode) activityNode).isInitialNode()) {
@@ -187,11 +200,21 @@ public class ADParser {
 						activityNode = defineFork(activityNode, nodes); // create fork node and set next action node
 					} else if (((IControlNode) activityNode).isJoinNode()) {
 						activityNode = defineJoin(activityNode, nodes); // create join node and set next action node
-					} else if (((IControlNode) activityNode).isMergeNode()) {
-						activityNode = defineMerge(activityNode, nodes); // create merge node and set next action node
 					} else if (((IControlNode) activityNode).isDecisionMergeNode()) {
 						activityNode = defineDecision(activityNode, nodes); // create decision node and set next action node
+					} else if (((IControlNode) activityNode).isMergeNode()) {
+						activityNode = defineMerge(activityNode, nodes); // create merge node and set next action node
 					} 
+				}
+				
+				if (activityNode != null) {
+					input = 0;
+					
+					for (Pair<String, String> tupla : syncChannels.keySet()) {	//get amount input
+						if (tupla.getValue().equals(activityNode.getName())) {
+							input++;
+						}
+					}
 				}
 			}	
 		}
@@ -208,6 +231,8 @@ public class ADParser {
 		String nameAction = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
 		String nameActionTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
 		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		action.append(nameAction + " = ");
 		
@@ -221,16 +246,14 @@ public class ADParser {
 		String cnIn = syncChannels.get(sync);
 		
 		cn(alphabet, numCall, action, cnIn, " -> ");
-		lock(alphabet, numCall, action, 1);
+		event(alphabet, nameAction, action);
+		update(alphabet, numCall, action, inFlows.length, outFlows.length);
 		
-		for (IFlow flow : activityNode.getOutgoings()) {	//creates output channels
+		for (IFlow flow : outFlows) {	//creates output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
 			cn(alphabet, numCall, action, cn, " -> ");
 		}
-
-		update(alphabet, numCall, action, activityNode.getIncomings().length, activityNode.getOutgoings().length);
-		lock(alphabet, numCall, action, 0);
 		
 		action.append(nameAction + "\n");
 		
@@ -239,7 +262,7 @@ public class ADParser {
 
 		alphabetNode.put(activityNode.getName(), alphabet);
 		
-		IFlow flow[] = activityNode.getOutgoings();
+		IFlow flow[] = outFlows;
 		activityNode = flow[0].getTarget();	//set next action or control node
 		
 		nodes.append(action.toString());
@@ -257,20 +280,29 @@ public class ADParser {
 		
 		finalNode.append(nameFinalNode + " = ");
 
-		
-		Pair<String, String> sync = new Pair<String, String>("", "");
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get sync channel
+		ArrayList<Pair<String, String>> cnInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get all sync channels
 			if (tupla.getValue().equals(activityNode.getName())) {
-				sync = tupla;
+				cnInitials.add(tupla);
 			}
 		}
 		
-		String cnIn = syncChannels.get(sync);
+		finalNode.append("(");
+		for (int i = 0; i < cnInitials.size(); i++) {
+			String cnIn = syncChannels.get(cnInitials.get(i));	//get the parallel input channels
+	
+			finalNode.append("(");
+			
+			if (i >= 0 && i < cnInitials.size() - 1) {
+				cn(alphabet, numCall, finalNode, cnIn, " -> SKIP) [] ");
+			} else {
+				cn(alphabet, numCall, finalNode, cnIn, " -> SKIP)");
+			}
+		}
 		
-		cn(alphabet, numCall, finalNode, cnIn, " -> ");
-		lock(alphabet, numCall, finalNode, 1);
+		finalNode.append("); ");
+		
 		clear(alphabet, numCall, finalNode);
-		lock(alphabet, numCall, finalNode, 0);
 		
 		finalNode.append("SKIP\n");
 		
@@ -291,10 +323,14 @@ public class ADParser {
 		ArrayList<String> alphabet = new ArrayList<>();
 		int numCall = countCall.get(ad.getName());
 		String nameInitialNode = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		initialNode.append(nameInitialNode + " = ");
 		
-		for (IFlow flow : activityNode.getOutgoings()) {	//creates output channels
+		update(alphabet, numCall, initialNode, inFlows.length, outFlows.length);
+		
+		for (IFlow flow : outFlows) {	//creates output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
 			cn(alphabet, numCall, initialNode, cn, " -> ");
@@ -304,11 +340,13 @@ public class ADParser {
 
 		alphabetNode.put(activityNode.getName(), alphabet);
 
-		IFlow flows[] = activityNode.getOutgoings();
+		IFlow flows[] = outFlows;
 		activityNode = flows[0].getTarget();	//set next action or control node
 		
 		for (int i = 1; i < flows.length; i++) {	//puts the remaining nodes in the queue
-			queueNode.add(flows[i].getTarget());
+			if (!queueNode.contains(flows[i].getTarget())) {
+				queueNode.add(flows[i].getTarget());
+			}
 		}
 		
 		nodes.append(initialNode.toString());
@@ -323,6 +361,8 @@ public class ADParser {
 		String nameCallBehavior = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
 		String nameCallBehaviorTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
 		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		callBehavior.append(nameCallBehavior + " = ");
 		
@@ -336,20 +376,17 @@ public class ADParser {
 		String cnIn = syncChannels.get(sync);
 		
 		cn(alphabet, numCall, callBehavior, cnIn, " -> ");
-		lock(alphabet, numCall, callBehavior, 1);
 		get(alphabet, numCall, callBehavior, 'x');
 		startActivity(alphabet, numCall, callBehavior);
 		endActivity(alphabet, numCall, callBehavior);
 		set(alphabet, numCall, callBehavior, 'y');
+		update(alphabet, numCall, callBehavior, inFlows.length, outFlows.length);
 		
-		for (IFlow flow : activityNode.getOutgoings()) {	//creates output channels
+		for (IFlow flow : outFlows) {	//creates output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
 			cn(alphabet, numCall, callBehavior, cn, " -> ");
 		}
-		
-		update(alphabet, numCall, callBehavior, activityNode.getIncomings().length, activityNode.getOutgoings().length);
-		lock(alphabet, numCall, callBehavior, 0);
 		
 		callBehavior.append(nameCallBehavior + "\n");
 		
@@ -360,7 +397,7 @@ public class ADParser {
 		
 		callBehaviorList.add(((IAction) activityNode).getCallingActivity()); 	// add activity call behavior
 		
-		IFlow flow[] = activityNode.getOutgoings();
+		IFlow flow[] = outFlows;
 		activityNode = flow[0].getTarget();	//set next action or control node
 		
 		nodes.append(callBehavior.toString());
@@ -375,6 +412,8 @@ public class ADParser {
 		String nameFork = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
 		String nameForkTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
 		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		fork.append(nameFork + " = ");
 		
@@ -388,28 +427,25 @@ public class ADParser {
 		String cnIn = syncChannels.get(sync);
 		
 		cn(alphabet, numCall, fork, cnIn, " -> ");
-		lock(alphabet, numCall, fork, 1);
+		update(alphabet, numCall, fork, inFlows.length, outFlows.length);
 		
 		fork.append("(");
 		
-		IFlow flows[] =  activityNode.getOutgoings();
+		IFlow flows[] =  outFlows;
 		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), cn);
 			
-			if (i > 0 && i < flows.length - 1) {
-				cn(alphabet, numCall, fork, cn, " -> SKIP ||| ");
-			} else if (i == 0 && flows.length > 1) {
-				cn(alphabet, numCall, fork, cn, " -> SKIP ");
+			fork.append("(");
+			
+			if (i >= 0 && i < flows.length - 1) {
+				cn(alphabet, numCall, fork, cn, " -> SKIP) ||| ");
 			} else {
-				cn(alphabet, numCall, fork, cn, " -> SKIP");
+				cn(alphabet, numCall, fork, cn, " -> SKIP)");
 			}
 		}
 		
 		fork.append("); ");
-		
-		update(alphabet, numCall, fork, activityNode.getIncomings().length, flows.length);
-		lock(alphabet, numCall, fork, 0);
 		
 		fork.append(nameFork + "\n");
 		
@@ -420,8 +456,11 @@ public class ADParser {
 		
 		activityNode = flows[0].getTarget();	//set next action or control node
 		
+		
 		for (int i = 1; i < flows.length; i++) {	//puts the remaining nodes in the queue
-			queueNode.add(flows[i].getTarget());
+			if (!queueNode.contains(flows[i].getTarget())) {
+				queueNode.add(flows[i].getTarget());
+			}
 		}
 		
 		nodes.append(fork.toString());
@@ -436,6 +475,8 @@ public class ADParser {
 		String nameJoin = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
 		String nameJoinTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
 		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		join.append(nameJoin + " = ");
 		
@@ -450,27 +491,24 @@ public class ADParser {
 		for (int i = 0; i < cnInitials.size(); i++) {
 			String cnIn = syncChannels.get(cnInitials.get(i));	//get the parallel input channels
 	
-			if (i > 0 && i < activityNode.getOutgoings().length - 1) {
-				cn(alphabet, numCall, join, cnIn, " -> SKIP ||| ");
-			} else if (i == 0 && activityNode.getOutgoings().length > 1) {
-				cn(alphabet, numCall, join, cnIn, " -> SKIP ");
+			join.append("(");
+			
+			if (i >= 0 && i < cnInitials.size() - 1) {
+				cn(alphabet, numCall, join, cnIn, " -> SKIP) ||| ");
 			} else {
-				cn(alphabet, numCall, join, cnIn, " -> SKIP");
+				cn(alphabet, numCall, join, cnIn, " -> SKIP)");
 			}
 		}
 		
 		join.append("); ");
 		
-		lock(alphabet, numCall, join, 1);
+		update(alphabet, numCall, join, inFlows.length, outFlows.length);
 		
-		for (IFlow flow : activityNode.getOutgoings()) {	//creates output channels
+		for (IFlow flow : outFlows) {	//creates output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
 			cn(alphabet, numCall, join, cn, " -> ");
 		}
-		
-		update(alphabet, numCall, join, activityNode.getIncomings().length, activityNode.getOutgoings().length);
-		lock(alphabet, numCall, join, 0);
 		
 		join.append(nameJoin + "\n");
 		
@@ -479,7 +517,7 @@ public class ADParser {
 
 		alphabetNode.put(activityNode.getName(), alphabet);
 		
-		IFlow flow[] = activityNode.getOutgoings();
+		IFlow flow[] = outFlows;
 		activityNode = flow[0].getTarget();	//set next action or control node
 		
 		nodes.append(join.toString());
@@ -494,6 +532,8 @@ public class ADParser {
 		String nameMerge = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
 		String nameMergeTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
 		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		merge.append(nameMerge + " = ");
 		
@@ -508,27 +548,24 @@ public class ADParser {
 		for (int i = 0; i < cnInitials.size(); i++) {
 			String cnIn = syncChannels.get(cnInitials.get(i));
 	
-			if (i > 0 && i < activityNode.getOutgoings().length - 1) {	//creates the input channels (merge)
-				cn(alphabet, numCall, merge, cnIn, " -> SKIP [] ");
-			} else if (i == 0 && activityNode.getOutgoings().length > 1) {
-				cn(alphabet, numCall, merge, cnIn, " -> SKIP ");
+			merge.append("(");
+			
+			if (i >= 0 && i < cnInitials.size() - 1) {	//creates the input channels (merge)
+				cn(alphabet, numCall, merge, cnIn, " -> SKIP) [] ");
 			} else {
-				cn(alphabet, numCall, merge, cnIn, " -> SKIP");
+				cn(alphabet, numCall, merge, cnIn, " -> SKIP)");
 			}
 		}
 		
 		merge.append("); ");
 		
-		lock(alphabet, numCall, merge, 1);
+		update(alphabet, numCall, merge, inFlows.length, outFlows.length);
 		
-		for (IFlow flow : activityNode.getOutgoings()) {	//creates output channels
+		for (IFlow flow : outFlows) {	//creates output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
 			cn(alphabet, numCall, merge, cn, " -> ");
 		}
-		
-		update(alphabet, numCall, merge, activityNode.getIncomings().length, activityNode.getOutgoings().length);
-		lock(alphabet, numCall, merge, 0);
 		
 		merge.append(nameMerge + "\n");
 		
@@ -537,7 +574,7 @@ public class ADParser {
 
 		alphabetNode.put(activityNode.getName(), alphabet);
 		
-		IFlow flow[] = activityNode.getOutgoings();
+		IFlow flow[] = outFlows;
 		activityNode = flow[0].getTarget();	//set next action or control node
 		
 		nodes.append(merge.toString());
@@ -552,6 +589,8 @@ public class ADParser {
 		String nameDecision = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
 		String nameDecisionTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
 		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
 		
 		decision.append(nameDecision + " = ");
 		
@@ -565,30 +604,26 @@ public class ADParser {
 		String cnIn = syncChannels.get(sync);
 		
 		cn(alphabet, numCall, decision, cnIn, " -> ");
-		lock(alphabet, numCall, decision, 1);
+		update(alphabet, numCall, decision, inFlows.length, 1);
+		get(alphabet, numCall, decision, 'x');
 		
 		decision.append("(");
 		
-		IFlow flows[] =  activityNode.getOutgoings();
+		IFlow flows[] =  outFlows;
 		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
 			String cn = createCN(numCall);
 			syncChannels.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), cn);
 			
-			decision.append(flows[i].getGuard() + " & ");
+			decision.append(flows[i].getGuard() + " & (");
 			
-			if (i > 0 && i < flows.length - 1) {
-				cn(alphabet, numCall, decision, cn, " -> SKIP [] ");
-			} else if (i == 0 && flows.length > 1) {
-				cn(alphabet, numCall, decision, cn, " -> SKIP ");
+			if (i >= 0 && i < flows.length - 1) {
+				cn(alphabet, numCall, decision, cn, " -> SKIP) [] ");
 			} else {
-				cn(alphabet, numCall, decision, cn, " -> SKIP");
+				cn(alphabet, numCall, decision, cn, " -> SKIP)");
 			}
 		}
 		
 		decision.append("); ");
-		
-		update(alphabet, numCall, decision, activityNode.getIncomings().length, flows.length);
-		lock(alphabet, numCall, decision, 0);
 		
 		decision.append(nameDecision + "\n");
 		
@@ -600,7 +635,9 @@ public class ADParser {
 		activityNode = flows[0].getTarget();	//set next action or control node
 		
 		for (int i = 1; i < flows.length; i++) {	//puts the remaining nodes in the queue
-			queueNode.add(flows[i].getTarget());
+			if (!queueNode.contains(flows[i].getTarget())) {
+				queueNode.add(flows[i].getTarget());
+			}
 		}
 		
 		nodes.append(decision.toString());
@@ -648,16 +685,22 @@ public class ADParser {
 		}
 	}
 	
-	private void lock(ArrayList<String> alphabetNode, int numCall, StringBuilder action, int inOut) {
-		if (inOut == 0) {
-			String lock = "lock_" + ad.getName() + "_" + numCall + "." + countLock_ad++;
-			alphabetNode.add(lock);
-			action.append(lock + ".0 -> ");
-		} else {
-			String lock = "lock_" + ad.getName() + "_" + numCall + "." + countLock_ad;
-			alphabetNode.add(lock);
-			action.append(lock + ".1 -> ");
-		}
+//	private void lock(ArrayList<String> alphabetNode, int numCall, StringBuilder action, int inOut) {
+//		if (inOut == 0) {
+//			String lock = "lock_" + ad.getName() + "_" + numCall + "." + countLock_ad++;
+//			alphabetNode.add(lock);
+//			action.append(lock + ".0 -> ");
+//		} else {
+//			String lock = "lock_" + ad.getName() + "_" + numCall + "." + countLock_ad;
+//			alphabetNode.add(lock);
+//			action.append(lock + ".1 -> ");
+//		}
+//	}
+	
+	private void event(ArrayList<String> alphabet, String nameAction, StringBuilder action) {
+		alphabet.add("event_" + nameAction);
+		eventChannel.add("event_" + nameAction);
+		action.append("event_" + nameAction + " -> ");
 	}
 	
 	private void cn(ArrayList<String> alphabetNode, int numCall, StringBuilder action, String cn, String posCn) {

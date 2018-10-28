@@ -1,9 +1,10 @@
-package com.ref;
+package com.ref.activityDiagram;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;
@@ -12,7 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.parser.ADParser;
+import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTest {
 	
@@ -53,14 +54,15 @@ public class ADParserTest {
 	/*
 	 * Teste de Tradução dos tipos de elementos
 	 * */
+	@Ignore
 	@Test
 	public void TestNodesActionAndcountrol() {
 		String actual = parser.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_ad2_1 = cn_ad2_1.1 -> SKIP\n" + 
-				"act1_ad2_1 = cn_ad2_1.1 -> lock_ad2_1.1.1 -> cn_ad2_1.2 -> update_ad2_1.2!(1-1) -> lock_ad2_1.1.0 -> act1_ad2_1\n" + 
+		expected.append("init1_ad2_1 = update_ad2_1.1!(1-0) -> cn_ad2_1.1 -> SKIP\n" + 
+				"act1_ad2_1 = cn_ad2_1.1 -> event_act1_ad2_1 -> update_ad2_1.2!(1-1) -> cn_ad2_1.2 -> act1_ad2_1\n" + 
 				"act1_ad2_t_1 = act1_ad2_1 /\\ END_DIAGRAM_ad2_1\n" + 
-				"fin1_ad2_1 = cn_ad2_1.2 -> lock_ad2_1.2.1 -> clear_ad2_1.1 -> lock_ad2_1.2.0 -> SKIP\n" + 
+				"fin1_ad2_1 = cn_ad2_1.2 -> clear_ad2_1.1 -> SKIP\n" + 
 				"fin1_ad2_t_1 = fin1_ad2_1 /\\ END_DIAGRAM_ad2_1\n");
 		
 		assertEquals(expected.toString(), actual);
@@ -69,85 +71,81 @@ public class ADParserTest {
 	
 	 /* Teste de Tradução do processo Node_"getname"
 	 */
-	/*@Test
+	@Ignore
+	@Test
 	public void TestDefineProcessNode() {
 		String actual = "";
 		StringBuffer expected = new StringBuffer();
-		expected.append("Node_ad2_1 = ((init1_ad2_1 [{|cn_ad2_1.1|}||{|cn_ad2_1.1,lock_ad2_1.1,cn_ad2_1.2,update_ad2_1.2,endDiagram_ad2_1|}] act1_ad2_t_1) [{|cn_ad2_1.1,lock_ad2_1.1,cn_ad2_1.2,update_ad2_1.2,endDiagram_ad2_1|}||{|cn_ad2_1.2,lock_ad2_1.2,clear_ad2_1.1,endDiagram_ad2_1|}] fin1_ad2_t_1)\n");
+		expected.append("Node_ad2_1 = ((init1_ad2_1 [{|cn_ad2_1.1,update_ad2_1.1|}||{|cn_ad2_1.1,cn_ad2_1.2,update_ad2_1.2,endDiagram_ad2_1,event_act1_ad2_1|}] act1_ad2_t_1) [{|cn_ad2_1.1,cn_ad2_1.2,update_ad2_1.1,update_ad2_1.2,endDiagram_ad2_1,event_act1_ad2_1|}||{|cn_ad2_1.2,clear_ad2_1.1,endDiagram_ad2_1|}] fin1_ad2_t_1)\n");
 	
 		assertEquals(expected.toString(), actual);
-	}*/
+	}
 	
 	
 	
 	 /* Teste de Tradução do processo de memória
 	 */ 
-	/*@Test
+	@Ignore
+	@Test
 	public void TestDefineProcessMemory() {
-		ad2 não countém
-	}*/
+		
+	}
 	
 	
 	
 	 /* Teste de Tradução do processo TokenManager
 	 */ 
-	/*@Test
+	@Ignore
+	@Test
 	public void TestDefineProcessTokenManager() {
 		String actual = "";
 		StringBuffer expected = new StringBuffer();
-		expected.append("TokenManager_ad2_1(x) = update_ad2_1?c?y:limiteUpdate_ad2_1 -> x+y < 10 & x+y > -10 & TokenManager_ad2_1(x+y) [] clear_ad2_1?c -> endDiagram_ad2_1 -> SKIP [] x == 0 & get_value_ad2_1 -> endDiagram_ad2_1 -> SKIP\n" + 
-				"TokenManager_ad2_t_1(x) = TokenManager_ad2_1(x)\n");
+		expected.append("TokenManager_ad2_1(x,init) = update_ad2_1?c?y:limiteUpdate_ad2_1 -> x+y < 10 & x+y > -10 & TokenManager_ad2_1(x+y,1) [] clear_ad2_1?c -> endDiagram_ad2_1 -> SKIP [] x == 0 & init == 1 & endDiagram_ad2_1 -> SKIP\n" + 
+				"TokenManager_ad2_t_1(x,init) = TokenManager_ad2_1(x,init)\n");
 		
 		assertEquals(expected.toString(), actual);
-	}*/
+	}
 	
 	
 	 /* Teste de Tradução do processo Lock
 	 */ 
-	/*@Test
-	public void TestDefineProcessLock() {
-		String actual = "";
-		StringBuffer expected = new StringBuffer();
-		expected.append("Lock_ad2_1(x) = x == 1 & lock_ad2_1?c.1 -> Lock_ad2_1(0) [] x == 0 & lock_ad2_1?c.0 -> Lock_ad2_1(1) [] x == 1 & get_value_ad2_1 -> Lock_ad2_1(x)\n" + 
-				"Lock_ad2_t_1(x) = Lock_ad2_1(x) /\\ END_DIAGRAM_ad2_1\n");
-		
-		assertEquals(expected.toString(), actual);
-	}*/
+//	@Ignore
+//	@Test
+//	public void TestDefineProcessLock() {
+//		String actual = "";
+//		StringBuffer expected = new StringBuffer();
+//		expected.append("");
+//		
+//		assertEquals(expected.toString(), actual);
+//	}
 
 	
 	
 	 /* Teste de Tradução do processo principal
 	 */ 
-	/*@Test
+	@Ignore
+	@Test
 	public void TestDefineProcessMain() {
-		
-		  ad process
-		 * internal_ad process
-		 * StartActivity_ad process
-		 * EndActivity_ad process
-		 * END_DIAGRAM_ad process
-		 * MAIN process
-		 * LOOP process
-		  
 		
 		String actual = "";
 		StringBuffer expected = new StringBuffer();
 		expected.append("MAIN = ad2_1; LOOP\n" + 
 				"LOOP = loop -> LOOP\n" + 
 				"END_DIAGRAM_ad2_1 = endDiagram_ad2_1 -> SKIP\n" + 
-				"ad2_1 = ((Internal_ad2_1 [|{|update_ad2_1,clear_ad2_1,get_value_ad2_1,endDiagram_ad2_1|}|] TokenManager_ad2_t_1(0)) [|{|lock_ad2_1,get_value_ad2_1,endDiagram_ad2_1|}|] Lock_ad2_t_1(1))\n" + 
+				"ad2_1 = ((Internal_ad2_1 [|{|update_ad2_1,clear_ad2_1,endDiagram_ad2_1|}|] TokenManager_ad2_t_1(0,0)))\n" + 
 				"Internal_ad2_1 = StartActivity_ad2_1; Node_ad2_1; EndActivity_ad2_1\n" + 
-				"StartActivity_ad2_1 = startActivity_ad2_1 -> update_ad2_1.1!1 -> SKIP\n" + 
+				"StartActivity_ad2_1 = startActivity_ad2_1 -> SKIP\n" + 
 				"EndActivity_ad2_1 = endActivity_ad2_1 -> SKIP\n");
 		
 		assertEquals(expected.toString(), actual);
-	}*/
+	}
 	
 	
 	
 	 /* Teste de Tradução dos tipos de dados
 	 */
-	/*@Test
+	@Ignore
+	@Test
 	public void TestDefineTypes() {
 		parser.defineNodesActionAndControl();
 		String actual = parser.defineTypes();
@@ -155,16 +153,16 @@ public class ADParserTest {
 		expected.append("countCn_ad2_1 = {1..2}\n" + 
 				"countUpdate_ad2_1 = {1..2}\n" + 
 				"countClear_ad2_1 = {1..1}\n" + 
-				"limiteUpdate_ad2_1 = {(-2)..2}\n" + 
-				"countLock_ad2_1 = {1..2}\n");
+				"limiteUpdate_ad2_1 = {(-2)..2}\n");
 
 		assertEquals(expected.toString(), actual);
-	}*/
+	}
 	
 	
 	/* Teste de Tradução dos canais
 	 */
-	/*@Test
+	
+	@Test
 	public void TestDefineChannels() {
 		parser.defineNodesActionAndControl();
 		parser.defineTypes();
@@ -176,12 +174,11 @@ public class ADParserTest {
 				"channel clear_ad2_1: countClear_ad2_1\n" + 
 				"channel update_ad2_1: countUpdate_ad2_1.limiteUpdate_ad2_1\n" + 
 				"channel endDiagram_ad2_1\n" + 
-				"channel lock_ad2_1: countLock_ad2_1.{0,1}\n" + 
-				"channel get_value_ad2_1\n" + 
+				"channel event_act1_ad2_1\n" + 
 				"channel loop\n");
 
 		assertEquals(expected.toString(), actual);
-	}*/
+	}
 	
 	@AfterClass
 	public static void CloseProject() throws Exception {
