@@ -28,7 +28,7 @@ public class ADParserTest {
 	public static void GetDiagram() throws Exception {
 		try {
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/ad2.asta");
+			projectAccessor.open("src/test/resources/activityDiagram/ad2.asta");
 			INamedElement[] findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
