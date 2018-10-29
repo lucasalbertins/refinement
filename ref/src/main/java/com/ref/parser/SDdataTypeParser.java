@@ -14,8 +14,6 @@ public class SDdataTypeParser {
     private Map<String,String> lfIdMap;
     private List<String> msgs;
     private List<String> getters;
-    private List<String> op;
-    private List<String> sig;
 
     public SDdataTypeParser(ISequenceDiagram seq1, ISequenceDiagram seq2, Map<String, String> lfIdMap) {
         this.seq1 = seq1;
@@ -23,8 +21,6 @@ public class SDdataTypeParser {
         this.lfIdMap = lfIdMap;
         this.msgs = new ArrayList<>();
         this.getters = new ArrayList<>();
-        this.op = new ArrayList<>();
-        this.sig = new ArrayList<>();
     }
 
     public String defineTypes(){
@@ -35,21 +31,19 @@ public class SDdataTypeParser {
 
         types.append("datatype ID = ");
 
-        List<String> added = new ArrayList<>();
-
-        defineLifelineID(types, seq1,blocks, added);
+        defineLifelineID(types, seq1,blocks);
         types.deleteCharAt(types.length() - 1);
-        defineLifelineID(types, seq2,blocks, added);
+        defineLifelineID(types, seq2,blocks);
 
-        // types.deleteCharAt(types.length() - 1);
         types.append("\n");
         types.append("datatype ID_SD = ").append("sd1id").append("|").append("sd2id").append("\n");
 
-        types.append(defineArguments());
+        // This is not being used atm
+        //types.append(defineArguments());
 
-        StringBuilder typesAux = new StringBuilder();
+        StringBuilder blockMessages = new StringBuilder();
         for (IClass block : blocks) {
-            defineBlockMessages(typesAux, block);
+            blockMessages.append(defineBlockMessages(block));
         }
 
         types.append("datatype MSG = ");
@@ -58,7 +52,9 @@ public class SDdataTypeParser {
         }
         types.deleteCharAt(types.length() - 1);
         types.append("\n");
-        types.append(typesAux.toString());
+
+        types.append(blockMessages.toString());
+
         for (String get : getters) {
             types.append(get);
         }
@@ -66,13 +62,14 @@ public class SDdataTypeParser {
         return types.toString();
     }
 
-    private void defineLifelineID(StringBuilder types, ISequenceDiagram seq,List<IClass> blocks, List<String> added) {
+    private void defineLifelineID(StringBuilder types, ISequenceDiagram seq,List<IClass> blocks) {
         for (ILifeline lifeline : seq.getInteraction().getLifelines()) {
-            if (!added.contains(lfIdMap.get(lifeline.getBase().toString()))) {
-                types.append(this.lfIdMap.get(lifeline.getBase().toString()));
-                added.add(this.lfIdMap.get(lifeline.getBase().toString()));
+            String base = lifeline.getBase().toString();
+            if (this.lfIdMap.containsKey(base)) {
+                types.append(this.lfIdMap.get(base));
                 types.append("|");
                 blocks.add(lifeline.getBase());
+                this.lfIdMap.remove(base);
             }
         }
     }
@@ -154,104 +151,76 @@ public class SDdataTypeParser {
         return parametros.toString();
     }
 
+    private String defineBlockMessages(IClass block) {
 
-    private void defineBlockMessages(StringBuilder types, IClass block) {
-
+        StringBuilder result = new StringBuilder();
         List<IMessage> messages = ParserUtilities.getInstance().getBlockMessages(seq1,seq2,block);
-        List<String> datatypes = new ArrayList<>();
-        StringBuilder auxiliar = new StringBuilder();
-        StringBuilder operationsAux;
         StringBuilder gettersAux;
-        StringBuilder signalsAux;
 
-        //StringBuilder finalGetters = new StringBuilder();
+        // This is for sync messages
         StringBuilder operations = new StringBuilder();
+
+        // This is for async messages
         StringBuilder signals = new StringBuilder();
 
         for (IMessage message : messages) {
             gettersAux = new StringBuilder();
-            operationsAux = new StringBuilder();
-            signalsAux = new StringBuilder();
 
-            if (message.isAsynchronous()) {
-                signalsAux.append(message.getName());
-                gettersAux.append("get_id(").append(message.getName());
-                if (!"".equals(message.getArgument())) {
-                    // treatArguments(signalsAux, message.getArgument());
-                    // treatGetterArguments(gettersAux, message.getArgument());
-                }
-                gettersAux.append(") = ").append(message.getName()).append("\n");
-                if (!sig.contains(signalsAux.toString())) {
-                    addMessages(signalsAux, signals, sig);
-                }
+            if (message.isAsynchronous())
+                signals.append(addMessage(message.getName(),gettersAux,false));
+             else
+                operations.append(addMessage(message.getName(),gettersAux,true));
 
-            } else if (message.isSynchronous()) {
-                operationsAux.append(message.getName()).append("_I");
-                gettersAux.append("get_id(").append(message.getName()).append("_I");
-                if (!"".equals(message.getArgument())) {
-                    // treatArguments(operationsAux, message.getArgument());
-                    // treatGetterArguments(gettersAux, message.getArgument());
-                }
-                gettersAux.append(") = ").append(message.getName()).append("_I\n");
-
-                if (!op.contains(operationsAux.toString())) {
-                    addMessages(operationsAux, operations, op);
-                }
-
-                operationsAux = new StringBuilder();
-
-                operationsAux.append(message.getName()).append("_O");
-                gettersAux.append("get_id(").append(message.getName()).append("_O");
-                if (!"".equals(message.getReturnValueVariable())) {
-                    // treatArguments(operationsAux,
-                    // message.getReturnValueVariable());
-                    // treatGetterArguments(gettersAux, message.getArgument());
-                }
-                gettersAux.append(") = ").append(message.getName()).append("_O\n");
-
-                if (!op.contains(operationsAux.toString())) {
-                    addMessages(operationsAux, operations, op);
-                }
-
-            }
             if (!this.getters.contains(gettersAux.toString())) {
-                //finalGetters.append(gettersAux.toString());
                 getters.add(gettersAux.toString());
             }
-
         }
 
         if (!signals.toString().isEmpty()) {
             signals.delete(signals.length() - 3, signals.length());
-            auxiliar.append("subtype ").append(block.getName());
-            auxiliar.append("_SIG = ").append(signals.toString()).append("\n");
-            if (!datatypes.contains(auxiliar.toString())) {
-                types.append(auxiliar.toString());
-                datatypes.add(auxiliar.toString());
-            }
+            result.append("subtype ").append(block.getName());
+            result.append("_SIG = ").append(signals.toString()).append("\n");
         }
         if (!operations.toString().isEmpty()) {
-            auxiliar = new StringBuilder();
             operations.delete(operations.length() - 3, operations.length());
-            auxiliar.append("subtype ").append(block.getName());
-            auxiliar.append("_OPS = ").append(operations.toString()).append("\n");
-            if (!datatypes.contains(auxiliar.toString())) {
-                types.append(auxiliar.toString());
-                datatypes.add(auxiliar.toString());
-            }
+            result.append("subtype ").append(block.getName());
+            result.append("_OPS = ").append(operations.toString()).append("\n");
         }
 
-        // types.append(finalGetters.toString());
+        return result.toString();
     }
 
-    private void addMessages(StringBuilder msgAux, StringBuilder signals, List<String> sig) {
-        this.msgs.add(msgAux.toString());
-        signals.append(msgAux.toString());
-        sig.add(msgAux.toString());
-        signals.append(" | ");
+    private String addMessage(String message,StringBuilder getter, boolean isSync){
+        if(isSync) message += "_I";
+        StringBuilder result = new StringBuilder();
+        getter.append("get_id(").append(message);
+
+//                if (!"".equals(message.getArgument())) { // This is not being used atm (params)
+//                    // treatArguments(signalsAux, message.getArgument());
+//                    // treatGetterArguments(gettersAux, message.getArgument());
+//                }
+
+        getter.append(") = ").append(message);
+        getter.append("\n");
+        if (!msgs.contains(message)) {
+            this.msgs.add(message);
+            result.append(message);
+            result.append(" | ");
+
+            if(isSync){
+                String returnMessage = message.replace("_I", "_O");
+                this.msgs.add(returnMessage);
+                getter.append("get_id(").append(returnMessage);
+                getter.append(") = ").append(returnMessage).append("\n");
+                result.append(returnMessage);
+                result.append(" | ");
+            }
+
+        }
+
+        return result.toString();
     }
-
-
+        
     private boolean isInteger(String param) {
         try {
             Integer.parseInt(param);

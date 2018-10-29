@@ -15,8 +15,6 @@ public class SDParser {
     private String sd1Parse;
     private String sd2Parse;
 
-    //private String paralel;
-
     // Auxiliary lists and maps for lifeline data
     private static Map<String, String> lfsWithUnderscore;
     private static Map<String, String> lfsWithoutUnderscore;
@@ -30,13 +28,9 @@ public class SDParser {
     public SDParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
         this.seq1 = seq1;
         this.seq2 = seq2;
-//        processes = new ArrayList<>();
         lfsWithUnderscore = new HashMap<>();
         lfsWithoutUnderscore = new HashMap<>();
         lifelineMapping = new TreeMap<>();
-        //alphabetMap = new HashMap<>();
-      //  msgProcesses = new ArrayList<>();
-
         int numberOfLifelines = 1;
         numberOfLifelines = loadLifelines(seq1, numberOfLifelines);
         loadLifelines(seq2, numberOfLifelines);
