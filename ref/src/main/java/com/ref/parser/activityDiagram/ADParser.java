@@ -194,6 +194,8 @@ public class ADParser {
 				} else if (activityNode instanceof IControlNode) {
 					if (((IControlNode) activityNode).isFinalNode()) {
 						activityNode = defineFinalNode(activityNode, nodes); // create final node and set next action node
+					} else if (((IControlNode) activityNode).isFlowFinalNode()) {
+						activityNode = defineFlowFinal(activityNode, nodes); // create flow final and set next action node
 					} else if (((IControlNode) activityNode).isInitialNode()) {
 						activityNode = defineInitialNode(activityNode, nodes); // create initial node and set next action node
 					} else if (((IControlNode) activityNode).isForkNode()) {
@@ -641,6 +643,54 @@ public class ADParser {
 		}
 		
 		nodes.append(decision.toString());
+		
+		return activityNode;
+	}
+	
+	private IActivityNode defineFlowFinal (IActivityNode activityNode, StringBuilder nodes) {
+		StringBuilder flowFinal = new StringBuilder();
+		ArrayList<String> alphabet = new ArrayList<>();
+		int numCall = countCall.get(ad.getName());
+		String nameFlowFinal = activityNode.getName() + "_" + ad.getName() + "_" + numCall;
+		String nameFlowFinalTermination = activityNode.getName() + "_" + ad.getName() + "_t_" + numCall;
+		String endDiagram = "END_DIAGRAM_" + ad.getName() + "_" + numCall;
+		
+		flowFinal.append(nameFlowFinal + " = ");
+
+		ArrayList<Pair<String, String>> cnInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get all sync channels
+			if (tupla.getValue().equals(activityNode.getName())) {
+				cnInitials.add(tupla);
+			}
+		}
+		
+		flowFinal.append("(");
+		for (int i = 0; i < cnInitials.size(); i++) {
+			String cnIn = syncChannels.get(cnInitials.get(i));	//get the parallel input channels
+	
+			flowFinal.append("(");
+			
+			if (i >= 0 && i < cnInitials.size() - 1) {
+				cn(alphabet, numCall, flowFinal, cnIn, " -> SKIP) [] ");
+			} else {
+				cn(alphabet, numCall, flowFinal, cnIn, " -> SKIP)");
+			}
+		}
+		
+		flowFinal.append("); ");
+		
+		update(alphabet, numCall, flowFinal, 1, 0);
+		
+		flowFinal.append("SKIP\n");
+		
+		flowFinal.append(nameFlowFinalTermination + " = ");
+		flowFinal.append(nameFlowFinal + " /\\ " + endDiagram + "\n");
+
+		alphabetNode.put(activityNode.getName(), alphabet);
+
+		activityNode = null;	
+
+		nodes.append(flowFinal.toString());
 		
 		return activityNode;
 	}
