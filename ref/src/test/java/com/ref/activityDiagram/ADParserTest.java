@@ -59,10 +59,10 @@ public class ADParserTest {
 	public void TestNodesActionAndcountrol() {
 		String actual = parser.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_ad2_1 = update_ad2_1.1!(1-0) -> cn_ad2_1.1 -> SKIP\n" + 
-				"act1_ad2_1 = cn_ad2_1.1 -> event_act1_ad2_1 -> update_ad2_1.2!(1-1) -> cn_ad2_1.2 -> act1_ad2_1\n" + 
+		expected.append("init1_ad2_t_1 = update_ad2_1.1!(1-0) -> cn_ad2_1.1 -> SKIP\n" + 
+				"act1_ad2_1 = cn_ad2_1.1 -> lock_act1_ad2_1.lock -> event_act1_ad2_1 -> update_ad2_1.2!(1-1) -> lock_act1_ad2_1.unlock -> cn_ad2_1.2 -> act1_ad2_1\n" + 
 				"act1_ad2_t_1 = act1_ad2_1 /\\ END_DIAGRAM_ad2_1\n" + 
-				"fin1_ad2_1 = cn_ad2_1.2 -> clear_ad2_1.1 -> SKIP\n" + 
+				"fin1_ad2_1 = ((cn_ad2_1.2 -> SKIP)); clear_ad2_1.1 -> SKIP\n" + 
 				"fin1_ad2_t_1 = fin1_ad2_1 /\\ END_DIAGRAM_ad2_1\n");
 		
 		assertEquals(expected.toString(), actual);
@@ -71,12 +71,16 @@ public class ADParserTest {
 	
 	 /* Teste de Tradução do processo Node_"getname"
 	 */
-	@Ignore
+	
 	@Test
-	public void TestDefineProcessNode() {
-		String actual = "";
+	public void TestDefineProcessSync() {
+		parser.defineNodesActionAndControl();
+		parser.defineTypes();
+		parser.defineChannels();
+		parser.defineLock();
+		String actual = parser.defineProcessSync();
 		StringBuffer expected = new StringBuffer();
-		expected.append("Node_ad2_1 = ((init1_ad2_1 [{|cn_ad2_1.1,update_ad2_1.1|}||{|cn_ad2_1.1,cn_ad2_1.2,update_ad2_1.2,endDiagram_ad2_1,event_act1_ad2_1|}] act1_ad2_t_1) [{|cn_ad2_1.1,cn_ad2_1.2,update_ad2_1.1,update_ad2_1.2,endDiagram_ad2_1,event_act1_ad2_1|}||{|cn_ad2_1.2,clear_ad2_1.1,endDiagram_ad2_1|}] fin1_ad2_t_1)\n");
+		expected.append("Node_ad2_1 = ((act1_ad2_t_1 [{|cn_ad2_1.1,lock_act1_ad2_1,event_act1_ad2_1,update_ad2_1.2,cn_ad2_1.2,endDiagram_ad2_1|}||{|cn_ad2_1.2,clear_ad2_1.1,endDiagram_ad2_1|}] fin1_ad2_t_1) [{|cn_ad2_1.1,lock_act1_ad2_1,event_act1_ad2_1,update_ad2_1.2,cn_ad2_1.2,endDiagram_ad2_1,clear_ad2_1.1|}||{|update_ad2_1.1,cn_ad2_1.1|}] init1_ad2_t_1)\n");
 	
 		assertEquals(expected.toString(), actual);
 	}
@@ -98,7 +102,11 @@ public class ADParserTest {
 	@Ignore
 	@Test
 	public void TestDefineProcessTokenManager() {
-		String actual = "";
+		parser.defineNodesActionAndControl();
+		parser.defineTypes();
+		parser.defineChannels();
+		parser.defineLock();
+		String actual = parser.defineTokenManager();
 		StringBuffer expected = new StringBuffer();
 		expected.append("TokenManager_ad2_1(x,init) = update_ad2_1?c?y:limiteUpdate_ad2_1 -> x+y < 10 & x+y > -10 & TokenManager_ad2_1(x+y,1) [] clear_ad2_1?c -> endDiagram_ad2_1 -> SKIP [] x == 0 & init == 1 & endDiagram_ad2_1 -> SKIP\n" + 
 				"TokenManager_ad2_t_1(x,init) = TokenManager_ad2_1(x,init)\n");
@@ -109,15 +117,19 @@ public class ADParserTest {
 	
 	 /* Teste de Tradução do processo Lock
 	 */ 
-//	@Ignore
-//	@Test
-//	public void TestDefineProcessLock() {
-//		String actual = "";
-//		StringBuffer expected = new StringBuffer();
-//		expected.append("");
-//		
-//		assertEquals(expected.toString(), actual);
-//	}
+	@Ignore
+	@Test
+	public void TestDefineProcessLock() {
+		parser.defineNodesActionAndControl();
+		parser.defineTypes();
+		parser.defineChannels();
+		String actual = parser.defineLock();
+		StringBuffer expected = new StringBuffer();
+		expected.append("Lock_act1_ad2_1 = lock_act1_ad2_1.lock -> lock_act1_ad2_1.unlock -> Lock_act1_ad2_1 [] endDiagram_ad2_1 -> SKIP\n" + 
+				"Lock_ad2_1 = Lock_act1_ad2_1\n");
+		
+		assertEquals(expected.toString(), actual);
+	}
 
 	
 	
@@ -153,7 +165,8 @@ public class ADParserTest {
 		expected.append("countCn_ad2_1 = {1..2}\n" + 
 				"countUpdate_ad2_1 = {1..2}\n" + 
 				"countClear_ad2_1 = {1..1}\n" + 
-				"limiteUpdate_ad2_1 = {(-2)..2}\n");
+				"limiteUpdate_ad2_1 = {(-2)..2}\n" +
+				"datatype T = lock | unlock\n");
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -161,7 +174,7 @@ public class ADParserTest {
 	
 	/* Teste de Tradução dos canais
 	 */
-	
+	@Ignore
 	@Test
 	public void TestDefineChannels() {
 		parser.defineNodesActionAndControl();
@@ -175,6 +188,7 @@ public class ADParserTest {
 				"channel update_ad2_1: countUpdate_ad2_1.limiteUpdate_ad2_1\n" + 
 				"channel endDiagram_ad2_1\n" + 
 				"channel event_act1_ad2_1\n" + 
+				"channel lock_act1_ad2_1: T\n" +
 				"channel loop\n");
 
 		assertEquals(expected.toString(), actual);
