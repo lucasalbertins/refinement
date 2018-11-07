@@ -123,11 +123,10 @@ public class SDParserTest {
 		assertEquals(expected.toString(), actual);
 	}
 
-
 	@Test
 	public void testParseSD1() throws IOException {
 		String actual = parser.getSd1Parse();
-		//System.out.println(actual);
+//		System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("Seq0_t_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);");
 		expected.append("(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(get_id(x) == m0_O)} -> SKIP)\n");
@@ -140,7 +139,7 @@ public class SDParserTest {
 		//		"Seq0_C(sd_id,lf2_id,lf3_id) =(C_mSIG.r!lf2_id!lf3_id?signal:{x | x <- C_SIG,(get_id(x) == m2)} -> SKIP)\n");
 
 		expected.append(
-				"Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id)\n");
+				"Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id) = B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq0_t_A_u_B_m0(sd_id,lf1_id,lf2_id)\n");
 
 		expected.append(
 				"Seq0_u_B_t_A_m0_r(sd_id,lf2_id,lf1_id) = B_mOP.s.lf2_id.lf1_id?x:{x | x<-B_OPS,get_id(x) == m0_O} -> B_mOP.r.lf2_id.lf1_id!x -> Seq0_u_B_t_A_m0_r(sd_id,lf2_id,lf1_id)\n");
@@ -169,7 +168,6 @@ public class SDParserTest {
 	@Test
 	public void testParseSD2() throws IOException {
 		String actual = parser.getSd2Parse();
-		//System.out.println(actual);
 		StringBuilder expected = new StringBuilder();
 		expected.append("Seq1_x_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);");
 		expected.append(
@@ -180,7 +178,7 @@ public class SDParserTest {
 		expected.append("(B_mOP.s!lf2_id!lf1_id.m0_O -> SKIP);(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);(A_mSIG.s!lf2_id!lf1_id.m1 -> SKIP)\n");
 
 		expected.append(
-				"Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id) =B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id)\n");
+				"Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id) = B_mOP.s.lf1_id.lf2_id?x:{x | x<-B_OPS,get_id(x) == m0_I} -> B_mOP.r.lf1_id.lf2_id!x -> Seq1_x_A_y_B_m0(sd_id,lf1_id,lf2_id)\n");
 
 		expected.append(
 				"Seq1_y_B_x_A_m1(sd_id,lf2_id,lf1_id) = A_mSIG.s.lf2_id.lf1_id?x:{x | x<-A_SIG,get_id(x) == m1} -> A_mSIG.r.lf2_id.lf1_id!x -> Seq1_y_B_x_A_m1(sd_id,lf2_id,lf1_id)\n");
@@ -201,6 +199,7 @@ public class SDParserTest {
 		expected.append(
 				"[|{|B_mOP.s.lf1_id.lf2_id.m0_I,B_mOP.r.lf1_id.lf2_id.m0_I,A_mSIG.s.lf2_id.lf1_id.m1,A_mSIG.r.lf2_id.lf1_id.m1,B_mOP.s.lf2_id.lf1_id.m0_O,B_mOP.r.lf2_id.lf1_id.m0_O,endInteraction|}|]Seq1_MessagesBuffer(sd_id,lf1_id,lf2_id))");
 		assertEquals(expected.toString(), actual);
+
 	}
 
 }

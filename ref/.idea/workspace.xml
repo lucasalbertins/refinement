@@ -3,8 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/testRef3.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/testRef3.asta" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,45 +31,46 @@
     <session id="547090754">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="21" />
-          <entry key="project.open.time.1" value="4" />
+          <entry key="project.closed" value="31" />
+          <entry key="project.open.time.1" value="5" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.12" value="2" />
           <entry key="project.open.time.13" value="2" />
-          <entry key="project.open.time.15" value="4" />
-          <entry key="project.open.time.16" value="2" />
+          <entry key="project.open.time.14" value="1" />
+          <entry key="project.open.time.15" value="5" />
+          <entry key="project.open.time.16" value="4" />
           <entry key="project.open.time.17" value="1" />
-          <entry key="project.open.time.18" value="2" />
-          <entry key="project.open.time.2" value="3" />
+          <entry key="project.open.time.18" value="4" />
+          <entry key="project.open.time.2" value="6" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.40" value="1" />
-          <entry key="project.opened" value="23" />
+          <entry key="project.opened" value="33" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="29" />
-          <entry key="java" value="76" />
+          <entry key="class" value="32" />
+          <entry key="java" value="93" />
           <entry key="xml" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="CLASS" value="29" />
-          <entry key="JAVA" value="76" />
+          <entry key="CLASS" value="32" />
+          <entry key="JAVA" value="93" />
           <entry key="XML" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="64" />
-          <entry key="java" value="13052" />
+          <entry key="java" value="15822" />
           <entry key="xml" value="5" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="13052" />
+          <entry key="JAVA" value="15822" />
           <entry key="PLAIN_TEXT" value="64" />
           <entry key="XML" value="5" />
         </counts>
@@ -78,23 +85,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
-              <caret line="55" column="57" selection-start-line="55" selection-start-column="57" selection-end-line="55" selection-end-column="57" />
-              <folding>
-                <element signature="e#3804#3805#0" expanded="true" />
-                <element signature="e#3844#3845#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="1690">
+              <caret line="67" selection-start-line="67" selection-end-line="67" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-706">
-              <caret line="162" column="30" selection-start-line="162" selection-start-column="21" selection-end-line="162" selection-end-column="30" />
+            <state relative-caret-position="336">
+              <caret line="53" column="8" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
               <folding>
-                <element signature="method#defineArguments#0;class#SDdataTypeParser#0" />
+                <element signature="method#parseLifeline#0;class#SDprocessParser#0" />
+                <element signature="method#translateFragment#0;class#SDprocessParser#0" />
               </folding>
             </state>
           </provider>
@@ -103,10 +107,49 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="63">
-              <caret line="52" column="58" lean-forward="true" selection-start-line="52" selection-start-column="58" selection-end-line="52" selection-end-column="58" />
+            <state relative-caret-position="518">
+              <caret line="124" selection-start-line="124" selection-end-line="124" />
               <folding>
                 <element signature="method#testParseChannels#0;class#SDParserTest#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="190">
+              <caret line="302" column="48" lean-forward="true" selection-start-line="302" selection-start-column="48" selection-end-line="302" selection-end-column="48" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#880#881#0" expanded="true" />
+                <element signature="e#921#922#0" expanded="true" />
+                <element signature="method#addToAlphabetMap#0;class#MessageParser#0" />
+                <element signature="method#addIDS#0;class#MessageParser#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="149" column="10" selection-start-line="149" selection-start-column="10" selection-end-line="149" selection-end-column="10" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/ParallelParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="10" column="25" lean-forward="true" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#526#527#0" expanded="true" />
+                <element signature="e#545#546#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -123,37 +166,40 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>lfs</find>
-      <find>lfswithou</find>
-      <find>get</find>
-      <find>sd1a</find>
-      <find>auxiliar</find>
-      <find>i</find>
-      <find>parselife</find>
-      <find>alphabet</find>
-      <find>numlife</find>
-      <find>eventos</find>
-      <find>aux</find>
-      <find>b</find>
-      <find>uild</find>
-      <find>processes</find>
-      <find>refinement</find>
-      <find>alphabetmap</find>
-      <find>sd1</find>
-      <find>build</find>
-      <find>buildass</find>
-      <find>msgpro</find>
-      <find>msgproce</find>
-      <find>sd1al</find>
-      <find>withou</find>
-      <find>msg</find>
+      <find>with</find>
       <find>lfid</find>
-      <find>op</find>
-      <find>msgs</find>
-      <find>getters</find>
-      <find>MSG</find>
-      <find>datatypes</find>
+      <find>lifelinemapp</find>
+      <find>system</find>
+      <find>lifeline1</find>
+      <find>SDParser.getLfsWithUnderscore()</find>
+      <find>aux</find>
+      <find>\n</find>
+      <find>messageforpro</find>
+      <find>retur</find>
+      <find>,</find>
+      <find>&quot;,</find>
+      <find>addtoal</find>
+      <find>translate</find>
+      <find>msgb</find>
+      <find>getpre</find>
+      <find>getprevious</find>
+      <find>previou</find>
+      <find>getmsg</find>
+      <find>addins</find>
+      <find>msgbu</find>
+      <find>num</find>
+      <find>numlife</find>
+      <find>alpha</find>
+      <find>paralel</find>
+      <find>para</find>
+      <find>parale</find>
+      <find>processes</find>
+      <find>refineme</find>
+      <find>for</find>
     </findStrings>
+    <replaceStrings>
+      <replace>lfsWithUnderscore</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -170,15 +216,16 @@
         <option value="$PROJECT_DIR$/src/test/java/com/ref/SDRefinementTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/AltFragmentTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/FileTest.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/ParallelParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java" />
       </list>
     </option>
   </component>
@@ -211,9 +258,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -266,37 +312,17 @@
               <item name="ref" type="462c0819:PsiDirectoryNode" />
               <item name="parser" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="ref" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ref" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ref" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ref" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="ref" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ref" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="java" type="462c0819:PsiDirectoryNode" />
-              <item name="ref" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1540817732249" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1541592876643" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -438,44 +464,54 @@
       <workItem from="1540378895438" duration="883000" />
       <workItem from="1540379813411" duration="7527000" />
       <workItem from="1540424456147" duration="85000" />
-      <workItem from="1540810707962" duration="6796000" />
+      <workItem from="1540810707962" duration="7104000" />
+      <workItem from="1540831326808" duration="12000" />
+      <workItem from="1541001658768" duration="2792000" />
+      <workItem from="1541034435110" duration="11000" />
+      <workItem from="1541070336666" duration="6544000" />
+      <workItem from="1541088563358" duration="2479000" />
+      <workItem from="1541243568274" duration="8360000" />
+      <workItem from="1541457525943" duration="38000" />
+      <workItem from="1541513413326" duration="2457000" />
+      <workItem from="1541546266819" duration="13000" />
+      <workItem from="1541589014076" duration="3775000" />
     </task>
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 41m 44s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 08h 36m 49s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 41m 52s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 08h 50m 59s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 42m 31s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 08h 54m 54s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 45m 58s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 08h 56m 01s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 46m 03s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 08h 56m 56s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 46m 34s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 08h 59m 29s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 46m 44s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 09h 00m 21s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 48m 53s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 09h 01m 40s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 49m 01s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 09h 03m 39s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="SDParserTest - 2018.10.29 at 09h 49m 07s.xml">
+    <history-entry file="SDParserTest - 2018.11.07 at 09h 04m 22s.xml">
       <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="86272000" />
+    <option name="totallyTimeSpent" value="113061000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1366" height="768" extended-state="6" />
@@ -491,7 +527,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3275862" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49924242" weight="0.5971787" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.52071005" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.5188088" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -499,7 +535,7 @@
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5007576" side_tool="true" weight="0.59874606" />
-      <window_info anchor="bottom" id="Messages" order="11" weight="0.3239645" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.32288402" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -548,18 +584,6 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java</url>
-          <line>112</line>
-          <properties />
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/pom.xml">
@@ -618,13 +642,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDRefinementTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1260">
-          <caret line="72" column="9" selection-start-line="72" selection-start-column="9" selection-end-line="72" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/SDRefinementChecker.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
@@ -646,31 +663,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="231">
-          <caret line="69" column="14" selection-start-line="69" selection-start-column="14" selection-end-line="69" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5964">
           <caret line="367" column="41" lean-forward="true" selection-start-line="367" selection-start-column="41" selection-end-line="367" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="40" column="48" lean-forward="true" selection-start-line="40" selection-start-column="48" selection-end-line="40" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/xD.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="97">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
         </state>
       </provider>
     </entry>
@@ -685,30 +681,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1218">
           <caret line="93" column="83" lean-forward="true" selection-start-line="93" selection-start-column="83" selection-end-line="93" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="216" column="52" selection-start-line="216" selection-start-column="52" selection-end-line="216" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="348">
-          <caret line="112" column="28" lean-forward="true" selection-start-line="112" selection-start-column="28" selection-end-line="112" selection-end-column="28" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/FileTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="170" column="53" lean-forward="true" selection-start-line="170" selection-start-column="53" selection-end-line="170" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -803,13 +775,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/vY.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="115" selection-start-line="115" selection-end-line="115" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///usr/lib/jvm/java-8-oracle/jre/lib/rt.jar!/sun/reflect/NativeMethodAccessorImpl.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -824,53 +789,119 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="354">
-          <caret line="39" column="41" lean-forward="true" selection-start-line="39" selection-start-column="41" selection-end-line="39" selection-end-column="41" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="596">
+          <caret line="57" column="66" selection-start-line="57" selection-start-column="66" selection-end-line="57" selection-end-column="66" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="518">
-          <caret line="49" selection-start-line="49" selection-end-line="49" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="231">
+          <caret line="69" column="14" selection-start-line="69" selection-start-column="14" selection-end-line="69" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDRefinementTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1560">
+          <caret line="72" column="9" selection-start-line="72" selection-start-column="9" selection-end-line="72" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/FileTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="47" column="62" selection-start-line="47" selection-start-column="62" selection-end-line="47" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4628">
+          <caret line="216" column="38" selection-start-line="216" selection-start-column="38" selection-end-line="216" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="71" column="25" selection-start-line="71" selection-start-column="21" selection-end-line="71" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/vY.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="115" selection-start-line="115" selection-end-line="115" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/xD.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="55" column="57" selection-start-line="55" selection-start-column="57" selection-end-line="55" selection-end-column="57" />
-          <folding>
-            <element signature="e#3804#3805#0" expanded="true" />
-            <element signature="e#3844#3845#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1690">
+          <caret line="67" selection-start-line="67" selection-end-line="67" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="52" column="58" lean-forward="true" selection-start-line="52" selection-start-column="58" selection-end-line="52" selection-end-column="58" />
+        <state relative-caret-position="518">
+          <caret line="124" selection-start-line="124" selection-end-line="124" />
           <folding>
             <element signature="method#testParseChannels#0;class#SDParserTest#0" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/ParserUtilities.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-706">
-          <caret line="162" column="30" selection-start-line="162" selection-start-column="21" selection-end-line="162" selection-end-column="30" />
+        <state relative-caret-position="180">
+          <caret line="149" column="10" selection-start-line="149" selection-start-column="10" selection-end-line="149" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/ParallelParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="10" column="25" lean-forward="true" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
           <folding>
-            <element signature="method#defineArguments#0;class#SDdataTypeParser#0" />
+            <element signature="imports" expanded="true" />
+            <element signature="e#526#527#0" expanded="true" />
+            <element signature="e#545#546#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/MessageParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="302" column="48" lean-forward="true" selection-start-line="302" selection-start-column="48" selection-end-line="302" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#880#881#0" expanded="true" />
+            <element signature="e#921#922#0" expanded="true" />
+            <element signature="method#addToAlphabetMap#0;class#MessageParser#0" />
+            <element signature="method#addIDS#0;class#MessageParser#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="336">
+          <caret line="53" column="8" selection-start-line="53" selection-start-column="8" selection-end-line="53" selection-end-column="8" />
+          <folding>
+            <element signature="method#parseLifeline#0;class#SDprocessParser#0" />
+            <element signature="method#translateFragment#0;class#SDprocessParser#0" />
           </folding>
         </state>
       </provider>

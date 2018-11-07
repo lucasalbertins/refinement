@@ -17,7 +17,6 @@ public class SDParser {
 
     // Auxiliary lists and maps for lifeline data
     private static Map<String, String> lfsWithUnderscore;
-    private static Map<String, String> lfsWithoutUnderscore;
     private Map<String, String> lifelineMapping;
     private List<String> sd1Alphabet;
     private List<String> sd2Alphabet;
@@ -29,7 +28,6 @@ public class SDParser {
         this.seq1 = seq1;
         this.seq2 = seq2;
         lfsWithUnderscore = new HashMap<>();
-        lfsWithoutUnderscore = new HashMap<>();
         lifelineMapping = new TreeMap<>();
         int numberOfLifelines = 1;
         numberOfLifelines = loadLifelines(seq1, numberOfLifelines);
@@ -41,7 +39,7 @@ public class SDParser {
         for (ILifeline lifeline : seq.getInteraction().getLifelines()) {
             if (!lfsWithUnderscore.containsKey(lifeline.getBase().toString())) {
                 lfsWithUnderscore.put(lifeline.getBase().toString(), "lf" + numberOfLifelines + "_id");
-                lfsWithoutUnderscore.put(lifeline.getBase().toString(), "lf" + numberOfLifelines + "id");
+                //lfsWithoutUnderscore.put(lifeline.getBase().toString(), "lf" + numberOfLifelines + "id");
                 lifelineMapping(lifeline, numberOfLifelines);
                 numberOfLifelines++;
             }
@@ -53,7 +51,7 @@ public class SDParser {
         StringBuilder process = new StringBuilder();
 
         // Generate datatype definition
-        SDdataTypeParser dataTypeParser = new SDdataTypeParser(seq1, seq2, lfsWithoutUnderscore);
+        SDdataTypeParser dataTypeParser = new SDdataTypeParser(seq1, seq2, lfsWithUnderscore);
         this.definedTypes = dataTypeParser.defineTypes();
         process.append(this.definedTypes);
 
@@ -64,19 +62,23 @@ public class SDParser {
 
         //Generate lifeline and message processes
         SDprocessParser processParser = new SDprocessParser(seq1,seq2,lfsWithUnderscore);
-        this.sd1Parse = processParser.parseSD1();
+        this.sd1Parse = processParser.parseSD(seq1);
         process.append(sd1Parse);
         process.append("\n");
-        this.sd2Parse = processParser.parseSD2();
+        this.sd2Parse = processParser.parseSD(seq2);
         process.append(sd2Parse);
+
+        this.sd1Alphabet = processParser.getSd1Alphabet();
+        this.sd2Alphabet = processParser.getSd2Alphabet();
 
         return process.toString();
     }
 
     public String getRefinementAssertion() {
         StringBuilder sb = new StringBuilder();
-        sb.append(ParserUtilities.getInstance().buildAssertions(seq1, seq2, 0, sd1Alphabet,sd2Alphabet));
-        sb.append(ParserUtilities.getInstance().buildAssertions(seq2, seq1, 1,sd1Alphabet,sd2Alphabet));
+        sb.append(ParserUtilities.getInstance().buildAssertions(seq1, seq2, 1, sd1Alphabet,sd2Alphabet,lfsWithUnderscore));
+        sb.append(ParserUtilities.getInstance().buildAssertions(seq2, seq1, 0,sd1Alphabet,sd2Alphabet,lfsWithUnderscore));
+        System.out.println(sb.toString());
         return sb.toString();
     }
 
@@ -102,10 +104,6 @@ public class SDParser {
 
     public Map<String, String> getLifelineMapping() {
         return lifelineMapping;
-    }
-
-    public static Map<String, String> getLfsWithoutUnderscore() {
-        return lfsWithoutUnderscore;
     }
 
     public static Map<String, String> getLfsWithUnderscore() {
