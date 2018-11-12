@@ -1,0 +1,38 @@
+ID_fork1 = {1..1}
+datatype T = lock | unlock
+countCn_fork1 = {1..5}
+countUpdate_fork1 = {1..4}
+countClear_fork1 = {1..1}
+limiteUpdate_fork1 = {(-2)..2}
+channel startActivity_fork1: ID_fork1
+channel endActivity_fork1: ID_fork1
+channel cn_fork1: countCn_fork1
+channel clear_fork1: countClear_fork1
+channel update_fork1: countUpdate_fork1.limiteUpdate_fork1
+channel endDiagram_fork1
+channel event_act1_fork1,event_act2_fork1
+channel lock_act1_fork1,lock_act2_fork1: T
+channel loop
+MAIN = fork1(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_fork1 = endDiagram_fork1 -> SKIP
+fork1(ID_fork1) = (((Internal_fork1(ID_fork1) [|{|update_fork1,clear_fork1,endDiagram_fork1|}|] TokenManager_fork1_t(0,0))) [|{|lock_act1_fork1,endDiagram_fork1|}|] Lock_act1_fork1)
+Internal_fork1(ID_fork1) = StartActivity_fork1(ID_fork1); Node_fork1; EndActivity_fork1(ID_fork1)
+StartActivity_fork1(ID_fork1) = startActivity_fork1.ID_fork1 -> SKIP
+EndActivity_fork1(ID_fork1) = endActivity_fork1.ID_fork1 -> SKIP
+Node_fork1 = ((((act1_fork1_t [{|cn_fork1.2,lock_act1_fork1,event_act1_fork1,update_fork1.3,cn_fork1.4,endDiagram_fork1|}||{|cn_fork1.5,cn_fork1.4,clear_fork1.1,endDiagram_fork1|}] fin1_fork1_t) [{|cn_fork1.2,lock_act1_fork1,event_act1_fork1,update_fork1.3,cn_fork1.4,endDiagram_fork1,cn_fork1.5,clear_fork1.1|}||{|update_fork1.1,cn_fork1.1,endDiagram_fork1|}] init_fork1_t) [{|cn_fork1.2,lock_act1_fork1,event_act1_fork1,update_fork1.3,cn_fork1.4,endDiagram_fork1,cn_fork1.5,clear_fork1.1,update_fork1.1,cn_fork1.1|}||{|cn_fork1.3,lock_act2_fork1,event_act2_fork1,update_fork1.4,cn_fork1.5,endDiagram_fork1|}] act2_fork1_t) [{|cn_fork1.2,lock_act1_fork1,event_act1_fork1,update_fork1.3,cn_fork1.4,endDiagram_fork1,cn_fork1.5,clear_fork1.1,update_fork1.1,cn_fork1.1,cn_fork1.3,lock_act2_fork1,event_act2_fork1,update_fork1.4|}||{|cn_fork1.1,update_fork1.2,cn_fork1.2,cn_fork1.3,endDiagram_fork1|}] fork1_fork1_t)
+init1_fork1_t = update_fork1.1!(1-0) -> ((cn_fork1.1 -> SKIP))
+fork1_fork1 = cn_fork1.1 -> update_fork1.2!(2-1) -> ((cn_fork1.2 -> SKIP) ||| (cn_fork1.3 -> SKIP)); fork1_fork1 
+fork1_fork1_t = fork1_fork1 /\ END_DIAGRAM_fork1
+act1_fork1 = cn_fork1.2 -> lock_act1_fork1.lock -> event_act1_fork1 -> lock_act1_fork1.unlock -> update_fork1.3!(1-1) -> cn_fork1.4 -> act1_fork1
+act1_fork1_t = act1_fork1 /\ END_DIAGRAM_fork1
+act2_fork1 = cn_fork1.3 -> lock_act2_fork1.lock -> event_act2_fork1 -> lock_act2_fork1.unlock -> update_fork1.4!(1-1) -> cn_fork1.5 -> act2_fork1
+act2_fork1_t = act2_fork1 /\ END_DIAGRAM_fork1
+fin1_fork1 = ((cn_fork1.5 -> SKIP) [] (cn_fork1.4 -> SKIP)); clear_fork1.1 -> SKIP
+fin1_fork1_t = fin1_fork1 /\ END_DIAGRAM_fork1
+init_fork1_t = (init1_fork1_t) /\ END_DIAGRAM_fork1
+TokenManager_fork1(x,init) = update_fork1?c?y:limiteUpdate_fork1 -> x+y < 10 & x+y > -10 & TokenManager_fork1(x+y,1) [] clear_fork1?c -> endDiagram_fork1 -> SKIP [] x == 0 & init == 1 & endDiagram_fork1 -> SKIP
+TokenManager_fork1_t(x,init) = TokenManager_fork1(x,init)
+Lock_act1_fork1 = lock_act1_fork1.lock -> lock_act1_fork1.unlock -> Lock_act1_fork1 [] endDiagram_fork1 -> SKIP
+Lock_act2_fork1 = lock_act2_fork1.lock -> lock_act2_fork1.unlock -> Lock_act2_fork1 [] endDiagram_fork1 -> SKIP
+Lock_fork1 = (Lock_act1_fork1 [|{|endDiagram_fork1|}|] Lock_act2_fork1)

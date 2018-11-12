@@ -1,0 +1,38 @@
+ID_merge1 = {1..1}
+datatype T = lock | unlock
+countCn_merge1 = {1..5}
+countUpdate_merge1 = {1..4}
+countClear_merge1 = {1..1}
+limiteUpdate_merge1 = {(-2)..2}
+channel startActivity_merge1: ID_merge1
+channel endActivity_merge1: ID_merge1
+channel cn_merge1: countCn_merge1
+channel clear_merge1: countClear_merge1
+channel update_merge1: countUpdate_merge1.limiteUpdate_merge1
+channel endDiagram_merge1
+channel event_act1_merge1,event_act2_merge1
+channel lock_act1_merge1,lock_act2_merge1: T
+channel loop
+MAIN = merge1(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_merge1 = endDiagram_merge1 -> SKIP
+merge1(ID_merge1) = (((Internal_merge1(ID_merge1) [|{|update_merge1,clear_merge1,endDiagram_merge1|}|] TokenManager_merge1_t(0,0))) [|{|lock_act1_merge1,endDiagram_merge1|}|] Lock_act1_merge1)
+Internal_merge1(ID_merge1) = StartActivity_merge1(ID_merge1); Node_merge1; EndActivity_merge1(ID_merge1)
+StartActivity_merge1(ID_merge1) = startActivity_merge1.ID_merge1 -> SKIP
+EndActivity_merge1(ID_merge1) = endActivity_merge1.ID_merge1 -> SKIP
+Node_merge1 = ((((init_merge1_t [{|update_merge1.1,cn_merge1.1,cn_merge1.2,endDiagram_merge1|}||{|cn_merge1.1,lock_act1_merge1,event_act1_merge1,update_merge1.2,cn_merge1.3,endDiagram_merge1|}] act1_merge1_t) [{|update_merge1.1,cn_merge1.1,cn_merge1.2,endDiagram_merge1,lock_act1_merge1,event_act1_merge1,update_merge1.2,cn_merge1.3|}||{|cn_merge1.5,clear_merge1.1,endDiagram_merge1|}] fin1_merge1_t) [{|update_merge1.1,cn_merge1.1,cn_merge1.2,endDiagram_merge1,lock_act1_merge1,event_act1_merge1,update_merge1.2,cn_merge1.3,cn_merge1.5,clear_merge1.1|}||{|cn_merge1.2,lock_act2_merge1,event_act2_merge1,update_merge1.3,cn_merge1.4,endDiagram_merge1|}] act2_merge1_t) [{|update_merge1.1,cn_merge1.1,cn_merge1.2,endDiagram_merge1,lock_act1_merge1,event_act1_merge1,update_merge1.2,cn_merge1.3,cn_merge1.5,clear_merge1.1,lock_act2_merge1,event_act2_merge1,update_merge1.3,cn_merge1.4|}||{|cn_merge1.3,cn_merge1.4,update_merge1.4,cn_merge1.5,endDiagram_merge1|}] merge1_merge1_t)
+init1_merge1_t = update_merge1.1!(2-0) -> ((cn_merge1.1 -> SKIP) ||| (cn_merge1.2 -> SKIP))
+act1_merge1 = cn_merge1.1 -> lock_act1_merge1.lock -> event_act1_merge1 -> lock_act1_merge1.unlock -> update_merge1.2!(1-1) -> cn_merge1.3 -> act1_merge1
+act1_merge1_t = act1_merge1 /\ END_DIAGRAM_merge1
+act2_merge1 = cn_merge1.2 -> lock_act2_merge1.lock -> event_act2_merge1 -> lock_act2_merge1.unlock -> update_merge1.3!(1-1) -> cn_merge1.4 -> act2_merge1
+act2_merge1_t = act2_merge1 /\ END_DIAGRAM_merge1
+merge1_merge1 = ((cn_merge1.3 -> SKIP) [] (cn_merge1.4 -> SKIP)); update_merge1.4!(1-2) -> cn_merge1.5 -> merge1_merge1
+merge1_merge1_t = merge1_merge1 /\ END_DIAGRAM_merge1
+fin1_merge1 = ((cn_merge1.5 -> SKIP)); clear_merge1.1 -> SKIP
+fin1_merge1_t = fin1_merge1 /\ END_DIAGRAM_merge1
+init_merge1_t = (init1_merge1_t) /\ END_DIAGRAM_merge1
+TokenManager_merge1(x,init) = update_merge1?c?y:limiteUpdate_merge1 -> x+y < 10 & x+y > -10 & TokenManager_merge1(x+y,1) [] clear_merge1?c -> endDiagram_merge1 -> SKIP [] x == 0 & init == 1 & endDiagram_merge1 -> SKIP
+TokenManager_merge1_t(x,init) = TokenManager_merge1(x,init)
+Lock_act1_merge1 = lock_act1_merge1.lock -> lock_act1_merge1.unlock -> Lock_act1_merge1 [] endDiagram_merge1 -> SKIP
+Lock_act2_merge1 = lock_act2_merge1.lock -> lock_act2_merge1.unlock -> Lock_act2_merge1 [] endDiagram_merge1 -> SKIP
+Lock_merge1 = (Lock_act1_merge1 [|{|endDiagram_merge1|}|] Lock_act2_merge1)

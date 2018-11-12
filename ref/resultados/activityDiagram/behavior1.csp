@@ -1,0 +1,62 @@
+ID_behavior1 = {1..1}
+ID_CB1 = {1..1}
+datatype T = lock | unlock
+countCn_behavior1 = {1..2}
+countUpdate_behavior1 = {1..2}
+countClear_behavior1 = {1..1}
+limiteUpdate_behavior1 = {(-2)..2}
+channel startActivity_behavior1: ID_behavior1
+channel endActivity_behavior1: ID_behavior1
+channel cn_behavior1: countCn_behavior1
+channel clear_behavior1: countClear_behavior1
+channel update_behavior1: countUpdate_behavior1.limiteUpdate_behavior1
+channel endDiagram_behavior1
+channel lock_CB1_behavior1: T
+channel loop
+MAIN = behavior1(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_behavior1 = endDiagram_behavior1 -> SKIP
+behavior1(ID_behavior1) = ((((Internal_behavior1(ID_behavior1) [|{|startActivity_CB1,endActivity_CB1|}|] CB1(1)) [|{|update_behavior1,clear_behavior1,endDiagram_behavior1|}|] TokenManager_behavior1_t(0,0))) [|{|lock_CB1_behavior1,endDiagram_behavior1|}|] Lock_CB1_behavior1)
+Internal_behavior1(ID_behavior1) = StartActivity_behavior1(ID_behavior1); Node_behavior1; EndActivity_behavior1(ID_behavior1)
+StartActivity_behavior1(ID_behavior1) = startActivity_behavior1.ID_behavior1 -> SKIP
+EndActivity_behavior1(ID_behavior1) = endActivity_behavior1.ID_behavior1 -> SKIP
+Node_behavior1 = ((CB1_behavior1_t [{|cn_behavior1.1,lock_CB1_behavior1,startActivity_CB1.1,endActivity_CB1.1,update_behavior1.2,cn_behavior1.2,endDiagram_behavior1|}||{|cn_behavior1.2,clear_behavior1.1,endDiagram_behavior1|}] fin1_behavior1_t) [{|cn_behavior1.1,lock_CB1_behavior1,startActivity_CB1.1,endActivity_CB1.1,update_behavior1.2,cn_behavior1.2,endDiagram_behavior1,clear_behavior1.1|}||{|update_behavior1.1,cn_behavior1.1,endDiagram_behavior1|}] init_behavior1_t)
+init1_behavior1_t = update_behavior1.1!(1-0) -> cn_behavior1.1 -> SKIP
+CB1_behavior1 = cn_behavior1.1 -> lock_CB1_behavior1.lock -> startActivity_CB1.1 -> endActivity_CB1.1 -> lock_CB1_behavior1.unlock -> update_behavior1.2!(1-1) -> cn_behavior1.2 -> CB1_behavior1
+CB1_behavior1_t = CB1_behavior1 /\ END_DIAGRAM_behavior1
+fin1_behavior1 = ((cn_behavior1.2 -> SKIP)); clear_behavior1.1 -> SKIP
+fin1_behavior1_t = fin1_behavior1 /\ END_DIAGRAM_behavior1
+init_behavior1_t = (init1_behavior1_t) /\ END_DIAGRAM_behavior1
+TokenManager_behavior1(x,init) = update_behavior1?c?y:limiteUpdate_behavior1 -> x+y < 10 & x+y > -10 & TokenManager_behavior1(x+y,1) [] clear_behavior1?c -> endDiagram_behavior1 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior1 -> SKIP
+TokenManager_behavior1_t(x,init) = TokenManager_behavior1(x,init)
+Lock_CB1_behavior1 = lock_CB1_behavior1.lock -> lock_CB1_behavior1.unlock -> Lock_CB1_behavior1 [] endDiagram_behavior1 -> SKIP
+Lock_behavior1 = Lock_CB1_behavior1
+
+countCn_CB1 = {1..2}
+countUpdate_CB1 = {1..2}
+countClear_CB1 = {1..1}
+limiteUpdate_CB1 = {(-2)..2}
+channel startActivity_CB1: ID_CB1
+channel endActivity_CB1: ID_CB1
+channel cn_CB1: countCn_CB1
+channel clear_CB1: countClear_CB1
+channel update_CB1: countUpdate_CB1.limiteUpdate_CB1
+channel endDiagram_CB1
+channel event_act1_CB1
+channel lock_act1_CB1: T
+END_DIAGRAM_CB1 = endDiagram_CB1 -> SKIP
+CB1(ID_CB1) = (((Internal_CB1(ID_CB1) [|{|update_CB1,clear_CB1,endDiagram_CB1|}|] TokenManager_CB1_t(0,0))) [|{|lock_act1_CB1,endDiagram_CB1|}|] Lock_act1_CB1)
+Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)
+StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1 -> SKIP
+EndActivity_CB1(ID_CB1) = endActivity_CB1.ID_CB1 -> SKIP
+Node_CB1 = ((act1_CB1_t [{|cn_CB1.1,lock_act1_CB1,event_act1_CB1,update_CB1.2,cn_CB1.2,endDiagram_CB1|}||{|cn_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t) [{|cn_CB1.1,lock_act1_CB1,event_act1_CB1,update_CB1.2,cn_CB1.2,endDiagram_CB1,clear_CB1.1|}||{|update_CB1.1,cn_CB1.1,endDiagram_CB1|}] init_CB1_t)
+init1_CB1_t = update_CB1.1!(1-0) -> cn_CB1.1 -> SKIP
+act1_CB1 = cn_CB1.1 -> lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> update_CB1.2!(1-1) -> cn_CB1.2 -> act1_CB1
+act1_CB1_t = act1_CB1 /\ END_DIAGRAM_CB1
+fin1_CB1 = ((cn_CB1.2 -> SKIP)); clear_CB1.1 -> SKIP
+fin1_CB1_t = fin1_CB1 /\ END_DIAGRAM_CB1
+init_CB1_t = (init1_CB1_t) /\ END_DIAGRAM_CB1
+TokenManager_CB1(x,init) = update_CB1?c?y:limiteUpdate_CB1 -> x+y < 10 & x+y > -10 & TokenManager_CB1(x+y,1) [] clear_CB1?c -> endDiagram_CB1 -> SKIP [] x == 0 & init == 1 & endDiagram_CB1 -> SKIP
+TokenManager_CB1_t(x,init) = TokenManager_CB1(x,init)
+Lock_act1_CB1 = lock_act1_CB1.lock -> lock_act1_CB1.unlock -> Lock_act1_CB1 [] endDiagram_CB1 -> SKIP
+Lock_CB1 = Lock_act1_CB1
