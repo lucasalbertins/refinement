@@ -64,7 +64,8 @@ public class ParserUtilities {
             sb.append("(sd2id");
 
         for (ILifeline lifeline : seq1.getInteraction().getLifelines()) {
-            sb.append(",").append(SDParser.getLfsWithUnderscore().get(lifeline.getBase().toString().replace("_id","id")));
+            String lfid = SDParser.getLfsWithUnderscore().get(lifeline.getBase().toString()).replace("_id","id");
+            sb.append(",").append(lfid);
         }
         sb.append(")");
         if (aux == 0) {
@@ -81,7 +82,8 @@ public class ParserUtilities {
             sb.append("(sd1id");
 
         for (ILifeline lifeline : seq2.getInteraction().getLifelines()) {
-            sb.append(",").append(SDParser.getLfsWithUnderscore().get(lifeline.getBase().toString().replace("_id","id")));
+            String lfid = SDParser.getLfsWithUnderscore().get(lifeline.getBase().toString()).replace("_id","id");
+            sb.append(",").append(lfid);
         }
         sb.append(")");
         if (aux == 1) {

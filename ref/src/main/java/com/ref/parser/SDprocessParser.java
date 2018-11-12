@@ -42,7 +42,6 @@ public class SDprocessParser {
         msgParser.clearAlphabetMap();
         process.append("\n");
         process.append(parallelParser.getSDprocess(seq,msgParser.getRefinementAlphabet()));
-        msgParser.clearRefAlphabet();
 
         if (seq.equals(seq1)) {
             sd1Alphabet = new ArrayList<>(msgParser.getRefinementAlphabet());

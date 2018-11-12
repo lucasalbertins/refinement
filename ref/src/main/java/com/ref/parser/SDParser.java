@@ -78,7 +78,6 @@ public class SDParser {
         StringBuilder sb = new StringBuilder();
         sb.append(ParserUtilities.getInstance().buildAssertions(seq1, seq2, 1, sd1Alphabet,sd2Alphabet,lfsWithUnderscore));
         sb.append(ParserUtilities.getInstance().buildAssertions(seq2, seq1, 0,sd1Alphabet,sd2Alphabet,lfsWithUnderscore));
-        System.out.println(sb.toString());
         return sb.toString();
     }
 

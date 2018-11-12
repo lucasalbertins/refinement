@@ -28,170 +28,166 @@ import com.ref.parser.SDParser;
 
 public class FileTest {
 
-	private static SDParser parser;
-	private static ISequenceDiagram seq1;
-	private static ISequenceDiagram seq2;
-	private static BufferedWriter bw;
-	private static FileWriter fw;
-	private static FileReader fr;
-	private static BufferedReader br;
+    private static SDParser parser;
+    private static ISequenceDiagram seq1;
+    private static ISequenceDiagram seq2;
+//    private static BufferedWriter bw;
+//    private static BufferedReader br;
 
-	@Before
-	public void setUpBeforeClass() throws Exception {
-		try {
-			//fw = new FileWriter(new File("resultado.csp"));
-			//bw = new BufferedWriter(fw);
-			fr = new FileReader("result.csp");
-			br = new BufferedReader(fr);
+    @Before
+    public void setUpBeforeClass() throws Exception {
+        try {
+//			fw = new FileWriter(new File("resultado.csp"));
+//			bw = new BufferedWriter(fw);
+//			fr = new FileReader("result.csp");
+//			br = new BufferedReader(fr);
 
-			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/testRef2.asta");
-			INamedElement[] findSequence = findSequence(projectAccessor);
-			// buildCounterExample(projectAccessor);
+            ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+            projectAccessor.open("src/test/resources/testRef3.asta");
+            INamedElement[] findSequence = findSequence(projectAccessor);
+            // buildCounterExample(projectAccessor);
 
-			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
-				seq1 = (ISequenceDiagram) findSequence[0];
-				seq2 = (ISequenceDiagram) findSequence[1];
-			} else {
-				seq1 = (ISequenceDiagram) findSequence[1];
-				seq2 = (ISequenceDiagram) findSequence[0];
-			}
-			parser = new SDParser(seq1, seq2);
-			//parser.carregaLifelines();
-		} catch (ProjectNotFoundException e) {
-			System.out.println("aqui");
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
+                seq1 = (ISequenceDiagram) findSequence[0];
+                seq2 = (ISequenceDiagram) findSequence[1];
+            } else {
+                seq1 = (ISequenceDiagram) findSequence[1];
+                seq2 = (ISequenceDiagram) findSequence[0];
+            }
+            parser = new SDParser(seq1, seq2);
+            parser.parseSDs();
+            //parser.carregaLifelines();
+        } catch (ProjectNotFoundException e) {
+            System.out.println("aqui");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	@Ignore
-	@Test
-	public void refinementAssertion() throws InvalidEditingException {
+    @Test
+    public void refinementAssertion() throws InvalidEditingException {
 
-		parser.parseSDs();
-		String actual = parser.getRefinementAssertion();
-		System.out.println(actual);
-		String expected = "assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n"
-				+ "assert SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|} [T= SD_Seq0(sd1id,lf1id,lf2id)";
-		assertEquals(expected, actual);
-	}
+        String actual = parser.getRefinementAssertion();
+        String expected = "assert SD_Seq0(sd1id,lf1id,lf2id) [T= SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|}\n"
+                + "assert SD_Seq1(sd2id,lf1id,lf2id)\\{|A_mSIG.s.lf2id.lf1id.m1,A_mSIG.r.lf2id.lf1id.m1|} [T= SD_Seq0(sd1id,lf1id,lf2id)";
+        assertEquals(expected, actual);
+    }
 
-	@Ignore
-	@Test
-	public void verificarConteudo() throws IOException, InvalidEditingException {
-		StringBuffer sbArquivo = new StringBuffer();
-		String linha = br.readLine();
 
-		while (linha != null) {
-			sbArquivo.append(linha);
-			sbArquivo.append("\n");
-			linha = br.readLine();
-		}
+    @Test
+    public void gerarArquivo() {
 
-		br.close();
-		fr.close();
+        try {
+            FileWriter fw = new FileWriter(new File("testFiles/resultado2.csp"));
+            BufferedWriter bw = new BufferedWriter(fw);
+            String actual = parser.getDefinedTypes();
+            bw.write(actual);
+            //bw.newLine();
+            actual = parser.getChannels();
+            bw.write(actual);
+            //bw.newLine();
+            actual = parser.getSd1Parse();
+            bw.write(actual);
+            //bw.newLine();
+            //bw.newLine();
+            bw.newLine();
+            actual = parser.getSd2Parse();
+            bw.write(actual);
+            //bw.write(actual);
+            bw.newLine();
+            actual = parser.getRefinementAssertion();
+            bw.write(actual);
 
-		String actual = "";
-		actual += parser.getDefinedTypes();
-		actual += parser.getChannels();
-		actual += parser.getSd1Parse() + "\n";
-		actual += parser.getSd2Parse() + "\n";
-		actual += parser.getRefinementAssertion();
+            bw.close();
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		assertEquals(sbArquivo.toString(), actual);
-	}
+        assertEquals(true, new File("testFiles/resultado2.csp").exists());
+    }
 
-	@Test
-	public void gerarArquivo() throws InvalidEditingException, IOException {
+    @Test
+    public void verificarConteudo() throws IOException, InvalidEditingException {
+        StringBuffer sbArquivo = new StringBuffer();
+        FileReader fr = new FileReader("testFiles/resultado2.csp");
+        BufferedReader br = new BufferedReader(fr);
+        String linha = br.readLine();
 
-		fw = new FileWriter(new File("resultado2.csp"));
-		bw = new BufferedWriter(fw);
-		
-		String actual = parser.getDefinedTypes();
-		bw.write(actual);
-		//bw.newLine();
-		actual = parser.getChannels();
-		bw.write(actual);
-		//bw.newLine();
-		actual = parser.getSd1Parse();
-		bw.write(actual);
-		//bw.newLine();
-		//bw.newLine();
-		bw.newLine();
-		actual = parser.getSd2Parse();
-		bw.write(actual);
-		//bw.write(actual);
-		bw.newLine();
-		actual = parser.getRefinementAssertion();
-		System.out.println(actual);
-		bw.write(actual);
-		
-		bw.close();
-		fw.close();
-		
-		assertEquals(true, new File("resultado2.csp").exists());
-	}
+        while (linha != null) {
+            sbArquivo.append(linha);
+            sbArquivo.append("\n");
+            linha = br.readLine();
+        }
 
-	
-	@Test
-	public void compararArquivos() throws IOException{
-		StringBuilder sb1 = new StringBuilder();
-		StringBuilder sb2 = new StringBuilder();
-		
-		String linha = br.readLine();
+        br.close();
+        fr.close();
 
-		//result
-		while (linha != null) {
-			sb1.append(linha);
-			sb1.append("\n");
-			linha = br.readLine();
-		}
-		br.close();
-		fr.close();
-		
-	
-		FileReader fr2 = new FileReader("resultado2.csp");
-		BufferedReader br2 = new BufferedReader(fr2);
+        String actual = "";
+        actual += parser.getDefinedTypes();
+        actual += parser.getChannels();
+        actual += parser.getSd1Parse() + "\n";
+        actual += parser.getSd2Parse() + "\n";
+        actual += parser.getRefinementAssertion();
+        actual += "\n";
 
-		String linha2 = br2.readLine();
-		
-		//resultado
-		while (linha2 != null) {
-			sb2.append(linha2);
-			sb2.append("\n");
-			linha2 = br2.readLine();
-		}
-		
-		br2.close();
-		fr2.close();
+        assertEquals(sbArquivo.toString(), actual);
+    }
 
-		assertEquals(sb1.toString(), sb2.toString());
-		
-	}
-	
-	@Ignore
-	@Test
-	public void fdrTest() {
-		
-	}
+    @Test
+    public void compararArquivos() throws IOException {
+        StringBuilder sb1 = new StringBuilder();
+        StringBuilder sb2 = new StringBuilder();
+        FileReader fr = new FileReader("testFiles/resultado.csp");
+        BufferedReader br = new BufferedReader(fr);
 
-	private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
-		INamedElement[] foundElements = projectAccessor.findElements(new ModelFinder() {
-			public boolean isTarget(INamedElement namedElement) {
-				return namedElement instanceof ISequenceDiagram;
-			}
-		});
-		return foundElements;
-	}
+        String linha = br.readLine();
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-		AstahAPI.getAstahAPI().getProjectAccessor().close();
-		bw.close();
-		fw.close();
-	}
+        //result
+        while (linha != null) {
+            sb1.append(linha);
+            sb1.append("\n");
+            linha = br.readLine();
+        }
+
+//		br.close();
+//		fr.close();
+
+        FileReader fr2 = new FileReader("testFiles/resultado2.csp");
+        BufferedReader br2 = new BufferedReader(fr2);
+
+        String linha2 = br2.readLine();
+
+        //resultado
+        while (linha2 != null) {
+            sb2.append(linha2);
+            sb2.append("\n");
+            linha2 = br2.readLine();
+        }
+
+        br2.close();
+        fr2.close();
+
+        assertEquals(sb1.toString(), sb2.toString());
+
+    }
+
+    private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
+        INamedElement[] foundElements = projectAccessor.findElements(new ModelFinder() {
+            public boolean isTarget(INamedElement namedElement) {
+                return namedElement instanceof ISequenceDiagram;
+            }
+        });
+        return foundElements;
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() throws Exception {
+        AstahAPI.getAstahAPI().getProjectAccessor().close();
+//		bw.close();
+//		fw.close();
+    }
 
 }
