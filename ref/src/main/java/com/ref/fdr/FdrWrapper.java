@@ -16,47 +16,27 @@ import java.util.List;
 public class FdrWrapper {
 
     private static FdrWrapper instance;
-
+    private static boolean isLoaded;
     private URLClassLoader urlCl;
-
     private Class fdrClass;
-
     private Class<?> sessionClass;
-
     private Class<?> assertionClass;
-
     private Class<?> counterexampleClass;
-
     private Class<?> traceCounterexampleClass;
-
     private Class<?> debugContextClass;
-
     private Class<?> refinementCounterexampleClass;
-
     private Class<?> behaviourClass;
-
     private Class<?> irrelevantBehaviourClass;
-
     private Class<?> compiledEventListClass;
-
     private Class<?> TraceBehaviour;
-
     private Class<?> Node;
-
     private Class<?> ProcessName;
-
     private Class<?> Canceller;
-
     private Class<?> Machine;
-
     private Class<?> TransitionList;
-
     private Class<?> Transition;
-
     private File fdrJar;
-
     private List<String> classes;
-
     private Object session;
     private List<Object> counterExamples;
     private List<Object> assertions;
@@ -64,17 +44,11 @@ public class FdrWrapper {
     public boolean loadFDR(String path) {
 
         File file = new File(path);
-
         if (file.exists()) {
-
             fdrJar = file;
-
             return true;
-
         } else
-
             return false;
-
     }
 
     private FdrWrapper() {
@@ -92,73 +66,39 @@ public class FdrWrapper {
     public void loadClasses() throws MalformedURLException, ClassNotFoundException {
 
         classes = new ArrayList<String>();
-
         urlCl = new URLClassLoader(new URL[]{fdrJar.toURI().toURL()}, System.class.getClassLoader());
-
         fdrClass = urlCl.loadClass("uk.ac.ox.cs.fdr.fdr");
-
         sessionClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Session");
-
         assertionClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Assertion");
-
         counterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Counterexample");
-
         traceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceCounterexample");
-
         debugContextClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DebugContext");
-
         refinementCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.RefinementCounterexample");
-
         behaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Behaviour");
-
         irrelevantBehaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.IrrelevantBehaviour");
-
         compiledEventListClass = urlCl.loadClass("uk.ac.ox.cs.fdr.CompiledEventList");
-
         TraceBehaviour = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceBehaviour");
-
         Node = urlCl.loadClass("uk.ac.ox.cs.fdr.Node");
-
         ProcessName = urlCl.loadClass("uk.ac.ox.cs.fdr.ProcessName");
-
         Machine = urlCl.loadClass("uk.ac.ox.cs.fdr.Machine");
-
         TransitionList = urlCl.loadClass("uk.ac.ox.cs.fdr.TransitionList");
-
         Transition = urlCl.loadClass("uk.ac.ox.cs.fdr.Transition");
-
         classes.add(fdrClass.getName());
-
         classes.add(sessionClass.getName());
-
         classes.add(assertionClass.getName());
-
         classes.add(counterexampleClass.getName());
-
         classes.add(traceCounterexampleClass.getName());
-
         classes.add(debugContextClass.getName());
-
         classes.add(refinementCounterexampleClass.getName());
-
         classes.add(behaviourClass.getName());
-
         classes.add(TraceBehaviour.getName());
-
         classes.add(Node.getName());
-
         classes.add(ProcessName.getName());
-
         classes.add(TransitionList.getName());
-
         classes.add(Transition.getName());
-
         // Classes extras que são usadas como parametro
-
         Canceller = urlCl.loadClass("uk.ac.ox.cs.fdr.Canceller");
-
         classes.add(Canceller.getName());
-
     }
 
     public List<String> getClasses() {
@@ -373,7 +313,5 @@ public class FdrWrapper {
             e.printStackTrace();
             throw new Exception(e.getMessage());
         }
-
     }
-
 }

@@ -1,9 +1,6 @@
 package com.ref.parser;
 
-import com.change_vision.jude.api.inf.model.IClass;
-import com.change_vision.jude.api.inf.model.ILifeline;
-import com.change_vision.jude.api.inf.model.IMessage;
-import com.change_vision.jude.api.inf.model.ISequenceDiagram;
+import com.change_vision.jude.api.inf.model.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,7 +49,50 @@ public class SDchannelParser {
             }
         }
 
+        channelBuilder.append(fragmentChannels());
+
         return channelBuilder.toString();
+    }
+
+    private String fragmentChannels() {
+        Set<INamedElement> fragments = new HashSet<>();
+        List<ILifeline>lifelines = ParserUtilities.getInstance().getLifelines(seq1,seq2);
+
+        for (ILifeline lf : lifelines){
+            INamedElement[] aux = lf.getFragments();
+            for (INamedElement frag : aux){
+                if(frag instanceof ICombinedFragment)
+                fragments.add(frag);
+            }
+        }
+
+        String altChannels = parseAlt(fragments);
+        System.out.println(altChannels);
+
+        return "";
+    }
+
+    private String parseAlt(Set<INamedElement> fragments) {
+        int index = 1;
+        StringBuilder sb = new StringBuilder();
+        for (INamedElement frag : fragments){
+             ICombinedFragment castFrag = (ICombinedFragment) frag;
+            if( castFrag.isAlt()){
+                IInteractionOperand[] operands = castFrag.getInteractionOperands();
+                sb.append("channel alt").append(index).append(":");
+                index++;
+                for (IInteractionOperand operand : operands){
+                    if (operand.getGuard().equals(""))
+                        sb.append("{True}.");
+                    else
+                        sb.append("Bool.");
+                }
+                sb.deleteCharAt(sb.length()-1);
+                sb.append("\n");
+            }
+        }
+
+        return sb.toString();
     }
 
     // Adds the blocks of a given sequence diagram to a given List

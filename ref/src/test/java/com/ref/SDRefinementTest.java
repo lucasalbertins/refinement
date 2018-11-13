@@ -53,7 +53,6 @@ public class SDRefinementTest {
         for (String classe : actual) {
             assertEquals(true, classes.contains(classe));
         }
-
     }
 
     @Test

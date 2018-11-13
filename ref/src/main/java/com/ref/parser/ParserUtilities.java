@@ -164,4 +164,16 @@ public class ParserUtilities {
         return sb.toString();
     }
 
+    public List<ILifeline> getLifelines(ISequenceDiagram seq1, ISequenceDiagram seq2) {
+        List<ILifeline> lifelines = new ArrayList<>();
+        for (ILifeline lf : seq1.getInteraction().getLifelines()){
+            lifelines.add(lf);
+        }
+
+        for (ILifeline lf : seq2.getInteraction().getLifelines()){
+            lifelines.add(lf);
+        }
+
+        return lifelines;
+    }
 }
