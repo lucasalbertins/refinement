@@ -10,6 +10,8 @@ import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.change_vision.jude.api.inf.model.IControlNode;
 import com.change_vision.jude.api.inf.model.IFlow;
+import com.change_vision.jude.api.inf.model.IInputPin;
+import com.change_vision.jude.api.inf.model.IOutputPin;
 
 import javafx.util.Pair;
 
@@ -33,6 +35,8 @@ public class ADParser {
 	private ArrayList<String> lockChannel;
 	private ArrayList<String> allInitial;
 	private ArrayList<String> alphabetAllInitial;
+	private HashMap<String, String> parameterNodesInput;
+	private HashMap<String, String> parameterNodesOutput;
 	
 	public ADParser(IActivity ad, String nameAD) {
 		this.ad = ad;
@@ -52,6 +56,8 @@ public class ADParser {
 		lockChannel = new ArrayList<>();
 		allInitial = new ArrayList<>();
 		alphabetAllInitial = new ArrayList<>();
+		parameterNodesInput = new HashMap<>();
+		parameterNodesOutput = new HashMap<>();
 	}
 	
 	public void clearBuffer() {
@@ -70,6 +76,8 @@ public class ADParser {
 		lockChannel = new ArrayList<>();
 		allInitial = new ArrayList<>();
 		alphabetAllInitial = new ArrayList<>();
+		parameterNodesInput = new HashMap<>();
+		parameterNodesOutput = new HashMap<>();
 	}
 	
 	private void setName(String nameAD) {
@@ -92,34 +100,61 @@ public class ADParser {
 	public String defineChannels() {
 		StringBuilder channels = new StringBuilder();
 		IActivityNode nodes[] =  ad.getActivityNodes();
-		boolean parameterIn = false;
-		boolean parameterOut = false;
 		
 		for (IActivityNode activityNode : nodes) {
-			if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {	// ainda falta verificar isso
-				parameterIn = true;
+			if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {	
+				parameterNodesInput.put(activityNode.getName(), ((IActivityParameterNode) activityNode).getBase().getName());
 			}
 			
-			if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {	// ainda falta verificar isso
-				parameterOut = true;
+			if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {	
+				parameterNodesOutput.put(activityNode.getName(), ((IActivityParameterNode) activityNode).getBase().getName());
 			}
 		}
 		
-		if (parameterIn) {
-			channels.append("channel startActivity_" + ad.getName() + ": ID_" + ad.getName() + ".typeIn_" + ad.getName() + "\n");	// Tipos de parametros ainda a decidir
+		if (parameterNodesInput.size() > 0) {
+			channels.append("channel startActivity_" + ad.getName() + ": ID_" + ad.getName());
+			
+			for (String input : parameterNodesInput.keySet()) {
+				channels.append("." + input + "_" + ad.getName());
+			}
+			
+			channels.append("\n");
+			
 		} else {
 			channels.append("channel startActivity_" + ad.getName() + ": ID_" + ad.getName() + "\n");
 		}
 		
-		if (parameterOut) {
-			channels.append("channel endActivity_" + ad.getName() + ": ID_" + ad.getName() + ".typeIn_" + ad.getName() + "\n");	// Tipos de parametros ainda a decidir
+		if (parameterNodesOutput.size() > 0) {
+			channels.append("channel endActivity_" + ad.getName() + ": ID_" + ad.getName());
+			
+			for (String output : parameterNodesOutput.keySet()) {
+				channels.append("." + output + "_" + ad.getName());
+			}
+			
+			channels.append("\n");
+			
 		} else {
 			channels.append("channel endActivity_" + ad.getName() + ": ID_" + ad.getName() + "\n");
 		}
 		
-		if (countGet_ad > 1 || countSet_ad > 1) {
-			channels.append("channel set_x_" + ad.getName() + ", set_y_" + ad.getName() + ": countSet_" + ad.getName() + ".typeIn_" + ad.getName() + "\n");
-			channels.append("channel get_x_" + ad.getName() + ", get_y_" + ad.getName() + ": countGet_" + ad.getName() + ".typeIn_" + ad.getName() + "\n");
+		if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
+			
+			for (String get : parameterNodesInput.keySet()) {
+				channels.append("channel get_" + get + "_" + ad.getName() + ": countGet_" + ad.getName() + "." + get + "_" + ad.getName() + "\n");
+			}
+			
+			for (String get : parameterNodesOutput.keySet()) {
+				channels.append("channel get_" + get + "_" + ad.getName() + ": countGet_" + ad.getName() + "." + get + "_" + ad.getName() + "\n");
+			}
+			
+			for (String set : parameterNodesInput.keySet()) {
+				channels.append("channel set_" + set + "_" + ad.getName() + ": countSet_" + ad.getName() + "." + set + "_" + ad.getName() + "\n");
+			}
+			
+			for (String set : parameterNodesOutput.keySet()) {
+				channels.append("channel set_" + set + "_" + ad.getName() + ": countSet_" + ad.getName() + "." + set + "_" + ad.getName() + "\n");
+			}
+			
 		}
 		
 		if (countCn_ad > 1) {
@@ -171,8 +206,6 @@ public class ADParser {
 	
 	public String defineTypes() {
 		StringBuilder types = new StringBuilder();
-		IActivityNode nodes[] =  ad.getActivityNodes();
-		boolean parameter = false;
 		
 		if (countCall.size() > 0) {
 			for (String nameDiagram : countCall.keySet()) {
@@ -181,15 +214,26 @@ public class ADParser {
 		}
 		
 		types.append("datatype T = lock | unlock\n");
-
-		for (IActivityNode activityNode : nodes) {
-			if (activityNode instanceof IActivityParameterNode) {	// ainda falta verificar isso
-				parameter = true;
-			}
-		}
 		
-		if (parameter) {
-			types.append("typeIn_" + ad.getName() + " = {0..1}\n");
+		if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
+			for (String input : parameterNodesInput.keySet()) {
+				types.append(input + "_" + ad.getName() + " = ");
+				
+				if (parameterNodesInput.get(input).equals("int")) {
+					types.append("{0..1}\n"); //Verificar se possivel usar o campo definition para definir o intervalo
+				}
+				
+			}
+			
+			for (String output : parameterNodesOutput.keySet()) {
+				types.append(output + "_" + ad.getName() + " = ");
+				
+				if (parameterNodesOutput.get(output).equals("int")) {
+					types.append("{0..1}\n"); //Verificar se possivel usar o campo definition para definir o intervalo
+				}
+				
+			}
+			
 		}
 		
 		if (countGet_ad > 1 || countSet_ad > 1) {
@@ -264,10 +308,32 @@ public class ADParser {
 						activityNode = defineFork(activityNode, nodes); // create fork node and set next action node
 					} else if (((IControlNode) activityNode).isJoinNode()) {
 						activityNode = defineJoin(activityNode, nodes); // create join node and set next action node
-					} else if (((IControlNode) activityNode).isDecisionMergeNode() && activityNode.getIncomings().length == 1) {
-						activityNode = defineDecision(activityNode, nodes); // create decision node and set next action node
-					} else if (((IControlNode) activityNode).isMergeNode() && activityNode.getOutgoings().length == 1) {
-						activityNode = defineMerge(activityNode, nodes); // create merge node and set next action node
+					} else if (((IControlNode) activityNode).isDecisionMergeNode()) {
+						
+						if (activityNode.getOutgoings().length > 1) {
+							activityNode = defineDecision(activityNode, nodes); // create decision node and set next action node
+						} else {
+							IFlow flows[] = activityNode.getOutgoings();
+							boolean decision = false;
+							for (int i = 0; i < flows.length; i++) {
+								
+								String stereotype[] = flows[i].getStereotypes();
+								
+								for (int j = 0; j < stereotype.length; j++) {
+									if (stereotype[j].equals("decisionInputFlow")) {
+										decision = true;
+									}
+								}
+								
+								
+							}
+						
+							if (decision) {
+								activityNode = defineDecision(activityNode, nodes); // create decision node and set next action node
+							} else {
+								activityNode = defineMerge(activityNode, nodes); // create merge node and set next action node
+							}	
+						}
 					} 
 				}
 
@@ -647,7 +713,7 @@ public class ADParser {
 		return activityNode;
 	} 
 	
-	private IActivityNode defineCallBehavior(IActivityNode activityNode, StringBuilder nodes) {
+	private IActivityNode defineCallBehavior(IActivityNode activityNode, StringBuilder nodes) {	//Ainda nao testado
 		StringBuilder callBehavior = new StringBuilder();
 		ArrayList<String> alphabet = new ArrayList<>();
 		String nameCallBehavior = activityNode.getName() + "_" + ad.getName();
@@ -655,6 +721,8 @@ public class ADParser {
 		String endDiagram = "END_DIAGRAM_" + ad.getName();
 		IFlow outFlows[] = activityNode.getOutgoings();
 		IFlow inFlows[] = activityNode.getIncomings();
+		ArrayList<String> inputPins = new ArrayList<>();
+		ArrayList<String> outputPins = new ArrayList<>();
 		
 		callBehavior.append(nameCallBehavior + " = ");
 		
@@ -668,10 +736,31 @@ public class ADParser {
 		String cnIn = syncChannels.get(sync);
 		
 		cn(alphabet, callBehavior, cnIn, " -> ");
-		get(alphabet, callBehavior, 'x');
-		startActivity(alphabet, callBehavior);
-		endActivity(alphabet, callBehavior);
-		set(alphabet, callBehavior, 'y');
+		
+		for (IFlow pinInput : activityNode.getIncomings()) {
+			
+			IActivityNode pin = pinInput.getSource();
+			
+			if (pin instanceof IInputPin) {
+				get(alphabet, callBehavior, pin.getName());
+				inputPins.add(pin.getName());
+			}
+		}
+		
+		
+		startActivity(alphabet, callBehavior, inputPins);
+		endActivity(alphabet, callBehavior, outputPins);
+		
+		for (IFlow pinOutput : activityNode.getOutgoings()) {
+			
+			IActivityNode pin = pinOutput.getTarget();
+			
+			if (pin instanceof IOutputPin) {
+				set(alphabet, callBehavior, pin.getName());
+				outputPins.add(pin.getName());
+			}
+		}
+		
 		update(alphabet, callBehavior, inFlows.length, outFlows.length);
 		
 		for (IFlow flow : outFlows) {	//creates output channels
@@ -825,7 +914,7 @@ public class ADParser {
 		String nameMergeTermination = activityNode.getName() + "_" + ad.getName() + "_t";
 		String endDiagram = "END_DIAGRAM_" + ad.getName();
 		IFlow outFlows[] = activityNode.getOutgoings();
-		IFlow inFlows[] = activityNode.getIncomings();
+		//IFlow inFlows[] = activityNode.getIncomings();
 		
 		merge.append(nameMerge + " = ");
 		
@@ -851,7 +940,7 @@ public class ADParser {
 		
 		merge.append("); ");
 		
-		update(alphabet, merge, inFlows.length, outFlows.length);
+		update(alphabet, merge, 1, 1);
 		
 		for (IFlow flow : outFlows) {	//creates output channels
 			String cn = createCN();
@@ -883,6 +972,20 @@ public class ADParser {
 		String endDiagram = "END_DIAGRAM_" + ad.getName();
 		IFlow outFlows[] = activityNode.getOutgoings();
 		IFlow inFlows[] = activityNode.getIncomings();
+		String decisionInputFlow = null;
+		
+		for (int i = 0; i < inFlows.length; i++) {	
+			
+			String stereotype[] = inFlows[i].getStereotypes();
+		
+			for (int j = 0; j < stereotype.length; j++) {
+				if (stereotype[j].equals("decisionInputFlow")) {
+					decisionInputFlow = inFlows[i].getSource().getName();
+				}
+			}
+			
+		}
+		
 		
 		decision.append(nameDecision + " = ");
 		
@@ -896,8 +999,8 @@ public class ADParser {
 		String cnIn = syncChannels.get(sync);
 		
 		cn(alphabet, decision, cnIn, " -> ");
-		update(alphabet, decision, inFlows.length, 1);
-		get(alphabet, decision, 'x');
+		update(alphabet, decision, 1, 1);
+		get(alphabet, decision, decisionInputFlow);
 		
 		decision.append("(");
 		
@@ -990,40 +1093,38 @@ public class ADParser {
 		return "cn_" + ad.getName() + "." + countCn_ad++;
 	}
 	
-	private void startActivity(ArrayList<String> alphabetNode, StringBuilder action) {
-		String startActivity = "startActivity_" + ad.getName();
+	private void startActivity(ArrayList<String> alphabetNode, StringBuilder action, ArrayList<String> inputPins) {
+		String startActivity = "startActivity_" + ad.getName();	
 		alphabetNode.add(startActivity);
-		action.append(startActivity + "!x -> ");
+		
+		for (String pin : inputPins) {
+			startActivity += "!" + pin;
+		}
+		
+		action.append(startActivity + " -> ");
 	}
 	
-	private void endActivity(ArrayList<String> alphabetNode, StringBuilder action) {
+	private void endActivity(ArrayList<String> alphabetNode, StringBuilder action, ArrayList<String> outputPins) {
 		String endActivity = "endActivity_" + ad.getName();
 		alphabetNode.add(endActivity);
-		action.append(endActivity + "?y -> ");
+		
+		for (String pin : outputPins) {
+			endActivity += "?" + pin;
+		}
+		
+		action.append(endActivity + " -> ");
 	}
 	
-	private void get(ArrayList<String> alphabetNode, StringBuilder action, char c) {
-		if (c == 'x') {
-			String get = "get_x_" + ad.getName() + "." + countGet_ad++;
-			alphabetNode.add(get);
-			action.append(get +"?x -> ");
-		} else {
-			String get = "get_y_" + ad.getName() + "." + countGet_ad++;
-			alphabetNode.add(get);
-			action.append(get +"?y -> ");
-		}
+	private void get(ArrayList<String> alphabetNode, StringBuilder action, String nameObject) {
+		String get = "get_" + nameObject + "_" + ad.getName() + "." + countGet_ad++;
+		alphabetNode.add(get);
+		action.append(get +"?" + nameObject + " -> ");
 	}
 	
-	private void set(ArrayList<String> alphabetNode, StringBuilder action, char c) {
-		if (c == 'x') {
-			String set = "set_x_" + ad.getName() + "." + countSet_ad++;
-			alphabetNode.add(set);
-			action.append(set +"!x -> ");
-		} else {
-			String set = "set_y_" + ad.getName() + "." + countSet_ad++;
-			alphabetNode.add(set);
-			action.append(set +"!y -> ");
-		}
+	private void set(ArrayList<String> alphabetNode, StringBuilder action, String nameObject) {
+		String set = "set_" + nameObject + "_" + ad.getName() + "." + countSet_ad++;
+		alphabetNode.add(set);
+		action.append(set +"!" + nameObject + " -> ");
 	}
 	
 	private void lock(ArrayList<String> alphabetNode, StringBuilder action, int inOut, String nameNode) {

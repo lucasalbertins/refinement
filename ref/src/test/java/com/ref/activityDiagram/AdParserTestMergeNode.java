@@ -62,7 +62,7 @@ public class AdParserTestMergeNode {
 	 * Teste de Tradução Merge Node
 	 * */
 	@Test
-	public void TestNodesAction1() {
+	public void TestMergeNode1() {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_merge1_t = update_merge1.1!(2-0) -> ((cn_merge1.1 -> SKIP) ||| (cn_merge1.2 -> SKIP))\n" + 
@@ -70,7 +70,7 @@ public class AdParserTestMergeNode {
 				"act1_merge1_t = act1_merge1 /\\ END_DIAGRAM_merge1\n" + 
 				"act2_merge1 = cn_merge1.2 -> lock_act2_merge1.lock -> event_act2_merge1 -> lock_act2_merge1.unlock -> update_merge1.3!(1-1) -> cn_merge1.4 -> act2_merge1\n" + 
 				"act2_merge1_t = act2_merge1 /\\ END_DIAGRAM_merge1\n" + 
-				"merge1_merge1 = ((cn_merge1.3 -> SKIP) [] (cn_merge1.4 -> SKIP)); update_merge1.4!(1-2) -> cn_merge1.5 -> merge1_merge1\n" + 
+				"merge1_merge1 = ((cn_merge1.3 -> SKIP) [] (cn_merge1.4 -> SKIP)); update_merge1.4!(1-1) -> cn_merge1.5 -> merge1_merge1\n" + 
 				"merge1_merge1_t = merge1_merge1 /\\ END_DIAGRAM_merge1\n" + 
 				"fin1_merge1 = ((cn_merge1.5 -> SKIP)); clear_merge1.1 -> SKIP\n" + 
 				"fin1_merge1_t = fin1_merge1 /\\ END_DIAGRAM_merge1\n" + 

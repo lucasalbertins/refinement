@@ -96,10 +96,10 @@ public class ADParserTestChannel {
 		parser2.defineNodesActionAndControl();
 		String actual = parser2.defineChannels();
 		StringBuffer expected = new StringBuffer();
-		expected.append("channel startActivity_decision1: ID_decision1.typeIn_decision1\n" + 
+		expected.append("channel startActivity_decision1: ID_decision1.x_decision1\n" + 
 				"channel endActivity_decision1: ID_decision1\n" + 
-				"channel set_x_decision1, set_y_decision1: countSet_decision1.typeIn_decision1\n" + 
-				"channel get_x_decision1, get_y_decision1: countGet_decision1.typeIn_decision1\n" + 
+				"channel get_x_decision1: countGet_decision1.x_decision1\n" +
+				"channel set_x_decision1: countSet_decision1.x_decision1\n" +  
 				"channel cn_decision1: countCn_decision1\n" + 
 				"channel clear_decision1: countClear_decision1\n" + 
 				"channel update_decision1: countUpdate_decision1.limiteUpdate_decision1\n" + 

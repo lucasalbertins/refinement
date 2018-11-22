@@ -73,6 +73,7 @@ public class AdParserTestType {
 	public void TestDefineTypes1() {
 		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
+		parser1.defineChannels();
 		String actual = parser1.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_action1 = {1..1}\n" + 
@@ -91,11 +92,12 @@ public class AdParserTestType {
 	public void TestDefineTypes2() {
 		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
+		parser2.defineChannels();
 		String actual = parser2.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_decision1 = {1..1}\n" + 
 				"datatype T = lock | unlock\n" + 
-				"typeIn_decision1 = {0..1}\n" + 
+				"x_decision1 = {0..1}\n" + 
 				"countGet_decision1 = {1..1}\n" + 
 				"countSet_decision1 = {1..1}\n" + 
 				"countCn_decision1 = {1..5}\n" + 
