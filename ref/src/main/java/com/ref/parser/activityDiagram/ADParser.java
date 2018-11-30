@@ -21,20 +21,24 @@ public class ADParser {
 	
 	private int countGet_ad;
 	private int countSet_ad;
-	private int countCn_ad;
+	private int countCe_ad;
+	private int countOe_ad;
 	private int countUpdate_ad;
 	private int countClear_ad;
-	//limiteUpdate_ad = {(-2)..2}
+	private int limiteInf;
+	private int limiteSup;
 	
 	private static HashMap<String, Integer> countCall;
 	private HashMap<String, ArrayList<String>> alphabetNode;
-	private HashMap<Pair<String, String>, String> syncChannels; 
+	private HashMap<Pair<String, String>, String> syncChannelsEdge;
+	private HashMap<Pair<String, String>, String> syncObjectEdge;
+	private HashMap<String, String> objectEdges;
 	private ArrayList<IActivityNode> queueNode;
 	private ArrayList<IActivity> callBehaviorList;
 	private ArrayList<String> eventChannel;
 	private ArrayList<String> lockChannel;
 	private ArrayList<String> allInitial;
-	private ArrayList<String> alphabetAllInitial;
+	private ArrayList<String> alphabetAllInitialAndParameter;
 	private HashMap<String, String> parameterNodesInput;
 	private HashMap<String, String> parameterNodesOutput;
 	
@@ -43,19 +47,24 @@ public class ADParser {
 		setName(nameAD);
 		this.countGet_ad = 1;
 		this.countSet_ad = 1;
-		this.countCn_ad = 1;
+		this.countCe_ad = 1;
+		this.countOe_ad = 1;
 		this.countUpdate_ad = 1;
 		this.countClear_ad = 1;
+		this.limiteInf = 99;
+		this.limiteSup = -99;
 		this.alphabetNode = new HashMap<>();
 		countCall = new HashMap<>();
 		//addCountCall(); //comentado durante os testes
-		syncChannels = new HashMap<>();
+		syncChannelsEdge = new HashMap<>();
+		syncObjectEdge = new HashMap<>();
+		objectEdges = new HashMap<>();
 		queueNode = new ArrayList<>();
 		callBehaviorList = new ArrayList<>();
 		eventChannel = new ArrayList<>();
 		lockChannel = new ArrayList<>();
 		allInitial = new ArrayList<>();
-		alphabetAllInitial = new ArrayList<>();
+		alphabetAllInitialAndParameter = new ArrayList<>();
 		parameterNodesInput = new HashMap<>();
 		parameterNodesOutput = new HashMap<>();
 	}
@@ -63,19 +72,24 @@ public class ADParser {
 	public void clearBuffer() {
 		this.countGet_ad = 1;
 		this.countSet_ad = 1;
-		this.countCn_ad = 1;
+		this.countCe_ad = 1;
+		this.countOe_ad = 1;
 		this.countUpdate_ad = 1;
 		this.countClear_ad = 1;
+		this.limiteInf = 99;
+		this.limiteSup = -99;
 		this.alphabetNode = new HashMap<>();
 		countCall.clear();
 		addCountCall();
-		syncChannels = new HashMap<>();
+		syncChannelsEdge = new HashMap<>();
+		syncObjectEdge = new HashMap<>();
+		objectEdges = new HashMap<>();
 		queueNode = new ArrayList<>();
 		callBehaviorList = new ArrayList<>();
 		eventChannel = new ArrayList<>();
 		lockChannel = new ArrayList<>();
 		allInitial = new ArrayList<>();
-		alphabetAllInitial = new ArrayList<>();
+		alphabetAllInitialAndParameter = new ArrayList<>();
 		parameterNodesInput = new HashMap<>();
 		parameterNodesOutput = new HashMap<>();
 	}
@@ -157,8 +171,8 @@ public class ADParser {
 			
 		}
 		
-		if (countCn_ad > 1) {
-			channels.append("channel cn_" + ad.getName() + ": countCn_" + ad.getName() + "\n");
+		if (countCe_ad > 1) {
+			channels.append("channel ce_" + ad.getName() + ": countCe_" + ad.getName() + "\n");
 		}
 
 		if (countClear_ad > 1) {
@@ -250,8 +264,12 @@ public class ADParser {
 			}
 		}
 
-		if (countCn_ad > 1) {
-			types.append("countCn_" + ad.getName() + " = {1.." + (countCn_ad - 1) + "}\n");
+		if (countCe_ad > 1) {
+			types.append("countCe_" + ad.getName() + " = {1.." + (countCe_ad - 1) + "}\n");
+		}
+		
+		if (countOe_ad > 1) {
+			types.append("countOe_" + ad.getName() + " = {1.." + (countOe_ad - 1) + "}\n");
 		}
 		
 		types.append("countUpdate_" + ad.getName() + " = {1.." + (countUpdate_ad - 1) + "}\n");
@@ -260,7 +278,7 @@ public class ADParser {
 			types.append("countClear_" + ad.getName() + " = {1.." + (countClear_ad - 1) + "}\n");
 		}
 		
-		types.append("limiteUpdate_" + ad.getName() + " = {(-2)..2}\n");	// valor fixo
+		types.append("limiteUpdate_" + ad.getName() + " = {(" + limiteInf + ")..(" + limiteSup + ")}\n");
 		
 		System.out.println(types);
 		
@@ -271,12 +289,10 @@ public class ADParser {
 		StringBuilder nodes = new StringBuilder();
 		
 		for (IActivityNode activityNode : ad.getActivityNodes()) {
-			if (activityNode instanceof IControlNode) {
-				if (((IControlNode) activityNode).isInitialNode()) {
-					if (!queueNode.contains(activityNode)) {
-						queueNode.add(activityNode);
-					}
-				}
+			if (((activityNode instanceof IControlNode && ((IControlNode) activityNode).isInitialNode()) || 
+					activityNode instanceof IActivityParameterNode) && !queueNode.contains(activityNode)) {
+				
+				queueNode.add(activityNode);
 			}
 		}
 		
@@ -290,7 +306,7 @@ public class ADParser {
 			
 			while (activityNode != null && !alphabetNode.containsKey(activityNode.getName())	// Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
 					&& input == activityNode.getIncomings().length ) {
-			
+				
 				if (activityNode instanceof IAction) {
 					if (((IAction) activityNode).isCallBehaviorAction()) {
 						activityNode = defineCallBehavior(activityNode, nodes);
@@ -335,10 +351,12 @@ public class ADParser {
 							}	
 						}
 					} 
+				} else if (activityNode instanceof IActivityParameterNode) {
+					activityNode = defineParameterNode(activityNode, nodes);
 				}
 
 				input = countAmount(activityNode);
-				
+
 			}	
 		}
 		
@@ -352,9 +370,9 @@ public class ADParser {
 		}
 		
 		nodes.append(") /\\ END_DIAGRAM_" + ad.getName());
-		alphabetAllInitial.add("endDiagram_" + ad.getName());
+		alphabetAllInitialAndParameter.add("endDiagram_" + ad.getName());
 		
-		alphabetNode.put("init", alphabetAllInitial);
+		alphabetNode.put("init", alphabetAllInitialAndParameter);
 		
 		System.out.println(nodes);
 
@@ -533,19 +551,16 @@ public class ADParser {
 		if (activityNode != null) {
 			input = 0;
 			
-			for (Pair<String, String> tupla : syncChannels.keySet()) {	//get amount input
+			for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get amount input
 				if (tupla.getValue().equals(activityNode.getName())) {
 					input++;
 				}
 			}
 			
-			IFlow flows[] = activityNode.getIncomings();
-			
-			for (int i = 0; i < flows.length; i++) {	//get amount input
-				if (flows[i].getSource() instanceof IActivityParameterNode) {
+			for (Pair<String, String> tupla : syncObjectEdge.keySet()) {	//get amount input
+				if (tupla.getValue().equals(activityNode.getName())) {
 					input++;
 				}
-				
 			}
 			
 		}
@@ -561,28 +576,50 @@ public class ADParser {
 		String endDiagram = "END_DIAGRAM_" + ad.getName();
 		IFlow outFlows[] = activityNode.getOutgoings();
 		IFlow inFlows[] = activityNode.getIncomings();
+		String nameObject = null;
+		boolean syncBool = false;
+		boolean sync2Bool = false;
 		
 		action.append(nameAction + " = ");
 		
 		Pair<String, String> sync = new Pair<String, String>("", "");
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get sync channel
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
 			if (tupla.getValue().equals(activityNode.getName())) {
 				sync = tupla;
+				String ceIn = syncChannelsEdge.get(sync);
+				ce(alphabet, action, ceIn, " -> ");
+				syncBool = true;
 			}
 		}
 		
-		String cnIn = syncChannels.get(sync);
-		
-		cn(alphabet, action, cnIn, " -> ");
+		for (Pair<String, String> tupla : syncObjectEdge.keySet()) {	//get sync channel
+			if (tupla.getValue().equals(activityNode.getName())) {
+				sync = tupla;
+				String ceIn2 = syncObjectEdge.get(sync);
+				nameObject = objectEdges.get(ceIn2);
+				oe(alphabet, action, ceIn2, "?" + nameObject + " -> ");
+				sync2Bool = true;
+			}
+		}
+	
 		lock(alphabet, action, 0, nameAction);
 		event(alphabet, nameAction, action);
 		lock(alphabet, action, 1, nameAction);
 		update(alphabet, action, inFlows.length, outFlows.length);
 		
-		for (IFlow flow : outFlows) {	//creates output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
-			cn(alphabet, action, cn, " -> ");
+		if (syncBool) {
+			for (IFlow flow : outFlows) {	//creates output channels
+				String ce = createCE();
+				syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), ce);
+				ce(alphabet, action, ce, " -> ");
+			}
+		} else if (sync2Bool) {
+			for (IFlow flow : outFlows) {	//creates output channels
+				String oe = createOE(nameObject);
+				syncObjectEdge.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), oe);
+				objectEdges.put(oe, nameObject);
+				ce(alphabet, action, oe, "!" + nameObject + " -> ");
+			}
 		}
 		
 		action.append(nameAction + "\n");
@@ -616,25 +653,52 @@ public class ADParser {
 		
 		finalNode.append(nameFinalNode + " = ");
 
-		ArrayList<Pair<String, String>> cnInitials = new ArrayList<>();
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get all sync channels
+		ArrayList<Pair<String, String>> ceInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get all sync channels
 			if (tupla.getValue().equals(activityNode.getName())) {
-				cnInitials.add(tupla);
+				ceInitials.add(tupla);
 			}
 		}
 		
-		finalNode.append("(");
-		for (int i = 0; i < cnInitials.size(); i++) {
-			String cnIn = syncChannels.get(cnInitials.get(i));	//get the parallel input channels
-	
+		if (ceInitials.size() > 0) {
 			finalNode.append("(");
-			
-			if (i >= 0 && i < cnInitials.size() - 1) {
-				cn(alphabet, finalNode, cnIn, " -> SKIP) [] ");
-			} else {
-				cn(alphabet, finalNode, cnIn, " -> SKIP)");
+			for (int i = 0; i < ceInitials.size(); i++) {
+				String ceIn = syncChannelsEdge.get(ceInitials.get(i));	//get the parallel input channels
+		
+				finalNode.append("(");
+				
+				if (i >= 0 && i < ceInitials.size() - 1) {
+					ce(alphabet, finalNode, ceIn, " -> SKIP) [] ");
+				} else {
+					ce(alphabet, finalNode, ceIn, " -> SKIP)");
+				}
 			}
 		}
+
+		ceInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncObjectEdge.keySet()) {	//get all sync channels
+			if (tupla.getValue().equals(activityNode.getName())) {
+				ceInitials.add(tupla);
+			}
+		}
+		
+		
+		
+		if (ceInitials.size() > 0) {
+			finalNode.append("(");
+			for (int i = 0; i < ceInitials.size(); i++) {
+				String oeIn = syncObjectEdge.get(ceInitials.get(i));	//get the parallel input channels
+				String nameObject = objectEdges.get(oeIn);
+
+				finalNode.append("(");
+				
+				if (i >= 0 && i < ceInitials.size() - 1) {
+					oe(alphabet, finalNode, oeIn, "?" + nameObject + " -> SKIP) [] ");
+				} else {
+					oe(alphabet, finalNode, oeIn, "?" + nameObject + " -> SKIP)");
+				}
+			}
+		}	
 		
 		finalNode.append("); ");
 		
@@ -670,15 +734,15 @@ public class ADParser {
 		
 		IFlow flows[] =  outFlows;
 		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), cn);
+			String ce = createCE();
+			syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), ce);
 			
 			initialNode.append("(");
 			
 			if (i >= 0 && i < flows.length - 1) {
-				cn(alphabet, initialNode, cn, " -> SKIP) ||| ");
+				ce(alphabet, initialNode, ce, " -> SKIP) ||| ");
 			} else {
-				cn(alphabet, initialNode, cn, " -> SKIP)");
+				ce(alphabet, initialNode, ce, " -> SKIP)");
 			}
 		}
 		
@@ -686,17 +750,17 @@ public class ADParser {
 		
 		
 //		for (IFlow flow : outFlows) {	//creates output channels
-//			String cn = createCN();
-//			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
-//			cn(alphabet, initialNode, cn, " -> ");
+//			String ce = createCN();
+//			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), ce);
+//			ce(alphabet, initialNode, ce, " -> ");
 //		}
 //		
 //		initialNode.append("SKIP\n");
 
 		allInitial.add(nameInitialNode);	
 		for (String channel : alphabet) {
-			if (!alphabetAllInitial.contains(channel)) {
-				alphabetAllInitial.add(channel);
+			if (!alphabetAllInitialAndParameter.contains(channel)) {
+				alphabetAllInitialAndParameter.add(channel);
 			}
 		}
 
@@ -727,15 +791,15 @@ public class ADParser {
 		callBehavior.append(nameCallBehavior + " = ");
 		
 		Pair<String, String> sync = new Pair<String, String>("", "");
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get sync channel
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
 			if (tupla.getValue().equals(activityNode.getName())) {
 				sync = tupla;
 			}
 		}
 		
-		String cnIn = syncChannels.get(sync);
+		String ceIn = syncChannelsEdge.get(sync);
 		
-		cn(alphabet, callBehavior, cnIn, " -> ");
+		ce(alphabet, callBehavior, ceIn, " -> ");
 		
 		for (IFlow pinInput : activityNode.getIncomings()) {
 			
@@ -764,9 +828,9 @@ public class ADParser {
 		update(alphabet, callBehavior, inFlows.length, outFlows.length);
 		
 		for (IFlow flow : outFlows) {	//creates output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
-			cn(alphabet, callBehavior, cn, " -> ");
+			String ce = createCE();
+			syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), ce);
+			ce(alphabet, callBehavior, ce, " -> ");
 		}
 		
 		callBehavior.append(nameCallBehavior + "\n");
@@ -799,30 +863,30 @@ public class ADParser {
 		fork.append(nameFork + " = ");
 		
 		Pair<String, String> sync = new Pair<String, String>("", "");
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get sync channel
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
 			if (tupla.getValue().equals(activityNode.getName())) {
 				sync = tupla;
 			}
 		}
 		
-		String cnIn = syncChannels.get(sync);
+		String ceIn = syncChannelsEdge.get(sync);
 		
-		cn(alphabet, fork, cnIn, " -> ");
+		ce(alphabet, fork, ceIn, " -> ");
 		update(alphabet, fork, inFlows.length, outFlows.length);
 		
 		fork.append("(");
 		
 		IFlow flows[] =  outFlows;
 		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), cn);
+			String ce = createCE();
+			syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), ce);
 			
 			fork.append("(");
 			
 			if (i >= 0 && i < flows.length - 1) {
-				cn(alphabet, fork, cn, " -> SKIP) ||| ");
+				ce(alphabet, fork, ce, " -> SKIP) ||| ");
 			} else {
-				cn(alphabet, fork, cn, " -> SKIP)");
+				ce(alphabet, fork, ce, " -> SKIP)");
 			}
 		}
 		
@@ -861,23 +925,23 @@ public class ADParser {
 		
 		join.append(nameJoin + " = ");
 		
-		ArrayList<Pair<String, String>> cnInitials = new ArrayList<>();
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get all sync channels
+		ArrayList<Pair<String, String>> ceInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get all sync channels
 			if (tupla.getValue().equals(activityNode.getName())) {
-				cnInitials.add(tupla);
+				ceInitials.add(tupla);
 			}
 		}
 		
 		join.append("(");
-		for (int i = 0; i < cnInitials.size(); i++) {
-			String cnIn = syncChannels.get(cnInitials.get(i));	//get the parallel input channels
+		for (int i = 0; i < ceInitials.size(); i++) {
+			String ceIn = syncChannelsEdge.get(ceInitials.get(i));	//get the parallel input channels
 	
 			join.append("(");
 			
-			if (i >= 0 && i < cnInitials.size() - 1) {
-				cn(alphabet, join, cnIn, " -> SKIP) ||| ");
+			if (i >= 0 && i < ceInitials.size() - 1) {
+				ce(alphabet, join, ceIn, " -> SKIP) ||| ");
 			} else {
-				cn(alphabet, join, cnIn, " -> SKIP)");
+				ce(alphabet, join, ceIn, " -> SKIP)");
 			}
 		}
 		
@@ -886,9 +950,9 @@ public class ADParser {
 		update(alphabet, join, inFlows.length, outFlows.length);
 		
 		for (IFlow flow : outFlows) {	//creates output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
-			cn(alphabet, join, cn, " -> ");
+			String ce = createCE();
+			syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), ce);
+			ce(alphabet, join, ce, " -> ");
 		}
 		
 		join.append(nameJoin + "\n");
@@ -918,23 +982,23 @@ public class ADParser {
 		
 		merge.append(nameMerge + " = ");
 		
-		ArrayList<Pair<String, String>> cnInitials = new ArrayList<>();
-		for (Pair<String, String> tupla : syncChannels.keySet()) {		//get all sync channels
+		ArrayList<Pair<String, String>> ceInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {		//get all sync channels
 			if (tupla.getValue().equals(activityNode.getName())) {
-				cnInitials.add(tupla);
+				ceInitials.add(tupla);
 			}
 		}
 		
 		merge.append("(");
-		for (int i = 0; i < cnInitials.size(); i++) {
-			String cnIn = syncChannels.get(cnInitials.get(i));
+		for (int i = 0; i < ceInitials.size(); i++) {
+			String ceIn = syncChannelsEdge.get(ceInitials.get(i));
 	
 			merge.append("(");
 			
-			if (i >= 0 && i < cnInitials.size() - 1) {	//creates the input channels (merge)
-				cn(alphabet, merge, cnIn, " -> SKIP) [] ");
+			if (i >= 0 && i < ceInitials.size() - 1) {	//creates the input channels (merge)
+				ce(alphabet, merge, ceIn, " -> SKIP) [] ");
 			} else {
-				cn(alphabet, merge, cnIn, " -> SKIP)");
+				ce(alphabet, merge, ceIn, " -> SKIP)");
 			}
 		}
 		
@@ -943,9 +1007,9 @@ public class ADParser {
 		update(alphabet, merge, 1, 1);
 		
 		for (IFlow flow : outFlows) {	//creates output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), cn);
-			cn(alphabet, merge, cn, " -> ");
+			String ce = createCE();
+			syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), ce);
+			ce(alphabet, merge, ce, " -> ");
 		}
 		
 		merge.append(nameMerge + "\n");
@@ -983,60 +1047,171 @@ public class ADParser {
 					decisionInputFlow = inFlows[i].getSource().getName();
 				}
 			}
-			
 		}
 		
-		
-		decision.append(nameDecision + " = ");
-		
-		Pair<String, String> sync = new Pair<String, String>("", "");
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get sync channel
-			if (tupla.getValue().equals(activityNode.getName())) {
-				sync = tupla;
+		if (decisionInputFlow != null && inFlows.length == 1) {
+			decision.append(nameDecision + " = ");
+			
+			Pair<String, String> sync = new Pair<String, String>("", "");
+			for (Pair<String, String> tupla : syncObjectEdge.keySet()) {	//get sync channel
+				if (tupla.getValue().equals(activityNode.getName())) {
+					sync = tupla;
+				}
 			}
-		}
-		
-		String cnIn = syncChannels.get(sync);
-		
-		cn(alphabet, decision, cnIn, " -> ");
-		update(alphabet, decision, 1, 1);
-		get(alphabet, decision, decisionInputFlow);
-		
-		decision.append("(");
-		
-		IFlow flows[] =  outFlows;
-		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
-			String cn = createCN();
-			syncChannels.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), cn);
 			
-			decision.append(flows[i].getGuard() + " & (");
+			String ceIn = syncObjectEdge.get(sync);
 			
-			if (i >= 0 && i < flows.length - 1) {
-				cn(alphabet, decision, cn, " -> SKIP) [] ");
-			} else {
-				cn(alphabet, decision, cn, " -> SKIP)");
+			oe(alphabet, decision, ceIn, "?" + decisionInputFlow + " -> ");
+			update(alphabet, decision, 1, 1);
+			
+			decision.append("(");
+			
+			for (int i = 0; i < outFlows.length; i++) {	//creates the parallel output channels
+				String oe = createOE(decisionInputFlow);
+				syncObjectEdge.put(new Pair<String, String>(activityNode.getName(), outFlows[i].getTarget().getName()), oe);
+				objectEdges.put(oe, decisionInputFlow);
+				
+				decision.append(outFlows[i].getGuard() + " & (");
+				
+				if (i >= 0 && i < outFlows.length - 1) {
+					oe(alphabet, decision, oe, "!" + decisionInputFlow + " -> SKIP) [] ");
+				} else {
+					oe(alphabet, decision, oe, "!" + decisionInputFlow + " -> SKIP)");
+				}
 			}
-		}
-		
-		decision.append("); ");
-		
-		decision.append(nameDecision + "\n");
-		
-		decision.append(nameDecisionTermination + " = ");
-		decision.append(nameDecision + " /\\ " + endDiagram + "\n");
+			
+			decision.append("); ");
+			
+			decision.append(nameDecision + "\n");
+			
+			decision.append(nameDecisionTermination + " = ");
+			decision.append(nameDecision + " /\\ " + endDiagram + "\n");
 
-		alphabet.add("endDiagram_" + ad.getName());
-		alphabetNode.put(activityNode.getName(), alphabet);
-		
-		activityNode = flows[0].getTarget();	//set next action or control node
-		
-		for (int i = 1; i < flows.length; i++) {	//puts the remaining nodes in the queue
-			if (!queueNode.contains(flows[i].getTarget())) {
-				queueNode.add(flows[i].getTarget());
+			alphabet.add("endDiagram_" + ad.getName());
+			alphabetNode.put(activityNode.getName(), alphabet);
+			
+			activityNode = outFlows[0].getTarget();	//set next action or control node
+			
+			for (int i = 1; i < outFlows.length; i++) {	//puts the remaining nodes in the queue
+				if (!queueNode.contains(outFlows[i].getTarget())) {
+					queueNode.add(outFlows[i].getTarget());
+				}
 			}
+			
+			nodes.append(decision.toString());
+		} else if (decisionInputFlow != null && inFlows.length > 1) {
+			decision.append(nameDecision + "(" + decisionInputFlow + ") = ");
+			
+			Pair<String, String> sync2 = new Pair<String, String>("", "");
+			for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
+				if (tupla.getValue().equals(activityNode.getName())) {
+					sync2 = tupla;
+				}
+			}
+			
+			Pair<String, String> sync = new Pair<String, String>("", "");
+			for (Pair<String, String> tupla : syncObjectEdge.keySet()) {	//get sync channel
+				if (tupla.getValue().equals(activityNode.getName())) {
+					sync = tupla;
+				}
+			}
+			
+			String ceIn2 = syncChannelsEdge.get(sync2);
+			String ceIn = syncObjectEdge.get(sync);
+			
+			decision.append("((");
+			ce(alphabet, decision, ceIn2, " -> SKIP");
+			
+			decision.append(") ||| (");
+			oe(alphabet, decision, ceIn, "?" + decisionInputFlow + " -> SKIP");
+			decision.append(")); ");
+			
+			update(alphabet, decision, 2, 1);
+			
+			decision.append("(");
+			
+			for (int i = 0; i < outFlows.length; i++) {	//creates the parallel output channels
+				String ce = createCE();
+				syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), outFlows[i].getTarget().getName()), ce);
+				
+				decision.append(outFlows[i].getGuard() + " & (");
+				
+				if (i >= 0 && i < outFlows.length - 1) {
+					ce(alphabet, decision, ce, " -> SKIP) [] ");
+				} else {
+					ce(alphabet, decision, ce, " -> SKIP)");
+				}
+			}
+			
+			decision.append("); ");
+			
+			decision.append(nameDecision + "(" + decisionInputFlow + ")\n");
+			
+			decision.append(nameDecisionTermination + " = ");
+			decision.append(nameDecision + "(0) /\\ " + endDiagram + "\n");
+
+			alphabet.add("endDiagram_" + ad.getName());
+			alphabetNode.put(activityNode.getName(), alphabet);
+			
+			activityNode = outFlows[0].getTarget();	//set next action or control node
+			
+			for (int i = 1; i < outFlows.length; i++) {	//puts the remaining nodes in the queue
+				if (!queueNode.contains(outFlows[i].getTarget())) {
+					queueNode.add(outFlows[i].getTarget());
+				}
+			}
+			
+			nodes.append(decision.toString());
+		} else {
+			decision.append(nameDecision + " = ");
+			
+			Pair<String, String> sync = new Pair<String, String>("", "");
+			for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
+				if (tupla.getValue().equals(activityNode.getName())) {
+					sync = tupla;
+				}
+			}
+			
+			String ceIn = syncChannelsEdge.get(sync);
+			
+			ce(alphabet, decision, ceIn, " -> ");
+			update(alphabet, decision, 1, 1);
+			
+			decision.append("(");
+			
+			for (int i = 0; i <  outFlows.length; i++) {	//creates the parallel output channels
+				String ce = createCE();
+				syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), outFlows[i].getTarget().getName()), ce);
+				
+				decision.append("(");
+				
+				if (i >= 0 && i < outFlows.length - 1) {
+					ce(alphabet, decision, ce, " -> SKIP) [] ");
+				} else {
+					ce(alphabet, decision, ce, " -> SKIP)");
+				}
+			}
+			
+			decision.append("); ");
+			
+			decision.append(nameDecision + "\n");
+			
+			decision.append(nameDecisionTermination + " = ");
+			decision.append(nameDecision + " /\\ " + endDiagram + "\n");
+
+			alphabet.add("endDiagram_" + ad.getName());
+			alphabetNode.put(activityNode.getName(), alphabet);
+			
+			activityNode = outFlows[0].getTarget();	//set next action or control node
+			
+			for (int i = 1; i < outFlows.length; i++) {	//puts the remaining nodes in the queue
+				if (!queueNode.contains(outFlows[i].getTarget())) {
+					queueNode.add(outFlows[i].getTarget());
+				}
+			}
+			
+			nodes.append(decision.toString());
 		}
-		
-		nodes.append(decision.toString());
 		
 		return activityNode;
 	}
@@ -1050,23 +1225,23 @@ public class ADParser {
 		
 		flowFinal.append(nameFlowFinal + " = ");
 
-		ArrayList<Pair<String, String>> cnInitials = new ArrayList<>();
-		for (Pair<String, String> tupla : syncChannels.keySet()) {	//get all sync channels
+		ArrayList<Pair<String, String>> ceInitials = new ArrayList<>();
+		for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get all sync channels
 			if (tupla.getValue().equals(activityNode.getName())) {
-				cnInitials.add(tupla);
+				ceInitials.add(tupla);
 			}
 		}
 		
 		flowFinal.append("(");
-		for (int i = 0; i < cnInitials.size(); i++) {
-			String cnIn = syncChannels.get(cnInitials.get(i));	//get the parallel input channels
+		for (int i = 0; i < ceInitials.size(); i++) {
+			String ceIn = syncChannelsEdge.get(ceInitials.get(i));	//get the parallel input channels
 	
 			flowFinal.append("(");
 			
-			if (i >= 0 && i < cnInitials.size() - 1) {
-				cn(alphabet, flowFinal, cnIn, " -> SKIP) [] ");
+			if (i >= 0 && i < ceInitials.size() - 1) {
+				ce(alphabet, flowFinal, ceIn, " -> SKIP) [] ");
 			} else {
-				cn(alphabet, flowFinal, cnIn, " -> SKIP)");
+				ce(alphabet, flowFinal, ceIn, " -> SKIP)");
 			}
 		}
 		
@@ -1089,8 +1264,62 @@ public class ADParser {
 		return activityNode;
 	}
 	
-	private String createCN() {
-		return "cn_" + ad.getName() + "." + countCn_ad++;
+	private IActivityNode defineParameterNode (IActivityNode activityNode, StringBuilder nodes) {
+		StringBuilder parameterNode = new StringBuilder();
+		ArrayList<String> alphabet = new ArrayList<>();
+		String nameParameterNode =  "parameter_" + activityNode.getName() + "_t";
+		IFlow outFlows[] = activityNode.getOutgoings();
+		IFlow inFlows[] = activityNode.getIncomings();
+		
+		parameterNode.append(nameParameterNode + " = ");
+		
+		update(alphabet, parameterNode, inFlows.length, outFlows.length);
+		get(alphabet, parameterNode, activityNode.getName());
+		
+		parameterNode.append("(");
+		
+		IFlow flows[] =  outFlows;
+		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
+			String oe = createOE(activityNode.getName());
+			syncObjectEdge.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), oe);
+			
+			parameterNode.append("(");
+			
+			if (i >= 0 && i < flows.length - 1) {
+				oe(alphabet, parameterNode, oe, "!" + activityNode.getName() + " -> SKIP) ||| ");
+			} else {
+				oe(alphabet, parameterNode, oe, "!" + activityNode.getName() + " -> SKIP)");
+			}
+		}
+		
+		parameterNode.append(")\n");
+
+		allInitial.add(nameParameterNode);	
+		for (String channel : alphabet) {
+			if (!alphabetAllInitialAndParameter.contains(channel)) {
+				alphabetAllInitialAndParameter.add(channel);
+			}
+		}
+
+		activityNode = flows[0].getTarget();	//set next action or control node
+		
+		for (int i = 1; i < flows.length; i++) {	//puts the remaining nodes in the queue
+			if (!queueNode.contains(flows[i].getTarget())) {
+				queueNode.add(flows[i].getTarget());
+			}
+		}
+		
+		nodes.append(parameterNode.toString());
+		
+		return activityNode;
+	} 
+	
+	private String createCE() {
+		return "ce_" + ad.getName() + "." + countCe_ad++;
+	}
+	
+	private String createOE(String nameObject) {
+		return "oe_" + nameObject + "_" + ad.getName() + "." + countOe_ad++;
 	}
 	
 	private void startActivity(ArrayList<String> alphabetNode, StringBuilder action, ArrayList<String> inputPins) {
@@ -1145,15 +1374,41 @@ public class ADParser {
 		action.append("event_" + nameAction + " -> ");
 	}
 	
-	private void cn(ArrayList<String> alphabetNode, StringBuilder action, String cn, String posCn) {
-		alphabetNode.add(cn);
-		action.append(cn + posCn);
+	private void ce(ArrayList<String> alphabetNode, StringBuilder action, String ce, String posCe) {
+		alphabetNode.add(ce);
+		action.append(ce + posCe);
+	}
+	
+	private void oe(ArrayList<String> alphabetNode, StringBuilder action, String oe, String posOe) {
+		alphabetNode.add(oe);
+		action.append(oe + posOe);
 	}
 	
 	private void update(ArrayList<String> alphabetNode, StringBuilder action, int countInFlows, int countOutFlows) {
 		String update = "update_" + ad.getName() + "." + countUpdate_ad++;
 		alphabetNode.add(update);
 		action.append(update + "!(" + countOutFlows + "-" + countInFlows + ") -> ");
+		
+		int result = countOutFlows - countInFlows;
+		
+		if (result < limiteInf) {
+			limiteInf = result;
+			
+			if (limiteSup == -99) {
+				limiteSup = result;
+			}
+			
+		}
+		
+		if (result > limiteSup) {
+			limiteSup = result;
+			
+			if (limiteInf == 99) {
+				limiteInf = result;
+			}
+			
+		}
+		
 	}
 
 	private void clear(ArrayList<String> alphabetNode, StringBuilder action) {

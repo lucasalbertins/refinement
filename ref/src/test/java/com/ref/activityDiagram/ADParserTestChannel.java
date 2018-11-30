@@ -77,7 +77,7 @@ public class ADParserTestChannel {
 		StringBuffer expected = new StringBuffer();
 		expected.append("channel startActivity_action1: ID_action1\n" + 
 				"channel endActivity_action1: ID_action1\n" + 
-				"channel cn_action1: countCn_action1\n" + 
+				"channel ce_action1: countCe_action1\n" + 
 				"channel clear_action1: countClear_action1\n" + 
 				"channel update_action1: countUpdate_action1.limiteUpdate_action1\n" + 
 				"channel endDiagram_action1\n" + 
@@ -100,7 +100,7 @@ public class ADParserTestChannel {
 				"channel endActivity_decision1: ID_decision1\n" + 
 				"channel get_x_decision1: countGet_decision1.x_decision1\n" +
 				"channel set_x_decision1: countSet_decision1.x_decision1\n" +  
-				"channel cn_decision1: countCn_decision1\n" + 
+				"channel ce_decision1: countCe_decision1\n" + 
 				"channel clear_decision1: countClear_decision1\n" + 
 				"channel update_decision1: countUpdate_decision1.limiteUpdate_decision1\n" + 
 				"channel endDiagram_decision1\n" + 

@@ -65,10 +65,10 @@ public class ADParserTesteFlowFinalNode {
 	public void TestNodesFlowFinal1() {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_flowFinal1_t = update_flowFinal1.1!(1-0) -> ((cn_flowFinal1.1 -> SKIP))\n" + 
-				"act1_flowFinal1 = cn_flowFinal1.1 -> lock_act1_flowFinal1.lock -> event_act1_flowFinal1 -> lock_act1_flowFinal1.unlock -> update_flowFinal1.2!(1-1) -> cn_flowFinal1.2 -> act1_flowFinal1\n" + 
+		expected.append("init1_flowFinal1_t = update_flowFinal1.1!(1-0) -> ((ce_flowFinal1.1 -> SKIP))\n" + 
+				"act1_flowFinal1 = ce_flowFinal1.1 -> lock_act1_flowFinal1.lock -> event_act1_flowFinal1 -> lock_act1_flowFinal1.unlock -> update_flowFinal1.2!(1-1) -> ce_flowFinal1.2 -> act1_flowFinal1\n" + 
 				"act1_flowFinal1_t = act1_flowFinal1 /\\ END_DIAGRAM_flowFinal1\n" + 
-				"flowFinal1_flowFinal1 = ((cn_flowFinal1.2 -> SKIP)); update_flowFinal1.3!(0-1) -> SKIP\n" + 
+				"flowFinal1_flowFinal1 = ((ce_flowFinal1.2 -> SKIP)); update_flowFinal1.3!(0-1) -> SKIP\n" + 
 				"flowFinal1_flowFinal1_t = flowFinal1_flowFinal1 /\\ END_DIAGRAM_flowFinal1\n" + 
 				"init_flowFinal1_t = (init1_flowFinal1_t) /\\ END_DIAGRAM_flowFinal1");
 		

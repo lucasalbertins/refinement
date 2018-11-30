@@ -19,6 +19,7 @@ public class AdParserTestType {
 	public static IActivityDiagram ad;
 	private static ADParser parser1;
 	private static ADParser parser2;
+	private static ADParser parser3;
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -38,6 +39,14 @@ public class AdParserTestType {
 			ad = (IActivityDiagram) findElements[0];
 
 			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/join1.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+
+			parser3 = new ADParser(ad.getActivity(), ad.getName());
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -78,10 +87,10 @@ public class AdParserTestType {
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_action1 = {1..1}\n" + 
 				"datatype T = lock | unlock\n" + 
-				"countCn_action1 = {1..2}\n" + 
+				"countCe_action1 = {1..2}\n" + 
 				"countUpdate_action1 = {1..2}\n" + 
 				"countClear_action1 = {1..1}\n" + 
-				"limiteUpdate_action1 = {(-2)..2}\n");
+				"limiteUpdate_action1 = {(0)..(1)}\n");
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -100,10 +109,30 @@ public class AdParserTestType {
 				"x_decision1 = {0..1}\n" + 
 				"countGet_decision1 = {1..1}\n" + 
 				"countSet_decision1 = {1..1}\n" + 
-				"countCn_decision1 = {1..5}\n" + 
-				"countUpdate_decision1 = {1..4}\n" + 
+				"countCe_decision1 = {1..5}\n" + 
+				"countOe_decision1 = {1..1}\n" + 
+				"countUpdate_decision1 = {1..5}\n" + 
 				"countClear_decision1 = {1..1}\n" + 
-				"limiteUpdate_decision1 = {(-2)..2}\n");
+				"limiteUpdate_decision1 = {(-1)..(1)}\n");
+
+		assertEquals(expected.toString(), actual);
+	}
+	
+	/* Teste de Tradução dos tipos de dados
+	 */
+	@Test
+	public void TestDefineTypes3() {
+		parser3.clearBuffer();
+		parser3.defineNodesActionAndControl();
+		parser3.defineChannels();
+		String actual = parser3.defineTypes();
+		StringBuffer expected = new StringBuffer();
+		expected.append("ID_join1 = {1..1}\n" + 
+				"datatype T = lock | unlock\n" + 
+				"countCe_join1 = {1..5}\n" + 
+				"countUpdate_join1 = {1..4}\n" + 
+				"countClear_join1 = {1..1}\n" + 
+				"limiteUpdate_join1 = {(-1)..(2)}\n");
 
 		assertEquals(expected.toString(), actual);
 	}

@@ -65,14 +65,14 @@ public class ADParserTestJoinNode {
 	public void TestNodesJoin1() {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_join1_t = update_join1.1!(2-0) -> ((cn_join1.1 -> SKIP) ||| (cn_join1.2 -> SKIP))\n" + 
-				"act1_join1 = cn_join1.1 -> lock_act1_join1.lock -> event_act1_join1 -> lock_act1_join1.unlock -> update_join1.2!(1-1) -> cn_join1.3 -> act1_join1\n" + 
+		expected.append("init1_join1_t = update_join1.1!(2-0) -> ((ce_join1.1 -> SKIP) ||| (ce_join1.2 -> SKIP))\n" + 
+				"act1_join1 = ce_join1.1 -> lock_act1_join1.lock -> event_act1_join1 -> lock_act1_join1.unlock -> update_join1.2!(1-1) -> ce_join1.3 -> act1_join1\n" + 
 				"act1_join1_t = act1_join1 /\\ END_DIAGRAM_join1\n" + 
-				"act2_join1 = cn_join1.2 -> lock_act2_join1.lock -> event_act2_join1 -> lock_act2_join1.unlock -> update_join1.3!(1-1) -> cn_join1.4 -> act2_join1\n" + 
+				"act2_join1 = ce_join1.2 -> lock_act2_join1.lock -> event_act2_join1 -> lock_act2_join1.unlock -> update_join1.3!(1-1) -> ce_join1.4 -> act2_join1\n" + 
 				"act2_join1_t = act2_join1 /\\ END_DIAGRAM_join1\n" + 
-				"join1_join1 = ((cn_join1.3 -> SKIP) ||| (cn_join1.4 -> SKIP)); update_join1.4!(1-2) -> cn_join1.5 -> join1_join1\n" + 
+				"join1_join1 = ((ce_join1.3 -> SKIP) ||| (ce_join1.4 -> SKIP)); update_join1.4!(1-2) -> ce_join1.5 -> join1_join1\n" + 
 				"join1_join1_t = join1_join1 /\\ END_DIAGRAM_join1\n" + 
-				"fin1_join1 = ((cn_join1.5 -> SKIP)); clear_join1.1 -> SKIP\n" + 
+				"fin1_join1 = ((ce_join1.5 -> SKIP)); clear_join1.1 -> SKIP\n" + 
 				"fin1_join1_t = fin1_join1 /\\ END_DIAGRAM_join1\n" + 
 				"init_join1_t = (init1_join1_t) /\\ END_DIAGRAM_join1");
 		
