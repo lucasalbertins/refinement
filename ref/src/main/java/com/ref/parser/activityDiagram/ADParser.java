@@ -32,14 +32,14 @@ public class ADParser {
 	private HashMap<String, ArrayList<String>> alphabetNode;
 	private HashMap<Pair<String, String>, String> syncChannelsEdge;
 	private HashMap<Pair<String, String>, String> syncObjectEdge;
-	private HashMap<String, String> objectEdges;
+	private HashMap<String, String> objectEdges;				//channel; name
 	private ArrayList<IActivityNode> queueNode;
 	private ArrayList<IActivity> callBehaviorList;
 	private ArrayList<String> eventChannel;
 	private ArrayList<String> lockChannel;
 	private ArrayList<String> allInitial;
 	private ArrayList<String> alphabetAllInitialAndParameter;
-	private HashMap<String, String> parameterNodesInput;
+	private HashMap<String, String> parameterNodesInput;		//name; type
 	private HashMap<String, String> parameterNodesOutput;
 	
 	public ADParser(IActivity ad, String nameAD) {
@@ -114,6 +114,7 @@ public class ADParser {
 	public String defineChannels() {
 		StringBuilder channels = new StringBuilder();
 		IActivityNode nodes[] =  ad.getActivityNodes();
+		String nameDiagram = ad.getName();
 		
 		for (IActivityNode activityNode : nodes) {
 			if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {	
@@ -126,62 +127,76 @@ public class ADParser {
 		}
 		
 		if (parameterNodesInput.size() > 0) {
-			channels.append("channel startActivity_" + ad.getName() + ": ID_" + ad.getName());
+			channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
 			
 			for (String input : parameterNodesInput.keySet()) {
-				channels.append("." + input + "_" + ad.getName());
+				channels.append("." + input + "_" + nameDiagram);
 			}
 			
 			channels.append("\n");
 			
 		} else {
-			channels.append("channel startActivity_" + ad.getName() + ": ID_" + ad.getName() + "\n");
+			channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
 		}
 		
 		if (parameterNodesOutput.size() > 0) {
-			channels.append("channel endActivity_" + ad.getName() + ": ID_" + ad.getName());
+			channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram);
 			
 			for (String output : parameterNodesOutput.keySet()) {
-				channels.append("." + output + "_" + ad.getName());
+				channels.append("." + output + "_" + nameDiagram);
 			}
 			
 			channels.append("\n");
 			
 		} else {
-			channels.append("channel endActivity_" + ad.getName() + ": ID_" + ad.getName() + "\n");
+			channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
 		}
 		
 		if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
 			
 			for (String get : parameterNodesInput.keySet()) {
-				channels.append("channel get_" + get + "_" + ad.getName() + ": countGet_" + ad.getName() + "." + get + "_" + ad.getName() + "\n");
+				channels.append("channel get_" + get + "_" + nameDiagram + ": countGet_" + nameDiagram + "." + get + "_" + nameDiagram + "\n");
 			}
 			
 			for (String get : parameterNodesOutput.keySet()) {
-				channels.append("channel get_" + get + "_" + ad.getName() + ": countGet_" + ad.getName() + "." + get + "_" + ad.getName() + "\n");
+				channels.append("channel get_" + get + "_" + nameDiagram + ": countGet_" + nameDiagram + "." + get + "_" + nameDiagram + "\n");
 			}
 			
 			for (String set : parameterNodesInput.keySet()) {
-				channels.append("channel set_" + set + "_" + ad.getName() + ": countSet_" + ad.getName() + "." + set + "_" + ad.getName() + "\n");
+				channels.append("channel set_" + set + "_" + nameDiagram + ": countSet_" + nameDiagram + "." + set + "_" + nameDiagram + "\n");
 			}
 			
 			for (String set : parameterNodesOutput.keySet()) {
-				channels.append("channel set_" + set + "_" + ad.getName() + ": countSet_" + ad.getName() + "." + set + "_" + ad.getName() + "\n");
+				channels.append("channel set_" + set + "_" + nameDiagram + ": countSet_" + nameDiagram + "." + set + "_" + nameDiagram + "\n");
 			}
 			
 		}
 		
 		if (countCe_ad > 1) {
-			channels.append("channel ce_" + ad.getName() + ": countCe_" + ad.getName() + "\n");
+			channels.append("channel ce_" + nameDiagram + ": countCe_" + nameDiagram + "\n");
+		}
+		
+		if (syncObjectEdge.size() > 0) {
+			ArrayList<String> allObjectEdges = new ArrayList<>();
+			for (Pair<String, String> tupla : syncObjectEdge.keySet()) {	//get sync channel
+				String objectEdge = syncObjectEdge.get(tupla);
+				String nameParamater = objectEdges.get(objectEdge);
+				
+				if (!allObjectEdges.contains(nameParamater)) {
+					allObjectEdges.add(nameParamater);
+					channels.append("channel oe_" + nameParamater + "_" + nameDiagram + ": countOe_" + nameDiagram + "." + nameParamater + "_" + nameDiagram + "\n");
+				}
+			}
+			
 		}
 
 		if (countClear_ad > 1) {
-			channels.append("channel clear_" + ad.getName() + ": countClear_" + ad.getName() + "\n");
+			channels.append("channel clear_" + nameDiagram + ": countClear_" + nameDiagram + "\n");
 		}
 		
-		channels.append("channel update_" + ad.getName() + ": countUpdate_" + ad.getName() + ".limiteUpdate_" + ad.getName() + "\n");
+		channels.append("channel update_" + nameDiagram + ": countUpdate_" + nameDiagram + ".limiteUpdate_" + nameDiagram + "\n");
 		
-		channels.append("channel endDiagram_" + ad.getName() + "\n");
+		channels.append("channel endDiagram_" + nameDiagram + "\n");
 		
 		if (eventChannel.size() > 0) {
 			channels.append("channel ");
@@ -220,10 +235,11 @@ public class ADParser {
 	
 	public String defineTypes() {
 		StringBuilder types = new StringBuilder();
+		String nameDiagram = ad.getName();
 		
-		if (countCall.size() > 0) {
-			for (String nameDiagram : countCall.keySet()) {
-				types.append("ID_" + nameDiagram + " = {1.." + countCall.get(nameDiagram) + "}\n");
+		if (countCall.size() > 0) {		//Provavelmente deve ser criado por ultimo
+			for (String nameDiagram2 : countCall.keySet()) {
+				types.append("ID_" + nameDiagram2 + " = {1.." + countCall.get(nameDiagram2) + "}\n");
 			}
 		}
 		
@@ -231,7 +247,7 @@ public class ADParser {
 		
 		if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
 			for (String input : parameterNodesInput.keySet()) {
-				types.append(input + "_" + ad.getName() + " = ");
+				types.append(input + "_" + nameDiagram + " = ");
 				
 				if (parameterNodesInput.get(input).equals("int")) {
 					types.append("{0..1}\n"); //Verificar se possivel usar o campo definition para definir o intervalo
@@ -240,7 +256,7 @@ public class ADParser {
 			}
 			
 			for (String output : parameterNodesOutput.keySet()) {
-				types.append(output + "_" + ad.getName() + " = ");
+				types.append(output + "_" + nameDiagram + " = ");
 				
 				if (parameterNodesOutput.get(output).equals("int")) {
 					types.append("{0..1}\n"); //Verificar se possivel usar o campo definition para definir o intervalo
@@ -252,33 +268,33 @@ public class ADParser {
 		
 		if (countGet_ad > 1 || countSet_ad > 1) {
 			if (countGet_ad == 1) {
-				types.append("countGet_" + ad.getName() + " = {1.." + countGet_ad + "}\n");
+				types.append("countGet_" + nameDiagram + " = {1.." + countGet_ad + "}\n");
 			} else {
-				types.append("countGet_" + ad.getName() + " = {1.." + (countGet_ad - 1) + "}\n");
+				types.append("countGet_" + nameDiagram + " = {1.." + (countGet_ad - 1) + "}\n");
 			}
 			
 			if (countSet_ad == 1) {
-				types.append("countSet_" + ad.getName() + " = {1.." + countSet_ad + "}\n");
+				types.append("countSet_" + nameDiagram + " = {1.." + countSet_ad + "}\n");
 			} else {
-				types.append("countSet_" + ad.getName() + " = {1.." + (countSet_ad - 1) + "}\n");
+				types.append("countSet_" + nameDiagram + " = {1.." + (countSet_ad - 1) + "}\n");
 			}
 		}
 
 		if (countCe_ad > 1) {
-			types.append("countCe_" + ad.getName() + " = {1.." + (countCe_ad - 1) + "}\n");
+			types.append("countCe_" + nameDiagram + " = {1.." + (countCe_ad - 1) + "}\n");
 		}
 		
 		if (countOe_ad > 1) {
-			types.append("countOe_" + ad.getName() + " = {1.." + (countOe_ad - 1) + "}\n");
+			types.append("countOe_" + nameDiagram + " = {1.." + (countOe_ad - 1) + "}\n");
 		}
 		
-		types.append("countUpdate_" + ad.getName() + " = {1.." + (countUpdate_ad - 1) + "}\n");
+		types.append("countUpdate_" + nameDiagram + " = {1.." + (countUpdate_ad - 1) + "}\n");
 
 		if (countClear_ad > 1) {
-			types.append("countClear_" + ad.getName() + " = {1.." + (countClear_ad - 1) + "}\n");
+			types.append("countClear_" + nameDiagram + " = {1.." + (countClear_ad - 1) + "}\n");
 		}
 		
-		types.append("limiteUpdate_" + ad.getName() + " = {(" + limiteInf + ")..(" + limiteSup + ")}\n");
+		types.append("limiteUpdate_" + nameDiagram + " = {(" + limiteInf + ")..(" + limiteSup + ")}\n");
 		
 		System.out.println(types);
 		
@@ -1282,6 +1298,7 @@ public class ADParser {
 		for (int i = 0; i <  flows.length; i++) {	//creates the parallel output channels
 			String oe = createOE(activityNode.getName());
 			syncObjectEdge.put(new Pair<String, String>(activityNode.getName(), flows[i].getTarget().getName()), oe);
+			objectEdges.put(oe, activityNode.getName());
 			
 			parameterNode.append("(");
 			

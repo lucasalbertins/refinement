@@ -19,7 +19,8 @@ public class ADParserTestChannel {
 	public static IActivityDiagram ad;
 	private static ADParser parser1;
 	private static ADParser parser2;
-	
+	private static ADParser parser3;
+
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
 		try {
@@ -38,6 +39,14 @@ public class ADParserTestChannel {
 			ad = (IActivityDiagram) findElements[0];
 
 			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/decision3.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+
+			parser3 = new ADParser(ad.getActivity(), ad.getName());
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -98,14 +107,38 @@ public class ADParserTestChannel {
 		StringBuffer expected = new StringBuffer();
 		expected.append("channel startActivity_decision1: ID_decision1.x_decision1\n" + 
 				"channel endActivity_decision1: ID_decision1\n" + 
-				"channel get_x_decision1: countGet_decision1.x_decision1\n" +
-				"channel set_x_decision1: countSet_decision1.x_decision1\n" +  
+				"channel get_x_decision1: countGet_decision1.x_decision1\n" + 
+				"channel set_x_decision1: countSet_decision1.x_decision1\n" + 
 				"channel ce_decision1: countCe_decision1\n" + 
+				"channel oe_x_decision1: countOe_decision1.x_decision1\n" + 
 				"channel clear_decision1: countClear_decision1\n" + 
 				"channel update_decision1: countUpdate_decision1.limiteUpdate_decision1\n" + 
 				"channel endDiagram_decision1\n" + 
 				"channel event_act1_decision1,event_act2_decision1\n" + 
 				"channel lock_act1_decision1,lock_act2_decision1: T\n" + 
+				"channel loop\n");
+
+		assertEquals(expected.toString(), actual);
+	}
+	
+	/* Teste de Tradução dos canais
+	 */
+	@Test
+	public void TestDefineChannels3() {
+		parser3.clearBuffer();
+		parser3.defineNodesActionAndControl();
+		String actual = parser3.defineChannels();
+		StringBuffer expected = new StringBuffer();
+		expected.append("channel startActivity_decision3: ID_decision3.z_decision3\n" + 
+				"channel endActivity_decision3: ID_decision3\n" + 
+				"channel get_z_decision3: countGet_decision3.z_decision3\n" + 
+				"channel set_z_decision3: countSet_decision3.z_decision3\n" + 
+				"channel oe_z_decision3: countOe_decision3.z_decision3\n" + 
+				"channel clear_decision3: countClear_decision3\n" + 
+				"channel update_decision3: countUpdate_decision3.limiteUpdate_decision3\n" + 
+				"channel endDiagram_decision3\n" + 
+				"channel event_act1_decision3,event_act2_decision3\n" + 
+				"channel lock_act1_decision3,lock_act2_decision3: T\n" + 
 				"channel loop\n");
 
 		assertEquals(expected.toString(), actual);
