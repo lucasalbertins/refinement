@@ -21,7 +21,6 @@ public class AdParserTestType {
 	private static ADParser parser2;
 	private static ADParser parser3;
 	private static ADParser parser4;
-	private static ADParser parser5;
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -49,22 +48,14 @@ public class AdParserTestType {
 			ad = (IActivityDiagram) findElements[0];
 
 			parser3 = new ADParser(ad.getActivity(), ad.getName());
-			
-			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/decision1.asta");
-			findElements = findElements(projectAccessor);
 
-			ad = (IActivityDiagram) findElements[0];
-
-			parser4 = new ADParser(ad.getActivity(), ad.getName());
-			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/decision3.asta");
 			findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
 
-			parser5 = new ADParser(ad.getActivity(), ad.getName());
+			parser4 = new ADParser(ad.getActivity(), ad.getName());
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -158,34 +149,11 @@ public class AdParserTestType {
 	/* Teste de Tradução dos tipos de dados
 	 */
 	@Test
-	public void TestDefineTypes4() {
+	public void TestDefineTypes5() {
 		parser4.clearBuffer();
 		parser4.defineNodesActionAndControl();
 		parser4.defineChannels();
 		String actual = parser4.defineTypes();
-		StringBuffer expected = new StringBuffer();
-		expected.append("ID_decision1 = {1..1}\n" + 
-				"datatype T = lock | unlock\n" + 
-				"x_decision1 = {0..1}\n" + 
-				"countGet_decision1 = {1..1}\n" + 
-				"countSet_decision1 = {1..1}\n" + 
-				"countCe_decision1 = {1..5}\n" + 
-				"countOe_decision1 = {1..1}\n" + 
-				"countUpdate_decision1 = {1..5}\n" + 
-				"countClear_decision1 = {1..1}\n" + 
-				"limiteUpdate_decision1 = {(-1)..(1)}\n");
-
-		assertEquals(expected.toString(), actual);
-	}
-	
-	/* Teste de Tradução dos tipos de dados
-	 */
-	@Test
-	public void TestDefineTypes5() {
-		parser5.clearBuffer();
-		parser5.defineNodesActionAndControl();
-		parser5.defineChannels();
-		String actual = parser5.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_decision3 = {1..1}\n" + 
 				"datatype T = lock | unlock\n" + 
