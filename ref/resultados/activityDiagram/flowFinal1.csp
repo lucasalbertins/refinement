@@ -1,12 +1,12 @@
 ID_flowFinal1 = {1..1}
 datatype T = lock | unlock
-countCn_flowFinal1 = {1..2}
+countCe_flowFinal1 = {1..2}
 countUpdate_flowFinal1 = {1..3}
 countClear_flowFinal1 = {1..1}
-limiteUpdate_flowFinal1 = {(-2)..2}
+limiteUpdate_flowFinal1 = {(-1)..(1)}
 channel startActivity_flowFinal1: ID_flowFinal1
 channel endActivity_flowFinal1: ID_flowFinal1
-channel cn_flowFinal1: countCn_flowFinal1
+channel ce_flowFinal1: countCe_flowFinal1
 channel clear_flowFinal1: countClear_flowFinal1
 channel update_flowFinal1: countUpdate_flowFinal1.limiteUpdate_flowFinal1
 channel endDiagram_flowFinal1
@@ -16,15 +16,15 @@ channel loop
 MAIN = flowFinal1(1); LOOP
 LOOP = loop -> LOOP
 END_DIAGRAM_flowFinal1 = endDiagram_flowFinal1 -> SKIP
-flowFinal1(ID_flowFinal1) = (((Internal_flowFinal1(ID_flowFinal1) [|{|update_flowFinal1,clear_flowFinal1,endDiagram_flowFinal1|}|] TokenManager_flowFinal1_t(0,0))) [|{|lock_act1_flowFinal1,endDiagram_flowFinal1|}|] Lock_act1_flowFinal1)
+flowFinal1(ID_flowFinal1) = (((Internal_flowFinal1(ID_flowFinal1) [|{|update_flowFinal1,clear_flowFinal1,endDiagram_flowFinal1|}|] TokenManager_flowFinal1_t(0,0))) [|{|lock_act1_flowFinal1,endDiagram_flowFinal1|}|] Lock_flowFinal1)
 Internal_flowFinal1(ID_flowFinal1) = StartActivity_flowFinal1(ID_flowFinal1); Node_flowFinal1; EndActivity_flowFinal1(ID_flowFinal1)
 StartActivity_flowFinal1(ID_flowFinal1) = startActivity_flowFinal1.ID_flowFinal1 -> SKIP
 EndActivity_flowFinal1(ID_flowFinal1) = endActivity_flowFinal1.ID_flowFinal1 -> SKIP
-Node_flowFinal1 = ((act1_flowFinal1_t [{|cn_flowFinal1.1,lock_act1_flowFinal1,event_act1_flowFinal1,update_flowFinal1.2,cn_flowFinal1.2,endDiagram_flowFinal1|}||{|cn_flowFinal1.2,update_flowFinal1.3,endDiagram_flowFinal1|}] flowFinal1_flowFinal1_t) [{|cn_flowFinal1.1,lock_act1_flowFinal1,event_act1_flowFinal1,update_flowFinal1.2,cn_flowFinal1.2,endDiagram_flowFinal1,update_flowFinal1.3|}||{|update_flowFinal1.1,cn_flowFinal1.1,endDiagram_flowFinal1|}] init_flowFinal1_t)
-init1_flowFinal1_t = update_flowFinal1.1!(1-0) -> ((cn_flowFinal1.1 -> SKIP))
-act1_flowFinal1 = cn_flowFinal1.1 -> lock_act1_flowFinal1.lock -> event_act1_flowFinal1 -> lock_act1_flowFinal1.unlock -> update_flowFinal1.2!(1-1) -> cn_flowFinal1.2 -> act1_flowFinal1
+Node_flowFinal1 = ((act1_flowFinal1_t [{|ce_flowFinal1.1,lock_act1_flowFinal1,event_act1_flowFinal1,update_flowFinal1.2,ce_flowFinal1.2,endDiagram_flowFinal1|}||{|ce_flowFinal1.2,update_flowFinal1.3,endDiagram_flowFinal1|}] flowFinal1_flowFinal1_t) [{|ce_flowFinal1.1,lock_act1_flowFinal1,event_act1_flowFinal1,update_flowFinal1.2,ce_flowFinal1.2,endDiagram_flowFinal1,update_flowFinal1.3|}||{|update_flowFinal1.1,ce_flowFinal1.1,endDiagram_flowFinal1|}] init_flowFinal1_t)
+init1_flowFinal1_t = update_flowFinal1.1!(1-0) -> ((ce_flowFinal1.1 -> SKIP))
+act1_flowFinal1 = ce_flowFinal1.1 -> lock_act1_flowFinal1.lock -> event_act1_flowFinal1 -> lock_act1_flowFinal1.unlock -> update_flowFinal1.2!(1-1) -> ((ce_flowFinal1.2 -> SKIP)); act1_flowFinal1
 act1_flowFinal1_t = act1_flowFinal1 /\ END_DIAGRAM_flowFinal1
-flowFinal1_flowFinal1 = ((cn_flowFinal1.2 -> SKIP)); update_flowFinal1.3!(0-1) -> SKIP
+flowFinal1_flowFinal1 = ((ce_flowFinal1.2 -> SKIP)); update_flowFinal1.3!(0-1) -> flowFinal1_flowFinal1
 flowFinal1_flowFinal1_t = flowFinal1_flowFinal1 /\ END_DIAGRAM_flowFinal1
 init_flowFinal1_t = (init1_flowFinal1_t) /\ END_DIAGRAM_flowFinal1
 TokenManager_flowFinal1(x,init) = update_flowFinal1?c?y:limiteUpdate_flowFinal1 -> x+y < 10 & x+y > -10 & TokenManager_flowFinal1(x+y,1) [] clear_flowFinal1?c -> endDiagram_flowFinal1 -> SKIP [] x == 0 & init == 1 & endDiagram_flowFinal1 -> SKIP

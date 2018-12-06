@@ -1,0 +1,46 @@
+ID_join2 = {1..1}
+datatype T = lock | unlock
+x_join2 = {0..1}
+countGet_join2 = {1..1}
+countSet_join2 = {1..1}
+countOe_join2 = {1..5}
+countUpdate_join2 = {1..4}
+countClear_join2 = {1..1}
+limiteUpdate_join2 = {(-1)..(2)}
+channel startActivity_join2: ID_join2.x_join2
+channel endActivity_join2: ID_join2
+channel get_x_join2: countGet_join2.x_join2
+channel set_x_join2: countSet_join2.x_join2
+channel oe_x_join2: countOe_join2.x_join2
+channel clear_join2: countClear_join2
+channel update_join2: countUpdate_join2.limiteUpdate_join2
+channel endDiagram_join2
+channel event_act1_join2,event_act2_join2
+channel lock_act1_join2,lock_act2_join2: T
+channel loop
+MAIN = join2(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_join2 = endDiagram_join2 -> SKIP
+join2(ID_join2) = ((((Internal_join2(ID_join2) [|{|update_join2,clear_join2,endDiagram_join2|}|] TokenManager_join2_t(0,0))) [|{|lock_act1_join2,lock_act2_join2,endDiagram_join2|}|] Lock_join2) [|{|get_x_join2,set_x_join2,endActivity_join2|}|] Mem_join2)
+Internal_join2(ID_join2) = StartActivity_join2(ID_join2); Node_join2; EndActivity_join2(ID_join2)
+StartActivity_join2(ID_join2) = startActivity_join2.ID_join2?x -> set_x_join2.1!x -> SKIP
+EndActivity_join2(ID_join2) = endActivity_join2.ID_join2 -> SKIP
+Node_join2 = ((((init_join2_t [{|update_join2.1,oe_x_join2.1,oe_x_join2.2,get_x_join2.1,endDiagram_join2|}||{|oe_x_join2.1,lock_act1_join2,event_act1_join2,update_join2.2,oe_x_join2.3,endDiagram_join2|}] act1_join2_t) [{|get_x_join2.1,update_join2.1,oe_x_join2.1,oe_x_join2.2,endDiagram_join2,lock_act1_join2,event_act1_join2,update_join2.2,oe_x_join2.3|}||{|oe_x_join2.5,clear_join2.1,endDiagram_join2|}] fin1_join2_t) [{|get_x_join2.1,update_join2.1,oe_x_join2.1,oe_x_join2.2,endDiagram_join2,lock_act1_join2,event_act1_join2,update_join2.2,oe_x_join2.3,oe_x_join2.5,clear_join2.1|}||{|oe_x_join2.2,lock_act2_join2,event_act2_join2,update_join2.3,oe_x_join2.4,endDiagram_join2|}] act2_join2_t) [{|get_x_join2.1,update_join2.1,oe_x_join2.1,oe_x_join2.2,endDiagram_join2,lock_act1_join2,event_act1_join2,update_join2.2,oe_x_join2.3,oe_x_join2.5,clear_join2.1,lock_act2_join2,event_act2_join2,update_join2.3,oe_x_join2.4|}||{|oe_x_join2.3,oe_x_join2.4,update_join2.4,oe_x_join2.5,endDiagram_join2|}] join1_join2_t)
+parameter_x_t = update_join2.1!(2-0) -> get_x_join2.1?x -> ((oe_x_join2.1!x -> SKIP) ||| (oe_x_join2.2!x -> SKIP))
+act1_join2 = oe_x_join2.1?x -> lock_act1_join2.lock -> event_act1_join2 -> lock_act1_join2.unlock -> update_join2.2!(1-1) -> ((oe_x_join2.3!x -> SKIP)); act1_join2
+act1_join2_t = act1_join2 /\ END_DIAGRAM_join2
+act2_join2 = oe_x_join2.2?x -> lock_act2_join2.lock -> event_act2_join2 -> lock_act2_join2.unlock -> update_join2.3!(1-1) -> ((oe_x_join2.4!x -> SKIP)); act2_join2
+act2_join2_t = act2_join2 /\ END_DIAGRAM_join2
+join1_join2(x) = ((oe_x_join2.3?x -> SKIP) ||| (oe_x_join2.4?x -> SKIP)); update_join2.4!(1-2) -> ((oe_x_join2.5!x -> SKIP)); join1_join2(x)
+join1_join2_t = join1_join2(0) /\ END_DIAGRAM_join2
+fin1_join2 = ((oe_x_join2.5?x -> SKIP)); clear_join2.1 -> SKIP
+fin1_join2_t = fin1_join2 /\ END_DIAGRAM_join2
+init_join2_t = (parameter_x_t) /\ END_DIAGRAM_join2
+Mem_join2_x(x) = get_x_join2?c!x -> Mem_join2_x(x) [] set_x_join2?c?x -> Mem_join2_x(x)
+Mem_join2_x_t(x) = Mem_join2_x(x) /\ (endActivity_join2?x -> SKIP)
+Mem_join2 = Mem_join2_x_t(0)
+TokenManager_join2(x,init) = update_join2?c?y:limiteUpdate_join2 -> x+y < 10 & x+y > -10 & TokenManager_join2(x+y,1) [] clear_join2?c -> endDiagram_join2 -> SKIP [] x == 0 & init == 1 & endDiagram_join2 -> SKIP
+TokenManager_join2_t(x,init) = TokenManager_join2(x,init)
+Lock_act1_join2 = lock_act1_join2.lock -> lock_act1_join2.unlock -> Lock_act1_join2 [] endDiagram_join2 -> SKIP
+Lock_act2_join2 = lock_act2_join2.lock -> lock_act2_join2.unlock -> Lock_act2_join2 [] endDiagram_join2 -> SKIP
+Lock_join2 = (Lock_act1_join2 [|{|endDiagram_join2|}|] Lock_act2_join2)

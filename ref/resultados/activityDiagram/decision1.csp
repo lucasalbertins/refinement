@@ -3,15 +3,17 @@ datatype T = lock | unlock
 x_decision1 = {0..1}
 countGet_decision1 = {1..1}
 countSet_decision1 = {1..1}
-countCn_decision1 = {1..5}
-countUpdate_decision1 = {1..4}
+countCe_decision1 = {1..5}
+countOe_decision1 = {1..1}
+countUpdate_decision1 = {1..5}
 countClear_decision1 = {1..1}
-limiteUpdate_decision1 = {(-2)..2}
+limiteUpdate_decision1 = {(-1)..(1)}
 channel startActivity_decision1: ID_decision1.x_decision1
 channel endActivity_decision1: ID_decision1
 channel get_x_decision1: countGet_decision1.x_decision1
 channel set_x_decision1: countSet_decision1.x_decision1
-channel cn_decision1: countCn_decision1
+channel ce_decision1: countCe_decision1
+channel oe_x_decision1: countOe_decision1.x_decision1
 channel clear_decision1: countClear_decision1
 channel update_decision1: countUpdate_decision1.limiteUpdate_decision1
 channel endDiagram_decision1
@@ -21,21 +23,22 @@ channel loop
 MAIN = decision1(1); LOOP
 LOOP = loop -> LOOP
 END_DIAGRAM_decision1 = endDiagram_decision1 -> SKIP
-decision1(ID_decision1) = ((((Internal_decision1(ID_decision1) [|{|update_decision1,clear_decision1,endDiagram_decision1|}|] TokenManager_decision1_t(0,0))) [|{|lock_act1_decision1,endDiagram_decision1|}|] Lock_act1_decision1) [|{|get_x_decision1,set_x_decision1,endActivity_decision1|}|] Mem_decision1)
+decision1(ID_decision1) = ((((Internal_decision1(ID_decision1) [|{|update_decision1,clear_decision1,endDiagram_decision1|}|] TokenManager_decision1_t(0,0))) [|{|lock_act1_decision1,lock_act2_decision1,endDiagram_decision1|}|] Lock_decision1) [|{|get_x_decision1,set_x_decision1,endActivity_decision1|}|] Mem_decision1)
 Internal_decision1(ID_decision1) = StartActivity_decision1(ID_decision1); Node_decision1; EndActivity_decision1(ID_decision1)
 StartActivity_decision1(ID_decision1) = startActivity_decision1.ID_decision1?x -> set_x_decision1.1!x -> SKIP
 EndActivity_decision1(ID_decision1) = endActivity_decision1.ID_decision1 -> SKIP
-Node_decision1 = ((((dec1_decision1_t [{|cn_decision1.1,update_decision1.2,get_x_decision1.1,cn_decision1.2,cn_decision1.3,endDiagram_decision1|}||{|update_decision1.1,cn_decision1.1,endDiagram_decision1|}] init_decision1_t) [{|cn_decision1.1,update_decision1.2,get_x_decision1.1,cn_decision1.2,cn_decision1.3,endDiagram_decision1,update_decision1.1|}||{|cn_decision1.2,lock_act1_decision1,event_act1_decision1,update_decision1.3,cn_decision1.4,endDiagram_decision1|}] act1_decision1_t) [{|cn_decision1.1,update_decision1.2,get_x_decision1.1,cn_decision1.2,cn_decision1.3,endDiagram_decision1,update_decision1.1,lock_act1_decision1,event_act1_decision1,update_decision1.3,cn_decision1.4|}||{|cn_decision1.5,cn_decision1.4,clear_decision1.1,endDiagram_decision1|}] fin1_decision1_t) [{|cn_decision1.1,update_decision1.2,get_x_decision1.1,cn_decision1.2,cn_decision1.3,endDiagram_decision1,update_decision1.1,lock_act1_decision1,event_act1_decision1,update_decision1.3,cn_decision1.4,cn_decision1.5,clear_decision1.1|}||{|cn_decision1.3,lock_act2_decision1,event_act2_decision1,update_decision1.4,cn_decision1.5,endDiagram_decision1|}] act2_decision1_t)
-init1_decision1_t = update_decision1.1!(1-0) -> ((cn_decision1.1 -> SKIP))
-dec1_decision1 = cn_decision1.1 -> update_decision1.2!(1-1) -> get_x_decision1.1?x -> (x == 1 & (cn_decision1.2 -> SKIP) [] x == 0 & (cn_decision1.3 -> SKIP)); dec1_decision1
-dec1_decision1_t = dec1_decision1 /\ END_DIAGRAM_decision1
-act1_decision1 = cn_decision1.2 -> lock_act1_decision1.lock -> event_act1_decision1 -> lock_act1_decision1.unlock -> update_decision1.3!(1-1) -> cn_decision1.4 -> act1_decision1
+Node_decision1 = ((((dec1_decision1_t [{|ce_decision1.1,oe_x_decision1.1,update_decision1.3,ce_decision1.2,ce_decision1.3,endDiagram_decision1|}||{|update_decision1.1,ce_decision1.1,update_decision1.2,get_x_decision1.1,oe_x_decision1.1,endDiagram_decision1|}] init_decision1_t) [{|ce_decision1.1,oe_x_decision1.1,update_decision1.3,ce_decision1.2,ce_decision1.3,endDiagram_decision1,update_decision1.1,update_decision1.2,get_x_decision1.1|}||{|ce_decision1.2,lock_act1_decision1,event_act1_decision1,update_decision1.4,ce_decision1.4,endDiagram_decision1|}] act1_decision1_t) [{|ce_decision1.1,oe_x_decision1.1,update_decision1.3,ce_decision1.2,ce_decision1.3,endDiagram_decision1,update_decision1.1,update_decision1.2,get_x_decision1.1,lock_act1_decision1,event_act1_decision1,update_decision1.4,ce_decision1.4|}||{|ce_decision1.5,ce_decision1.4,clear_decision1.1,endDiagram_decision1|}] fin1_decision1_t) [{|ce_decision1.1,oe_x_decision1.1,update_decision1.3,ce_decision1.2,ce_decision1.3,endDiagram_decision1,update_decision1.1,update_decision1.2,get_x_decision1.1,lock_act1_decision1,event_act1_decision1,update_decision1.4,ce_decision1.4,ce_decision1.5,clear_decision1.1|}||{|ce_decision1.3,lock_act2_decision1,event_act2_decision1,update_decision1.5,ce_decision1.5,endDiagram_decision1|}] act2_decision1_t)
+init1_decision1_t = update_decision1.1!(1-0) -> ((ce_decision1.1 -> SKIP))
+parameter_x_t = update_decision1.2!(1-0) -> get_x_decision1.1?x -> ((oe_x_decision1.1!x -> SKIP))
+dec1_decision1(x) = ((ce_decision1.1 -> SKIP) ||| (oe_x_decision1.1?x -> SKIP)); update_decision1.3!(1-2) -> (x == 1 & (ce_decision1.2 -> SKIP) [] x == 0 & (ce_decision1.3 -> SKIP)); dec1_decision1(x)
+dec1_decision1_t = dec1_decision1(0) /\ END_DIAGRAM_decision1
+act1_decision1 = ce_decision1.2 -> lock_act1_decision1.lock -> event_act1_decision1 -> lock_act1_decision1.unlock -> update_decision1.4!(1-1) -> ((ce_decision1.4 -> SKIP)); act1_decision1
 act1_decision1_t = act1_decision1 /\ END_DIAGRAM_decision1
-act2_decision1 = cn_decision1.3 -> lock_act2_decision1.lock -> event_act2_decision1 -> lock_act2_decision1.unlock -> update_decision1.4!(1-1) -> cn_decision1.5 -> act2_decision1
+act2_decision1 = ce_decision1.3 -> lock_act2_decision1.lock -> event_act2_decision1 -> lock_act2_decision1.unlock -> update_decision1.5!(1-1) -> ((ce_decision1.5 -> SKIP)); act2_decision1
 act2_decision1_t = act2_decision1 /\ END_DIAGRAM_decision1
-fin1_decision1 = ((cn_decision1.5 -> SKIP) [] (cn_decision1.4 -> SKIP)); clear_decision1.1 -> SKIP
+fin1_decision1 = ((ce_decision1.5 -> SKIP) [] (ce_decision1.4 -> SKIP)); clear_decision1.1 -> SKIP
 fin1_decision1_t = fin1_decision1 /\ END_DIAGRAM_decision1
-init_decision1_t = (init1_decision1_t) /\ END_DIAGRAM_decision1
+init_decision1_t = (init1_decision1_t ||| parameter_x_t) /\ END_DIAGRAM_decision1
 Mem_decision1_x(x) = get_x_decision1?c!x -> Mem_decision1_x(x) [] set_x_decision1?c?x -> Mem_decision1_x(x)
 Mem_decision1_x_t(x) = Mem_decision1_x(x) /\ (endActivity_decision1?x -> SKIP)
 Mem_decision1 = Mem_decision1_x_t(0)
