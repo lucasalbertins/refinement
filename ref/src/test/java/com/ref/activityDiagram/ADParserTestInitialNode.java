@@ -221,8 +221,8 @@ public class ADParserTestInitialNode {
 				"act1_join2_t = act1_join2 /\\ END_DIAGRAM_join2\n" + 
 				"act2_join2 = oe_x_join2.2?x -> lock_act2_join2.lock -> event_act2_join2 -> lock_act2_join2.unlock -> update_join2.3!(1-1) -> ((oe_x_join2.4!x -> SKIP)); act2_join2\n" + 
 				"act2_join2_t = act2_join2 /\\ END_DIAGRAM_join2\n" + 
-				"join1_join2(x) = ((oe_x_join2.3?x -> SKIP) ||| (oe_x_join2.4?x -> SKIP)); update_join2.4!(1-2) -> ((oe_x_join2.5!x -> SKIP)); join1_join2(x)\n" + 
-				"join1_join2_t = join1_join2(0) /\\ END_DIAGRAM_join2\n" + 
+				"join1_join2 = ((oe_x_join2.3?x -> set_x_join1_join2.2!x -> SKIP) ||| (oe_x_join2.4?x -> set_x_join1_join2.3!x -> SKIP)); update_join2.4!(1-2) -> get_x_join1_join2.2?x -> ((oe_x_join2.5!x -> SKIP)); join1_join2\n" + 
+				"join1_join2_t = ((join1_join2 /\\ END_DIAGRAM_join2) [|{|get_x_join1_join2,set_x_join1_join2,endDiagram_join2|}|] Mem_join1_join2_x_t(0)) \\{|get_x_join1_join2,set_x_join1_join2|}\n" + 
 				"fin1_join2 = ((oe_x_join2.5?x -> SKIP)); clear_join2.1 -> SKIP\n" + 
 				"fin1_join2_t = fin1_join2 /\\ END_DIAGRAM_join2\n" + 
 				"init_join2_t = (parameter_x_t) /\\ END_DIAGRAM_join2");
