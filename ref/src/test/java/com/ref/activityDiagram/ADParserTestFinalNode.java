@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;
@@ -139,6 +140,7 @@ public class ADParserTestFinalNode {
 	/*
 	 * Teste de Tradução Final node
 	 * */
+	@Ignore
 	@Test
 	public void TestNodesFinal3() {
 		String actual = parser3.defineNodesActionAndControl();
@@ -156,6 +158,7 @@ public class ADParserTestFinalNode {
 	/*
 	 * Teste de Tradução Final node
 	 * */
+	@Ignore
 	@Test
 	public void TestNodesFinal4() {
 		String actual = parser4.defineNodesActionAndControl();

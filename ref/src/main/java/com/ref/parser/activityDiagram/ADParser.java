@@ -2,6 +2,7 @@ package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.IAction;
@@ -41,6 +42,7 @@ public class ADParser {
 	private ArrayList<String> alphabetAllInitialAndParameter;
 	private HashMap<String, String> parameterNodesInput;		//name; type
 	private HashMap<String, String> parameterNodesOutput;
+	private List<String> memoryLocal;
 	
 	public ADParser(IActivity ad, String nameAD) {
 		this.ad = ad;
@@ -67,6 +69,7 @@ public class ADParser {
 		alphabetAllInitialAndParameter = new ArrayList<>();
 		parameterNodesInput = new HashMap<>();
 		parameterNodesOutput = new HashMap<>();
+		memoryLocal = new ArrayList<>();
 	}
 	
 	public void clearBuffer() {
@@ -92,6 +95,7 @@ public class ADParser {
 		alphabetAllInitialAndParameter = new ArrayList<>();
 		parameterNodesInput = new HashMap<>();
 		parameterNodesOutput = new HashMap<>();
+		memoryLocal = new ArrayList<>();
 	}
 	
 	private void setName(String nameAD) {
@@ -595,6 +599,8 @@ public class ADParser {
 		String nameObject = null;
 		boolean syncBool = false;
 		boolean sync2Bool = false;
+		//ArrayList<Pair<String, String>> ceInitials = new ArrayList<>();
+		//ArrayList<Pair<String, String>> oeInitials = new ArrayList<>();
 		
 		action.append(nameAction + " = ");
 		
@@ -602,6 +608,7 @@ public class ADParser {
 			if (tupla.getValue().equals(activityNode.getName())) {
 				String ceIn = syncChannelsEdge.get(tupla);
 				ce(alphabet, action, ceIn, " -> ");
+				//ceInitials.add(tupla);
 				syncBool = true;
 			}
 		}
@@ -611,10 +618,11 @@ public class ADParser {
 				String ceIn2 = syncObjectsEdge.get(tupla);
 				nameObject = objectEdges.get(ceIn2);
 				oe(alphabet, action, ceIn2, "?" + nameObject + " -> ");
+				//oeInitials.add(tupla);
 				sync2Bool = true;
 			}
 		}
-	
+		
 		lock(alphabet, action, 0, nameAction);
 		event(alphabet, nameAction, action);
 		lock(alphabet, action, 1, nameAction);
@@ -972,6 +980,7 @@ public class ADParser {
 		IFlow outFlows[] = activityNode.getOutgoings();
 		IFlow inFlows[] = activityNode.getIncomings();
 		HashMap<Pair<String, String>, String> nameObjects = new HashMap<>();
+		List<String> objects = new ArrayList<>();
 		String nameObject = null;
 		boolean syncBool = false;
 		boolean sync2Bool = false;
@@ -993,14 +1002,8 @@ public class ADParser {
 				sync2Bool = true;
 			}
 		}
-
-		if (sync2Bool) {
-			joinNode.append(nameJoin + "(" + nameObject + ") = ");
-		} else {
-			joinNode.append(nameJoin + " = ");
-		}
 		
-		joinNode.append("(");
+		joinNode.append(nameJoin + " = (");
 		
 		for (int i = 0; i < ceInitials.size(); i++) {
 			String ceIn = syncChannelsEdge.get(ceInitials.get(i));	//get the parallel input channels
@@ -1018,12 +1021,20 @@ public class ADParser {
 				
 				nameObject = nameObjects.get(ceInitials.get(i));
 				
+				if (!objects.contains(nameObject)) {
+					objects.add(nameObject);
+				}
+				
 				joinNode.append("(");
 				
 				if (i >= 0 && i < ceInitials.size() - 1) {
-					ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> SKIP) ||| ");
+					ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
+					setLocal(alphabet, joinNode, nameObject, activityNode.getName());
+					joinNode.append("SKIP) ||| ");
 				} else {
-					ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> SKIP)");
+					ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
+					setLocal(alphabet, joinNode, nameObject, activityNode.getName());
+					joinNode.append("SKIP)");
 				}
 			}
 			
@@ -1033,9 +1044,28 @@ public class ADParser {
 
 		update(alphabet, joinNode, inFlows.length, outFlows.length);
 		
+		if (sync2Bool) {
+			for (String nameObjectOut : objects) {
+				getLocal(alphabet, joinNode, nameObjectOut, activityNode.getName());
+			}
+		}
+		
 		joinNode.append("(");
 		
-		if (syncBool) {
+		if (sync2Bool) {	
+			for (int i = 0; i <  objects.size(); i++) {	//creates the parallel output channels
+				String oe = createOE(objects.get(i));
+				syncObjectsEdge.put(new Pair<String, String>(activityNode.getName(), outFlows[0].getTarget().getName()), oe);	//just one output
+				objectEdges.put(oe, objects.get(i));
+				joinNode.append("(");
+				
+				if (i >= 0 && i < objects.size() - 1) {
+					ce(alphabet, joinNode, oe, "!" + objects.get(i) + " -> SKIP) |~| ");
+				} else {
+					ce(alphabet, joinNode, oe, "!" + objects.get(i) + " -> SKIP)");
+				}
+			}
+		} else if (syncBool) {
 			for (int i = 0; i <  outFlows.length; i++) {	//creates the parallel output channels
 				String ce = createCE();
 				syncChannelsEdge.put(new Pair<String, String>(activityNode.getName(), outFlows[i].getTarget().getName()), ce);
@@ -1048,37 +1078,45 @@ public class ADParser {
 					ce(alphabet, joinNode, ce, " -> SKIP)");
 				}
 			}	
-		} else if (sync2Bool) {	
-			for (int i = 0; i <  outFlows.length; i++) {	//creates the parallel output channels
-				String oe = createOE(nameObject);
-				syncObjectsEdge.put(new Pair<String, String>(activityNode.getName(), outFlows[i].getTarget().getName()), oe);
-				objectEdges.put(oe, nameObject);
-				joinNode.append("(");
-				
-				if (i >= 0 && i < outFlows.length - 1) {
-					ce(alphabet, joinNode, oe, "!" + nameObject + " -> SKIP) ||| ");
-				} else {
-					ce(alphabet, joinNode, oe, "!" + nameObject + " -> SKIP)");
-				}
-			}
 		}
 		
 		joinNode.append("); ");
 		
-		if (sync2Bool) {
-			joinNode.append(nameJoin + "(" + nameObject + ")\n");
-		} else {
-			joinNode.append(nameJoin + "\n");
-		}
+		joinNode.append(nameJoin + "\n");
 	
 		joinNode.append(nameJoinTermination + " = ");
 		
-		if (sync2Bool) {
-			joinNode.append(nameJoin + "(0) /\\ " + endDiagram + "\n");
-		} else {
-			joinNode.append(nameJoin + " /\\ " + endDiagram + "\n");
+		for (int i = 0; i < objects.size(); i++) {
+			joinNode.append("(");
 		}
+		
+		joinNode.append("(" + nameJoin + " /\\ " + endDiagram + ")");
 
+		for (int i = 0; i < objects.size(); i++) {	//creates the parallel output channels
+			joinNode.append(" [|{|");
+			joinNode.append("get_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+			joinNode.append("set_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+			joinNode.append("endDiagram_" + ad.getName() + "|}|] ");
+			joinNode.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
+		}
+		
+		if (objects.size() > 0) {
+			joinNode.append(" \\{|");
+			
+			for (int i = 0; i < objects.size(); i++) {
+				joinNode.append("get_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+				joinNode.append("set_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName());
+				if (i < objects.size() - 1) {
+					joinNode.append(",");
+				}
+			}
+			
+			joinNode.append("|}");
+			
+		} 
+		
+		joinNode.append("\n");
+		
 		alphabet.add("endDiagram_" + ad.getName());
 		alphabetNode.put(activityNode.getName(), alphabet);
 		
@@ -1572,6 +1610,18 @@ public class ADParser {
 		String set = "set_" + nameObject + "_" + ad.getName() + "." + countSet_ad++;
 		alphabetNode.add(set);
 		action.append(set +"!" + nameObject + " -> ");
+	}
+	
+	private void setLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode) {
+		String set = "set_" + nameObject + "_" + nameNode + "_" + ad.getName() + "." + countSet_ad++;
+		alphabetNode.add(set);
+		action.append(set +"!" + nameObject + " -> ");
+	}
+	
+	private void getLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode) {
+		String get = "get_" + nameObject + "_" + nameNode + "_" + ad.getName() + "." + countGet_ad++;
+		alphabetNode.add(get);
+		action.append(get +"?" + nameObject + " -> ");
 	}
 	
 	private void lock(ArrayList<String> alphabetNode, StringBuilder action, int inOut, String nameNode) {
