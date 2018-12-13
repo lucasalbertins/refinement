@@ -91,7 +91,6 @@ public class ADParserTestFinalNode {
 		parser2.clearBuffer();
 		parser3.clearBuffer();
 		parser4.clearBuffer();
-		parser5.clearBuffer();
 	}
 	
 	@AfterClass
