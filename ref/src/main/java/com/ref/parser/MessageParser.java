@@ -13,6 +13,26 @@ public class MessageParser {
     private List<String> msgProcesses;
     private List<String> refinementAlphabet;
     private Map<String, String> alphabetMap;
+    private Set<IMessage> parsedMessages;
+    private static MessageParser instance;
+
+    private MessageParser(){
+    }
+
+    public static MessageParser getInstance(){
+        if(instance == null){
+            instance = new MessageParser();
+        }
+        return instance;
+    }
+
+    public void init(Map<String,String> lfsWithUnderscore){
+        this.lfsWithUnderscore = lfsWithUnderscore;
+        refinementAlphabet = new ArrayList<>();
+        alphabetMap = new HashMap<>();
+        msgProcesses = new ArrayList<>();
+        parsedMessages = new HashSet<>();
+    }
 
     public Map<String, String> getAlphabetMap() {
         return alphabetMap;
@@ -20,13 +40,6 @@ public class MessageParser {
 
     public List<String> getRefinementAlphabet() {
         return refinementAlphabet;
-    }
-
-    public MessageParser(Map<String, String> lfsWithUnderscore) {
-        this.lfsWithUnderscore = lfsWithUnderscore;
-        refinementAlphabet = new ArrayList<>();
-        alphabetMap = new HashMap<>();
-        msgProcesses = new ArrayList<>();
     }
 
     public String translateMessageForProcess(IMessage msg, ISequenceDiagram seq) {
@@ -241,6 +254,8 @@ public class MessageParser {
                 sb.append("?oper:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
                 sb.append(",(get_id(x) == ").append(msg.getName()).append("_I)}");
                 sb.append(" -> SKIP");
+
+                parsedMessages.add(msg);
             }
 
         } else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
@@ -265,6 +280,8 @@ public class MessageParser {
                 sb.append(",(get_id(x) == ").append(msg.getName()).append(")}");
                 aux.append(",(get_id(x) == ").append(msg.getName()).append(")}");
                 sb.append(" -> SKIP");
+
+                parsedMessages.add(msg);
             }
         } else if (msg.isReturnMessage()) {
             IMessage syncMsg = null;
@@ -291,7 +308,9 @@ public class MessageParser {
                 treatArguments(sb, msg.getArgument());
                 sb.append(" -> SKIP");
             }
+            parsedMessages.add(msg);
         }
+
         return sb.toString();
     }
 
@@ -318,6 +337,10 @@ public class MessageParser {
 
     public void clearAlphabetMap() {
         alphabetMap.clear();
+    }
+
+    public boolean wasParsed(IMessage msg){
+        return parsedMessages.contains(msg);
     }
 
     private void addIDS(String lf1, String lf2, StringBuilder sb, StringBuilder aux) {

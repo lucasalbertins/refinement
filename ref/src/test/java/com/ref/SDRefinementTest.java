@@ -19,7 +19,7 @@ public class SDRefinementTest {
     @BeforeClass
     public static void setup() {
         try {
-            FdrWrapper.getInstance().loadFDR("/usr/local/lib/fdr4/lib/fdr.jar");
+            FdrWrapper.getInstance().loadFDR("/usr/lib/fdr4/lib/fdr.jar");
             FdrWrapper.getInstance().loadClasses();
         } catch (MalformedURLException e) {
             e.printStackTrace();
