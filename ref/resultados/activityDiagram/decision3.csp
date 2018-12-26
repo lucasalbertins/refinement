@@ -1,8 +1,8 @@
 ID_decision3 = {1..1}
 datatype T = lock | unlock
 z_decision3 = {0..1}
-countGet_decision3 = {1..1}
-countSet_decision3 = {1..1}
+countGet_decision3 = {1..3}
+countSet_decision3 = {1..3}
 countOe_decision3 = {1..5}
 countUpdate_decision3 = {1..4}
 countClear_decision3 = {1..1}
@@ -10,7 +10,11 @@ limiteUpdate_decision3 = {(0)..(1)}
 channel startActivity_decision3: ID_decision3.z_decision3
 channel endActivity_decision3: ID_decision3
 channel get_z_decision3: countGet_decision3.z_decision3
+channel get_z_act1_decision3: countGet_decision3.z_decision3
+channel get_z_act2_decision3: countGet_decision3.z_decision3
 channel set_z_decision3: countSet_decision3.z_decision3
+channel set_z_act1_decision3: countSet_decision3.z_decision3
+channel set_z_act2_decision3: countSet_decision3.z_decision3
 channel oe_z_decision3: countOe_decision3.z_decision3
 channel clear_decision3: countClear_decision3
 channel update_decision3: countUpdate_decision3.limiteUpdate_decision3
@@ -23,19 +27,23 @@ LOOP = loop -> LOOP
 END_DIAGRAM_decision3 = endDiagram_decision3 -> SKIP
 decision3(ID_decision3) = ((((Internal_decision3(ID_decision3) [|{|update_decision3,clear_decision3,endDiagram_decision3|}|] TokenManager_decision3_t(0,0))) [|{|lock_act1_decision3,lock_act2_decision3,endDiagram_decision3|}|] Lock_decision3) [|{|get_z_decision3,set_z_decision3,endActivity_decision3|}|] Mem_decision3)
 Internal_decision3(ID_decision3) = StartActivity_decision3(ID_decision3); Node_decision3; EndActivity_decision3(ID_decision3)
-StartActivity_decision3(ID_decision3) = startActivity_decision3.ID_decision3?x -> set_z_decision3.1!x -> SKIP
+StartActivity_decision3(ID_decision3) = startActivity_decision3.ID_decision3?z -> set_z_decision3.1!z -> SKIP
 EndActivity_decision3(ID_decision3) = endActivity_decision3.ID_decision3 -> SKIP
 Node_decision3 = ((((dec1_decision3_t [{|update_decision3.2,oe_z_decision3.1,oe_z_decision3.2,oe_z_decision3.3,endDiagram_decision3|}||{|oe_z_decision3.2,lock_act1_decision3,event_act1_decision3,update_decision3.3,oe_z_decision3.4,endDiagram_decision3|}] act1_decision3_t) [{|update_decision3.2,oe_z_decision3.1,oe_z_decision3.2,oe_z_decision3.3,endDiagram_decision3,lock_act1_decision3,event_act1_decision3,update_decision3.3,oe_z_decision3.4|}||{|oe_z_decision3.5,oe_z_decision3.4,clear_decision3.1,endDiagram_decision3|}] fin1_decision3_t) [{|oe_z_decision3.2,oe_z_decision3.1,oe_z_decision3.3,endDiagram_decision3,update_decision3.2,lock_act1_decision3,event_act1_decision3,update_decision3.3,oe_z_decision3.4,oe_z_decision3.5,clear_decision3.1|}||{|oe_z_decision3.3,lock_act2_decision3,event_act2_decision3,update_decision3.4,oe_z_decision3.5,endDiagram_decision3|}] act2_decision3_t) [{|oe_z_decision3.2,oe_z_decision3.1,oe_z_decision3.3,endDiagram_decision3,update_decision3.2,lock_act1_decision3,event_act1_decision3,update_decision3.3,oe_z_decision3.4,oe_z_decision3.5,clear_decision3.1,lock_act2_decision3,event_act2_decision3,update_decision3.4|}||{|update_decision3.1,get_z_decision3.1,oe_z_decision3.1,endDiagram_decision3|}] init_decision3_t)
 parameter_z_t = update_decision3.1!(1-0) -> get_z_decision3.1?z -> ((oe_z_decision3.1!z -> SKIP))
 dec1_decision3 = oe_z_decision3.1?z -> update_decision3.2!(1-1) -> (z > 0 & (oe_z_decision3.2!z -> SKIP) [] z <= 0 & (oe_z_decision3.3!z -> SKIP)); dec1_decision3
 dec1_decision3_t = dec1_decision3 /\ END_DIAGRAM_decision3
-act1_decision3 = oe_z_decision3.2?z -> lock_act1_decision3.lock -> event_act1_decision3 -> lock_act1_decision3.unlock -> update_decision3.3!(1-1) -> ((oe_z_decision3.4!z -> SKIP)); act1_decision3
-act1_decision3_t = act1_decision3 /\ END_DIAGRAM_decision3
-act2_decision3 = oe_z_decision3.3?z -> lock_act2_decision3.lock -> event_act2_decision3 -> lock_act2_decision3.unlock -> update_decision3.4!(1-1) -> ((oe_z_decision3.5!z -> SKIP)); act2_decision3
-act2_decision3_t = act2_decision3 /\ END_DIAGRAM_decision3
+act1_decision3 = ((oe_z_decision3.2?z -> set_z_act1_decision3.2!z -> SKIP)); lock_act1_decision3.lock -> event_act1_decision3 -> lock_act1_decision3.unlock -> update_decision3.3!(1-1) -> get_z_act1_decision3.2?z -> ((oe_z_decision3.4!(z) -> SKIP)); act1_decision3
+act1_decision3_t = ((act1_decision3 /\ END_DIAGRAM_decision3) [|{|get_z_act1_decision3,set_z_act1_decision3,endDiagram_decision3|}|] Mem_act1_decision3_z_t(0)) \{|get_z_act1_decision3,set_z_act1_decision3|}
+act2_decision3 = ((oe_z_decision3.3?z -> set_z_act2_decision3.3!z -> SKIP)); lock_act2_decision3.lock -> event_act2_decision3 -> lock_act2_decision3.unlock -> update_decision3.4!(1-1) -> get_z_act2_decision3.3?z -> ((oe_z_decision3.5!(z) -> SKIP)); act2_decision3
+act2_decision3_t = ((act2_decision3 /\ END_DIAGRAM_decision3) [|{|get_z_act2_decision3,set_z_act2_decision3,endDiagram_decision3|}|] Mem_act2_decision3_z_t(0)) \{|get_z_act2_decision3,set_z_act2_decision3|}
 fin1_decision3 = ((oe_z_decision3.5?z -> SKIP) [] (oe_z_decision3.4?z -> SKIP)); clear_decision3.1 -> SKIP
 fin1_decision3_t = fin1_decision3 /\ END_DIAGRAM_decision3
 init_decision3_t = (parameter_z_t) /\ END_DIAGRAM_decision3
+Mem_act1_decision3_z(z) = get_z_act1_decision3?c!z -> Mem_act1_decision3_z(z) [] set_z_act1_decision3?c?z -> Mem_act1_decision3_z(z)
+Mem_act1_decision3_z_t(z) = Mem_act1_decision3_z(z) /\ END_DIAGRAM_decision3
+Mem_act2_decision3_z(z) = get_z_act2_decision3?c!z -> Mem_act2_decision3_z(z) [] set_z_act2_decision3?c?z -> Mem_act2_decision3_z(z)
+Mem_act2_decision3_z_t(z) = Mem_act2_decision3_z(z) /\ END_DIAGRAM_decision3
 Mem_decision3_z(z) = get_z_decision3?c!z -> Mem_decision3_z(z) [] set_z_decision3?c?z -> Mem_decision3_z(z)
 Mem_decision3_z_t(z) = Mem_decision3_z(z) /\ (endActivity_decision3?z -> SKIP)
 Mem_decision3 = Mem_decision3_z_t(0)

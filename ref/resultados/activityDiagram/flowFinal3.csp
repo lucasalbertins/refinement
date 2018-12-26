@@ -1,8 +1,8 @@
 ID_flowFinal3 = {1..1}
 datatype T = lock | unlock
 x_flowFinal3 = {0..1}
-countGet_flowFinal3 = {1..1}
-countSet_flowFinal3 = {1..1}
+countGet_flowFinal3 = {1..2}
+countSet_flowFinal3 = {1..2}
 countOe_flowFinal3 = {1..2}
 countUpdate_flowFinal3 = {1..3}
 countClear_flowFinal3 = {1..1}
@@ -10,7 +10,9 @@ limiteUpdate_flowFinal3 = {(-1)..(1)}
 channel startActivity_flowFinal3: ID_flowFinal3.x_flowFinal3
 channel endActivity_flowFinal3: ID_flowFinal3
 channel get_x_flowFinal3: countGet_flowFinal3.x_flowFinal3
+channel get_x_act1_flowFinal3: countGet_flowFinal3.x_flowFinal3
 channel set_x_flowFinal3: countSet_flowFinal3.x_flowFinal3
+channel set_x_act1_flowFinal3: countSet_flowFinal3.x_flowFinal3
 channel oe_x_flowFinal3: countOe_flowFinal3.x_flowFinal3
 channel clear_flowFinal3: countClear_flowFinal3
 channel update_flowFinal3: countUpdate_flowFinal3.limiteUpdate_flowFinal3
@@ -27,11 +29,13 @@ StartActivity_flowFinal3(ID_flowFinal3) = startActivity_flowFinal3.ID_flowFinal3
 EndActivity_flowFinal3(ID_flowFinal3) = endActivity_flowFinal3.ID_flowFinal3 -> SKIP
 Node_flowFinal3 = ((act1_flowFinal3_t [{|oe_x_flowFinal3.1,lock_act1_flowFinal3,event_act1_flowFinal3,update_flowFinal3.2,oe_x_flowFinal3.2,endDiagram_flowFinal3|}||{|oe_x_flowFinal3.2,update_flowFinal3.3,endDiagram_flowFinal3|}] flowFinal1_flowFinal3_t) [{|oe_x_flowFinal3.1,lock_act1_flowFinal3,event_act1_flowFinal3,update_flowFinal3.2,oe_x_flowFinal3.2,endDiagram_flowFinal3,update_flowFinal3.3|}||{|update_flowFinal3.1,oe_x_flowFinal3.1,get_x_flowFinal3.1,endDiagram_flowFinal3|}] init_flowFinal3_t)
 parameter_x_t = update_flowFinal3.1!(1-0) -> get_x_flowFinal3.1?x -> ((oe_x_flowFinal3.1!x -> SKIP))
-act1_flowFinal3 = oe_x_flowFinal3.1?x -> lock_act1_flowFinal3.lock -> event_act1_flowFinal3 -> lock_act1_flowFinal3.unlock -> update_flowFinal3.2!(1-1) -> ((oe_x_flowFinal3.2!x -> SKIP)); act1_flowFinal3
-act1_flowFinal3_t = act1_flowFinal3 /\ END_DIAGRAM_flowFinal3
+act1_flowFinal3 = ((oe_x_flowFinal3.1?x -> set_x_act1_flowFinal3.2!x -> SKIP)); lock_act1_flowFinal3.lock -> event_act1_flowFinal3 -> lock_act1_flowFinal3.unlock -> update_flowFinal3.2!(1-1) -> get_x_act1_flowFinal3.2?x -> ((oe_x_flowFinal3.2!(x) -> SKIP)); act1_flowFinal3
+act1_flowFinal3_t = ((act1_flowFinal3 /\ END_DIAGRAM_flowFinal3) [|{|get_x_act1_flowFinal3,set_x_act1_flowFinal3,endDiagram_flowFinal3|}|] Mem_act1_flowFinal3_x_t(0)) \{|get_x_act1_flowFinal3,set_x_act1_flowFinal3|}
 flowFinal1_flowFinal3 = ((oe_x_flowFinal3.2?x -> SKIP)); update_flowFinal3.3!(0-1) -> flowFinal1_flowFinal3
 flowFinal1_flowFinal3_t = flowFinal1_flowFinal3 /\ END_DIAGRAM_flowFinal3
 init_flowFinal3_t = (parameter_x_t) /\ END_DIAGRAM_flowFinal3
+Mem_act1_flowFinal3_x(x) = get_x_act1_flowFinal3?c!x -> Mem_act1_flowFinal3_x(x) [] set_x_act1_flowFinal3?c?x -> Mem_act1_flowFinal3_x(x)
+Mem_act1_flowFinal3_x_t(x) = Mem_act1_flowFinal3_x(x) /\ END_DIAGRAM_flowFinal3
 Mem_flowFinal3_x(x) = get_x_flowFinal3?c!x -> Mem_flowFinal3_x(x) [] set_x_flowFinal3?c?x -> Mem_flowFinal3_x(x)
 Mem_flowFinal3_x_t(x) = Mem_flowFinal3_x(x) /\ (endActivity_flowFinal3?x -> SKIP)
 Mem_flowFinal3 = Mem_flowFinal3_x_t(0)

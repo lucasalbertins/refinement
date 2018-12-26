@@ -1,8 +1,8 @@
 ID_fork2 = {1..1}
 datatype T = lock | unlock
 x_fork2 = {0..1}
-countGet_fork2 = {1..1}
-countSet_fork2 = {1..1}
+countGet_fork2 = {1..3}
+countSet_fork2 = {1..3}
 countOe_fork2 = {1..5}
 countUpdate_fork2 = {1..4}
 countClear_fork2 = {1..1}
@@ -10,7 +10,11 @@ limiteUpdate_fork2 = {(0)..(1)}
 channel startActivity_fork2: ID_fork2.x_fork2
 channel endActivity_fork2: ID_fork2
 channel get_x_fork2: countGet_fork2.x_fork2
+channel get_x_act1_fork2: countGet_fork2.x_fork2
+channel get_x_act2_fork2: countGet_fork2.x_fork2
 channel set_x_fork2: countSet_fork2.x_fork2
+channel set_x_act1_fork2: countSet_fork2.x_fork2
+channel set_x_act2_fork2: countSet_fork2.x_fork2
 channel oe_x_fork2: countOe_fork2.x_fork2
 channel clear_fork2: countClear_fork2
 channel update_fork2: countUpdate_fork2.limiteUpdate_fork2
@@ -29,13 +33,17 @@ Node_fork2 = ((((act1_fork2_t [{|oe_x_fork2.2,lock_act1_fork2,event_act1_fork2,u
 parameter_x_t = update_fork2.1!(1-0) -> get_x_fork2.1?x -> ((oe_x_fork2.1!x -> SKIP))
 fork1_fork2 = oe_x_fork2.1?x -> update_fork2.2!(2-1) -> ((oe_x_fork2.2!x -> SKIP) ||| (oe_x_fork2.3!x -> SKIP)); fork1_fork2
 fork1_fork2_t = fork1_fork2 /\ END_DIAGRAM_fork2
-act1_fork2 = oe_x_fork2.2?x -> lock_act1_fork2.lock -> event_act1_fork2 -> lock_act1_fork2.unlock -> update_fork2.3!(1-1) -> ((oe_x_fork2.4!x -> SKIP)); act1_fork2
-act1_fork2_t = act1_fork2 /\ END_DIAGRAM_fork2
-act2_fork2 = oe_x_fork2.3?x -> lock_act2_fork2.lock -> event_act2_fork2 -> lock_act2_fork2.unlock -> update_fork2.4!(1-1) -> ((oe_x_fork2.5!x -> SKIP)); act2_fork2
-act2_fork2_t = act2_fork2 /\ END_DIAGRAM_fork2
-fin1_fork2 = ((oe_x_fork2.5?x -> SKIP) [] (oe_x_fork2.4?x -> SKIP)); clear_fork2.1 -> SKIP
+act1_fork2 = ((oe_x_fork2.2?x -> set_x_act1_fork2.2!x -> SKIP)); lock_act1_fork2.lock -> event_act1_fork2 -> lock_act1_fork2.unlock -> update_fork2.3!(1-1) -> get_x_act1_fork2.2?x -> ((oe_x_fork2.4!(x) -> SKIP)); act1_fork2
+act1_fork2_t = ((act1_fork2 /\ END_DIAGRAM_fork2) [|{|get_x_act1_fork2,set_x_act1_fork2,endDiagram_fork2|}|] Mem_act1_fork2_x_t(0)) \{|get_x_act1_fork2,set_x_act1_fork2|}
+act2_fork2 = ((oe_x_fork2.3?x -> set_x_act2_fork2.3!x -> SKIP)); lock_act2_fork2.lock -> event_act2_fork2 -> lock_act2_fork2.unlock -> update_fork2.4!(1-1) -> get_x_act2_fork2.3?x -> ((oe_x_fork2.5!(x) -> SKIP)); act2_fork2
+act2_fork2_t = ((act2_fork2 /\ END_DIAGRAM_fork2) [|{|get_x_act2_fork2,set_x_act2_fork2,endDiagram_fork2|}|] Mem_act2_fork2_x_t(0)) \{|get_x_act2_fork2,set_x_act2_fork2|}
+fin1_fork2 = ((oe_x_fork2.4?x -> SKIP) [] (oe_x_fork2.5?x -> SKIP)); clear_fork2.1 -> SKIP
 fin1_fork2_t = fin1_fork2 /\ END_DIAGRAM_fork2
 init_fork2_t = (parameter_x_t) /\ END_DIAGRAM_fork2
+Mem_act1_fork2_x(x) = get_x_act1_fork2?c!x -> Mem_act1_fork2_x(x) [] set_x_act1_fork2?c?x -> Mem_act1_fork2_x(x)
+Mem_act1_fork2_x_t(x) = Mem_act1_fork2_x(x) /\ END_DIAGRAM_fork2
+Mem_act2_fork2_x(x) = get_x_act2_fork2?c!x -> Mem_act2_fork2_x(x) [] set_x_act2_fork2?c?x -> Mem_act2_fork2_x(x)
+Mem_act2_fork2_x_t(x) = Mem_act2_fork2_x(x) /\ END_DIAGRAM_fork2
 Mem_fork2_x(x) = get_x_fork2?c!x -> Mem_fork2_x(x) [] set_x_fork2?c?x -> Mem_fork2_x(x)
 Mem_fork2_x_t(x) = Mem_fork2_x(x) /\ (endActivity_fork2?x -> SKIP)
 Mem_fork2 = Mem_fork2_x_t(0)

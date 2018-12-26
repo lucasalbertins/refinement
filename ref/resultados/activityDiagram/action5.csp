@@ -1,8 +1,8 @@
 ID_action5 = {1..1}
 datatype T = lock | unlock
 x_action5 = {0..1}
-countGet_action5 = {1..1}
-countSet_action5 = {1..1}
+countGet_action5 = {1..2}
+countSet_action5 = {1..2}
 countOe_action5 = {1..2}
 countUpdate_action5 = {1..2}
 countClear_action5 = {1..1}
@@ -10,7 +10,9 @@ limiteUpdate_action5 = {(0)..(1)}
 channel startActivity_action5: ID_action5.x_action5
 channel endActivity_action5: ID_action5
 channel get_x_action5: countGet_action5.x_action5
+channel get_x_act1_action5: countGet_action5.x_action5
 channel set_x_action5: countSet_action5.x_action5
+channel set_x_act1_action5: countSet_action5.x_action5
 channel oe_x_action5: countOe_action5.x_action5
 channel clear_action5: countClear_action5
 channel update_action5: countUpdate_action5.limiteUpdate_action5
@@ -27,11 +29,13 @@ StartActivity_action5(ID_action5) = startActivity_action5.ID_action5?x -> set_x_
 EndActivity_action5(ID_action5) = endActivity_action5.ID_action5 -> SKIP
 Node_action5 = ((init_action5_t [{|update_action5.1,get_x_action5.1,oe_x_action5.1,endDiagram_action5|}||{|oe_x_action5.1,lock_act1_action5,event_act1_action5,update_action5.2,oe_x_action5.2,endDiagram_action5|}] act1_action5_t) [{|update_action5.1,get_x_action5.1,oe_x_action5.1,endDiagram_action5,lock_act1_action5,event_act1_action5,update_action5.2,oe_x_action5.2|}||{|oe_x_action5.2,clear_action5.1,endDiagram_action5|}] fin1_action5_t)
 parameter_x_t = update_action5.1!(1-0) -> get_x_action5.1?x -> ((oe_x_action5.1!x -> SKIP))
-act1_action5 = oe_x_action5.1?x -> lock_act1_action5.lock -> event_act1_action5 -> lock_act1_action5.unlock -> update_action5.2!(1-1) -> ((oe_x_action5.2!x -> SKIP)); act1_action5
-act1_action5_t = act1_action5 /\ END_DIAGRAM_action5
+act1_action5 = ((oe_x_action5.1?x -> set_x_act1_action5.2!x -> SKIP)); lock_act1_action5.lock -> event_act1_action5 -> lock_act1_action5.unlock -> update_action5.2!(1-1) -> get_x_act1_action5.2?x -> ((oe_x_action5.2!(x) -> SKIP)); act1_action5
+act1_action5_t = ((act1_action5 /\ END_DIAGRAM_action5) [|{|get_x_act1_action5,set_x_act1_action5,endDiagram_action5|}|] Mem_act1_action5_x_t(0)) \{|get_x_act1_action5,set_x_act1_action5|}
 fin1_action5 = ((oe_x_action5.2?x -> SKIP)); clear_action5.1 -> SKIP
 fin1_action5_t = fin1_action5 /\ END_DIAGRAM_action5
 init_action5_t = (parameter_x_t) /\ END_DIAGRAM_action5
+Mem_act1_action5_x(x) = get_x_act1_action5?c!x -> Mem_act1_action5_x(x) [] set_x_act1_action5?c?x -> Mem_act1_action5_x(x)
+Mem_act1_action5_x_t(x) = Mem_act1_action5_x(x) /\ END_DIAGRAM_action5
 Mem_action5_x(x) = get_x_action5?c!x -> Mem_action5_x(x) [] set_x_action5?c?x -> Mem_action5_x(x)
 Mem_action5_x_t(x) = Mem_action5_x(x) /\ (endActivity_action5?x -> SKIP)
 Mem_action5 = Mem_action5_x_t(0)

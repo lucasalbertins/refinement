@@ -22,11 +22,11 @@ StartActivity_flowFinal2(ID_flowFinal2) = startActivity_flowFinal2.ID_flowFinal2
 EndActivity_flowFinal2(ID_flowFinal2) = endActivity_flowFinal2.ID_flowFinal2 -> SKIP
 Node_flowFinal2 = (((act1_flowFinal2_t [{|ce_flowFinal2.1,lock_act1_flowFinal2,event_act1_flowFinal2,update_flowFinal2.2,ce_flowFinal2.3,endDiagram_flowFinal2|}||{|ce_flowFinal2.3,ce_flowFinal2.4,update_flowFinal2.4,endDiagram_flowFinal2|}] flowFinal1_flowFinal2_t) [{|ce_flowFinal2.4,update_flowFinal2.4,ce_flowFinal2.1,lock_act1_flowFinal2,event_act1_flowFinal2,update_flowFinal2.2,ce_flowFinal2.3,endDiagram_flowFinal2|}||{|update_flowFinal2.1,ce_flowFinal2.1,ce_flowFinal2.2,endDiagram_flowFinal2|}] init_flowFinal2_t) [{|update_flowFinal2.1,ce_flowFinal2.2,ce_flowFinal2.4,update_flowFinal2.4,ce_flowFinal2.1,lock_act1_flowFinal2,event_act1_flowFinal2,update_flowFinal2.2,ce_flowFinal2.3,endDiagram_flowFinal2|}||{|ce_flowFinal2.2,ce_flowFinal2.4,lock_act2_flowFinal2,event_act2_flowFinal2,update_flowFinal2.3,endDiagram_flowFinal2|}] act2_flowFinal2_t)
 init1_flowFinal2_t = update_flowFinal2.1!(2-0) -> ((ce_flowFinal2.1 -> SKIP) ||| (ce_flowFinal2.2 -> SKIP))
-act1_flowFinal2 = ce_flowFinal2.1 -> lock_act1_flowFinal2.lock -> event_act1_flowFinal2 -> lock_act1_flowFinal2.unlock -> update_flowFinal2.2!(1-1) -> ((ce_flowFinal2.3 -> SKIP)); act1_flowFinal2
+act1_flowFinal2 = ((ce_flowFinal2.1 -> SKIP)); lock_act1_flowFinal2.lock -> event_act1_flowFinal2 -> lock_act1_flowFinal2.unlock -> update_flowFinal2.2!(1-1) -> ((ce_flowFinal2.3 -> SKIP)); act1_flowFinal2
 act1_flowFinal2_t = act1_flowFinal2 /\ END_DIAGRAM_flowFinal2
-act2_flowFinal2 = ce_flowFinal2.2 -> lock_act2_flowFinal2.lock -> event_act2_flowFinal2 -> lock_act2_flowFinal2.unlock -> update_flowFinal2.3!(1-1) -> ((ce_flowFinal2.4 -> SKIP)); act2_flowFinal2
+act2_flowFinal2 = ((ce_flowFinal2.2 -> SKIP)); lock_act2_flowFinal2.lock -> event_act2_flowFinal2 -> lock_act2_flowFinal2.unlock -> update_flowFinal2.3!(1-1) -> ((ce_flowFinal2.4 -> SKIP)); act2_flowFinal2
 act2_flowFinal2_t = act2_flowFinal2 /\ END_DIAGRAM_flowFinal2
-flowFinal1_flowFinal2 = ((ce_flowFinal2.4 -> SKIP) [] (ce_flowFinal2.3 -> SKIP)); update_flowFinal2.4!(0-1) -> flowFinal1_flowFinal2
+flowFinal1_flowFinal2 = ((ce_flowFinal2.3 -> SKIP) [] (ce_flowFinal2.4 -> SKIP)); update_flowFinal2.4!(0-1) -> flowFinal1_flowFinal2
 flowFinal1_flowFinal2_t = flowFinal1_flowFinal2 /\ END_DIAGRAM_flowFinal2
 init_flowFinal2_t = (init1_flowFinal2_t) /\ END_DIAGRAM_flowFinal2
 TokenManager_flowFinal2(x,init) = update_flowFinal2?c?y:limiteUpdate_flowFinal2 -> x+y < 10 & x+y > -10 & TokenManager_flowFinal2(x+y,1) [] clear_flowFinal2?c -> endDiagram_flowFinal2 -> SKIP [] x == 0 & init == 1 & endDiagram_flowFinal2 -> SKIP

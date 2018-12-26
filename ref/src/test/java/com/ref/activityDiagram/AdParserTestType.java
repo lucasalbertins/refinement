@@ -116,8 +116,8 @@ public class AdParserTestType {
 		expected.append("ID_decision1 = {1..1}\n" + 
 				"datatype T = lock | unlock\n" + 
 				"x_decision1 = {0..1}\n" + 
-				"countGet_decision1 = {1..1}\n" + 
-				"countSet_decision1 = {1..1}\n" + 
+				"countGet_decision1 = {1..2}\n" + 
+				"countSet_decision1 = {1..2}\n" + 
 				"countCe_decision1 = {1..5}\n" + 
 				"countOe_decision1 = {1..1}\n" + 
 				"countUpdate_decision1 = {1..5}\n" + 
@@ -149,7 +149,7 @@ public class AdParserTestType {
 	/* Teste de Tradução dos tipos de dados
 	 */
 	@Test
-	public void TestDefineTypes5() {
+	public void TestDefineTypes4() {
 		parser4.clearBuffer();
 		parser4.defineNodesActionAndControl();
 		parser4.defineChannels();
@@ -158,8 +158,8 @@ public class AdParserTestType {
 		expected.append("ID_decision3 = {1..1}\n" + 
 				"datatype T = lock | unlock\n" + 
 				"z_decision3 = {0..1}\n" + 
-				"countGet_decision3 = {1..1}\n" + 
-				"countSet_decision3 = {1..1}\n" + 
+				"countGet_decision3 = {1..3}\n" + 
+				"countSet_decision3 = {1..3}\n" + 
 				"countOe_decision3 = {1..5}\n" + 
 				"countUpdate_decision3 = {1..4}\n" + 
 				"countClear_decision3 = {1..1}\n" + 

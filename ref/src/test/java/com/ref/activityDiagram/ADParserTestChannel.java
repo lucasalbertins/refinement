@@ -108,7 +108,9 @@ public class ADParserTestChannel {
 		expected.append("channel startActivity_decision1: ID_decision1.x_decision1\n" + 
 				"channel endActivity_decision1: ID_decision1\n" + 
 				"channel get_x_decision1: countGet_decision1.x_decision1\n" + 
+				"channel get_x_dec1_decision1: countGet_decision1.x_decision1\n" + 
 				"channel set_x_decision1: countSet_decision1.x_decision1\n" + 
+				"channel set_x_dec1_decision1: countSet_decision1.x_decision1\n" + 
 				"channel ce_decision1: countCe_decision1\n" + 
 				"channel oe_x_decision1: countOe_decision1.x_decision1\n" + 
 				"channel clear_decision1: countClear_decision1\n" + 
@@ -132,7 +134,11 @@ public class ADParserTestChannel {
 		expected.append("channel startActivity_decision3: ID_decision3.z_decision3\n" + 
 				"channel endActivity_decision3: ID_decision3\n" + 
 				"channel get_z_decision3: countGet_decision3.z_decision3\n" + 
+				"channel get_z_act1_decision3: countGet_decision3.z_decision3\n" + 
+				"channel get_z_act2_decision3: countGet_decision3.z_decision3\n" + 
 				"channel set_z_decision3: countSet_decision3.z_decision3\n" + 
+				"channel set_z_act1_decision3: countSet_decision3.z_decision3\n" + 
+				"channel set_z_act2_decision3: countSet_decision3.z_decision3\n" + 
 				"channel oe_z_decision3: countOe_decision3.z_decision3\n" + 
 				"channel clear_decision3: countClear_decision3\n" + 
 				"channel update_decision3: countUpdate_decision3.limiteUpdate_decision3\n" + 

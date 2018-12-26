@@ -22,13 +22,13 @@ StartActivity_action2(ID_action2) = startActivity_action2.ID_action2 -> SKIP
 EndActivity_action2(ID_action2) = endActivity_action2.ID_action2 -> SKIP
 Node_action2 = ((((act1_action2_t [{|ce_action2.1,lock_act1_action2,event_act1_action2,update_action2.2,ce_action2.2,ce_action2.3,endDiagram_action2|}||{|ce_action2.5,ce_action2.4,clear_action2.1,endDiagram_action2|}] fin1_action2_t) [{|ce_action2.1,lock_act1_action2,event_act1_action2,update_action2.2,ce_action2.2,ce_action2.3,endDiagram_action2,ce_action2.5,ce_action2.4,clear_action2.1|}||{|update_action2.1,ce_action2.1,endDiagram_action2|}] init_action2_t) [{|ce_action2.1,lock_act1_action2,event_act1_action2,update_action2.2,ce_action2.2,ce_action2.3,endDiagram_action2,ce_action2.5,ce_action2.4,clear_action2.1,update_action2.1|}||{|ce_action2.3,lock_act3_action2,event_act3_action2,update_action2.4,ce_action2.5,endDiagram_action2|}] act3_action2_t) [{|ce_action2.1,lock_act1_action2,event_act1_action2,update_action2.2,ce_action2.2,ce_action2.3,endDiagram_action2,ce_action2.5,ce_action2.4,clear_action2.1,update_action2.1,lock_act3_action2,event_act3_action2,update_action2.4|}||{|ce_action2.2,lock_act2_action2,event_act2_action2,update_action2.3,ce_action2.4,endDiagram_action2|}] act2_action2_t)
 init1_action2_t = update_action2.1!(1-0) -> ((ce_action2.1 -> SKIP))
-act1_action2 = ce_action2.1 -> lock_act1_action2.lock -> event_act1_action2 -> lock_act1_action2.unlock -> update_action2.2!(2-1) -> ((ce_action2.2 -> SKIP) ||| (ce_action2.3 -> SKIP)); act1_action2
+act1_action2 = ((ce_action2.1 -> SKIP)); lock_act1_action2.lock -> event_act1_action2 -> lock_act1_action2.unlock -> update_action2.2!(2-1) -> ((ce_action2.2 -> SKIP) ||| (ce_action2.3 -> SKIP)); act1_action2
 act1_action2_t = act1_action2 /\ END_DIAGRAM_action2
-act2_action2 = ce_action2.2 -> lock_act2_action2.lock -> event_act2_action2 -> lock_act2_action2.unlock -> update_action2.3!(1-1) -> ((ce_action2.4 -> SKIP)); act2_action2
+act2_action2 = ((ce_action2.2 -> SKIP)); lock_act2_action2.lock -> event_act2_action2 -> lock_act2_action2.unlock -> update_action2.3!(1-1) -> ((ce_action2.4 -> SKIP)); act2_action2
 act2_action2_t = act2_action2 /\ END_DIAGRAM_action2
-act3_action2 = ce_action2.3 -> lock_act3_action2.lock -> event_act3_action2 -> lock_act3_action2.unlock -> update_action2.4!(1-1) -> ((ce_action2.5 -> SKIP)); act3_action2
+act3_action2 = ((ce_action2.3 -> SKIP)); lock_act3_action2.lock -> event_act3_action2 -> lock_act3_action2.unlock -> update_action2.4!(1-1) -> ((ce_action2.5 -> SKIP)); act3_action2
 act3_action2_t = act3_action2 /\ END_DIAGRAM_action2
-fin1_action2 = ((ce_action2.5 -> SKIP) [] (ce_action2.4 -> SKIP)); clear_action2.1 -> SKIP
+fin1_action2 = ((ce_action2.4 -> SKIP) [] (ce_action2.5 -> SKIP)); clear_action2.1 -> SKIP
 fin1_action2_t = fin1_action2 /\ END_DIAGRAM_action2
 init_action2_t = (init1_action2_t) /\ END_DIAGRAM_action2
 TokenManager_action2(x,init) = update_action2?c?y:limiteUpdate_action2 -> x+y < 10 & x+y > -10 & TokenManager_action2(x+y,1) [] clear_action2?c -> endDiagram_action2 -> SKIP [] x == 0 & init == 1 & endDiagram_action2 -> SKIP

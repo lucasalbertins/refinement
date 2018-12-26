@@ -2,8 +2,9 @@ ID_join4 = {1..1}
 datatype T = lock | unlock
 y_join4 = {0..1}
 x_join4 = {0..1}
-countGet_join4 = {1..2}
-countSet_join4 = {1..2}
+yx_join4 = union(y_join4,x_join4)
+countGet_join4 = {1..6}
+countSet_join4 = {1..6}
 countOe_join4 = {1..6}
 countUpdate_join4 = {1..4}
 countClear_join4 = {1..1}
@@ -11,11 +12,19 @@ limiteUpdate_join4 = {(-1)..(1)}
 channel startActivity_join4: ID_join4.y_join4.x_join4
 channel endActivity_join4: ID_join4
 channel get_y_join4: countGet_join4.y_join4
-channel set_y_join4: countSet_join4.y_join4
 channel get_x_join4: countGet_join4.x_join4
+channel get_y_join1_join4: countGet_join4.y_join4
+channel get_x_join1_join4: countGet_join4.x_join4
+channel get_x_act1_join4: countGet_join4.yx_join4
+channel set_y_join4: countSet_join4.y_join4
 channel set_x_join4: countSet_join4.x_join4
+channel set_y_join1_join4: countSet_join4.y_join4
+channel set_x_join1_join4: countSet_join4.x_join4
+channel set_y_act1_join4: countSet_join4.y_join4
+channel set_x_act1_join4: countSet_join4.yx_join4
 channel oe_y_join4: countOe_join4.y_join4
 channel oe_x_join4: countOe_join4.x_join4
+channel oe_yx_join4: countOe_join4.yx_join4
 channel clear_join4: countClear_join4
 channel update_join4: countUpdate_join4.limiteUpdate_join4
 channel endDiagram_join4
@@ -29,16 +38,22 @@ join4(ID_join4) = ((((Internal_join4(ID_join4) [|{|update_join4,clear_join4,endD
 Internal_join4(ID_join4) = StartActivity_join4(ID_join4); Node_join4; EndActivity_join4(ID_join4)
 StartActivity_join4(ID_join4) = startActivity_join4.ID_join4?y?x -> set_y_join4.1!y -> set_x_join4.2!x -> SKIP
 EndActivity_join4(ID_join4) = endActivity_join4.ID_join4 -> SKIP
-Node_join4 = (((init_join4_t [{|update_join4.1,update_join4.2,oe_x_join4.2,oe_y_join4.1,get_x_join4.2,get_y_join4.1,endDiagram_join4|}||{|oe_y_join4.1,oe_x_join4.2,update_join4.3,oe_x_join4.4,oe_y_join4.3,endDiagram_join4|}] join1_join4_t) [{|update_join4.1,update_join4.2,oe_x_join4.2,oe_y_join4.1,get_x_join4.2,get_y_join4.1,endDiagram_join4,update_join4.3,oe_x_join4.4,oe_y_join4.3|}||{|oe_y_join4.3,lock_act1_join4,event_act1_join4,update_join4.4,oe_y_join4.5,oe_x_join4.4,oe_x_join4.6,endDiagram_join4|}] act1_join4_t) [{|update_join4.1,update_join4.2,oe_x_join4.2,oe_y_join4.1,get_x_join4.2,get_y_join4.1,endDiagram_join4,update_join4.3,oe_x_join4.4,oe_y_join4.3,lock_act1_join4,event_act1_join4,update_join4.4,oe_y_join4.5,oe_x_join4.6|}||{|oe_y_join4.5,oe_x_join4.6,clear_join4.1,endDiagram_join4|}] fin1_join4_t)
+Node_join4 = (((init_join4_t [{|update_join4.1,update_join4.2,oe_x_join4.2,oe_y_join4.1,get_x_join4.2,get_y_join4.1,endDiagram_join4|}||{|oe_y_join4.1,oe_x_join4.2,update_join4.3,oe_yx_join4.3,endDiagram_join4|}] join1_join4_t) [{|update_join4.1,update_join4.2,oe_x_join4.2,oe_y_join4.1,get_x_join4.2,get_y_join4.1,endDiagram_join4,update_join4.3,oe_yx_join4.3|}||{|oe_yx_join4.3,lock_act1_join4,event_act1_join4,update_join4.4,get_x_act1_join4.5,oe_yx_join4.4,endDiagram_join4|}] act1_join4_t) [{|update_join4.1,update_join4.2,oe_x_join4.2,oe_y_join4.1,get_x_join4.2,get_y_join4.1,endDiagram_join4,update_join4.3,oe_yx_join4.3,lock_act1_join4,event_act1_join4,update_join4.4,get_x_act1_join4.5,oe_yx_join4.4|}||{|oe_yx_join4.4,clear_join4.1,endDiagram_join4|}] fin1_join4_t)
 parameter_y_t = update_join4.1!(1-0) -> get_y_join4.1?y -> ((oe_y_join4.1!y -> SKIP))
 parameter_x_t = update_join4.2!(1-0) -> get_x_join4.2?x -> ((oe_x_join4.2!x -> SKIP))
-join1_join4(y,x) = ((oe_y_join4.1?y -> SKIP) ||| (oe_x_join4.2?x -> SKIP)); update_join4.3!(1-2) -> ((oe_y_join4.3!y -> SKIP) |~| (oe_x_join4.4!x -> SKIP)); join1_join4(y,x)
-join1_join4_t = join1_join4(0,0) /\ END_DIAGRAM_join4
-act1_join4 = (oe_y_join4.3?y -> lock_act1_join4.lock -> event_act1_join4 -> lock_act1_join4.unlock -> update_join4.4!(1-1) -> ((oe_y_join4.5!y -> SKIP)); act1_join4) [] (oe_x_join4.4?x -> lock_act1_join4.lock -> event_act1_join4 -> lock_act1_join4.unlock -> update_join4.4!(1-1) -> ((oe_x_join4.6!x -> SKIP)); act1_join4)
-act1_join4_t = act1_join4 /\ END_DIAGRAM_join4
-fin1_join4 = ((oe_y_join4.5?y -> SKIP) [] (oe_x_join4.6?x -> SKIP)); clear_join4.1 -> SKIP
+join1_join4 = ((oe_y_join4.1?y -> set_y_join1_join4.3!y -> SKIP) ||| (oe_x_join4.2?x -> set_x_join1_join4.4!x -> SKIP)); update_join4.3!(1-2) -> get_y_join1_join4.3?y -> get_x_join1_join4.4?x -> ((oe_yx_join4.3!y -> SKIP) |~| (oe_yx_join4.3!x -> SKIP)); join1_join4
+join1_join4_t = (((join1_join4 /\ END_DIAGRAM_join4) [|{|get_y_join1_join4,set_y_join1_join4,endDiagram_join4|}|] Mem_join1_join4_y_t(0)) [|{|get_x_join1_join4,set_x_join1_join4,endDiagram_join4|}|] Mem_join1_join4_x_t(0)) \{|get_y_join1_join4,set_y_join1_join4,get_x_join1_join4,set_x_join1_join4|}
+act1_join4 = ((oe_yx_join4.3?x -> set_x_act1_join4.5!x -> SKIP)); lock_act1_join4.lock -> event_act1_join4 -> lock_act1_join4.unlock -> update_join4.4!(1-1) -> get_x_act1_join4.5?x -> ((oe_yx_join4.4!(x) -> SKIP)); act1_join4
+act1_join4_t = ((act1_join4 /\ END_DIAGRAM_join4) [|{|get_x_act1_join4,set_x_act1_join4,endDiagram_join4|}|] Mem_act1_join4_x_t(0)) \{|get_x_act1_join4,set_x_act1_join4|}
+fin1_join4 = ((oe_yx_join4.4?yx -> SKIP)); clear_join4.1 -> SKIP
 fin1_join4_t = fin1_join4 /\ END_DIAGRAM_join4
 init_join4_t = (parameter_y_t ||| parameter_x_t) /\ END_DIAGRAM_join4
+Mem_act1_join4_yx(yx) = get_x_act1_join4?c!yx -> Mem_act1_join4_yx(yx) [] set_x_act1_join4?c?yx -> Mem_act1_join4_yx(yx)
+Mem_act1_join4_x_t(yx) = Mem_act1_join4_yx(yx) /\ END_DIAGRAM_join4
+Mem_join1_join4_y(y) = get_y_join1_join4?c!y -> Mem_join1_join4_y(y) [] set_y_join1_join4?c?y -> Mem_join1_join4_y(y)
+Mem_join1_join4_y_t(y) = (Mem_join1_join4_y(y)) /\ END_DIAGRAM_join4
+Mem_join1_join4_x(x) = get_x_join1_join4?c!x -> Mem_join1_join4_x(x) [] set_x_join1_join4?c?x -> Mem_join1_join4_x(x)
+Mem_join1_join4_x_t(x) = (Mem_join1_join4_x(x)) /\ END_DIAGRAM_join4
 Mem_join4_x(x) = get_x_join4?c!x -> Mem_join4_x(x) [] set_x_join4?c?x -> Mem_join4_x(x)
 Mem_join4_x_t(x) = Mem_join4_x(x) /\ (endActivity_join4?x -> SKIP)
 Mem_join4_y(y) = get_y_join4?c!y -> Mem_join4_y(y) [] set_y_join4?c?y -> Mem_join4_y(y)

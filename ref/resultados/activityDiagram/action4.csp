@@ -1,0 +1,73 @@
+ID_action4 = {1..1}
+datatype T = lock | unlock
+x_action4 = {0..1}
+y_action4 = {0..1}
+xy_action4 = union(x_action4,y_action4)
+countGet_action4 = {1..7}
+countSet_action4 = {1..7}
+countCe_action4 = {1..1}
+countOe_action4 = {1..6}
+countUpdate_action4 = {1..5}
+countClear_action4 = {1..1}
+limiteUpdate_action4 = {(0)..(1)}
+channel startActivity_action4: ID_action4.x_action4.y_action4
+channel endActivity_action4: ID_action4
+channel get_x_action4: countGet_action4.x_action4
+channel get_y_action4: countGet_action4.y_action4
+channel get_x_act1_action4: countGet_action4.x_action4
+channel get_y_act1_action4: countGet_action4.y_action4
+channel get_w_act2_action4: countGet_action4.x_action4
+channel get_w_act3_action4: countGet_action4.x_action4
+channel set_x_action4: countSet_action4.x_action4
+channel set_y_action4: countSet_action4.y_action4
+channel set_x_act1_action4: countSet_action4.x_action4
+channel set_y_act1_action4: countSet_action4.y_action4
+channel set_w_act2_action4: countSet_action4.x_action4
+channel set_w_act3_action4: countSet_action4.x_action4
+channel oe_x_action4: countOe_action4.x_action4
+channel oe_y_action4: countOe_action4.y_action4
+channel oe_xy_action4: countOe_action4.xy_action4
+channel clear_action4: countClear_action4
+channel update_action4: countUpdate_action4.limiteUpdate_action4
+channel endDiagram_action4
+channel event_act1_action4,event_act2_action4,event_act3_action4
+channel lock_act1_action4,lock_act2_action4,lock_act3_action4: T
+channel loop
+MAIN = action4(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_action4 = endDiagram_action4 -> SKIP
+action4(ID_action4) = ((((Internal_action4(ID_action4) [|{|update_action4,clear_action4,endDiagram_action4|}|] TokenManager_action4_t(0,0))) [|{|lock_act1_action4,endDiagram_action4|}|] Lock_action4) [|{|get_x_action4,set_x_action4,get_y_action4,set_y_action4,endActivity_action4|}|] Mem_action4)
+Internal_action4(ID_action4) = StartActivity_action4(ID_action4); Node_action4; EndActivity_action4(ID_action4)
+StartActivity_action4(ID_action4) = startActivity_action4.ID_action4?x?y -> set_x_action4.1!x -> set_y_action4.2!y -> SKIP
+EndActivity_action4(ID_action4) = endActivity_action4.ID_action4 -> SKIP
+Node_action4 = ((((init_action4_t [{|update_action4.1,update_action4.2,get_x_action4.2,get_y_action4.1,oe_x_action4.2,oe_y_action4.1,endDiagram_action4|}||{|oe_x_action4.2,oe_y_action4.1,lock_act1_action4,event_act1_action4,update_action4.3,oe_xy_action4.3,oe_xy_action4.4,endDiagram_action4|}] act1_action4_t) [{|update_action4.1,update_action4.2,get_x_action4.2,get_y_action4.1,oe_x_action4.2,oe_y_action4.1,endDiagram_action4,lock_act1_action4,event_act1_action4,update_action4.3,oe_xy_action4.3,oe_xy_action4.4|}||{|oe_xy_action4.3,lock_act2_action4,event_act2_action4,update_action4.4,oe_xy_action4.5,endDiagram_action4|}] act2_action4_t) [{|update_action4.1,update_action4.2,get_x_action4.2,get_y_action4.1,oe_x_action4.2,oe_y_action4.1,endDiagram_action4,lock_act1_action4,event_act1_action4,update_action4.3,oe_xy_action4.3,oe_xy_action4.4,lock_act2_action4,event_act2_action4,update_action4.4,oe_xy_action4.5|}||{|oe_xy_action4.4,lock_act3_action4,event_act3_action4,update_action4.5,oe_xy_action4.6,endDiagram_action4|}] act3_action4_t) [{|update_action4.1,update_action4.2,get_x_action4.2,get_y_action4.1,oe_x_action4.2,oe_y_action4.1,endDiagram_action4,lock_act1_action4,event_act1_action4,update_action4.3,oe_xy_action4.3,oe_xy_action4.4,lock_act2_action4,event_act2_action4,update_action4.4,oe_xy_action4.5,lock_act3_action4,event_act3_action4,update_action4.5,oe_xy_action4.6|}||{|oe_xy_action4.5,oe_xy_action4.6,clear_action4.1,endDiagram_action4|}] fin1_action4_t)
+parameter_y_t = update_action4.1!(1-0) -> get_y_action4.1?y -> ((oe_y_action4.1!y -> SKIP))
+parameter_x_t = update_action4.2!(1-0) -> get_x_action4.2?x -> ((oe_x_action4.2!x -> SKIP))
+act1_action4 = ((oe_x_action4.2?x -> set_x_act1_action4.3!x -> SKIP) ||| (oe_y_action4.1?y -> set_y_act1_action4.4!y -> SKIP)); lock_act1_action4.lock -> event_act1_action4 -> get_y_act1_action4.3?y -> set_x_act1_action4.5!(y) -> lock_act1_action4.unlock -> update_action4.3!(2-2) -> get_x_act1_action4.4?x -> get_y_act1_action4.5?y -> ((oe_xy_action4.3!(x) -> SKIP) ||| (oe_xy_action4.4!(x) -> SKIP)); act1_action4
+act1_action4_t = (((act1_action4 /\ END_DIAGRAM_action4) [|{|get_x_act1_action4,set_x_act1_action4,endDiagram_action4|}|] Mem_act1_action4_x_t(0)) [|{|get_y_act1_action4,set_y_act1_action4,endDiagram_action4|}|] Mem_act1_action4_y_t(0)) \{|get_x_act1_action4,set_x_act1_action4,get_y_act1_action4,set_y_act1_action4|}
+act2_action4 = ((oe_xy_action4.3?w -> set_w_act2_action4.6!w -> SKIP)); lock_act2_action4.lock -> event_act2_action4 -> lock_act2_action4.unlock -> update_action4.4!(1-1) -> get_w_act2_action4.6?w -> ((oe_xy_action4.5!(w) -> SKIP)); act2_action4
+act2_action4_t = ((act2_action4 /\ END_DIAGRAM_action4) [|{|get_w_act2_action4,set_w_act2_action4,endDiagram_action4|}|] Mem_act2_action4_w_t(0)) \{|get_w_act2_action4,set_w_act2_action4|}
+act3_action4 = ((oe_xy_action4.4?w -> set_w_act3_action4.7!w -> SKIP)); lock_act3_action4.lock -> event_act3_action4 -> lock_act3_action4.unlock -> update_action4.5!(1-1) -> get_w_act3_action4.7?w -> ((oe_xy_action4.6!(w) -> SKIP)); act3_action4
+act3_action4_t = ((act3_action4 /\ END_DIAGRAM_action4) [|{|get_w_act3_action4,set_w_act3_action4,endDiagram_action4|}|] Mem_act3_action4_w_t(0)) \{|get_w_act3_action4,set_w_act3_action4|}
+fin1_action4 = ((oe_xy_action4.6?xy -> SKIP) [] (oe_xy_action4.5?xy -> SKIP)); clear_action4.1 -> SKIP
+fin1_action4_t = fin1_action4 /\ END_DIAGRAM_action4
+init_action4_t = (parameter_y_t ||| parameter_x_t) /\ END_DIAGRAM_action4
+Mem_act1_action4_x(x) = get_x_act1_action4?c!x -> Mem_act1_action4_x(x) [] set_x_act1_action4?c?x -> Mem_act1_action4_x(x)
+Mem_act1_action4_x_t(x) = Mem_act1_action4_x(x) /\ END_DIAGRAM_action4
+Mem_act1_action4_y(y) = get_y_act1_action4?c!y -> Mem_act1_action4_y(y) [] set_y_act1_action4?c?y -> Mem_act1_action4_y(y)
+Mem_act1_action4_y_t(y) = Mem_act1_action4_y(y) /\ END_DIAGRAM_action4
+Mem_act2_action4_w(w) = get_w_act2_action4?c!w -> Mem_act2_action4_w(w) [] set_w_act2_action4?c?w -> Mem_act2_action4_w(w)
+Mem_act2_action4_w_t(w) = Mem_act2_action4_w(w) /\ END_DIAGRAM_action4
+Mem_act3_action4_w(w) = get_w_act3_action4?c!w -> Mem_act3_action4_w(w) [] set_w_act3_action4?c?w -> Mem_act3_action4_w(w)
+Mem_act3_action4_w_t(w) = Mem_act3_action4_w(w) /\ END_DIAGRAM_action4
+Mem_action4_x(x) = get_x_action4?c!x -> Mem_action4_x(x) [] set_x_action4?c?x -> Mem_action4_x(x)
+Mem_action4_x_t(x) = Mem_action4_x(x) /\ (endActivity_action4?x -> SKIP)
+Mem_action4_y(y) = get_y_action4?c!y -> Mem_action4_y(y) [] set_y_action4?c?y -> Mem_action4_y(y)
+Mem_action4_y_t(y) = Mem_action4_y(y) /\ (endActivity_action4?y -> SKIP)
+Mem_action4 = (Mem_action4_x_t(0) [|{|endActivity_action4|}|] Mem_action4_y_t(0))
+TokenManager_action4(x,init) = update_action4?c?y:limiteUpdate_action4 -> x+y < 10 & x+y > -10 & TokenManager_action4(x+y,1) [] clear_action4?c -> endDiagram_action4 -> SKIP [] x == 0 & init == 1 & endDiagram_action4 -> SKIP
+TokenManager_action4_t(x,init) = TokenManager_action4(x,init)
+Lock_act1_action4 = lock_act1_action4.lock -> lock_act1_action4.unlock -> Lock_act1_action4 [] endDiagram_action4 -> SKIP
+Lock_act2_action4 = lock_act2_action4.lock -> lock_act2_action4.unlock -> Lock_act2_action4 [] endDiagram_action4 -> SKIP
+Lock_act3_action4 = lock_act3_action4.lock -> lock_act3_action4.unlock -> Lock_act3_action4 [] endDiagram_action4 -> SKIP
+Lock_action4 = Lock_act1_action4

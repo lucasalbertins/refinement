@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;
@@ -91,6 +90,7 @@ public class ADParserTestFinalNode {
 		parser2.clearBuffer();
 		parser3.clearBuffer();
 		parser4.clearBuffer();
+		parser5.clearBuffer();
 	}
 	
 	@AfterClass
@@ -106,7 +106,7 @@ public class ADParserTestFinalNode {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action1_t = update_action1.1!(1-0) -> ((ce_action1.1 -> SKIP))\n" + 
-				"act1_action1 = ce_action1.1 -> lock_act1_action1.lock -> event_act1_action1 -> lock_act1_action1.unlock -> update_action1.2!(1-1) -> ((ce_action1.2 -> SKIP)); act1_action1\n" + 
+				"act1_action1 = ((ce_action1.1 -> SKIP)); lock_act1_action1.lock -> event_act1_action1 -> lock_act1_action1.unlock -> update_action1.2!(1-1) -> ((ce_action1.2 -> SKIP)); act1_action1\n" + 
 				"act1_action1_t = act1_action1 /\\ END_DIAGRAM_action1\n" + 
 				"fin1_action1 = ((ce_action1.2 -> SKIP)); clear_action1.1 -> SKIP\n" + 
 				"fin1_action1_t = fin1_action1 /\\ END_DIAGRAM_action1\n" + 
@@ -123,13 +123,13 @@ public class ADParserTestFinalNode {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action2_t = update_action2.1!(1-0) -> ((ce_action2.1 -> SKIP))\n" + 
-				"act1_action2 = ce_action2.1 -> lock_act1_action2.lock -> event_act1_action2 -> lock_act1_action2.unlock -> update_action2.2!(2-1) -> ((ce_action2.2 -> SKIP) ||| (ce_action2.3 -> SKIP)); act1_action2\n" + 
+				"act1_action2 = ((ce_action2.1 -> SKIP)); lock_act1_action2.lock -> event_act1_action2 -> lock_act1_action2.unlock -> update_action2.2!(2-1) -> ((ce_action2.2 -> SKIP) ||| (ce_action2.3 -> SKIP)); act1_action2\n" + 
 				"act1_action2_t = act1_action2 /\\ END_DIAGRAM_action2\n" + 
-				"act2_action2 = ce_action2.2 -> lock_act2_action2.lock -> event_act2_action2 -> lock_act2_action2.unlock -> update_action2.3!(1-1) -> ((ce_action2.4 -> SKIP)); act2_action2\n" + 
+				"act2_action2 = ((ce_action2.2 -> SKIP)); lock_act2_action2.lock -> event_act2_action2 -> lock_act2_action2.unlock -> update_action2.3!(1-1) -> ((ce_action2.4 -> SKIP)); act2_action2\n" + 
 				"act2_action2_t = act2_action2 /\\ END_DIAGRAM_action2\n" + 
-				"act3_action2 = ce_action2.3 -> lock_act3_action2.lock -> event_act3_action2 -> lock_act3_action2.unlock -> update_action2.4!(1-1) -> ((ce_action2.5 -> SKIP)); act3_action2\n" + 
+				"act3_action2 = ((ce_action2.3 -> SKIP)); lock_act3_action2.lock -> event_act3_action2 -> lock_act3_action2.unlock -> update_action2.4!(1-1) -> ((ce_action2.5 -> SKIP)); act3_action2\n" + 
 				"act3_action2_t = act3_action2 /\\ END_DIAGRAM_action2\n" + 
-				"fin1_action2 = ((ce_action2.5 -> SKIP) [] (ce_action2.4 -> SKIP)); clear_action2.1 -> SKIP\n" + 
+				"fin1_action2 = ((ce_action2.4 -> SKIP) [] (ce_action2.5 -> SKIP)); clear_action2.1 -> SKIP\n" + 
 				"fin1_action2_t = fin1_action2 /\\ END_DIAGRAM_action2\n" + 
 				"init_action2_t = (init1_action2_t) /\\ END_DIAGRAM_action2");
 		
@@ -139,14 +139,13 @@ public class ADParserTestFinalNode {
 	/*
 	 * Teste de Tradução Final node
 	 * */
-	@Ignore
 	@Test
 	public void TestNodesFinal3() {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_t = update_action5.1!(1-0) -> get_x_action5.1?x -> ((oe_x_action5.1!x -> SKIP))\n" + 
-				"act1_action5 = oe_x_action5.1?x -> lock_act1_action5.lock -> event_act1_action5 -> lock_act1_action5.unlock -> update_action5.2!(1-1) -> ((oe_x_action5.2!x -> SKIP)); act1_action5\n" + 
-				"act1_action5_t = act1_action5 /\\ END_DIAGRAM_action5\n" + 
+				"act1_action5 = ((oe_x_action5.1?x -> set_x_act1_action5.2!x -> SKIP)); lock_act1_action5.lock -> event_act1_action5 -> lock_act1_action5.unlock -> update_action5.2!(1-1) -> get_x_act1_action5.2?x -> ((oe_x_action5.2!(x) -> SKIP)); act1_action5\n" + 
+				"act1_action5_t = ((act1_action5 /\\ END_DIAGRAM_action5) [|{|get_x_act1_action5,set_x_act1_action5,endDiagram_action5|}|] Mem_act1_action5_x_t(0)) \\{|get_x_act1_action5,set_x_act1_action5|}\n" + 
 				"fin1_action5 = ((oe_x_action5.2?x -> SKIP)); clear_action5.1 -> SKIP\n" + 
 				"fin1_action5_t = fin1_action5 /\\ END_DIAGRAM_action5\n" + 
 				"init_action5_t = (parameter_x_t) /\\ END_DIAGRAM_action5");
@@ -157,19 +156,18 @@ public class ADParserTestFinalNode {
 	/*
 	 * Teste de Tradução Final node
 	 * */
-	@Ignore
 	@Test
 	public void TestNodesFinal4() {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_t = update_action6.1!(1-0) -> get_x_action6.1?x -> ((oe_x_action6.1!x -> SKIP))\n" + 
-				"act1_action6 = oe_x_action6.1?x -> lock_act1_action6.lock -> event_act1_action6 -> lock_act1_action6.unlock -> update_action6.2!(2-1) -> ((oe_x_action6.2!x -> SKIP) ||| (oe_x_action6.3!x -> SKIP)); act1_action6\n" + 
-				"act1_action6_t = act1_action6 /\\ END_DIAGRAM_action6\n" + 
-				"act2_action6 = oe_x_action6.2?x -> lock_act2_action6.lock -> event_act2_action6 -> lock_act2_action6.unlock -> update_action6.3!(1-1) -> ((oe_x_action6.4!x -> SKIP)); act2_action6\n" + 
-				"act2_action6_t = act2_action6 /\\ END_DIAGRAM_action6\n" + 
-				"act3_action6 = oe_x_action6.3?x -> lock_act3_action6.lock -> event_act3_action6 -> lock_act3_action6.unlock -> update_action6.4!(1-1) -> ((oe_x_action6.5!x -> SKIP)); act3_action6\n" + 
-				"act3_action6_t = act3_action6 /\\ END_DIAGRAM_action6\n" + 
-				"fin1_action6 = ((oe_x_action6.5?x -> SKIP) [] (oe_x_action6.4?x -> SKIP)); clear_action6.1 -> SKIP\n" + 
+				"act1_action6 = ((oe_x_action6.1?x -> set_x_act1_action6.2!x -> SKIP)); lock_act1_action6.lock -> event_act1_action6 -> lock_act1_action6.unlock -> update_action6.2!(2-1) -> get_x_act1_action6.2?x -> ((oe_x_action6.2!(x) -> SKIP) ||| (oe_x_action6.3!(x) -> SKIP)); act1_action6\n" + 
+				"act1_action6_t = ((act1_action6 /\\ END_DIAGRAM_action6) [|{|get_x_act1_action6,set_x_act1_action6,endDiagram_action6|}|] Mem_act1_action6_x_t(0)) \\{|get_x_act1_action6,set_x_act1_action6|}\n" + 
+				"act2_action6 = ((oe_x_action6.2?y -> set_y_act2_action6.3!y -> SKIP)); lock_act2_action6.lock -> event_act2_action6 -> lock_act2_action6.unlock -> update_action6.3!(1-1) -> get_y_act2_action6.3?y -> ((oe_x_action6.4!(y) -> SKIP)); act2_action6\n" + 
+				"act2_action6_t = ((act2_action6 /\\ END_DIAGRAM_action6) [|{|get_y_act2_action6,set_y_act2_action6,endDiagram_action6|}|] Mem_act2_action6_y_t(0)) \\{|get_y_act2_action6,set_y_act2_action6|}\n" + 
+				"act3_action6 = ((oe_x_action6.3?y -> set_y_act3_action6.4!y -> SKIP)); lock_act3_action6.lock -> event_act3_action6 -> lock_act3_action6.unlock -> update_action6.4!(1-1) -> get_y_act3_action6.4?y -> ((oe_x_action6.5!(y) -> SKIP)); act3_action6\n" + 
+				"act3_action6_t = ((act3_action6 /\\ END_DIAGRAM_action6) [|{|get_y_act3_action6,set_y_act3_action6,endDiagram_action6|}|] Mem_act3_action6_y_t(0)) \\{|get_y_act3_action6,set_y_act3_action6|}\n" + 
+				"fin1_action6 = ((oe_x_action6.4?x -> SKIP) [] (oe_x_action6.5?x -> SKIP)); clear_action6.1 -> SKIP\n" + 
 				"fin1_action6_t = fin1_action6 /\\ END_DIAGRAM_action6\n" + 
 				"init_action6_t = (parameter_x_t) /\\ END_DIAGRAM_action6");
 		
@@ -184,14 +182,14 @@ public class ADParserTestFinalNode {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_t = update_final1.1!(1-0) -> get_x_final1.1?x -> ((oe_x_final1.1!x -> SKIP))\n" + 
-				"act2_final1 = oe_x_final1.1?x -> lock_act2_final1.lock -> event_act2_final1 -> lock_act2_final1.unlock -> update_final1.2!(1-1) -> ((oe_x_final1.2!x -> SKIP)); act2_final1\n" + 
-				"act2_final1_t = act2_final1 /\\ END_DIAGRAM_final1\n" + 
+				"act2_final1 = ((oe_x_final1.1?x -> set_x_act2_final1.2!x -> SKIP)); lock_act2_final1.lock -> event_act2_final1 -> lock_act2_final1.unlock -> update_final1.2!(1-1) -> get_x_act2_final1.2?x -> ((oe_x_final1.2!(x) -> SKIP)); act2_final1\n" + 
+				"act2_final1_t = ((act2_final1 /\\ END_DIAGRAM_final1) [|{|get_x_act2_final1,set_x_act2_final1,endDiagram_final1|}|] Mem_act2_final1_x_t(0)) \\{|get_x_act2_final1,set_x_act2_final1|}\n" + 
 				"init1_final1_t = update_final1.3!(1-0) -> ((ce_final1.1 -> SKIP))\n" + 
-				"act1_final1 = ce_final1.1 -> lock_act1_final1.lock -> event_act1_final1 -> lock_act1_final1.unlock -> update_final1.4!(1-1) -> ((ce_final1.2 -> SKIP)); act1_final1\n" + 
+				"act1_final1 = ((ce_final1.1 -> SKIP)); lock_act1_final1.lock -> event_act1_final1 -> lock_act1_final1.unlock -> update_final1.4!(1-1) -> ((ce_final1.2 -> SKIP)); act1_final1\n" + 
 				"act1_final1_t = act1_final1 /\\ END_DIAGRAM_final1\n" + 
-				"act3_final1 = ce_final1.2 -> lock_act3_final1.lock -> event_act3_final1 -> lock_act3_final1.unlock -> update_final1.5!(1-1) -> ((ce_final1.3 -> SKIP)); act3_final1\n" + 
+				"act3_final1 = ((ce_final1.2 -> SKIP)); lock_act3_final1.lock -> event_act3_final1 -> lock_act3_final1.unlock -> update_final1.5!(1-1) -> ((ce_final1.3 -> SKIP)); act3_final1\n" + 
 				"act3_final1_t = act3_final1 /\\ END_DIAGRAM_final1\n" + 
-				"fin1_final1 = ((ce_final1.3 -> SKIP) [] (oe_x_final1.2?x -> SKIP)); clear_final1.1 -> SKIP\n" + 
+				"fin1_final1 = ((oe_x_final1.2?x -> SKIP) [] (ce_final1.3 -> SKIP)); clear_final1.1 -> SKIP\n" + 
 				"fin1_final1_t = fin1_final1 /\\ END_DIAGRAM_final1\n" + 
 				"init_final1_t = (parameter_x_t ||| init1_final1_t) /\\ END_DIAGRAM_final1");
 		

@@ -24,11 +24,11 @@ Node_decision2 = ((((dec1_decision2_t [{|ce_decision2.1,update_decision2.2,ce_de
 init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))
 dec1_decision2 = ce_decision2.1 -> update_decision2.2!(1-1) -> ((ce_decision2.2 -> SKIP) [] (ce_decision2.3 -> SKIP)); dec1_decision2
 dec1_decision2_t = dec1_decision2 /\ END_DIAGRAM_decision2
-act1_decision2 = ce_decision2.2 -> lock_act1_decision2.lock -> event_act1_decision2 -> lock_act1_decision2.unlock -> update_decision2.3!(1-1) -> ((ce_decision2.4 -> SKIP)); act1_decision2
+act1_decision2 = ((ce_decision2.2 -> SKIP)); lock_act1_decision2.lock -> event_act1_decision2 -> lock_act1_decision2.unlock -> update_decision2.3!(1-1) -> ((ce_decision2.4 -> SKIP)); act1_decision2
 act1_decision2_t = act1_decision2 /\ END_DIAGRAM_decision2
-act2_decision2 = ce_decision2.3 -> lock_act2_decision2.lock -> event_act2_decision2 -> lock_act2_decision2.unlock -> update_decision2.4!(1-1) -> ((ce_decision2.5 -> SKIP)); act2_decision2
+act2_decision2 = ((ce_decision2.3 -> SKIP)); lock_act2_decision2.lock -> event_act2_decision2 -> lock_act2_decision2.unlock -> update_decision2.4!(1-1) -> ((ce_decision2.5 -> SKIP)); act2_decision2
 act2_decision2_t = act2_decision2 /\ END_DIAGRAM_decision2
-fin1_decision2 = ((ce_decision2.5 -> SKIP) [] (ce_decision2.4 -> SKIP)); clear_decision2.1 -> SKIP
+fin1_decision2 = ((ce_decision2.4 -> SKIP) [] (ce_decision2.5 -> SKIP)); clear_decision2.1 -> SKIP
 fin1_decision2_t = fin1_decision2 /\ END_DIAGRAM_decision2
 init_decision2_t = (init1_decision2_t) /\ END_DIAGRAM_decision2
 TokenManager_decision2(x,init) = update_decision2?c?y:limiteUpdate_decision2 -> x+y < 10 & x+y > -10 & TokenManager_decision2(x+y,1) [] clear_decision2?c -> endDiagram_decision2 -> SKIP [] x == 0 & init == 1 & endDiagram_decision2 -> SKIP
