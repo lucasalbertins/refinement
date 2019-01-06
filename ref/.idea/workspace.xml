@@ -348,7 +348,7 @@
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1544727101911" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1546798380205" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -366,7 +366,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.AltFragmentTest">
+  <component name="RunManager" selected="JUnit.TestSuiteSD">
     <configuration name="AltFragmentTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ref" />
       <extension name="coverage">
@@ -446,8 +446,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.AltFragmentTest" />
         <item itemvalue="JUnit.TestSuiteSD" />
+        <item itemvalue="JUnit.AltFragmentTest" />
         <item itemvalue="JUnit.FileTest" />
         <item itemvalue="JUnit.SDParserTest" />
         <item itemvalue="JUnit.SDRefinementTest" />
