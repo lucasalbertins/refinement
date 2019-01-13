@@ -42,7 +42,7 @@ public class ADParser {
 	private ArrayList<String> alphabetAllInitialAndParameter;
 	private HashMap<String, String> parameterNodesInput;		//name; type
 	private HashMap<String, String> parameterNodesOutput;
-	private List<Pair<String, String>> memoryLocal;
+	private List<Pair<String, String>> memoryLocal;				//nameNode, nameObject
 	
 	public ADParser(IActivity ad, String nameAD) {
 		this.ad = ad;
@@ -320,6 +320,78 @@ public class ADParser {
 		System.out.println(types);
 		
 		return types.toString();
+	}
+	
+	public String defineMemorys() {
+		StringBuilder memory = new StringBuilder();
+		String nameDiagram = ad.getName();
+		
+		for (Pair<String, String> pair : memoryLocal) {
+			memory.append("Mem_" + pair.getValue() + "_" + nameDiagram + "_" + pair.getKey() + "(" + pair.getKey() + ") = ");
+			memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + "?c!" + pair.getValue() + " -> ");
+			memory.append("Mem_" + pair.getValue() + "_" + nameDiagram + "_" + pair.getKey() + "(" + pair.getKey() + ") [] ");
+			memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + "?c?" + pair.getValue() + " -> ");
+			memory.append("Mem_" + pair.getValue() + "_" + nameDiagram + "_" + pair.getKey() + "(" + pair.getKey() + ")\n");
+			
+			memory.append("Mem_" + pair.getValue() + "_" + nameDiagram + "_" + pair.getKey() + "_t" + "(" + pair.getKey() + ") = ");
+			memory.append("Mem_" + pair.getValue() + "_" + nameDiagram + "_" + pair.getKey() + "(" + pair.getKey() + ") /\\ END_DIAGRAM_" + nameDiagram + "\n");
+		}
+		
+		
+		if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
+			for (String input : parameterNodesInput.keySet()) {
+				memory.append("Mem_" + nameDiagram + "_" + input + "(" + input + ") = ");
+				memory.append("get_" + input + "_" + nameDiagram + "?c!" + input + " -> ");
+				memory.append("Mem_" + nameDiagram + "_" + input + "(" + input + ") [] ");
+				memory.append("set_" + input + "_" + nameDiagram + "?c?" + input + " -> ");
+				memory.append("Mem_" + nameDiagram + "_" + input + "(" + input + ")\n");
+				
+				memory.append("Mem_" + nameDiagram + "_" + input + "_t" + "(" + input + ") = ");
+				memory.append("Mem_" + nameDiagram + "_" + input + "(" + input + ") /\\ (endActivity_" + nameDiagram + "?" + input + " -> SKIP)\n");
+			}
+			
+			for (String output : parameterNodesOutput.keySet()) {
+				memory.append("Mem_" + nameDiagram + "_" + output + "(" + output + ") = ");
+				memory.append("get_" + output + "_" + nameDiagram + "?c!" + output + " -> ");
+				memory.append("Mem_" + nameDiagram + "_" + output + "(" + output + ") [] ");
+				memory.append("set_" + output + "_" + nameDiagram + "?c?" + output + " -> ");
+				memory.append("Mem_" + nameDiagram + "_" + output + "(" + output + ")\n");
+				
+				memory.append("Mem_" + nameDiagram + "_" + output + "_t" + "(" + output + ") = ");
+				memory.append("Mem_" + nameDiagram + "_" + output + "(" + output + ") /\\ (endActivity_" + nameDiagram + "?" + output + " -> SKIP)\n");
+			}
+
+			memory.append("Mem_" + nameDiagram + " = ");
+			
+			for (int i = 0; i < parameterNodesInput.size() + parameterNodesOutput.size() - 1; i++) {
+				memory.append("(");
+			}
+			
+			int i = 0;
+			
+			for (String input : parameterNodesInput.keySet()) {
+				memory.append("Mem_" + nameDiagram + "_" + input + "_t(0)");
+				
+				if (i % 2 == 0 && i < parameterNodesInput.size() || parameterNodesOutput.size() > 0) {
+					memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
+				} else {
+					memory.append(")");
+				}
+			}
+			
+			for (String output : parameterNodesOutput.keySet()) {
+				memory.append("Mem_" + nameDiagram + "_" + output + "_t(0)");
+				
+				if (i % 2 == 0 && i <  parameterNodesOutput.size()) {
+					memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
+				} else {
+					memory.append(")");
+				}
+			}
+			
+		}
+		
+		return memory.toString();
 	}
 	
 	public String defineNodesActionAndControl() {
