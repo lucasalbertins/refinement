@@ -48,7 +48,7 @@ public class ADParser {
 		this.ad = ad;
 		setName(nameAD);
 		this.countGet_ad = 1;
-		this.countSet_ad = 2;
+		this.countSet_ad = 1;
 		this.countCe_ad = 1;
 		this.countOe_ad = 1;
 		this.countUpdate_ad = 1;
@@ -74,17 +74,7 @@ public class ADParser {
 	
 	public void clearBuffer() {
 		this.countGet_ad = 1;
-		if (ad.getName().equals("action4") || ad.getName().equals("merge3") || ad.getName().equals("join4")) {
-			this.countSet_ad = 3;
-		} else if(ad.getName().equals("decision1") || ad.getName().equals("decision3") || ad.getName().equals("action3")
-				|| ad.getName().equals("action5") || ad.getName().equals("action6") || ad.getName().equals("flowFinal3")
-				|| ad.getName().equals("flowFinal4") || ad.getName().equals("flowFinal5") || ad.getName().equals("final1")
-				|| ad.getName().equals("fork2") || ad.getName().equals("join2") || ad.getName().equals("join2")
-				|| ad.getName().equals("join3") || ad.getName().equals("merge4")){
-			this.countSet_ad = 2;
-		} else {
-			this.countSet_ad = 1;
-		}
+		this.countSet_ad = 1;
 		this.countCe_ad = 1;
 		this.countOe_ad = 1;
 		this.countUpdate_ad = 1;
@@ -398,6 +388,103 @@ public class ADParser {
 		}
 		
 		return memory.toString();
+	}
+	
+	public String defineMainNodes() {
+		StringBuilder mainNode = new StringBuilder();
+		String nameDiagram = ad.getName();
+		ArrayList<String> alphabet = new ArrayList<>();
+		
+		mainNode.append("MAIN = " + nameDiagram + "(1); LOOP\n");
+		mainNode.append("LOOP = loop -> LOOP\n");
+		
+		mainNode.append("END_DIAGRAM_" + nameDiagram + " = endDiagram_" + nameDiagram + " -> SKIP\n");
+		mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
+		
+		if (parameterNodesInput.size() + parameterNodesOutput.size() > 0) {
+			mainNode.append("(((");
+		} else {
+			mainNode.append("((");
+		}
+		
+		mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ") ");
+		mainNode.append("[|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
+		mainNode.append("TokenManager_" + nameDiagram + "_t(0,0)) ");
+		
+		if (lockChannel.size() > 0) {
+			mainNode.append("[|{|");
+			for (String lock : lockChannel) {
+				mainNode.append("lock_" + lock + ",");
+			}
+			mainNode.append("endDiagram_" + nameDiagram + "|}|] ");
+		}
+		
+		if (parameterNodesInput.size() + parameterNodesOutput.size() > 0) {
+			mainNode.append("Lock_" + nameDiagram + ")");
+			mainNode.append(" [|{|");
+			
+			for (String input : parameterNodesInput.keySet()) {
+				mainNode.append("get_" + input + "_" + nameDiagram + ",");
+				mainNode.append("set_" + input + "_" + nameDiagram + ",");
+			}
+			
+			for (String output : parameterNodesOutput.keySet()) {
+				mainNode.append("get_" + output + "_" + nameDiagram + ",");
+				mainNode.append("set_" + output + "_" + nameDiagram + ",");
+			}
+			
+			mainNode.append("endActivity_" + nameDiagram + "|}|] ");
+			
+			mainNode.append("Mem_" + nameDiagram + ")\n");
+		} else {
+			mainNode.append("Lock_" + nameDiagram + ")\n");
+		}
+		
+		
+		mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
+		mainNode.append("StartActivity_" + nameDiagram + "(ID_" + nameDiagram + "); Node_" + nameDiagram + "; EndActivity_" + nameDiagram + "(ID_" + nameDiagram + ")\n");
+		
+		
+		mainNode.append("StartActivity_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
+		mainNode.append("startActivity_" + nameDiagram + ".ID_" + nameDiagram);
+		
+		if (parameterNodesInput.size() > 0) {
+			for (String input : parameterNodesInput.keySet()) {
+				mainNode.append("?" + input);
+			}
+			
+			mainNode.append(" -> ");
+			
+			for (String input : parameterNodesInput.keySet()) {
+				set(alphabet, mainNode, input);
+			}
+			
+			mainNode.append("SKIP\n");
+		} else {
+			mainNode.append(" -> SKIP\n");
+		}
+		
+		
+		mainNode.append("EndActivity_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
+		
+		if (parameterNodesOutput.size() > 0) {			
+			for (String input : parameterNodesOutput.keySet()) {
+				get(alphabet, mainNode, input);
+			}
+			
+			mainNode.append("endActivity_" + nameDiagram + ".ID_" + nameDiagram);
+			
+			for (String output : parameterNodesOutput.keySet()) {
+				mainNode.append("!" + output);
+			}
+			
+			mainNode.append(" -> SKIP");
+		} else {
+			mainNode.append("endActivity_" + nameDiagram + ".ID_" + nameDiagram + " -> SKIP");
+		}
+
+		
+		return mainNode.toString();
 	}
 	
 	public String defineNodesActionAndControl() {

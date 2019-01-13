@@ -16,7 +16,7 @@ channel loop
 MAIN = action1(1); LOOP
 LOOP = loop -> LOOP
 END_DIAGRAM_action1 = endDiagram_action1 -> SKIP
-action1(ID_action1) = (((Internal_action1(ID_action1) [|{|update_action1,clear_action1,endDiagram_action1|}|] TokenManager_action1_t(0,0))) [|{|lock_act1_action1,endDiagram_action1|}|] Lock_action1)
+action1(ID_action1) = ((Internal_action1(ID_action1) [|{|update_action1,clear_action1,endDiagram_action1|}|] TokenManager_action1_t(0,0)) [|{|lock_act1_action1,endDiagram_action1|}|] Lock_action1)
 Internal_action1(ID_action1) = StartActivity_action1(ID_action1); Node_action1; EndActivity_action1(ID_action1)
 StartActivity_action1(ID_action1) = startActivity_action1.ID_action1 -> SKIP
 EndActivity_action1(ID_action1) = endActivity_action1.ID_action1 -> SKIP

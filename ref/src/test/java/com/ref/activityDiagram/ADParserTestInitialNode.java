@@ -185,7 +185,7 @@ public class ADParserTestInitialNode {
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision1_t = update_decision1.1!(1-0) -> ((ce_decision1.1 -> SKIP))\n" + 
 				"parameter_x_t = update_decision1.2!(1-0) -> get_x_decision1.1?x -> ((oe_x_decision1.1!x -> SKIP))\n" + 
-				"dec1_decision1 = ((ce_decision1.1 -> SKIP) ||| (oe_x_decision1.1?x -> set_x_dec1_decision1.2!x -> SKIP)); update_decision1.3!(1-2) -> get_x_dec1_decision1.2?x -> (x == 1 & (ce_decision1.2 -> SKIP) [] x == 0 & (ce_decision1.3 -> SKIP)); dec1_decision1\n" + 
+				"dec1_decision1 = ((ce_decision1.1 -> SKIP) ||| (oe_x_decision1.1?x -> set_x_dec1_decision1.1!x -> SKIP)); update_decision1.3!(1-2) -> get_x_dec1_decision1.2?x -> (x == 1 & (ce_decision1.2 -> SKIP) [] x == 0 & (ce_decision1.3 -> SKIP)); dec1_decision1\n" + 
 				"dec1_decision1_t = ((dec1_decision1 /\\ END_DIAGRAM_decision1) [|{|get_x_dec1_decision1,set_x_dec1_decision1,endDiagram_decision1|}|] Mem_dec1_decision1_x_t(0)) \\{|get_x_dec1_decision1,set_x_dec1_decision1|}\n" + 
 				"act1_decision1 = ((ce_decision1.2 -> SKIP)); lock_act1_decision1.lock -> event_act1_decision1 -> lock_act1_decision1.unlock -> update_decision1.4!(1-1) -> ((ce_decision1.4 -> SKIP)); act1_decision1\n" + 
 				"act1_decision1_t = act1_decision1 /\\ END_DIAGRAM_decision1\n" + 
@@ -208,9 +208,9 @@ public class ADParserTestInitialNode {
 		expected.append("parameter_z_t = update_decision3.1!(1-0) -> get_z_decision3.1?z -> ((oe_z_decision3.1!z -> SKIP))\n" + 
 				"dec1_decision3 = oe_z_decision3.1?z -> update_decision3.2!(1-1) -> (z > 0 & (oe_z_decision3.2!z -> SKIP) [] z <= 0 & (oe_z_decision3.3!z -> SKIP)); dec1_decision3\n" + 
 				"dec1_decision3_t = dec1_decision3 /\\ END_DIAGRAM_decision3\n" + 
-				"act1_decision3 = ((oe_z_decision3.2?z -> set_z_act1_decision3.2!z -> SKIP)); lock_act1_decision3.lock -> event_act1_decision3 -> lock_act1_decision3.unlock -> update_decision3.3!(1-1) -> get_z_act1_decision3.2?z -> ((oe_z_decision3.4!(z) -> SKIP)); act1_decision3\n" + 
+				"act1_decision3 = ((oe_z_decision3.2?z -> set_z_act1_decision3.1!z -> SKIP)); lock_act1_decision3.lock -> event_act1_decision3 -> lock_act1_decision3.unlock -> update_decision3.3!(1-1) -> get_z_act1_decision3.2?z -> ((oe_z_decision3.4!(z) -> SKIP)); act1_decision3\n" + 
 				"act1_decision3_t = ((act1_decision3 /\\ END_DIAGRAM_decision3) [|{|get_z_act1_decision3,set_z_act1_decision3,endDiagram_decision3|}|] Mem_act1_decision3_z_t(0)) \\{|get_z_act1_decision3,set_z_act1_decision3|}\n" + 
-				"act2_decision3 = ((oe_z_decision3.3?z -> set_z_act2_decision3.3!z -> SKIP)); lock_act2_decision3.lock -> event_act2_decision3 -> lock_act2_decision3.unlock -> update_decision3.4!(1-1) -> get_z_act2_decision3.3?z -> ((oe_z_decision3.5!(z) -> SKIP)); act2_decision3\n" + 
+				"act2_decision3 = ((oe_z_decision3.3?z -> set_z_act2_decision3.2!z -> SKIP)); lock_act2_decision3.lock -> event_act2_decision3 -> lock_act2_decision3.unlock -> update_decision3.4!(1-1) -> get_z_act2_decision3.3?z -> ((oe_z_decision3.5!(z) -> SKIP)); act2_decision3\n" + 
 				"act2_decision3_t = ((act2_decision3 /\\ END_DIAGRAM_decision3) [|{|get_z_act2_decision3,set_z_act2_decision3,endDiagram_decision3|}|] Mem_act2_decision3_z_t(0)) \\{|get_z_act2_decision3,set_z_act2_decision3|}\n" + 
 				"fin1_decision3 = ((oe_z_decision3.5?z -> SKIP) [] (oe_z_decision3.4?z -> SKIP)); clear_decision3.1 -> SKIP\n" + 
 				"fin1_decision3_t = fin1_decision3 /\\ END_DIAGRAM_decision3\n" + 
@@ -227,11 +227,11 @@ public class ADParserTestInitialNode {
 		String actual = parser6.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_t = update_join2.1!(2-0) -> get_x_join2.1?x -> ((oe_x_join2.1!x -> SKIP) ||| (oe_x_join2.2!x -> SKIP))\n" + 
-				"act2_join2 = ((oe_x_join2.1?x -> set_x_act2_join2.2!x -> SKIP)); lock_act2_join2.lock -> event_act2_join2 -> lock_act2_join2.unlock -> update_join2.2!(1-1) -> get_x_act2_join2.2?x -> ((oe_x_join2.3!(x) -> SKIP)); act2_join2\n" + 
+				"act2_join2 = ((oe_x_join2.1?x -> set_x_act2_join2.1!x -> SKIP)); lock_act2_join2.lock -> event_act2_join2 -> lock_act2_join2.unlock -> update_join2.2!(1-1) -> get_x_act2_join2.2?x -> ((oe_x_join2.3!(x) -> SKIP)); act2_join2\n" + 
 				"act2_join2_t = ((act2_join2 /\\ END_DIAGRAM_join2) [|{|get_x_act2_join2,set_x_act2_join2,endDiagram_join2|}|] Mem_act2_join2_x_t(0)) \\{|get_x_act2_join2,set_x_act2_join2|}\n" + 
-				"act1_join2 = ((oe_x_join2.2?x -> set_x_act1_join2.3!x -> SKIP)); lock_act1_join2.lock -> event_act1_join2 -> lock_act1_join2.unlock -> update_join2.3!(1-1) -> get_x_act1_join2.3?x -> ((oe_x_join2.4!(x) -> SKIP)); act1_join2\n" + 
+				"act1_join2 = ((oe_x_join2.2?x -> set_x_act1_join2.2!x -> SKIP)); lock_act1_join2.lock -> event_act1_join2 -> lock_act1_join2.unlock -> update_join2.3!(1-1) -> get_x_act1_join2.3?x -> ((oe_x_join2.4!(x) -> SKIP)); act1_join2\n" + 
 				"act1_join2_t = ((act1_join2 /\\ END_DIAGRAM_join2) [|{|get_x_act1_join2,set_x_act1_join2,endDiagram_join2|}|] Mem_act1_join2_x_t(0)) \\{|get_x_act1_join2,set_x_act1_join2|}\n" + 
-				"join1_join2 = ((oe_x_join2.3?x -> set_x_join1_join2.4!x -> SKIP) ||| (oe_x_join2.4?x -> set_x_join1_join2.5!x -> SKIP)); update_join2.4!(1-2) -> get_x_join1_join2.4?x -> ((oe_x_join2.5!x -> SKIP)); join1_join2\n" + 
+				"join1_join2 = ((oe_x_join2.3?x -> set_x_join1_join2.3!x -> SKIP) ||| (oe_x_join2.4?x -> set_x_join1_join2.4!x -> SKIP)); update_join2.4!(1-2) -> get_x_join1_join2.4?x -> ((oe_x_join2.5!x -> SKIP)); join1_join2\n" + 
 				"join1_join2_t = ((join1_join2 /\\ END_DIAGRAM_join2) [|{|get_x_join1_join2,set_x_join1_join2,endDiagram_join2|}|] Mem_join1_join2_x_t(0)) \\{|get_x_join1_join2,set_x_join1_join2|}\n" + 
 				"fin1_join2 = ((oe_x_join2.5?x -> SKIP)); clear_join2.1 -> SKIP\n" + 
 				"fin1_join2_t = fin1_join2 /\\ END_DIAGRAM_join2\n" + 
@@ -249,9 +249,9 @@ public class ADParserTestInitialNode {
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_t = update_merge3.1!(1-0) -> get_x_merge3.1?x -> ((oe_x_merge3.1!x -> SKIP))\n" + 
 				"parameter_y_t = update_merge3.2!(1-0) -> get_y_merge3.2?y -> ((oe_y_merge3.2!y -> SKIP))\n" + 
-				"merge1_merge3 = ((oe_y_merge3.2?y -> set_yx_merge1_merge3.3!y -> SKIP) [] (oe_x_merge3.1?x -> set_yx_merge1_merge3.4!x -> SKIP)); update_merge3.3!(1-1) -> get_yx_merge1_merge3.3?yx -> oe_yx_merge3.3!yx -> merge1_merge3\n" + 
+				"merge1_merge3 = ((oe_y_merge3.2?y -> set_yx_merge1_merge3.1!y -> SKIP) [] (oe_x_merge3.1?x -> set_yx_merge1_merge3.2!x -> SKIP)); update_merge3.3!(1-1) -> get_yx_merge1_merge3.3?yx -> oe_yx_merge3.3!yx -> merge1_merge3\n" + 
 				"merge1_merge3_t = ((merge1_merge3 /\\ END_DIAGRAM_merge3) [|{|get_yx_merge1_merge3,set_yx_merge1_merge3,endDiagram_merge3|}|] Mem_merge1_merge3_yx_t(0)) \\{|get_yx_merge1_merge3,set_yx_merge1_merge3|}\n" + 
-				"act1_merge3 = ((oe_yx_merge3.3?x -> set_x_act1_merge3.5!x -> SKIP)); lock_act1_merge3.lock -> event_act1_merge3 -> lock_act1_merge3.unlock -> update_merge3.4!(1-1) -> get_x_act1_merge3.4?x -> ((oe_yx_merge3.4!(x) -> SKIP)); act1_merge3\n" + 
+				"act1_merge3 = ((oe_yx_merge3.3?x -> set_x_act1_merge3.3!x -> SKIP)); lock_act1_merge3.lock -> event_act1_merge3 -> lock_act1_merge3.unlock -> update_merge3.4!(1-1) -> get_x_act1_merge3.4?x -> ((oe_yx_merge3.4!(x) -> SKIP)); act1_merge3\n" + 
 				"act1_merge3_t = ((act1_merge3 /\\ END_DIAGRAM_merge3) [|{|get_x_act1_merge3,set_x_act1_merge3,endDiagram_merge3|}|] Mem_act1_merge3_x_t(0)) \\{|get_x_act1_merge3,set_x_act1_merge3|}\n" + 
 				"fin1_merge3 = ((oe_yx_merge3.4?yx -> SKIP)); clear_merge3.1 -> SKIP\n" + 
 				"fin1_merge3_t = fin1_merge3 /\\ END_DIAGRAM_merge3\n" + 

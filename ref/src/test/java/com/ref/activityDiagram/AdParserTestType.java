@@ -92,6 +92,7 @@ public class AdParserTestType {
 		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
+		parser1.defineMainNodes();
 		String actual = parser1.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_action1 = {1..1}\n" + 
@@ -111,6 +112,7 @@ public class AdParserTestType {
 		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
+		parser2.defineMainNodes();
 		String actual = parser2.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_decision1 = {1..1}\n" + 
@@ -134,6 +136,7 @@ public class AdParserTestType {
 		parser3.clearBuffer();
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();
+		parser3.defineMainNodes();
 		String actual = parser3.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_join1 = {1..1}\n" + 
@@ -153,6 +156,7 @@ public class AdParserTestType {
 		parser4.clearBuffer();
 		parser4.defineNodesActionAndControl();
 		parser4.defineChannels();
+		parser4.defineMainNodes();
 		String actual = parser4.defineTypes();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_decision3 = {1..1}\n" + 
