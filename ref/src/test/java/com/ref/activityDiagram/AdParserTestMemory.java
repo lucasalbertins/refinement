@@ -89,10 +89,10 @@ public class AdParserTestMemory {
 		StringBuffer expected = new StringBuffer();
 		expected.append("Mem_act1_action3_x(x) = get_x_act1_action3?c!x -> Mem_act1_action3_x(x) [] set_x_act1_action3?c?x -> Mem_act1_action3_x(x)\n" + 
 				"Mem_act1_action3_x_t(x) = Mem_act1_action3_x(x) /\\ END_DIAGRAM_action3\n" + 
-				"Mem_act2_action3_z(z) = get_z_act2_action3?c!z -> Mem_act2_action3_z(z) [] set_z_act2_action3?c?z -> Mem_act2_action3_z(z)\n" + 
-				"Mem_act2_action3_z_t(z) = Mem_act2_action3_z(z) /\\ END_DIAGRAM_action3\n" + 
 				"Mem_act3_action3_w(w) = get_w_act3_action3?c!w -> Mem_act3_action3_w(w) [] set_w_act3_action3?c?w -> Mem_act3_action3_w(w)\n" + 
 				"Mem_act3_action3_w_t(w) = Mem_act3_action3_w(w) /\\ END_DIAGRAM_action3\n" + 
+				"Mem_act2_action3_z(z) = get_z_act2_action3?c!z -> Mem_act2_action3_z(z) [] set_z_act2_action3?c?z -> Mem_act2_action3_z(z)\n" + 
+				"Mem_act2_action3_z_t(z) = Mem_act2_action3_z(z) /\\ END_DIAGRAM_action3\n" + 
 				"Mem_action3_x(x) = get_x_action3?c!x -> Mem_action3_x(x) [] set_x_action3?c?x -> Mem_action3_x(x)\n" + 
 				"Mem_action3_x_t(x) = Mem_action3_x(x) /\\ (endActivity_action3?x -> SKIP)\n" + 
 				"Mem_action3 = Mem_action3_x_t(0)");
@@ -145,5 +145,5 @@ public class AdParserTestMemory {
 		
 		assertEquals(expected.toString(), actual);
 	}
-
+	
 }
