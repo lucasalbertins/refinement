@@ -26,4 +26,30 @@
             type="extraTab"
             class="com.ref.ui.RefinementView" />
    </extension>
+   <extension point="com.change_vision.astah.ui.actionSets">
+      <actionSet
+            label="%AD_set_label"
+            visible="true"
+            id="com.ref.ref.actionSet">
+         <menu
+               id="AD"
+               label="%AD_menu_group"
+               path="tool/AD">
+         </menu>
+         <menu
+               id="verification"
+               label="%AD2_menu_group"
+               path="tool/AD/verification">
+         </menu>
+         <action
+			   label="%AD_menu_label"
+               icon="icons/sample.gif"
+               class="com.ref.activityDiagram.TemplateActionAD"
+               tooltip="%menu_tooltip"
+               menubarPath="tool/AD/verification/"
+               id="verification">
+         </action>
+     </actionSet>
+   </extension>
+   
 </plugin>

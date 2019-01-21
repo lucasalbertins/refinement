@@ -354,5 +354,69 @@ public class FdrWrapper {
 		}
 
 	}
+	
+	/*  Activity Diagram  */
+	
+	public String getErrorEvent(Object counterExample, Object session) {
+        String errorEvent = "";
+        try {
+            Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
+            if ((Long) error != 1 && (Long) error != 0) {
+                errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) error).toString();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return errorEvent;
+    }
+
+	
+	public int checkDeadlock(String filename) throws Exception{
+		
+	/*
+	0 = no error
+	1 = deadlock
+	2 = compilation failed
+	
+	*/
+	
+		int hasError = 0;
+
+			Object session;
+			try {
+				session = sessionClass.newInstance();
+				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+				
+				for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
+						null)) {
+					
+					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+					
+					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+							"counterexamples", null, null)) {
+						hasError = 1;
+					}
+					
+					if (!((boolean) invokeProperty(assertion.getClass(), assertion,
+							"passed", null, null))) {
+						hasError = 2;
+					}
+				}
+			} catch (InstantiationException e) {
+				throw new Exception("Set your fdr path 1");
+			} catch (IllegalAccessException e) {
+				throw new Exception("Set your fdr path 2");
+			} catch (Exception e) {
+				Logador logger = Logador.getInstance();
+				logger.log("LOG FDRWRAPPER");
+				for(StackTraceElement element :e.getStackTrace()){
+					logger.log(element.toString());						
+				}
+				throw new Exception(e.getMessage());
+			}
+
+   
+		return hasError;
+	}
 
 }

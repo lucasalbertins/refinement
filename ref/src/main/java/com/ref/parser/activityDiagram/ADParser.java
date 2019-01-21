@@ -34,15 +34,16 @@ public class ADParser {
 	private HashMap<String, String> syncChannelsEdge;			//ID flow, channel
 	private HashMap<String, String> syncObjectsEdge;
 	private HashMap<String, String> objectEdges;				//channel; name
-	private ArrayList<IActivityNode> queueNode;
-	private ArrayList<IActivity> callBehaviorList;
-	private ArrayList<String> eventChannel;
-	private ArrayList<String> lockChannel;
-	private ArrayList<String> allInitial;
+	private List<IActivityNode> queueNode;
+	private List<IActivity> callBehaviorList;
+	private List<String> eventChannel;
+	private List<String> lockChannel;
+	private List<String> allInitial;
 	private ArrayList<String> alphabetAllInitialAndParameter;
 	private HashMap<String, String> parameterNodesInput;		//name; type
 	private HashMap<String, String> parameterNodesOutput;
 	private List<Pair<String, String>> memoryLocal;				//nameNode, nameObject
+	private List<ArrayList<String>> unionList;
 	
 	public ADParser(IActivity ad, String nameAD) {
 		this.ad = ad;
@@ -57,7 +58,7 @@ public class ADParser {
 		this.limiteSup = -99;
 		this.alphabetNode = new HashMap<>();
 		countCall = new HashMap<>();
-		//addCountCall(); //comentado durante os testes
+		addCountCall(); //comentado durante os testes
 		syncChannelsEdge = new HashMap<>();
 		syncObjectsEdge = new HashMap<>();
 		objectEdges = new HashMap<>();
@@ -70,6 +71,7 @@ public class ADParser {
 		parameterNodesInput = new HashMap<>();
 		parameterNodesOutput = new HashMap<>();
 		memoryLocal = new ArrayList<>();
+		unionList = new ArrayList<>();
 	}
 	
 	public void clearBuffer() {
@@ -114,6 +116,38 @@ public class ADParser {
 			countCall.put(ad.getName(), 1);
 		}
 	}
+	
+	/*
+	 * Master Function
+	 * */
+	
+	public String parserDiagram() {
+		String nodes = defineNodesActionAndControl();
+		String lock = defineLock();
+		String channel = defineChannels();
+		String main = defineMainNodes();
+		String type = defineTypes();
+		String tokenManager = defineTokenManager();
+		String memory = defineMemorys();
+		String processSync = defineProcessSync();
+		
+		String parser = type +
+						channel +
+						main +
+						processSync +
+						nodes +
+						memory +
+						tokenManager +
+						lock +
+						"\nassert MAIN :[deadlock free]";
+		
+		return parser;
+	}
+	
+	
+	/*   */
+	
+	
 	
 	public String defineChannels() {
 		StringBuilder channels = new StringBuilder();
@@ -275,6 +309,29 @@ public class ADParser {
 				
 			}
 			
+			List<String> buffer = new ArrayList<>();
+			
+			for (Pair<String, String> pair : memoryLocal) { //teste***
+				if (!parameterNodesInput.containsKey(pair.getValue()) && !parameterNodesOutput.containsKey(pair.getValue()) && !buffer.contains(pair.getValue())) {
+					types.append(pair.getValue() + "_" + nameDiagram + " = ");
+
+					types.append("{0..1}\n"); 
+				
+					buffer.add(pair.getValue());
+				}					
+				
+			}
+			
+			for (ArrayList union : unionList) {
+				String objectUnion = "";
+				for (int i = 0; i < union.size(); i++) {
+					objectUnion += union.get(i);
+				}
+				
+				types.append(objectUnion + "_" + nameDiagram + " = ");
+				types.append("{0..1}\n"); 
+				
+			}
 		}
 		
 		if (countGet_ad > 1 || countSet_ad > 1) {
@@ -387,6 +444,8 @@ public class ADParser {
 			
 		}
 		
+		memory.append("\n");
+		
 		return memory.toString();
 	}
 	
@@ -483,7 +542,7 @@ public class ADParser {
 			mainNode.append("endActivity_" + nameDiagram + ".ID_" + nameDiagram + " -> SKIP");
 		}
 
-		
+		mainNode.append("\n");
 		return mainNode.toString();
 	}
 	
@@ -594,6 +653,8 @@ public class ADParser {
 		
 		System.out.println(nodes);
 
+		nodes.append("\n");
+		
 		return nodes.toString();
 	}
 	
@@ -918,7 +979,9 @@ public class ADParser {
 			getLocal(alphabet, action, nameObj, activityNode.getName(), nameObj);
 		}
 		
-		action.append("(");
+		if (outFlows.length > 0 || outPins.length > 0) {
+			action.append("(");
+		}
 		
 		for (int i = 0; i <  outFlows.length; i++) {	//creates the parallel output channels
 			String ce = createCE();
@@ -935,12 +998,19 @@ public class ADParser {
 		
 		String nameObject = "";
 		
+		ArrayList<String> union = new ArrayList<>();
+		
 		for (int i = 0; i < inPins.length; i++) {
 			IFlow inFlowPin[] = inPins[i].getIncomings();
 			for (int x = 0; x < inFlowPin.length; x++) {
 				String channel = syncObjectsEdge.get(inFlowPin[x].getId());
 				nameObject += objectEdges.get(channel);
+				union.add(objectEdges.get(channel));
 			}
+		}
+		
+		if (union.size() > 1) {
+			unionList.add(union);
 		}
 		
 		for (int i = 0; i <  outPins.length; i++) {	//creates the parallel output channels
@@ -969,8 +1039,9 @@ public class ADParser {
 			}
 		}	
 		
-
-		action.append("); ");
+		if (outFlows.length > 0 || outPins.length > 0) {
+			action.append("); ");
+		}
 		
 		action.append(nameAction + "\n");
 		
@@ -1045,7 +1116,7 @@ public class ADParser {
 				}
 			}
 			
-		} else {
+		} else if (outPins.length > 0) {
 			
 			IFlow outFlowOut[] = outPins[0].getOutgoings();
 			if (outFlowOut[0].getTarget() instanceof IInputPin) {
@@ -1085,7 +1156,9 @@ public class ADParser {
 						}
 					}
 				}
-			}
+			} 
+		} else {
+			activityNode = null;
 		}
 			
 		nodes.append(action.toString());
