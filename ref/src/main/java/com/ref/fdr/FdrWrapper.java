@@ -6,6 +6,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -63,6 +64,8 @@ public class FdrWrapper {
 
 	private List<String> classes;
 
+	private Object session;
+	
 	public boolean loadFDR(String path) {
 
 		File file = new File(path);
@@ -371,37 +374,61 @@ public class FdrWrapper {
     }
 
 	
-	public int checkDeadlock(String filename) throws Exception{
+	public int checkDeadlock(String filename, int code) throws Exception{
 		
 	/*
 	0 = no error
 	1 = deadlock
 	2 = compilation failed
-	
 	*/
 	
 		int hasError = 0;
 
-			Object session;
 			try {
-				session = sessionClass.newInstance();
+				if (session == null) {
+					session = sessionClass.newInstance();
+				} else {
+					//invokeProperty(session.getClass(), session, "finalize", null, null);
+					//session = sessionClass.newInstance();
+				}
 				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 				
-				for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
-						null)) {
-					
+				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+				Object assertion = assertions.get(code);
+				try {
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-					
-					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-							"counterexamples", null, null)) {
-						hasError = 1;
+
+					if (code == 0) {	//check Deadlock
+						for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+								"counterexamples", null, null)) {
+							hasError = 1;
+						}
+					} else if (code == 1) { // check Livelock
+						if (!((boolean) invokeProperty(assertion.getClass(), assertion,
+								"passed", null, null))) {
+							hasError = 2;
+						}
+
+						for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+								"counterexamples", null, null)) {
+							hasError = 1;
+						}
+					} else { // check non-determinism
+						if (!((boolean) invokeProperty(assertion.getClass(), assertion,
+								"passed", null, null))) {
+							hasError = 2;
+						}
+
+						for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+								"counterexamples", null, null)) {
+							hasError = 1;
+						}
 					}
-					
-					if (!((boolean) invokeProperty(assertion.getClass(), assertion,
-							"passed", null, null))) {
-						hasError = 2;
-					}
+
+				} catch (Exception e) {
+					hasError = 2;
 				}
+				
 			} catch (InstantiationException e) {
 				throw new Exception("Set your fdr path 1");
 			} catch (IllegalAccessException e) {
@@ -412,11 +439,11 @@ public class FdrWrapper {
 				for(StackTraceElement element :e.getStackTrace()){
 					logger.log(element.toString());						
 				}
-				throw new Exception(e.getMessage());
+				//throw new Exception(e.getMessage());
 			}
 
    
 		return hasError;
 	}
-
+	
 }

@@ -139,7 +139,9 @@ public class ADParser {
 						memory +
 						tokenManager +
 						lock +
-						"\nassert MAIN :[deadlock free]";
+						"\nassert MAIN :[deadlock free]" +
+						"\nassert MAIN :[divergence free]" +
+						"\nassert MAIN :[deterministic]";
 		
 		return parser;
 	}

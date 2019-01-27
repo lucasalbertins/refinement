@@ -38,27 +38,26 @@ public class TemplateActionAD implements IPluginActionDelegate {
 				ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName());
 				String diagramCSP = parser.parserDiagram();
 				
-				//FileWriter fw = new FileWriter(new File( "C:\\Users\\Amaury\\Desktop\\Amaury\\" + ((IActivityDiagram) diagram).getActivity() + ".csp"));
-				//BufferedWriter bw = new BufferedWriter(fw);
+				String fs = System.getProperty("file.separator");
+				String uh = System.getProperty("user.home");
+				File directory = new File(uh+fs+"TempAstah");
+				directory.mkdirs();
 				
-				//bw.write(diagramCSP);
-				
-				String path = "C:\\Users\\Amaury\\Desktop\\Amaury\\";
-				
-				PrintWriter writer = new PrintWriter(((IActivityDiagram) diagram).getActivity() + ".csp", "UTF-8");
+				PrintWriter writer = new PrintWriter(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", "UTF-8");
 				writer.print(diagramCSP);		
 				
-				int result = FdrWrapper.getInstance().checkDeadlock(((IActivityDiagram) diagram).getActivity() + ".csp");
+				writer.flush();
+				writer.close();
+				
+				int result = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", 0);
 				System.out.println(result);
 				if (result == 0) {
-					JOptionPane.showMessageDialog(window.getParent(), "Free deadlock!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " is deadlock free!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
 				} else if (result == 1) {
-					JOptionPane.showMessageDialog(window.getParent(), "Deadlock detected!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " deadlock detected!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
 				} else if (result == 2) {
-					JOptionPane.showMessageDialog(window.getParent(), "Compilation Failed!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " compilation failed!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
 				}
-				
-				writer.close();
 			}
 			
 		} catch (FileNotFoundException e) {
