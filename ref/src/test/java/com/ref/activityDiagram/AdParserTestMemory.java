@@ -87,15 +87,15 @@ public class AdParserTestMemory {
 		parser1.defineChannels();
 		String actual = parser1.defineMemorys();
 		StringBuffer expected = new StringBuffer();
-		expected.append("Mem_act1_action3_x(x) = get_x_act1_action3?c!x -> Mem_act1_action3_x(x) [] set_x_act1_action3?c?x -> Mem_act1_action3_x(x)\n" + 
-				"Mem_act1_action3_x_t(x) = Mem_act1_action3_x(x) /\\ END_DIAGRAM_action3\n" + 
-				"Mem_act3_action3_w(w) = get_w_act3_action3?c!w -> Mem_act3_action3_w(w) [] set_w_act3_action3?c?w -> Mem_act3_action3_w(w)\n" + 
+		expected.append("Mem_act3_action3_w(w) = get_w_act3_action3?c!w -> Mem_act3_action3_w(w) [] set_w_act3_action3?c?w -> Mem_act3_action3_w(w)\n" + 
 				"Mem_act3_action3_w_t(w) = Mem_act3_action3_w(w) /\\ END_DIAGRAM_action3\n" + 
 				"Mem_act2_action3_z(z) = get_z_act2_action3?c!z -> Mem_act2_action3_z(z) [] set_z_act2_action3?c?z -> Mem_act2_action3_z(z)\n" + 
 				"Mem_act2_action3_z_t(z) = Mem_act2_action3_z(z) /\\ END_DIAGRAM_action3\n" + 
+				"Mem_act1_action3_x(x) = get_x_act1_action3?c!x -> Mem_act1_action3_x(x) [] set_x_act1_action3?c?x -> Mem_act1_action3_x(x)\n" + 
+				"Mem_act1_action3_x_t(x) = Mem_act1_action3_x(x) /\\ END_DIAGRAM_action3\n" + 
 				"Mem_action3_x(x) = get_x_action3?c!x -> Mem_action3_x(x) [] set_x_action3?c?x -> Mem_action3_x(x)\n" + 
 				"Mem_action3_x_t(x) = Mem_action3_x(x) /\\ (endActivity_action3?x -> SKIP)\n" + 
-				"Mem_action3 = Mem_action3_x_t(0)");
+				"Mem_action3 = Mem_action3_x_t(0)\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -109,19 +109,19 @@ public class AdParserTestMemory {
 		parser2.defineChannels();
 		String actual = parser2.defineMemorys();
 		StringBuffer expected = new StringBuffer();
-		expected.append("Mem_act1_action4_x(x) = get_x_act1_action4?c!x -> Mem_act1_action4_x(x) [] set_x_act1_action4?c?x -> Mem_act1_action4_x(x)\n" + 
-				"Mem_act1_action4_x_t(x) = Mem_act1_action4_x(x) /\\ END_DIAGRAM_action4\n" + 
-				"Mem_act1_action4_y(y) = get_y_act1_action4?c!y -> Mem_act1_action4_y(y) [] set_y_act1_action4?c?y -> Mem_act1_action4_y(y)\n" + 
-				"Mem_act1_action4_y_t(y) = Mem_act1_action4_y(y) /\\ END_DIAGRAM_action4\n" + 
-				"Mem_act2_action4_w(w) = get_w_act2_action4?c!w -> Mem_act2_action4_w(w) [] set_w_act2_action4?c?w -> Mem_act2_action4_w(w)\n" + 
+		expected.append("Mem_act2_action4_w(w) = get_w_act2_action4?c!w -> Mem_act2_action4_w(w) [] set_w_act2_action4?c?w -> Mem_act2_action4_w(w)\n" + 
 				"Mem_act2_action4_w_t(w) = Mem_act2_action4_w(w) /\\ END_DIAGRAM_action4\n" + 
 				"Mem_act3_action4_w(w) = get_w_act3_action4?c!w -> Mem_act3_action4_w(w) [] set_w_act3_action4?c?w -> Mem_act3_action4_w(w)\n" + 
 				"Mem_act3_action4_w_t(w) = Mem_act3_action4_w(w) /\\ END_DIAGRAM_action4\n" + 
+				"Mem_act1_action4_x(x) = get_x_act1_action4?c!x -> Mem_act1_action4_x(x) [] set_x_act1_action4?c?x -> Mem_act1_action4_x(x)\n" + 
+				"Mem_act1_action4_x_t(x) = Mem_act1_action4_x(x) /\\ END_DIAGRAM_action4\n" + 
+				"Mem_act1_action4_y(y) = get_y_act1_action4?c!y -> Mem_act1_action4_y(y) [] set_y_act1_action4?c?y -> Mem_act1_action4_y(y)\n" + 
+				"Mem_act1_action4_y_t(y) = Mem_act1_action4_y(y) /\\ END_DIAGRAM_action4\n" + 
 				"Mem_action4_x(x) = get_x_action4?c!x -> Mem_action4_x(x) [] set_x_action4?c?x -> Mem_action4_x(x)\n" + 
 				"Mem_action4_x_t(x) = Mem_action4_x(x) /\\ (endActivity_action4?x -> SKIP)\n" + 
 				"Mem_action4_y(y) = get_y_action4?c!y -> Mem_action4_y(y) [] set_y_action4?c?y -> Mem_action4_y(y)\n" + 
 				"Mem_action4_y_t(y) = Mem_action4_y(y) /\\ (endActivity_action4?y -> SKIP)\n" + 
-				"Mem_action4 = (Mem_action4_x_t(0) [|{|endActivity_action4|}|] Mem_action4_y_t(0))");
+				"Mem_action4 = (Mem_action4_x_t(0) [|{|endActivity_action4|}|] Mem_action4_y_t(0))\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -141,7 +141,7 @@ public class AdParserTestMemory {
 				"Mem_act2_decision3_z_t(z) = Mem_act2_decision3_z(z) /\\ END_DIAGRAM_decision3\n" + 
 				"Mem_decision3_z(z) = get_z_decision3?c!z -> Mem_decision3_z(z) [] set_z_decision3?c?z -> Mem_decision3_z(z)\n" + 
 				"Mem_decision3_z_t(z) = Mem_decision3_z(z) /\\ (endActivity_decision3?z -> SKIP)\n" + 
-				"Mem_decision3 = Mem_decision3_z_t(0)");
+				"Mem_decision3 = Mem_decision3_z_t(0)\n");
 		
 		assertEquals(expected.toString(), actual);
 	}

@@ -84,7 +84,7 @@ public class ADParserTestForkNode {
 				"act2_fork1_t = act2_fork1 /\\ END_DIAGRAM_fork1\n" + 
 				"fin1_fork1 = ((ce_fork1.4 -> SKIP) [] (ce_fork1.5 -> SKIP)); clear_fork1.1 -> SKIP\n" + 
 				"fin1_fork1_t = fin1_fork1 /\\ END_DIAGRAM_fork1\n" + 
-				"init_fork1_t = (init1_fork1_t) /\\ END_DIAGRAM_fork1");
+				"init_fork1_t = (init1_fork1_t) /\\ END_DIAGRAM_fork1\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -105,7 +105,7 @@ public class ADParserTestForkNode {
 				"act2_fork2_t = ((act2_fork2 /\\ END_DIAGRAM_fork2) [|{|get_x_act2_fork2,set_x_act2_fork2,endDiagram_fork2|}|] Mem_act2_fork2_x_t(0)) \\{|get_x_act2_fork2,set_x_act2_fork2|}\n" + 
 				"fin1_fork2 = ((oe_x_fork2.4?x -> SKIP) [] (oe_x_fork2.5?x -> SKIP)); clear_fork2.1 -> SKIP\n" + 
 				"fin1_fork2_t = fin1_fork2 /\\ END_DIAGRAM_fork2\n" + 
-				"init_fork2_t = (parameter_x_t) /\\ END_DIAGRAM_fork2");
+				"init_fork2_t = (parameter_x_t) /\\ END_DIAGRAM_fork2\n");
 		
 		assertEquals(expected.toString(), actual);
 	}

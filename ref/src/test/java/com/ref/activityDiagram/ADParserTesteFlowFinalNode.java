@@ -110,7 +110,7 @@ public class ADParserTesteFlowFinalNode {
 				"act1_flowFinal1_t = act1_flowFinal1 /\\ END_DIAGRAM_flowFinal1\n" + 
 				"flowFinal1_flowFinal1 = ((ce_flowFinal1.2 -> SKIP)); update_flowFinal1.3!(0-1) -> flowFinal1_flowFinal1\n" + 
 				"flowFinal1_flowFinal1_t = flowFinal1_flowFinal1 /\\ END_DIAGRAM_flowFinal1\n" + 
-				"init_flowFinal1_t = (init1_flowFinal1_t) /\\ END_DIAGRAM_flowFinal1");
+				"init_flowFinal1_t = (init1_flowFinal1_t) /\\ END_DIAGRAM_flowFinal1\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -129,7 +129,7 @@ public class ADParserTesteFlowFinalNode {
 				"act2_flowFinal2_t = act2_flowFinal2 /\\ END_DIAGRAM_flowFinal2\n" + 
 				"flowFinal1_flowFinal2 = ((ce_flowFinal2.3 -> SKIP) [] (ce_flowFinal2.4 -> SKIP)); update_flowFinal2.4!(0-1) -> flowFinal1_flowFinal2\n" + 
 				"flowFinal1_flowFinal2_t = flowFinal1_flowFinal2 /\\ END_DIAGRAM_flowFinal2\n" + 
-				"init_flowFinal2_t = (init1_flowFinal2_t) /\\ END_DIAGRAM_flowFinal2");
+				"init_flowFinal2_t = (init1_flowFinal2_t) /\\ END_DIAGRAM_flowFinal2\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -146,7 +146,7 @@ public class ADParserTesteFlowFinalNode {
 				"act1_flowFinal3_t = ((act1_flowFinal3 /\\ END_DIAGRAM_flowFinal3) [|{|get_x_act1_flowFinal3,set_x_act1_flowFinal3,endDiagram_flowFinal3|}|] Mem_act1_flowFinal3_x_t(0)) \\{|get_x_act1_flowFinal3,set_x_act1_flowFinal3|}\n" + 
 				"flowFinal1_flowFinal3 = ((oe_x_flowFinal3.2?x -> SKIP)); update_flowFinal3.3!(0-1) -> flowFinal1_flowFinal3\n" + 
 				"flowFinal1_flowFinal3_t = flowFinal1_flowFinal3 /\\ END_DIAGRAM_flowFinal3\n" + 
-				"init_flowFinal3_t = (parameter_x_t) /\\ END_DIAGRAM_flowFinal3");
+				"init_flowFinal3_t = (parameter_x_t) /\\ END_DIAGRAM_flowFinal3\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -167,7 +167,7 @@ public class ADParserTesteFlowFinalNode {
 				"act3_flowFinal4_t = ((act3_flowFinal4 /\\ END_DIAGRAM_flowFinal4) [|{|get_x_act3_flowFinal4,set_x_act3_flowFinal4,endDiagram_flowFinal4|}|] Mem_act3_flowFinal4_x_t(0)) \\{|get_x_act3_flowFinal4,set_x_act3_flowFinal4|}\n" + 
 				"flowFinal1_flowFinal4 = ((oe_x_flowFinal4.4?x -> SKIP) [] (oe_x_flowFinal4.5?x -> SKIP)); update_flowFinal4.5!(0-1) -> flowFinal1_flowFinal4\n" + 
 				"flowFinal1_flowFinal4_t = flowFinal1_flowFinal4 /\\ END_DIAGRAM_flowFinal4\n" + 
-				"init_flowFinal4_t = (parameter_x_t) /\\ END_DIAGRAM_flowFinal4");
+				"init_flowFinal4_t = (parameter_x_t) /\\ END_DIAGRAM_flowFinal4\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -189,7 +189,7 @@ public class ADParserTesteFlowFinalNode {
 				"act3_flowFinal5_t = act3_flowFinal5 /\\ END_DIAGRAM_flowFinal5\n" + 
 				"flowFinal1_flowFinal5 = ((oe_x_flowFinal5.2?x -> SKIP) [] (ce_flowFinal5.3 -> SKIP)); update_flowFinal5.6!(0-1) -> flowFinal1_flowFinal5\n" + 
 				"flowFinal1_flowFinal5_t = flowFinal1_flowFinal5 /\\ END_DIAGRAM_flowFinal5\n" + 
-				"init_flowFinal5_t = (parameter_x_t ||| init1_flowFinal5_t) /\\ END_DIAGRAM_flowFinal5");
+				"init_flowFinal5_t = (parameter_x_t ||| init1_flowFinal5_t) /\\ END_DIAGRAM_flowFinal5\n");
 		
 		assertEquals(expected.toString(), actual);
 	}

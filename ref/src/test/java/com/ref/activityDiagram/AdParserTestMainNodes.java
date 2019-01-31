@@ -103,7 +103,7 @@ public class AdParserTestMainNodes {
 				"action1(ID_action1) = ((Internal_action1(ID_action1) [|{|update_action1,clear_action1,endDiagram_action1|}|] TokenManager_action1_t(0,0)) [|{|lock_act1_action1,endDiagram_action1|}|] Lock_action1)\n" + 
 				"Internal_action1(ID_action1) = StartActivity_action1(ID_action1); Node_action1; EndActivity_action1(ID_action1)\n" + 
 				"StartActivity_action1(ID_action1) = startActivity_action1.ID_action1 -> SKIP\n" + 
-				"EndActivity_action1(ID_action1) = endActivity_action1.ID_action1 -> SKIP");
+				"EndActivity_action1(ID_action1) = endActivity_action1.ID_action1 -> SKIP\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -120,10 +120,10 @@ public class AdParserTestMainNodes {
 		expected.append("MAIN = action3(1); LOOP\n" + 
 				"LOOP = loop -> LOOP\n" + 
 				"END_DIAGRAM_action3 = endDiagram_action3 -> SKIP\n" + 
-				"action3(ID_action3) = (((Internal_action3(ID_action3) [|{|update_action3,clear_action3,endDiagram_action3|}|] TokenManager_action3_t(0,0)) [|{|lock_act1_action3,lock_act3_action3,lock_act2_action3,endDiagram_action3|}|] Lock_action3) [|{|get_x_action3,set_x_action3,endActivity_action3|}|] Mem_action3)\n" + 
+				"action3(ID_action3) = (((Internal_action3(ID_action3) [|{|update_action3,clear_action3,endDiagram_action3|}|] TokenManager_action3_t(0,0)) [|{|lock_act3_action3,lock_act2_action3,lock_act1_action3,endDiagram_action3|}|] Lock_action3) [|{|get_x_action3,set_x_action3,endActivity_action3|}|] Mem_action3)\n" + 
 				"Internal_action3(ID_action3) = StartActivity_action3(ID_action3); Node_action3; EndActivity_action3(ID_action3)\n" + 
 				"StartActivity_action3(ID_action3) = startActivity_action3.ID_action3?x -> set_x_action3.4!x -> SKIP\n" + 
-				"EndActivity_action3(ID_action3) = endActivity_action3.ID_action3 -> SKIP");
+				"EndActivity_action3(ID_action3) = endActivity_action3.ID_action3 -> SKIP\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -143,7 +143,7 @@ public class AdParserTestMainNodes {
 				"join3(ID_join3) = (((Internal_join3(ID_join3) [|{|update_join3,clear_join3,endDiagram_join3|}|] TokenManager_join3_t(0,0)) [|{|lock_act1_join3,endDiagram_join3|}|] Lock_join3) [|{|get_x_join3,set_x_join3,endActivity_join3|}|] Mem_join3)\n" + 
 				"Internal_join3(ID_join3) = StartActivity_join3(ID_join3); Node_join3; EndActivity_join3(ID_join3)\n" + 
 				"StartActivity_join3(ID_join3) = startActivity_join3.ID_join3?x -> set_x_join3.3!x -> SKIP\n" + 
-				"EndActivity_join3(ID_join3) = endActivity_join3.ID_join3 -> SKIP");
+				"EndActivity_join3(ID_join3) = endActivity_join3.ID_join3 -> SKIP\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -163,7 +163,7 @@ public class AdParserTestMainNodes {
 				"merge3(ID_merge3) = (((Internal_merge3(ID_merge3) [|{|update_merge3,clear_merge3,endDiagram_merge3|}|] TokenManager_merge3_t(0,0)) [|{|lock_act1_merge3,endDiagram_merge3|}|] Lock_merge3) [|{|get_x_merge3,set_x_merge3,get_y_merge3,set_y_merge3,endActivity_merge3|}|] Mem_merge3)\n" + 
 				"Internal_merge3(ID_merge3) = StartActivity_merge3(ID_merge3); Node_merge3; EndActivity_merge3(ID_merge3)\n" + 
 				"StartActivity_merge3(ID_merge3) = startActivity_merge3.ID_merge3?x?y -> set_x_merge3.4!x -> set_y_merge3.5!y -> SKIP\n" + 
-				"EndActivity_merge3(ID_merge3) = endActivity_merge3.ID_merge3 -> SKIP");
+				"EndActivity_merge3(ID_merge3) = endActivity_merge3.ID_merge3 -> SKIP\n");
 		
 		assertEquals(expected.toString(), actual);
 	}

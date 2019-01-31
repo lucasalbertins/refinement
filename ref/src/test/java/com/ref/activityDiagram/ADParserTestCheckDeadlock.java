@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -76,17 +77,15 @@ public class ADParserTestCheckDeadlock {
 	
 	@AfterClass
 	public static void CloseProject() throws Exception {
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempAstah");
+		delete(directory);
 		AstahAPI.getAstahAPI().getProjectAccessor().close();
 	}
 	
-	/*
-	 * Teste de Tradução TokenManager
-	 * */
-	@Test
-	public void TestCheckDeadlock1() {
-		parser1.clearBuffer();
-		String diagramCSP = parser1.parserDiagram();
-		
+	@BeforeClass
+	public static void loadClassesFDR() {
 		FdrWrapper wrapper = FdrWrapper.getInstance();
 		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
 		try {
@@ -95,6 +94,25 @@ public class ADParserTestCheckDeadlock {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+	}
+	
+	public static void delete(File f) throws IOException {
+		  if (f.isDirectory()) {
+		    for (File c : f.listFiles())
+		      delete(c);
+		  }
+		  if (!f.delete())
+		    throw new FileNotFoundException("Failed to delete file: " + f);
+	}
+	
+	
+	/*
+	 * Teste de Tradução TokenManager
+	 * */
+	@Test
+	public void TestCheckDeadlock1() {
+		parser1.clearBuffer();
+		String diagramCSP = parser1.parserDiagram();
 		
 		String fs = System.getProperty("file.separator");
 		String uh = System.getProperty("user.home");
@@ -131,15 +149,6 @@ public class ADParserTestCheckDeadlock {
 	public void TestCheckDeadlock2() {
 		parser2.clearBuffer();
 		String diagramCSP = parser2.parserDiagram();
-
-		FdrWrapper wrapper = FdrWrapper.getInstance();
-		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
-		try {
-			wrapper.loadClasses();
-		} catch (MalformedURLException | ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
 		
 		String fs = System.getProperty("file.separator");
 		String uh = System.getProperty("user.home");

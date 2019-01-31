@@ -8,7 +8,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ ADParserTestActionNode.class, ADParserTestChannel.class, ADParserTesteDecisionNode.class,
 		ADParserTesteFlowFinalNode.class, ADParserTestFinalNode.class, ADParserTestForkNode.class,
 		ADParserTestInitialNode.class, ADParserTestJoinNode.class, ADParserTestLock.class, AdParserTestMergeNode.class,
-		ADParserTestProcessSync.class, AdParserTestTokenManager.class, AdParserTestType.class, AdParserTestMemory.class, AdParserTestMainNodes.class})
+		ADParserTestProcessSync.class, AdParserTestTokenManager.class, AdParserTestType.class, AdParserTestMemory.class, AdParserTestMainNodes.class,
+		ADParserTestCheckDeadlock.class})
 public class AllTests {
 
 }

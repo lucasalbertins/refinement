@@ -385,12 +385,9 @@ public class FdrWrapper {
 		int hasError = 0;
 
 			try {
-				if (session == null) {
-					session = sessionClass.newInstance();
-				} else {
-					//invokeProperty(session.getClass(), session, "finalize", null, null);
-					//session = sessionClass.newInstance();
-				}
+
+				session = sessionClass.newInstance();
+
 				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 				
 				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);

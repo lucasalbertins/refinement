@@ -1,12 +1,8 @@
 package com.ref.activityDiagram;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.List;
+import java.util.Properties;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -27,17 +23,31 @@ import com.ref.ui.FDR3LocationDialog;
 
 public class TemplateActionAD implements IPluginActionDelegate {
 
+	private boolean firstInteration = true;
 	public Object run(IWindow window) throws UnExpectedException {
 
 		try {
-			FDR3LocationDialog dialog = new FDR3LocationDialog((JFrame) window.getParent(), true);	
-			
+			File fdrProperty = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
+
+			if (!fdrProperty.exists()) {
+				FDR3LocationDialog dialog = new FDR3LocationDialog((JFrame) window.getParent(), true);
+			} else {
+				Properties prop = new Properties();
+				prop.load(new FileInputStream(fdrProperty));
+				FdrWrapper wrapper = FdrWrapper.getInstance();
+				wrapper.loadFDR(prop.getProperty(FDR3LocationDialog.FDR3_JAR_LOCATION_PROPERTY));
+				if (firstInteration) {
+					wrapper.loadClasses();
+					firstInteration = false;
+				}
+			}
+
 			IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 			
 			if (diagram instanceof IActivityDiagram) {
 				ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName());
 				String diagramCSP = parser.parserDiagram();
-				
+
 				String fs = System.getProperty("file.separator");
 				String uh = System.getProperty("user.home");
 				File directory = new File(uh+fs+"TempAstah");

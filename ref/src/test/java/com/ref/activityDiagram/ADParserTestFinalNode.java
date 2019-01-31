@@ -110,7 +110,7 @@ public class ADParserTestFinalNode {
 				"act1_action1_t = act1_action1 /\\ END_DIAGRAM_action1\n" + 
 				"fin1_action1 = ((ce_action1.2 -> SKIP)); clear_action1.1 -> SKIP\n" + 
 				"fin1_action1_t = fin1_action1 /\\ END_DIAGRAM_action1\n" + 
-				"init_action1_t = (init1_action1_t) /\\ END_DIAGRAM_action1");
+				"init_action1_t = (init1_action1_t) /\\ END_DIAGRAM_action1\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -131,7 +131,7 @@ public class ADParserTestFinalNode {
 				"act3_action2_t = act3_action2 /\\ END_DIAGRAM_action2\n" + 
 				"fin1_action2 = ((ce_action2.4 -> SKIP) [] (ce_action2.5 -> SKIP)); clear_action2.1 -> SKIP\n" + 
 				"fin1_action2_t = fin1_action2 /\\ END_DIAGRAM_action2\n" + 
-				"init_action2_t = (init1_action2_t) /\\ END_DIAGRAM_action2");
+				"init_action2_t = (init1_action2_t) /\\ END_DIAGRAM_action2\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -148,7 +148,7 @@ public class ADParserTestFinalNode {
 				"act1_action5_t = ((act1_action5 /\\ END_DIAGRAM_action5) [|{|get_x_act1_action5,set_x_act1_action5,endDiagram_action5|}|] Mem_act1_action5_x_t(0)) \\{|get_x_act1_action5,set_x_act1_action5|}\n" + 
 				"fin1_action5 = ((oe_x_action5.2?x -> SKIP)); clear_action5.1 -> SKIP\n" + 
 				"fin1_action5_t = fin1_action5 /\\ END_DIAGRAM_action5\n" + 
-				"init_action5_t = (parameter_x_t) /\\ END_DIAGRAM_action5");
+				"init_action5_t = (parameter_x_t) /\\ END_DIAGRAM_action5\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -169,7 +169,7 @@ public class ADParserTestFinalNode {
 				"act3_action6_t = ((act3_action6 /\\ END_DIAGRAM_action6) [|{|get_y_act3_action6,set_y_act3_action6,endDiagram_action6|}|] Mem_act3_action6_y_t(0)) \\{|get_y_act3_action6,set_y_act3_action6|}\n" + 
 				"fin1_action6 = ((oe_x_action6.4?x -> SKIP) [] (oe_x_action6.5?x -> SKIP)); clear_action6.1 -> SKIP\n" + 
 				"fin1_action6_t = fin1_action6 /\\ END_DIAGRAM_action6\n" + 
-				"init_action6_t = (parameter_x_t) /\\ END_DIAGRAM_action6");
+				"init_action6_t = (parameter_x_t) /\\ END_DIAGRAM_action6\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -191,7 +191,7 @@ public class ADParserTestFinalNode {
 				"act3_final1_t = act3_final1 /\\ END_DIAGRAM_final1\n" + 
 				"fin1_final1 = ((oe_x_final1.2?x -> SKIP) [] (ce_final1.3 -> SKIP)); clear_final1.1 -> SKIP\n" + 
 				"fin1_final1_t = fin1_final1 /\\ END_DIAGRAM_final1\n" + 
-				"init_final1_t = (parameter_x_t ||| init1_final1_t) /\\ END_DIAGRAM_final1");
+				"init_final1_t = (parameter_x_t ||| init1_final1_t) /\\ END_DIAGRAM_final1\n");
 		
 		assertEquals(expected.toString(), actual);
 	}
