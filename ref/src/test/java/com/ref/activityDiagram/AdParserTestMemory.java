@@ -85,7 +85,7 @@ public class AdParserTestMemory {
 	public void TestMemoryNode1() {
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
-		String actual = parser1.defineMemorys();
+		String actual = parser1.defineMemories();
 		StringBuffer expected = new StringBuffer();
 		expected.append("Mem_act3_action3_w(w) = get_w_act3_action3?c!w -> Mem_act3_action3_w(w) [] set_w_act3_action3?c?w -> Mem_act3_action3_w(w)\n" + 
 				"Mem_act3_action3_w_t(w) = Mem_act3_action3_w(w) /\\ END_DIAGRAM_action3\n" + 
@@ -107,7 +107,7 @@ public class AdParserTestMemory {
 	public void TestMemoryNode2() {
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
-		String actual = parser2.defineMemorys();
+		String actual = parser2.defineMemories();
 		StringBuffer expected = new StringBuffer();
 		expected.append("Mem_act2_action4_w(w) = get_w_act2_action4?c!w -> Mem_act2_action4_w(w) [] set_w_act2_action4?c?w -> Mem_act2_action4_w(w)\n" + 
 				"Mem_act2_action4_w_t(w) = Mem_act2_action4_w(w) /\\ END_DIAGRAM_action4\n" + 
@@ -133,7 +133,7 @@ public class AdParserTestMemory {
 	public void TestMemoryNode3() {
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();
-		String actual = parser3.defineMemorys();
+		String actual = parser3.defineMemories();
 		StringBuffer expected = new StringBuffer();
 		expected.append("Mem_act1_decision3_z(z) = get_z_act1_decision3?c!z -> Mem_act1_decision3_z(z) [] set_z_act1_decision3?c?z -> Mem_act1_decision3_z(z)\n" + 
 				"Mem_act1_decision3_z_t(z) = Mem_act1_decision3_z(z) /\\ END_DIAGRAM_decision3\n" + 

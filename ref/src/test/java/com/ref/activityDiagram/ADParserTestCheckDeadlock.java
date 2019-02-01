@@ -32,6 +32,10 @@ public class ADParserTestCheckDeadlock {
 	public static IActivityDiagram ad;
 	private static ADParser parser1;
 	private static ADParser parser2;
+	private static ADParser parser3;
+	private static ADParser parser4;
+	private static ADParser parser5;
+	private static ADParser parser6;
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -45,12 +49,44 @@ public class ADParserTestCheckDeadlock {
 			parser1 = new ADParser(ad.getActivity(), ad.getName());
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/deadklockFree1.asta");
+			projectAccessor.open("src/test/resources/activityDiagram/deadlockFree1.asta");
 			findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
 			
 			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/deadlockFree2.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+			
+			parser3 = new ADParser(ad.getActivity(), ad.getName());
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/deadlock2.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+			
+			parser4 = new ADParser(ad.getActivity(), ad.getName());
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/deadlock3.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+			
+			parser5 = new ADParser(ad.getActivity(), ad.getName());
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/compilationFailed1.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+			
+			parser6 = new ADParser(ad.getActivity(), ad.getName());
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -107,7 +143,7 @@ public class ADParserTestCheckDeadlock {
 	
 	
 	/*
-	 * Teste de Tradução TokenManager
+	 * Teste de Check Deadlock
 	 * */
 	@Test
 	public void TestCheckDeadlock1() {
@@ -143,12 +179,12 @@ public class ADParserTestCheckDeadlock {
 	}
 	
 	/*
-	 * Teste de Tradução TokenManager
+	 * Teste de Check Deadlock
 	 * */
 	@Test
 	public void TestCheckDeadlock2() {
-		parser2.clearBuffer();
-		String diagramCSP = parser2.parserDiagram();
+		parser4.clearBuffer();
+		String diagramCSP = parser4.parserDiagram();
 		
 		String fs = System.getProperty("file.separator");
 		String uh = System.getProperty("user.home");
@@ -173,7 +209,151 @@ public class ADParserTestCheckDeadlock {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        int expected = 1;
+
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Teste de Check Deadlock
+	 * */
+	@Test
+	public void TestCheckDeadlock3() {
+		parser5.clearBuffer();
+		String diagramCSP = parser5.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempAstah");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempAstah" + fs + "teste3.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        int actual = -1;
+        try {
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int expected = 1;
+
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Teste de Check Deadlock Free
+	 * */
+	@Test
+	public void TestCheckDeadlockFree1() {
+		parser2.clearBuffer();
+		String diagramCSP = parser2.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempAstah");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempAstah" + fs + "teste4.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        int actual = -1;
+        try {
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         int expected = 0;
+
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Teste de Check Deadlock Free
+	 * */
+	@Test
+	public void TestCheckDeadlockFree2() {
+		parser3.clearBuffer();
+		String diagramCSP = parser3.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempAstah");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempAstah" + fs + "teste5.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        int actual = -1;
+        try {
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int expected = 0;
+
+		assertEquals(expected, actual);
+	}
+	
+	/*
+	 * Teste de Check Failed Compilation
+	 * */
+	@Test
+	public void TestCheckFailedCompilation1() {
+		parser6.clearBuffer();
+		String diagramCSP = parser6.parserDiagram();
+		
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempAstah");
+		directory.mkdirs();
+
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(uh + fs + "TempAstah" + fs + "teste6.csp", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+        int actual = -1;
+        try {
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        int expected = 2;
 
 		assertEquals(expected, actual);
 	}

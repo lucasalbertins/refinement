@@ -131,7 +131,7 @@ public class ADParser {
         String main = defineMainNodes();
         String type = defineTypes();
         String tokenManager = defineTokenManager();
-        String memory = defineMemorys();
+        String memory = defineMemories();
         String processSync = defineProcessSync();
 
         String parser = type +
@@ -377,7 +377,7 @@ public class ADParser {
         return types.toString();
     }
 
-    public String defineMemorys() {
+    public String defineMemories() {
         StringBuilder memory = new StringBuilder();
         String nameDiagram = ad.getName();
 
@@ -606,7 +606,7 @@ public class ADParser {
                             if (activityNode.getOutgoings().length > 1) {
                                 activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node
                             } else {
-                                IFlow flows[] = activityNode.getOutgoings();
+                                IFlow flows[] = activityNode.getIncomings();///
                                 boolean decision = false;
                                 for (int i = 0; i < flows.length; i++) {
 
@@ -667,7 +667,7 @@ public class ADParser {
                             if (activityNode.getOutgoings().length > 1) {
                                 activityNode = defineDecision(activityNode, nodes, 1); // create decision node and set next action node
                             } else {
-                                IFlow flows[] = activityNode.getOutgoings();
+                                IFlow flows[] = activityNode.getIncomings();
                                 boolean decision = false;
                                 for (int i = 0; i < flows.length; i++) {
 
@@ -738,7 +738,7 @@ public class ADParser {
                         if (activityNode.getOutgoings().length > 1) {
                             activityNode = defineDecision(activityNode, nodes, 2); // create decision node and set next action node
                         } else {
-                            IFlow flows[] = activityNode.getOutgoings();
+                            IFlow flows[] = activityNode.getIncomings();
                             boolean decision = false;
                             for (int i = 0; i < flows.length; i++) {
 
@@ -1326,12 +1326,13 @@ public class ADParser {
 
             ArrayList<String> union = new ArrayList<>();
             List<String> nameObjects = new ArrayList<>();
+            List<String> nodesAdded = new ArrayList<>();
 
             for (int i = 0; i < inPins.length; i++) {
                 IFlow inFlowPin[] = inPins[i].getIncomings();
                 for (int x = 0; x < inFlowPin.length; x++) {
 
-                    nameObjects.addAll(getObjects(inFlowPin[x]));
+                    nameObjects.addAll(getObjects(inFlowPin[x], nodesAdded));
 
                 }
             }
@@ -2436,10 +2437,11 @@ public class ADParser {
             }
 			
             nameObject = "";
+            List<String> nodesAdded = new ArrayList<>();
 
             List<String> nameObjs = new ArrayList<>();
             for (int i = 0; i < inFlows.length; i++) {
-                nameObjs.addAll(getObjects(inFlows[i]));
+                nameObjs.addAll(getObjects(inFlows[i], nodesAdded));
             }
 
             ArrayList<String> union = new ArrayList<>();
@@ -2810,9 +2812,10 @@ public class ADParser {
 
             ArrayList<String> union = new ArrayList<>();
             List<String> nameObjs = new ArrayList<>();
+            List<String> nodesAdded = new ArrayList<>();
 
             for (int i = 0; i < inFlows.length; i++) {
-                nameObjs.addAll(getObjects(inFlows[i]));
+                nameObjs.addAll(getObjects(inFlows[i], nodesAdded));
             }
 
             for (String nameObj : nameObjs) {
@@ -3861,21 +3864,24 @@ public class ADParser {
         return expReplaced;
     }
 
-    private List<String> getObjects (IFlow flow) {
+    private List<String> getObjects (IFlow flow, List<String> nodes) {
         List<String> objects = new ArrayList<>();
 
-        if (flow.getSource() instanceof IActivityParameterNode) {
-            objects.add(flow.getSource().getName());
-        } else if (flow.getSource() instanceof IOutputPin) {
-			IInputPin inPins[] = ((IAction)flow.getSource().getOwner()).getInputs();
-            for (int x = 0; x < inPins.length; x++) {
-				for (IFlow flowNode : inPins[x].getIncomings()) {
-					objects.addAll(getObjects(flowNode));
-				}
-			}
-        } else {
-            for (IFlow flowNode : flow.getSource().getIncomings()) {
-                objects.addAll(getObjects(flowNode));
+        if (!nodes.contains(flow.getSource().getId())) {
+            nodes.add(flow.getSource().getId());
+            if (flow.getSource() instanceof IActivityParameterNode) {
+                objects.add(flow.getSource().getName());
+            } else if (flow.getSource() instanceof IOutputPin) {
+                IInputPin inPins[] = ((IAction)flow.getSource().getOwner()).getInputs();
+                for (int x = 0; x < inPins.length; x++) {
+                    for (IFlow flowNode : inPins[x].getIncomings()) {
+                        objects.addAll(getObjects(flowNode, nodes));
+                    }
+                }
+            } else {
+                for (IFlow flowNode : flow.getSource().getIncomings()) {
+                    objects.addAll(getObjects(flowNode, nodes));
+                }
             }
         }
 

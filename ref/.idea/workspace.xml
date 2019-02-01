@@ -4,17 +4,7 @@
     <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/Activator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/Activator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateActionAD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateActionAD.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestForkNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestForkNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestInitialNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestInitialNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestJoinNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestJoinNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -39,11 +29,19 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="3719" column="5" lean-forward="true" selection-start-line="3719" selection-start-column="5" selection-end-line="3719" selection-end-column="5" />
+            <state relative-caret-position="78">
+              <caret line="3010" column="40" selection-start-line="3010" selection-start-column="40" selection-end-line="3010" selection-end-column="40" />
+              <folding>
+                <element signature="e#159626#159627#0" expanded="true" />
+                <element signature="e#159690#159691#0" expanded="true" />
+                <element signature="e#159740#159741#0" expanded="true" />
+                <element signature="e#159823#159824#0" expanded="true" />
+                <element signature="e#161433#161449#0" expanded="true" />
+                <element signature="e#161927#161943#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -51,7 +49,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="189">
+            <state relative-caret-position="6290">
               <caret line="388" column="16" selection-start-line="388" selection-start-column="16" selection-end-line="388" selection-end-column="16" />
             </state>
           </provider>
@@ -61,16 +59,16 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateActionAD.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="391">
-              <caret line="42" column="13" lean-forward="true" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
+              <caret line="42" column="13" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="37" column="23" lean-forward="true" selection-start-line="37" selection-start-column="23" selection-end-line="37" selection-end-column="23" />
+            <state relative-caret-position="357">
+              <caret line="45" column="41" selection-start-line="45" selection-start-column="41" selection-end-line="45" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -106,10 +104,10 @@
         <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateActionAD.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" />
       </list>
     </option>
   </component>
@@ -132,8 +130,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -351,6 +349,7 @@
       <workItem from="1548723561641" duration="472000" />
       <workItem from="1548878987331" duration="4229000" />
       <workItem from="1548897784708" duration="5089000" />
+      <workItem from="1548980343101" duration="2243000" />
     </task>
     <servers />
   </component>
@@ -387,12 +386,12 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="46312000" />
+    <option name="totallyTimeSpent" value="48555000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="696" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19579288" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.19902913" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -556,31 +555,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="3719" column="5" lean-forward="true" selection-start-line="3719" selection-start-column="5" selection-end-line="3719" selection-end-column="5" />
+        <state relative-caret-position="6290">
+          <caret line="388" column="16" selection-start-line="388" selection-start-column="16" selection-end-line="388" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateActionAD.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
-          <caret line="42" column="13" lean-forward="true" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="388" column="16" selection-start-line="388" selection-start-column="16" selection-end-line="388" selection-end-column="16" />
+          <caret line="42" column="13" selection-start-line="42" selection-start-column="13" selection-end-line="42" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="37" column="23" lean-forward="true" selection-start-line="37" selection-start-column="23" selection-end-line="37" selection-end-column="23" />
+        <state relative-caret-position="357">
+          <caret line="45" column="41" selection-start-line="45" selection-start-column="41" selection-end-line="45" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="78">
+          <caret line="3010" column="40" selection-start-line="3010" selection-start-column="40" selection-end-line="3010" selection-end-column="40" />
+          <folding>
+            <element signature="e#159626#159627#0" expanded="true" />
+            <element signature="e#159690#159691#0" expanded="true" />
+            <element signature="e#159740#159741#0" expanded="true" />
+            <element signature="e#159823#159824#0" expanded="true" />
+            <element signature="e#161433#161449#0" expanded="true" />
+            <element signature="e#161927#161943#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
