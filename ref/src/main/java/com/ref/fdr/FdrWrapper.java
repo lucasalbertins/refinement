@@ -1,5 +1,6 @@
 package com.ref.fdr;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -16,6 +17,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.change_vision.jude.api.inf.AstahAPI;
+import com.change_vision.jude.api.inf.editor.*;
+import com.change_vision.jude.api.inf.exception.InvalidEditingException;
+import com.change_vision.jude.api.inf.model.*;
+import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.log.Logador;
 
 public class FdrWrapper {
@@ -65,6 +71,8 @@ public class FdrWrapper {
 	private List<String> classes;
 
 	private Object session;
+
+	private Class<?> deadlockCounterexampleClass;
 	
 	public boolean loadFDR(String path) {
 
@@ -163,6 +171,8 @@ public class FdrWrapper {
 		Canceller = urlCl.loadClass("uk.ac.ox.cs.fdr.Canceller");
 
 		classes.add(Canceller.getName());
+
+		deadlockCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeadlockCounterexample");
 
 	}
 
@@ -359,7 +369,29 @@ public class FdrWrapper {
 	}
 	
 	/*  Activity Diagram  */
-	
+
+	public List<String> describeDeadlockCounterExample(Object session, Object counterExample) throws Exception {
+		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "behaviour", null, null);
+		List<String> trace = describeBehaviourDeadLock(session, behaviour);
+
+		return trace;
+	}
+
+	private List<String> describeBehaviourDeadLock(Object session, Object behaviour) throws Exception {
+
+		List<String> trace = new ArrayList<>();
+
+		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
+
+			if (event != 1 && event != 0) {
+				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
+				trace.add(result.toString());
+			}
+		}
+
+		return trace;
+	}
+
 	public String getErrorEvent(Object counterExample, Object session) {
         String errorEvent = "";
         try {
@@ -374,7 +406,7 @@ public class FdrWrapper {
     }
 
 	
-	public int checkDeadlock(String filename, int code) throws Exception{
+	public int checkDeadlock(String filename) throws Exception{
 		
 	/*
 	0 = no error
@@ -391,38 +423,35 @@ public class FdrWrapper {
 				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 				
 				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-				Object assertion = assertions.get(code);
+				Object assertion = assertions.get(0);
 				try {
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-					if (code == 0) {	//check Deadlock
-						for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-								"counterexamples", null, null)) {
-							hasError = 1;
-						}
-					} else if (code == 1) { // check Livelock
-						if (!((boolean) invokeProperty(assertion.getClass(), assertion,
-								"passed", null, null))) {
-							hasError = 2;
-						}
+					for (Object DeadlockCounterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+							"counterexamples", null, null)) {
 
-						for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-								"counterexamples", null, null)) {
-							hasError = 1;
-						}
-					} else { // check non-determinism
-						if (!((boolean) invokeProperty(assertion.getClass(), assertion,
-								"passed", null, null))) {
-							hasError = 2;
-						}
+						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExample);
+						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 
-						for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-								"counterexamples", null, null)) {
-							hasError = 1;
-						}
+						ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+						IModel project = prjAccessor.getProject();
+						BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
+
+						TransactionManager.beginTransaction();
+						IPackage Package = basicModelEditor.createPackage(project, "CounterExample");
+						ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
+						adEditor.setDiagram(diagram);
+						IActivityDiagram ad = adEditor.createActivityDiagram(Package, diagram.getName());
+						TransactionManager.endTransaction();
+
+						hasError = 1;
 					}
 
+				}catch (InvalidEditingException e) {
+					TransactionManager.abortTransaction();
+					System.out.println(e.getMessage());
 				} catch (Exception e) {
+					TransactionManager.abortTransaction();
 					hasError = 2;
 				}
 				
@@ -442,5 +471,109 @@ public class FdrWrapper {
    
 		return hasError;
 	}
-	
+
+	public int checkLivelock(String filename) throws Exception{
+
+	/*
+	0 = no error
+	1 = deadlock
+	2 = compilation failed
+	*/
+
+		int hasError = 0;
+
+		try {
+
+			session = sessionClass.newInstance();
+
+			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+			List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+			Object assertion = assertions.get(1);
+			try {
+				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+
+				if (!((boolean) invokeProperty(assertion.getClass(), assertion,
+						"passed", null, null))) {
+					hasError = 2;
+				}
+
+				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+						"counterexamples", null, null)) {
+					hasError = 1;
+				}
+
+			} catch (Exception e) {
+				hasError = 2;
+			}
+
+		} catch (InstantiationException e) {
+			throw new Exception("Set your fdr path 1");
+		} catch (IllegalAccessException e) {
+			throw new Exception("Set your fdr path 2");
+		} catch (Exception e) {
+			Logador logger = Logador.getInstance();
+			logger.log("LOG FDRWRAPPER");
+			for(StackTraceElement element :e.getStackTrace()){
+				logger.log(element.toString());
+			}
+			//throw new Exception(e.getMessage());
+		}
+
+
+		return hasError;
+	}
+
+	public int checkDeterminism(String filename) throws Exception{
+
+	/*
+	0 = no error
+	1 = deadlock
+	2 = compilation failed
+	*/
+
+		int hasError = 0;
+
+		try {
+
+			session = sessionClass.newInstance();
+
+			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+			List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+			Object assertion = assertions.get(2);
+			try {
+				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+
+				if (!((boolean) invokeProperty(assertion.getClass(), assertion,
+						"passed", null, null))) {
+					hasError = 2;
+				}
+
+				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+						"counterexamples", null, null)) {
+					hasError = 1;
+				}
+
+			} catch (Exception e) {
+				hasError = 2;
+			}
+
+		} catch (InstantiationException e) {
+			throw new Exception("Set your fdr path 1");
+		} catch (IllegalAccessException e) {
+			throw new Exception("Set your fdr path 2");
+		} catch (Exception e) {
+			Logador logger = Logador.getInstance();
+			logger.log("LOG FDRWRAPPER");
+			for(StackTraceElement element :e.getStackTrace()){
+				logger.log(element.toString());
+			}
+			//throw new Exception(e.getMessage());
+		}
+
+
+		return hasError;
+	}
+
 }

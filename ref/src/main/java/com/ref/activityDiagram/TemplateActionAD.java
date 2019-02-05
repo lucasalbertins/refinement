@@ -29,45 +29,58 @@ public class TemplateActionAD implements IPluginActionDelegate {
 		try {
 			File fdrProperty = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
 
-			if (!fdrProperty.exists()) {
-				FDR3LocationDialog dialog = new FDR3LocationDialog((JFrame) window.getParent(), true);
-			} else {
+			if (fdrProperty.exists()) {
 				Properties prop = new Properties();
 				prop.load(new FileInputStream(fdrProperty));
 				FdrWrapper wrapper = FdrWrapper.getInstance();
-				wrapper.loadFDR(prop.getProperty(FDR3LocationDialog.FDR3_JAR_LOCATION_PROPERTY));
-				if (firstInteration) {
-					wrapper.loadClasses();
-					firstInteration = false;
-				}
-			}
+				String pathFDR = prop.getProperty(FDR3LocationDialog.FDR3_JAR_LOCATION_PROPERTY);
 
-			IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
-			
-			if (diagram instanceof IActivityDiagram) {
-				ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName());
-				String diagramCSP = parser.parserDiagram();
+				if (!pathFDR.isEmpty()) {
+					File fdrLocation = new File(pathFDR);
 
-				String fs = System.getProperty("file.separator");
-				String uh = System.getProperty("user.home");
-				File directory = new File(uh+fs+"TempAstah");
-				directory.mkdirs();
-				
-				PrintWriter writer = new PrintWriter(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", "UTF-8");
-				writer.print(diagramCSP);		
-				
-				writer.flush();
-				writer.close();
-				
-				int result = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", 0);
-				System.out.println(result);
-				if (result == 0) {
-					JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " is deadlock free!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
-				} else if (result == 1) {
-					JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " deadlock detected!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
-				} else if (result == 2) {
-					JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " compilation failed!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+					if (fdrLocation.exists()) {
+						wrapper.loadFDR(pathFDR);
+						if (firstInteration) {
+							wrapper.loadClasses();
+							firstInteration = false;
+						}
+
+						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
+
+						if (diagram instanceof IActivityDiagram) {
+							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName());
+							String diagramCSP = parser.parserDiagram();
+
+							String fs = System.getProperty("file.separator");
+							String uh = System.getProperty("user.home");
+							File directory = new File(uh+fs+"TempAstah");
+							directory.mkdirs();
+
+							PrintWriter writer = new PrintWriter(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", "UTF-8");
+							writer.print(diagramCSP);
+
+							writer.flush();
+							writer.close();
+
+							int result = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp");
+							System.out.println(result);
+							if (result == 0) {
+								JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " is deadlock free!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+							} else if (result == 1) {
+								JOptionPane.showMessageDialog(window.getParent(), "Deadlock detected in " + ((IActivityDiagram) diagram).getName(),"Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+							} else if (result == 2) {
+								JOptionPane.showMessageDialog(window.getParent(), "Compilation failed in " + ((IActivityDiagram) diagram).getName(),"Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
+							}
+						}
+
+					} else {
+						JOptionPane.showMessageDialog(window.getParent(), "FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.","FDR Location", JOptionPane.ERROR_MESSAGE);
+					}
+				} else {
+				JOptionPane.showMessageDialog(window.getParent(), "FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.","FDR Location", JOptionPane.ERROR_MESSAGE);
 				}
+			} else {
+				JOptionPane.showMessageDialog(window.getParent(), "FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.","FDR Location", JOptionPane.ERROR_MESSAGE);
 			}
 			
 		} catch (FileNotFoundException e) {
