@@ -30,9 +30,10 @@ public class ADParser {
     private int limiteSup;
 
     private static HashMap<String, Integer> countCall;
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;			//ID flow, channel
-    private HashMap<String, String> syncObjectsEdge;
+    public HashMap<String, ArrayList<String>> alphabetNode;
+    public HashMap<String, ArrayList<String>> parameterAlphabetNode;
+    public HashMap<String, String> syncChannelsEdge;			//ID flow, channel
+    public HashMap<String, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;				//channel; name
     private List<IActivityNode> queueNode;
     private List<IActivityNode> queueRecreateNode;
@@ -58,6 +59,7 @@ public class ADParser {
         this.limiteInf = 99;
         this.limiteSup = -99;
         this.alphabetNode = new HashMap<>();
+        this.parameterAlphabetNode = new HashMap<>();
         countCall = new HashMap<>();
         addCountCall(); //comentado durante os testes
         syncChannelsEdge = new HashMap<>();
@@ -86,6 +88,7 @@ public class ADParser {
         this.limiteInf = 99;
         this.limiteSup = -99;
         this.alphabetNode = new HashMap<>();
+        this.parameterAlphabetNode = new HashMap<>();
         countCall.clear();
         addCountCall();
         syncChannelsEdge = new HashMap<>();
@@ -3673,6 +3676,7 @@ public class ADParser {
 
         parameterNode.append(")\n");
 
+        parameterAlphabetNode.put(activityNode.getName(), alphabet);
         allInitial.add(nameParameterNode);
         for (String channel : alphabet) {
             if (!alphabetAllInitialAndParameter.contains(channel)) {

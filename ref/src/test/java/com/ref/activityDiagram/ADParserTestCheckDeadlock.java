@@ -169,11 +169,11 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste1.csp", 0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste1.csp", parser1);
         } catch (Exception e) {
             e.printStackTrace();
         }
-		int expected = 1;
+		int expected = 2;
 
 		assertEquals(expected, actual);
 	}
@@ -205,11 +205,11 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste2.csp", 0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste2.csp", parser2);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int expected = 1;
+        int expected = 2;
 
 		assertEquals(expected, actual);
 	}
@@ -241,11 +241,11 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", 0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", parser5);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int expected = 1;
+        int expected = 2;
 
 		assertEquals(expected, actual);
 	}
@@ -277,11 +277,11 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", 0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", parser2);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int expected = 0;
+        int expected = 1;
 
 		assertEquals(expected, actual);
 	}
@@ -313,11 +313,11 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", 0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", parser3);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int expected = 0;
+        int expected = 1;
 
 		assertEquals(expected, actual);
 	}
@@ -349,11 +349,11 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", 0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", parser6);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        int expected = 2;
+        int expected = 3;
 
 		assertEquals(expected, actual);
 	}

@@ -1,0 +1,595 @@
+package com.ref.refinement.activityDiagram;
+
+import com.change_vision.jude.api.inf.AstahAPI;
+import com.change_vision.jude.api.inf.editor.ActivityDiagramEditor;
+import com.change_vision.jude.api.inf.editor.BasicModelEditor;
+import com.change_vision.jude.api.inf.editor.ModelEditorFactory;
+import com.change_vision.jude.api.inf.editor.TransactionManager;
+import com.change_vision.jude.api.inf.exception.InvalidEditingException;
+import com.change_vision.jude.api.inf.model.*;
+import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
+import com.change_vision.jude.api.inf.presentation.INodePresentation;
+import com.change_vision.jude.api.inf.presentation.IPresentation;
+import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.parser.activityDiagram.ADParser;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class DeadlockCounterExample {
+    private static HashMap<String, INodePresentation> nodeAdded;
+    private static HashMap<String, INodePresentation> objPresent;
+    private static List<String> trace;
+    private static ADParser parser;
+    //actionNode.setProperty("fill.color", "#FF0000");
+    //flow.setProperty("line.color", "#FF0000");
+
+    public static void createDeadlockCounterExample(List<String> traceList, ADParser parserParam) {
+        try {
+            nodeAdded = new HashMap<>();
+            objPresent = new HashMap<>();
+            trace = new ArrayList<>();
+
+            for (String objTrace : traceList) {
+                String objTracePartition[] = objTrace.split("\\.");
+                if (objTracePartition.length > 2) {
+                    trace.add(objTracePartition[0] + "." + objTracePartition[1]);
+                } else {
+                    trace.add(objTrace);
+                }
+            }
+
+            parser = parserParam;
+
+            IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
+
+            ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+            IModel project = prjAccessor.getProject();
+            BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
+
+            TransactionManager.beginTransaction();
+            IPackage Package = basicModelEditor.createPackage(project, "CounterExample");
+            ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
+            IActivityDiagram ad = adEditor.createActivityDiagram(Package, diagram.getName());
+
+            for (IActivityNode node : ((IActivityDiagram) diagram).getActivity().getActivityNodes()) {
+                createNode(node, adEditor);
+            }
+
+            TransactionManager.endTransaction();
+        } catch (Exception e) {
+            TransactionManager.abortTransaction();
+        }
+    }
+
+    private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor) {
+        INodePresentation nodePresent = null;
+
+        if (!nodeAdded.containsKey(node.getId())) {
+            if (node instanceof IAction) {
+                nodePresent = createAction(node, adEditor);
+            } else if (node instanceof IControlNode) {
+                if (((IControlNode) node).isFinalNode()) {
+                    nodePresent = createFinal(node, adEditor);
+                } else if (((IControlNode) node).isFlowFinalNode()) {
+                    nodePresent = createFlowFinal(node, adEditor);
+                } else if (((IControlNode) node).isInitialNode()) {
+                    nodePresent = createInitial(node, adEditor);
+                } else if (((IControlNode) node).isForkNode()) {
+                    nodePresent = createFork(node, adEditor);
+                } else if (((IControlNode) node).isJoinNode()) {
+                    nodePresent = createJoin(node, adEditor);
+                } else if (((IControlNode) node).isDecisionMergeNode()) {
+                    nodePresent = createDecisionAndMerge(node, adEditor);
+                }
+            } else if (node instanceof IActivityParameterNode) {
+                nodePresent = createParameter(node, adEditor);
+            }
+        } else {
+            nodePresent = nodeAdded.get(node.getId());
+        }
+
+        return nodePresent;
+    }
+
+    private static INodePresentation createAction(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        IInputPin inPins[] = ((IAction) node).getInputs();
+        IOutputPin outPins[] = ((IAction) node).getOutputs();
+        INodePresentation actionNode = null;
+
+        try {
+            actionNode = adEditor.createAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+
+            if (parser.alphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        actionNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), actionNode);
+
+            for (int i = 0; i < inPins.length; i++) {
+                createInputPin(node, adEditor, actionNode, inPins[i]);
+            }
+
+            for (int i = 0; i < outPins.length; i++) {
+                createOutputPin(node, adEditor, actionNode, outPins[i]);
+            }
+
+            for (int i = 0; i < outFlows.length; i++) {
+                INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                ILinkPresentation flow = adEditor.createFlow(actionNode, targetPresent);
+                flow.setLabel(outFlows[i].getGuard());
+
+                if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                    String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                    String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                    if (channel != null && trace.contains(channel)) {
+                        flow.setProperty("line.color", "#FF0000");
+                    } else if (channelObj != null && trace.contains(channelObj)) {
+                        flow.setProperty("line.color", "#FF0000");
+                    }
+                }
+
+            }
+
+            for (int i = 0; i < outPins.length; i++) {
+                IFlow targetOutFlows[] = outPins[i].getOutgoings();
+                for (int x = 0; x < targetOutFlows.length; x++) {
+                    if (targetOutFlows[x].getTarget() instanceof IInputPin) {
+                        createNode((IActivityNode) targetOutFlows[x].getTarget().getOwner(), adEditor);
+                        INodePresentation targetPresent = objPresent.get(targetOutFlows[x].getTarget().getId());
+                        INodePresentation pinPresent = objPresent.get(outPins[i].getId());
+                        ILinkPresentation flow = adEditor.createFlow(pinPresent, targetPresent);
+                        flow.setLabel(targetOutFlows[x].getGuard());
+                        //flow.setPoints(((ILinkPresentation) targetOutFlows[x].getPresentations()[0]).getAllPoints());
+
+                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x]) || parser.syncObjectsEdge.containsKey(targetOutFlows[x])) {
+                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x]);
+                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x]);
+
+                            if (channel != null && trace.contains(channel)) {
+                                flow.setProperty("line.color", "#FF0000");
+                                pinPresent.setProperty("fill.color", "#FF0000");
+                                targetPresent.setProperty("fill.color", "#FF0000");
+                            } else if (channelObj != null && trace.contains(channelObj)) {
+                                flow.setProperty("line.color", "#FF0000");
+                                pinPresent.setProperty("fill.color", "#FF0000");
+                                targetPresent.setProperty("fill.color", "#FF0000");
+                            }
+                        }
+
+                    } else {
+                        INodePresentation targetPresent = createNode(targetOutFlows[x].getTarget(), adEditor);
+                        INodePresentation pinPresent = objPresent.get(outPins[i].getId());
+                        ILinkPresentation flow = adEditor.createFlow(pinPresent, targetPresent);
+                        flow.setLabel(targetOutFlows[x].getGuard());
+                        //flow.setPoints(((ILinkPresentation) targetOutFlows[x].getPresentations()[0]).getAllPoints());
+
+                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x]) || parser.syncObjectsEdge.containsKey(targetOutFlows[x])) {
+                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x]);
+                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x]);
+
+                            if (channel != null && trace.contains(channel)) {
+                                flow.setProperty("line.color", "#FF0000");
+                                pinPresent.setProperty("fill.color", "#FF0000");
+                            } else if (channelObj != null && trace.contains(channelObj)) {
+                                flow.setProperty("line.color", "#FF0000");
+                                pinPresent.setProperty("fill.color", "#FF0000");
+                            }
+                        }
+
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return actionNode;
+
+    }
+
+    private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation initialNode = null;
+
+        try {
+            initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+
+            if (parser.alphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        initialNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), initialNode);
+
+            for (int i = 0; i < outFlows.length; i++) {
+                INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                ILinkPresentation flow = adEditor.createFlow(initialNode, targetPresent);
+                flow.setLabel(outFlows[i].getGuard());
+                //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                    String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                    String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                    if (channel != null && trace.contains(channel)) {
+                        flow.setProperty("line.color", "#FF0000");
+                    } else if (channelObj != null && trace.contains(channelObj)) {
+                        flow.setProperty("line.color", "#FF0000");
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return initialNode;
+    }
+
+    private static INodePresentation createParameter(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation parameterNode = null;
+
+        try {
+            parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+
+            if (parser.parameterAlphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.parameterAlphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        parameterNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), parameterNode);
+
+            for (int i = 0; i < outFlows.length; i++) {
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
+                    ILinkPresentation flow = adEditor.createFlow(parameterNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        }
+                    }
+
+                } else {
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    ILinkPresentation flow = adEditor.createFlow(parameterNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            System.out.println("aqui");
+                            flow.setProperty("line.color", "#FF0000");
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return parameterNode;
+    }
+
+    private static INodePresentation createDecisionAndMerge(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation decisionNode = null;
+
+        try {
+            decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
+            decisionNode.setLabel(node.getName());
+
+            if (parser.alphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        decisionNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), decisionNode);
+
+            for (int i = 0; i < outFlows.length; i++) {
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
+                    ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        }
+                    }
+
+                } else {
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+
+        return decisionNode;
+    }
+
+    private static INodePresentation createFork(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation forkNode = null;
+
+        try {
+            forkNode = adEditor.createForkNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
+                    ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
+            forkNode.setLabel(node.getName());
+
+            if (parser.alphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        forkNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), forkNode);
+
+            for (int i = 0; i < outFlows.length; i++) {
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
+                    ILinkPresentation flow = adEditor.createFlow(forkNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        }
+                    }
+
+                } else {
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    ILinkPresentation flow = adEditor.createFlow(forkNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+           e.printStackTrace();
+        }
+
+        return forkNode;
+    }
+
+    private static INodePresentation createJoin(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation joinNode = null;
+
+        try {
+            joinNode = adEditor.createJoinNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
+                    ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
+            joinNode.setLabel(node.getName());
+
+            if (parser.alphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        joinNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), joinNode);
+
+            for (int i = 0; i < outFlows.length; i++) {
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
+                    ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        }
+                    }
+
+                } else {
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return joinNode;
+    }
+
+    private static INodePresentation createFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation FinalNode = null;
+
+        try {
+            FinalNode = adEditor.createFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+
+            nodeAdded.put(node.getId(), FinalNode);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return FinalNode;
+    }
+
+    private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation flowFinalNode = null;
+
+        try {
+            flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+
+            if (parser.alphabetNode.containsKey(node.getName())) {
+                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        flowFinalNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), flowFinalNode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return flowFinalNode;
+    }
+
+    private static INodePresentation createInputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IInputPin pin) {
+        IFlow outFlows[] = node.getOutgoings();
+        IInputPin inPins[] = ((IAction) node).getInputs();
+        IOutputPin outPins[] = ((IAction) node).getOutputs();
+        INodePresentation targetPresent = null;
+
+        try{
+            targetPresent = adEditor.createPin(pin.getName(), null, true, actionNode, ((INodePresentation) pin.getPresentations()[0]).getLocation());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        objPresent.put(pin.getId(), targetPresent);
+
+        return targetPresent;
+    }
+
+    private static INodePresentation createOutputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IOutputPin pin) {
+        IFlow outFlows[] = node.getOutgoings();
+        IInputPin inPins[] = ((IAction) node).getInputs();
+        IOutputPin outPins[] = ((IAction) node).getOutputs();
+        INodePresentation targetPresent = null;
+
+        try {
+            targetPresent = adEditor.createPin(pin.getName(), null, false, actionNode, ((INodePresentation) pin.getPresentations()[0]).getLocation());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        objPresent.put(pin.getId(), targetPresent);
+
+        return targetPresent;
+    }
+
+}

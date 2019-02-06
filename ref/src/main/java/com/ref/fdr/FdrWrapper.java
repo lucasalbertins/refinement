@@ -23,6 +23,8 @@ import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.log.Logador;
+import com.ref.parser.activityDiagram.ADParser;
+import com.ref.refinement.activityDiagram.DeadlockCounterExample;
 
 public class FdrWrapper {
 
@@ -406,12 +408,13 @@ public class FdrWrapper {
     }
 
 	
-	public int checkDeadlock(String filename) throws Exception{
+	public int checkDeadlock(String filename, ADParser parser) throws Exception{
 		
 	/*
-	0 = no error
-	1 = deadlock
-	2 = compilation failed
+	0 = error
+	1 = deadlock free
+	2 = deadlock detected
+	3 = compilation failed
 	*/
 	
 		int hasError = 0;
@@ -427,32 +430,24 @@ public class FdrWrapper {
 				try {
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-					for (Object DeadlockCounterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+					for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 							"counterexamples", null, null)) {
 
-						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExample);
-						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
+						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
+                        DeadlockCounterExample.createDeadlockCounterExample(trace, parser);
 
-						ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-						IModel project = prjAccessor.getProject();
-						BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
+						hasError = 2;
+					}
 
-						TransactionManager.beginTransaction();
-						IPackage Package = basicModelEditor.createPackage(project, "CounterExample");
-						ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
-						adEditor.setDiagram(diagram);
-						IActivityDiagram ad = adEditor.createActivityDiagram(Package, diagram.getName());
-						TransactionManager.endTransaction();
-
+					if (hasError == 0) {
 						hasError = 1;
 					}
 
 				}catch (InvalidEditingException e) {
 					TransactionManager.abortTransaction();
-					System.out.println(e.getMessage());
 				} catch (Exception e) {
 					TransactionManager.abortTransaction();
-					hasError = 2;
+					hasError = 3;
 				}
 				
 			} catch (InstantiationException e) {
@@ -475,9 +470,10 @@ public class FdrWrapper {
 	public int checkLivelock(String filename) throws Exception{
 
 	/*
-	0 = no error
-	1 = deadlock
-	2 = compilation failed
+	0 = error
+	1 = deadlock free
+	2 = deadlock detected
+	3 = compilation failed
 	*/
 
 		int hasError = 0;
@@ -527,9 +523,10 @@ public class FdrWrapper {
 	public int checkDeterminism(String filename) throws Exception{
 
 	/*
-	0 = no error
-	1 = deadlock
-	2 = compilation failed
+	0 = error
+	1 = deadlock free
+	2 = deadlock detected
+	3 = compilation failed
 	*/
 
 		int hasError = 0;
