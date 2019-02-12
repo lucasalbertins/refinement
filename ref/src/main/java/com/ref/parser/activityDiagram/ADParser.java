@@ -5,20 +5,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IActivityParameterNode;
-import com.change_vision.jude.api.inf.model.IControlNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import com.change_vision.jude.api.inf.model.IInputPin;
-import com.change_vision.jude.api.inf.model.IOutputPin;
+import com.change_vision.jude.api.inf.model.*;
 
 import javafx.util.Pair;
 
 public class ADParser {
 
     private IActivity ad;
+    private IActivityDiagram adDiagram;
 
     private int countGet_ad;
     private int countSet_ad;
@@ -47,8 +41,9 @@ public class ADParser {
     private List<Pair<String, String>> memoryLocal;				//nameNode, nameObject
     private List<ArrayList<String>> unionList;
 
-    public ADParser(IActivity ad, String nameAD) {
+    public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
+        this.adDiagram = adDiagram;
         setName(nameAD);
         this.countGet_ad = 1;
         this.countSet_ad = 1;
@@ -164,11 +159,11 @@ public class ADParser {
 
         for (IActivityNode activityNode : nodes) {
             if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {
-                parameterNodesInput.put(activityNode.getName(), ((IActivityParameterNode) activityNode).getBase().getName());
+                parameterNodesInput.put(nameResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
             }
 
             if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {
-                parameterNodesOutput.put(activityNode.getName(), ((IActivityParameterNode) activityNode).getBase().getName());
+                parameterNodesOutput.put(nameResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
             }
         }
 
@@ -243,9 +238,11 @@ public class ADParser {
 
         }
 
-        if (countClear_ad > 1) {
-            channels.append("channel clear_" + nameDiagram + ": countClear_" + nameDiagram + "\n");
-        }
+//        if (countClear_ad > 1) {
+////            channels.append("channel clear_" + nameDiagram + ": countClear_" + nameDiagram + "\n");
+////        }
+
+        channels.append("channel clear_" + nameDiagram + ": countClear_" + nameDiagram + "\n");
 
         channels.append("channel update_" + nameDiagram + ": countUpdate_" + nameDiagram + ".limiteUpdate_" + nameDiagram + "\n");
 
@@ -299,21 +296,25 @@ public class ADParser {
         types.append("datatype T = lock | unlock\n");
 
         if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
+            HashMap<String,String> typesParameter = new HashMap<>();
+            String[] definition = adDiagram.getDefinition().replace(" ", "").split(";");
+
+            for (String def : definition) {
+                String[] keyValue = def.split("=");
+                typesParameter.put(keyValue[0],keyValue[1]);
+            }
+
             for (String input : parameterNodesInput.keySet()) {
                 types.append(input + "_" + nameDiagram + " = ");
 
-                if (parameterNodesInput.get(input).equals("int")) {
-                    types.append("{0..1}\n"); //Verificar se possivel usar o campo definition para definir o intervalo
-                }
+                types.append(typesParameter.get(parameterNodesInput.get(input)) + "\n"); //Verificar se possivel usar o campo definition para definir o intervalo
 
             }
 
             for (String output : parameterNodesOutput.keySet()) {
                 types.append(output + "_" + nameDiagram + " = ");
 
-                if (parameterNodesOutput.get(output).equals("int")) {
-                    types.append("{0..1}\n"); //Verificar se possivel usar o campo definition para definir o intervalo
-                }
+                types.append(typesParameter.get(parameterNodesInput.get(output)) + "\n"); //Verificar se possivel usar o campo definition para definir o intervalo
 
             }
 
@@ -323,7 +324,7 @@ public class ADParser {
                 if (!parameterNodesInput.containsKey(pair.getValue()) && !parameterNodesOutput.containsKey(pair.getValue()) && !buffer.contains(pair.getValue())) {
                     types.append(pair.getValue() + "_" + nameDiagram + " = ");
 
-                    types.append("{0..1}\n");
+                    types.append(typesParameter.get(parameterNodesInput.get(pair.getValue())) + "\n");
 
                     buffer.add(pair.getValue());
                 }
@@ -332,13 +333,15 @@ public class ADParser {
 			
             for (ArrayList union : unionList) {
                 String objectUnion = "";
+                String nameLast = null;
                 for (int i = 0; i < union.size(); i++) {
                     objectUnion += union.get(i);
+                    nameLast = union.get(i).toString();
                 }
 
                 if (!buffer.contains(objectUnion)) {
                     types.append(objectUnion + "_" + nameDiagram + " = ");
-                    types.append("{0..1}\n");
+                    types.append(typesParameter.get(parameterNodesInput.get(nameLast)) + "\n");
 					buffer.add(objectUnion);
                 }
 
@@ -369,9 +372,11 @@ public class ADParser {
 
         types.append("countUpdate_" + nameDiagram + " = {1.." + (countUpdate_ad - 1) + "}\n");
 
-        if (countClear_ad > 1) {
-            types.append("countClear_" + nameDiagram + " = {1.." + (countClear_ad - 1) + "}\n");
-        }
+//        if (countClear_ad > 1) {
+//            types.append("countClear_" + nameDiagram + " = {1.." + (countClear_ad - 1) + "}\n");
+//        }
+
+        types.append("countClear_" + nameDiagram + " = {1.." + (countClear_ad - 1) + "}\n");
 
         types.append("limiteUpdate_" + nameDiagram + " = {(" + limiteInf + ")..(" + limiteSup + ")}\n");
 
@@ -428,26 +433,34 @@ public class ADParser {
             int i = 0;
 
             for (String input : parameterNodesInput.keySet()) {
-                memory.append("Mem_" + nameDiagram + "_" + input + "_t(0)");
-
-                if (i % 2 == 0 && parameterNodesInput.size() + parameterNodesOutput.size() > 1 &&
-                        i < parameterNodesInput.size() || parameterNodesOutput.size() > 0) {
+                if (i <= 1) {
+                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(0)");
+                    if (i % 2 == 0 && parameterNodesInput.size() + parameterNodesOutput.size() > 1 &&
+                            i < parameterNodesInput.size() || parameterNodesOutput.size() > 0) {
+                        memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
+                    } else if (parameterNodesInput.size() + parameterNodesOutput.size() > 1){
+                        memory.append(")");
+                    }
+                } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                } else if (parameterNodesInput.size() + parameterNodesOutput.size() > 1){
-                    memory.append(")");
+                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(0))");
                 }
 
                 i++;
             }
 
             for (String output : parameterNodesOutput.keySet()) {
-                memory.append("Mem_" + nameDiagram + "_" + output + "_t(0)");
-
-                if (i % 2 == 0 && parameterNodesOutput.size() > 1 &&
-                        i <  parameterNodesOutput.size()) {
+                if (i <= 1) {
+                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(0)");
+                    if (i % 2 == 0 && parameterNodesOutput.size() > 1 &&
+                            i <  parameterNodesOutput.size()) {
+                        memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
+                    } else if (parameterNodesInput.size() + parameterNodesOutput.size() > 1){
+                        memory.append(")");
+                    }
+                } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                } else if (parameterNodesInput.size() + parameterNodesOutput.size() > 1){
-                    memory.append(")");
+                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(0))");
                 }
 
                 i++;
@@ -584,7 +597,7 @@ public class ADParser {
                 }
             }
 
-            while (activityNode != null && !alphabetNode.containsKey(activityNode.getName()) && !queueRecreateNode.contains(activityNode)) {	// Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
+            while (activityNode != null && !alphabetNode.containsKey(nameResolver(activityNode.getName())) && !queueRecreateNode.contains(activityNode)) {	// Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
 
                 if (input == expectedInput) {
                     if (activityNode instanceof IAction) {
@@ -720,7 +733,7 @@ public class ADParser {
                 }
             }
 
-            while (activityNode != null && !alphabetNode.containsKey(activityNode.getName())) {    // Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
+            while (activityNode != null && !alphabetNode.containsKey(nameResolver(activityNode.getName()))) {    // Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
                 if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
                         activityNode = defineCallBehavior(activityNode, nodes);
@@ -971,7 +984,7 @@ public class ADParser {
             IFlow inFlow[] = activityNode.getIncomings();
 
             for (int i = 0; i <  inFlow.length; i++) {
-                System.out.println("aq " + inFlow[i].getId() + " " + activityNode.getName() );
+                System.out.println("aq " + inFlow[i].getId() + " " + nameResolver(activityNode.getName()) );
                 if (syncChannelsEdge.containsKey(inFlow[i].getId())) {
                     input++;
                 }
@@ -984,7 +997,7 @@ public class ADParser {
                 for (int i = 0; i <  inPin.length; i++) {
                     IFlow inFlowPin[] = inPin[i].getIncomings();
                     for (int x = 0; x < inFlowPin.length; x++) {
-						System.out.println("aq " + inFlowPin[x].getId() + " " + activityNode.getName() );
+						System.out.println("aq " + inFlowPin[x].getId() + " " + nameResolver(activityNode.getName()) );
                         if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
                             input++;
                         }
@@ -993,13 +1006,13 @@ public class ADParser {
 
             } else {
                 for (int i = 0; i <  inFlow.length; i++) {
-					System.out.println("aq " + inFlow[i].getId() + " " + activityNode.getName() );
+					System.out.println("aq " + inFlow[i].getId() + " " + nameResolver(activityNode.getName()) );
                     if (syncObjectsEdge.containsKey(inFlow[i].getId())) {
                         input++;
                     }
                 }
             }
-            System.out.println(activityNode.getName() + " " + input + " " + activityNode.getIncomings().length);
+            System.out.println(nameResolver(activityNode.getName()) + " " + input + " " + activityNode.getIncomings().length);
         }
 
         return input;
@@ -1008,8 +1021,8 @@ public class ADParser {
     private IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) {
         StringBuilder action = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameAction = activityNode.getName() + "_" + ad.getName();
-        String nameActionTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameAction = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameActionTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -1063,11 +1076,11 @@ public class ADParser {
                         action.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
-                            setLocal(alphabet, action, nameObject, activityNode.getName(), nameObject);
+                            setLocal(alphabet, action, nameObject, nameResolver(activityNode.getName()), nameObject);
                             action.append("SKIP) ||| ");
                         } else {
                             oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
-                            setLocal(alphabet, action, nameObject, activityNode.getName(), nameObject);
+                            setLocal(alphabet, action, nameObject, nameResolver(activityNode.getName()), nameObject);
                             action.append("SKIP)");
                         }
 
@@ -1094,12 +1107,12 @@ public class ADParser {
                         for (String value : expReplaced) {				//get all parts
                             for (int x = 0; x < namesMemoryLocal.size(); x++) {
                                 if (value.equals(namesMemoryLocal.get(x))) {
-                                    getLocal(alphabet, action, namesMemoryLocal.get(x), activityNode.getName(), namesMemoryLocal.get(x));
+                                    getLocal(alphabet, action, namesMemoryLocal.get(x), nameResolver(activityNode.getName()), namesMemoryLocal.get(x));
                                 }
                             }
                         }
 
-                        setLocal(alphabet, action, expression[0], activityNode.getName(), "(" + expression[1] + ")");
+                        setLocal(alphabet, action, expression[0], nameResolver(activityNode.getName()), "(" + expression[1] + ")");
 
                     }
                 }
@@ -1118,7 +1131,7 @@ public class ADParser {
             update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin);
 
             for (String nameObj : namesMemoryLocal) {
-                getLocal(alphabet, action, nameObj, activityNode.getName(), nameObj);
+                getLocal(alphabet, action, nameObj, nameResolver(activityNode.getName()), nameObj);
             }
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -1197,22 +1210,22 @@ public class ADParser {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     action.append("[|{|");
-                    action.append("get_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                    action.append("set_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                    action.append("get_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                    action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                     action.append("endDiagram_" + ad.getName());
                     action.append("|}|] ");
-                    action.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(0)) ");
+                    action.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(0)) ");
                 }
 
                 action.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        action.append("get_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                        action.append("set_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName());
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                     } else {
-                        action.append("get_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                        action.append("set_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                     }
                 }
 
@@ -1223,7 +1236,7 @@ public class ADParser {
             }
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows.length > 0) {
                 activityNode = outFlows[0].getTarget();	//set next action or control node
@@ -1498,11 +1511,11 @@ public class ADParser {
                         action.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
-                            setLocal(alphabet, action, nameObject, activityNode.getName(), nameObject);
+                            setLocal(alphabet, action, nameObject, nameResolver(activityNode.getName()), nameObject);
                             action.append("SKIP) ||| ");
                         } else {
                             oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
-                            setLocal(alphabet, action, nameObject, activityNode.getName(), nameObject);
+                            setLocal(alphabet, action, nameObject, nameResolver(activityNode.getName()), nameObject);
                             action.append("SKIP)");
                         }
 
@@ -1529,12 +1542,12 @@ public class ADParser {
                         for (String value : expReplaced) {				//get all parts
                             for (int x = 0; x < namesMemoryLocal.size(); x++) {
                                 if (value.equals(namesMemoryLocal.get(x))) {
-                                    getLocal(alphabet, action, namesMemoryLocal.get(x), activityNode.getName(), namesMemoryLocal.get(x));
+                                    getLocal(alphabet, action, namesMemoryLocal.get(x), nameResolver(activityNode.getName()), namesMemoryLocal.get(x));
                                 }
                             }
                         }
 
-                        setLocal(alphabet, action, expression[0], activityNode.getName(), "(" + expression[1] + ")");
+                        setLocal(alphabet, action, expression[0], nameResolver(activityNode.getName()), "(" + expression[1] + ")");
 
                     }
                 }
@@ -1553,7 +1566,7 @@ public class ADParser {
             update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin);
 
             for (String nameObj : namesMemoryLocal) {
-                getLocal(alphabet, action, nameObj, activityNode.getName(), nameObj);
+                getLocal(alphabet, action, nameObj, nameResolver(activityNode.getName()), nameObj);
             }
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -1612,22 +1625,22 @@ public class ADParser {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     action.append("[|{|");
-                    action.append("get_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                    action.append("set_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                    action.append("get_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                    action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                     action.append("endDiagram_" + ad.getName());
                     action.append("|}|] ");
-                    action.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(0)) ");
+                    action.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(0)) ");
                 }
 
                 action.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        action.append("get_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                        action.append("set_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName());
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                     } else {
-                        action.append("get_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                        action.append("set_" + namesMemoryLocal.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                     }
                 }
 
@@ -1638,7 +1651,7 @@ public class ADParser {
             }
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows.length > 0) {
                 activityNode = outFlows[0].getTarget();	//set next action or control node
@@ -1727,8 +1740,8 @@ public class ADParser {
     private IActivityNode defineFinalNode (IActivityNode activityNode, StringBuilder nodes) {
         StringBuilder finalNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameFinalNode = activityNode.getName() + "_" + ad.getName();
-        String nameFinalNodeTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameFinalNode = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameFinalNodeTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         HashMap<String, String> nameObjects = new HashMap<>();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -1784,7 +1797,7 @@ public class ADParser {
         finalNode.append(nameFinalNode + " /\\ " + endDiagram + "\n");
 
         alphabet.add("endDiagram_" + ad.getName());
-        alphabetNode.put(activityNode.getName(), alphabet);
+        alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
         activityNode = null;
 
@@ -1796,7 +1809,7 @@ public class ADParser {
     private IActivityNode defineInitialNode (IActivityNode activityNode, StringBuilder nodes) {
         StringBuilder initialNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameInitialNode = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameInitialNode = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
 
@@ -1824,7 +1837,7 @@ public class ADParser {
 
 //		for (IFlow flow : outFlows) {	//creates output channels
 //			String ce = createCN();
-//			syncChannels.put(new Pair<String, String>(activityNode.getName(), flow.getTarget().getName()), ce);
+//			syncChannels.put(new Pair<String, String>(nameResolver(activityNode.getName()), flow.getTarget().getName()), ce);
 //			ce(alphabet, initialNode, ce, " -> ");
 //		}
 //
@@ -1853,8 +1866,8 @@ public class ADParser {
     private IActivityNode defineCallBehavior(IActivityNode activityNode, StringBuilder nodes) {	//Ainda nao testado
         StringBuilder callBehavior = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameCallBehavior = activityNode.getName() + "_" + ad.getName();
-        String nameCallBehaviorTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameCallBehavior = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameCallBehaviorTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -1908,7 +1921,7 @@ public class ADParser {
         callBehavior.append(nameCallBehavior + " /\\ " + endDiagram + "\n");
 
         alphabet.add("endDiagram_" + ad.getName());
-        alphabetNode.put(activityNode.getName(), alphabet);
+        alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
         callBehaviorList.add(((IAction) activityNode).getCallingActivity()); 	// add activity call behavior
 
@@ -1923,8 +1936,8 @@ public class ADParser {
     private IActivityNode defineFork(IActivityNode activityNode, StringBuilder nodes, int code) {
         StringBuilder forkNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameFork = activityNode.getName() + "_" + ad.getName();
-        String nameForkTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameFork = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameForkTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -1992,7 +2005,7 @@ public class ADParser {
             forkNode.append(nameFork + " /\\ " + endDiagram + "\n");
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -2198,7 +2211,7 @@ public class ADParser {
             forkNode.append(nameFork + " /\\ " + endDiagram + "\n");
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -2245,8 +2258,8 @@ public class ADParser {
     private IActivityNode defineJoin(IActivityNode activityNode, StringBuilder nodes, int code) {
         StringBuilder joinNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameJoin = activityNode.getName() + "_" + ad.getName();
-        String nameJoinTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameJoin = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameJoinTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -2299,11 +2312,11 @@ public class ADParser {
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, joinNode, nameObject, activityNode.getName(), nameObject);
+                        setLocal(alphabet, joinNode, nameObject, nameResolver(activityNode.getName()), nameObject);
                         joinNode.append("SKIP) ||| ");
                     } else {
                         ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, joinNode, nameObject, activityNode.getName(), nameObject);
+                        setLocal(alphabet, joinNode, nameObject, nameResolver(activityNode.getName()), nameObject);
                         joinNode.append("SKIP)");
                     }
                 }
@@ -2316,7 +2329,7 @@ public class ADParser {
 
             if (sync2Bool) {
                 for (String nameObjectOut : objects) {
-                    getLocal(alphabet, joinNode, nameObjectOut, activityNode.getName(), nameObjectOut);
+                    getLocal(alphabet, joinNode, nameObjectOut, nameResolver(activityNode.getName()), nameObjectOut);
                 }
             }
 
@@ -2375,18 +2388,18 @@ public class ADParser {
 
             for (int i = 0; i < objects.size(); i++) {	//creates the parallel output channels
                 joinNode.append(" [|{|");
-                joinNode.append("get_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                joinNode.append("set_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                joinNode.append("get_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                joinNode.append("set_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 joinNode.append("endDiagram_" + ad.getName() + "|}|] ");
-                joinNode.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
+                joinNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
             }
 
             if (objects.size() > 0) {
                 joinNode.append(" \\{|");
 
                 for (int i = 0; i < objects.size(); i++) {
-                    joinNode.append("get_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                    joinNode.append("set_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName());
+                    joinNode.append("get_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                    joinNode.append("set_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                     if (i < objects.size() - 1) {
                         joinNode.append(",");
                     }
@@ -2399,7 +2412,7 @@ public class ADParser {
             joinNode.append("\n");
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -2552,11 +2565,11 @@ public class ADParser {
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, joinNode, nameObject, activityNode.getName(), nameObject);
+                        setLocal(alphabet, joinNode, nameObject, nameResolver(activityNode.getName()), nameObject);
                         joinNode.append("SKIP) ||| ");
                     } else {
                         ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, joinNode, nameObject, activityNode.getName(), nameObject);
+                        setLocal(alphabet, joinNode, nameObject, nameResolver(activityNode.getName()), nameObject);
                         joinNode.append("SKIP)");
                     }
                 }
@@ -2569,7 +2582,7 @@ public class ADParser {
 
             if (sync2Bool) {
                 for (String nameObjectOut : objects) {
-                    getLocal(alphabet, joinNode, nameObjectOut, activityNode.getName(), nameObjectOut);
+                    getLocal(alphabet, joinNode, nameObjectOut, nameResolver(activityNode.getName()), nameObjectOut);
                 }
             }
 
@@ -2617,18 +2630,18 @@ public class ADParser {
 
             for (int i = 0; i < objects.size(); i++) {	//creates the parallel output channels
                 joinNode.append(" [|{|");
-                joinNode.append("get_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                joinNode.append("set_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                joinNode.append("get_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                joinNode.append("set_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 joinNode.append("endDiagram_" + ad.getName() + "|}|] ");
-                joinNode.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
+                joinNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
             }
 
             if (objects.size() > 0) {
                 joinNode.append(" \\{|");
 
                 for (int i = 0; i < objects.size(); i++) {
-                    joinNode.append("get_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                    joinNode.append("set_" + objects.get(i) + "_" + activityNode.getName() + "_" + ad.getName());
+                    joinNode.append("get_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                    joinNode.append("set_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                     if (i < objects.size() - 1) {
                         joinNode.append(",");
                     }
@@ -2641,7 +2654,7 @@ public class ADParser {
             joinNode.append("\n");
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -2667,8 +2680,8 @@ public class ADParser {
     private IActivityNode defineMerge(IActivityNode activityNode, StringBuilder nodes, int code) {
         StringBuilder merge = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameMerge = activityNode.getName() + "_" + ad.getName();
-        String nameMergeTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameMerge = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameMergeTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -2726,11 +2739,11 @@ public class ADParser {
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObject);
+                        setLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObject);
                         merge.append("SKIP) [] ");
                     } else {
                         ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObject);
+                        setLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObject);
                         merge.append("SKIP)");
                     }
                 }
@@ -2741,7 +2754,7 @@ public class ADParser {
             update(alphabet, merge, 1, 1);
 
             if (!nameObjectUnique.equals("")) {
-                getLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObjectUnique);
+                getLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObjectUnique);
                 String oe = createOE(nameObjectUnique); //creates output channels
                 syncObjectsEdge.put(outFlows[0].getId(), oe);
                 objectEdges.put(oe, nameObjectUnique);
@@ -2753,15 +2766,15 @@ public class ADParser {
                 merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
 
                 merge.append("[|{|");
-                merge.append("get_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                merge.append("set_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 merge.append("endDiagram_" + ad.getName());
                 merge.append("|}|] ");
-                merge.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
+                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
 
                 merge.append("\\{|");
-                merge.append("get_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                merge.append("set_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName());
+                merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                 merge.append("|}\n");
 
             } else {
@@ -2775,7 +2788,7 @@ public class ADParser {
             }
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -2837,7 +2850,7 @@ public class ADParser {
             }
 
             if (!nameObjectUnique.equals("")) {
-                //getLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObjectUnique);
+                //getLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObjectUnique);
                 String oe = createOE(nameObjectUnique); //creates output channels
                 syncObjectsEdge.put(outFlows[0].getId(), oe);
                 objectEdges.put(oe, nameObjectUnique);
@@ -2849,15 +2862,15 @@ public class ADParser {
                 merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
 
                 merge.append("[|{|");
-                merge.append("get_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                merge.append("set_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 merge.append("endDiagram_" + ad.getName());
                 merge.append("|}|] ");
-                merge.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
+                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
 
                 merge.append("\\{|");
-                merge.append("get_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                merge.append("set_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName());
+                merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                 merge.append("|}\n");
 
             } else {
@@ -2933,11 +2946,11 @@ public class ADParser {
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObject);
+                        setLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObject);
                         merge.append("SKIP) [] ");
                     } else {
                         ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        setLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObject);
+                        setLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObject);
                         merge.append("SKIP)");
                     }
                 }
@@ -2948,7 +2961,7 @@ public class ADParser {
             update(alphabet, merge, 1, 1);
 
             if (!nameObjectUnique.equals("")) {
-                getLocal(alphabet, merge, nameObjectUnique, activityNode.getName(), nameObjectUnique);
+                getLocal(alphabet, merge, nameObjectUnique, nameResolver(activityNode.getName()), nameObjectUnique);
                 String oe = syncObjectsEdge.get(outFlows[0].getId());
 
                 oe(alphabet, merge, oe,"!" + nameObjectUnique, " -> ");
@@ -2959,15 +2972,15 @@ public class ADParser {
                 merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
 
                 merge.append("[|{|");
-                merge.append("get_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                merge.append("set_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 merge.append("endDiagram_" + ad.getName());
                 merge.append("|}|] ");
-                merge.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
+                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
 
                 merge.append("\\{|");
-                merge.append("get_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                merge.append("set_" + nameObjectUnique + "_" + activityNode.getName() + "_" + ad.getName());
+                merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                 merge.append("|}\n");
 
             } else {
@@ -2980,7 +2993,7 @@ public class ADParser {
             }
 
             alphabet.add("endDiagram_" + ad.getName());
-            alphabetNode.put(activityNode.getName(), alphabet);
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -3006,8 +3019,8 @@ public class ADParser {
     private IActivityNode defineDecision(IActivityNode activityNode, StringBuilder nodes, int code) {
         StringBuilder decision = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameDecision = activityNode.getName() + "_" + ad.getName();
-        String nameDecisionTermination = activityNode.getName() + "_" + ad.getName() + "_t";
+        String nameDecision = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameDecisionTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t";
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -3062,7 +3075,7 @@ public class ADParser {
                 decision.append(nameDecision + " /\\ " + endDiagram + "\n");
 
                 alphabet.add("endDiagram_" + ad.getName());
-                alphabetNode.put(activityNode.getName(), alphabet);
+                alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
 //			activityNode = outFlows[0].getTarget();	//set next action or control node
 //
@@ -3114,14 +3127,14 @@ public class ADParser {
 
                 String sync2 = "";
 //			for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
-//				if (tupla.getValue().equals(activityNode.getName())) {
+//				if (tupla.getValue().equals(nameResolver(activityNode.getName()))) {
 //					sync2 = tupla;
 //				}
 //			}
 //
                 String sync = "";
 //			for (Pair<String, String> tupla : syncObjectsEdge.keySet()) {	//get sync channel
-//				if (tupla.getValue().equals(activityNode.getName())) {
+//				if (tupla.getValue().equals(nameResolver(activityNode.getName()))) {
 //					sync = tupla;
 //				}
 //			}
@@ -3147,11 +3160,11 @@ public class ADParser {
                 decision.append(") ||| (");
                 oe(alphabet, decision, ceIn, "?" + decisionInputFlow, " -> ");
 
-                setLocal(alphabet, decision, decisionInputFlow, activityNode.getName(), decisionInputFlow);
+                setLocal(alphabet, decision, decisionInputFlow, nameResolver(activityNode.getName()), decisionInputFlow);
                 decision.append("SKIP)); ");
 
                 update(alphabet, decision, 2, 1);
-                getLocal(alphabet, decision, decisionInputFlow, activityNode.getName(), decisionInputFlow);
+                getLocal(alphabet, decision, decisionInputFlow, nameResolver(activityNode.getName()), decisionInputFlow);
 
                 decision.append("(");
 
@@ -3176,19 +3189,19 @@ public class ADParser {
                 decision.append("((" + nameDecision + " /\\ " + endDiagram + ") ");
 
                 decision.append("[|{|");
-                decision.append("get_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                decision.append("set_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 decision.append("endDiagram_" + ad.getName());
                 decision.append("|}|] ");
-                decision.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + decisionInputFlow + "_t(0)) ");
+                decision.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + decisionInputFlow + "_t(0)) ");
 
                 decision.append("\\{|");
-                decision.append("get_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                decision.append("set_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName());
+                decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                 decision.append("|}\n");
 
                 alphabet.add("endDiagram_" + ad.getName());
-                alphabetNode.put(activityNode.getName(), alphabet);
+                alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
                 activityNode = outFlows[0].getTarget();	//set next action or control node
 
@@ -3204,7 +3217,7 @@ public class ADParser {
 
                 String sync = "";
 //			for (Pair<String, String> tupla : syncChannelsEdge.keySet()) {	//get sync channel
-//				if (tupla.getValue().equals(activityNode.getName())) {
+//				if (tupla.getValue().equals(nameResolver(activityNode.getName()))) {
 //					sync = tupla;
 //				}
 //			}
@@ -3239,7 +3252,7 @@ public class ADParser {
                 decision.append(nameDecision + " /\\ " + endDiagram + "\n");
 
                 alphabet.add("endDiagram_" + ad.getName());
-                alphabetNode.put(activityNode.getName(), alphabet);
+                alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
                 activityNode = outFlows[0].getTarget();	//set next action or control node
 
@@ -3408,7 +3421,7 @@ public class ADParser {
                 decision.append(nameDecision + " /\\ " + endDiagram + "\n");
 
                 alphabet.add("endDiagram_" + ad.getName());
-                alphabetNode.put(activityNode.getName(), alphabet);
+                alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
                 if (outFlows[0].getTarget() instanceof IInputPin) {
                     for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -3474,11 +3487,11 @@ public class ADParser {
                 decision.append(") ||| (");
                 oe(alphabet, decision, ceIn, "?" + decisionInputFlow, " -> ");
 
-                setLocal(alphabet, decision, decisionInputFlow, activityNode.getName(), decisionInputFlow);
+                setLocal(alphabet, decision, decisionInputFlow, nameResolver(activityNode.getName()), decisionInputFlow);
                 decision.append("SKIP)); ");
 
                 update(alphabet, decision, 2, 1);
-                getLocal(alphabet, decision, decisionInputFlow, activityNode.getName(), decisionInputFlow);
+                getLocal(alphabet, decision, decisionInputFlow, nameResolver(activityNode.getName()), decisionInputFlow);
 
                 decision.append("(");
 
@@ -3502,19 +3515,19 @@ public class ADParser {
                 decision.append("((" + nameDecision + " /\\ " + endDiagram + ") ");
 
                 decision.append("[|{|");
-                decision.append("get_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                decision.append("set_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName() + ",");
+                decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 decision.append("endDiagram_" + ad.getName());
                 decision.append("|}|] ");
-                decision.append("Mem_" + activityNode.getName() + "_" + ad.getName() + "_" + decisionInputFlow + "_t(0)) ");
+                decision.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + decisionInputFlow + "_t(0)) ");
 
                 decision.append("\\{|");
-                decision.append("get_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName() + ",");
-                decision.append("set_" + decisionInputFlow + "_" + activityNode.getName() + "_" + ad.getName());
+                decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
+                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName());
                 decision.append("|}\n");
 
                 alphabet.add("endDiagram_" + ad.getName());
-                alphabetNode.put(activityNode.getName(), alphabet);
+                alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
                 activityNode = outFlows[0].getTarget();	//set next action or control node
 
@@ -3559,7 +3572,7 @@ public class ADParser {
                 decision.append(nameDecision + " /\\ " + endDiagram + "\n");
 
                 alphabet.add("endDiagram_" + ad.getName());
-                alphabetNode.put(activityNode.getName(), alphabet);
+                alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
                 activityNode = outFlows[0].getTarget();	//set next action or control node
 
@@ -3579,8 +3592,8 @@ public class ADParser {
     private IActivityNode defineFlowFinal (IActivityNode activityNode, StringBuilder nodes) {
         StringBuilder flowFinal = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameFlowFinal = activityNode.getName() + "_" + ad.getName();
-        String nameFlowFinalTermination = activityNode.getName() + "_" + ad.getName() + "_t" ;
+        String nameFlowFinal = nameResolver(activityNode.getName()) + "_" + ad.getName();
+        String nameFlowFinalTermination = nameResolver(activityNode.getName()) + "_" + ad.getName() + "_t" ;
         String endDiagram = "END_DIAGRAM_" + ad.getName();
         HashMap<String, String> nameObjects = new HashMap<>();
         IFlow inFlows[] = activityNode.getIncomings();
@@ -3637,7 +3650,7 @@ public class ADParser {
         flowFinal.append(nameFlowFinal + " /\\ " + endDiagram + "\n");
 
         alphabet.add("endDiagram_" + ad.getName() );
-        alphabetNode.put(activityNode.getName(), alphabet);
+        alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
 
         activityNode = null;
 
@@ -3649,34 +3662,34 @@ public class ADParser {
     private IActivityNode defineParameterNode (IActivityNode activityNode, StringBuilder nodes) {
         StringBuilder parameterNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameParameterNode =  "parameter_" + activityNode.getName() + "_t";
+        String nameParameterNode =  "parameter_" + nameResolver(activityNode.getName()) + "_t";
         IFlow outFlows[] = activityNode.getOutgoings();
         IFlow inFlows[] = activityNode.getIncomings();
 
         parameterNode.append(nameParameterNode + " = ");
 
         update(alphabet, parameterNode, inFlows.length, outFlows.length);
-        get(alphabet, parameterNode, activityNode.getName());
+        get(alphabet, parameterNode, nameResolver(activityNode.getName()));
 
         parameterNode.append("(");
 
         for (int i = 0; i <  outFlows.length; i++) {	//creates the parallel output channels
-            String oe = createOE(activityNode.getName());
+            String oe = createOE(nameResolver(activityNode.getName()));
             syncObjectsEdge.put(outFlows[i].getId(), oe);
-            objectEdges.put(oe, activityNode.getName());
+            objectEdges.put(oe, nameResolver(activityNode.getName()));
 
             parameterNode.append("(");
 
             if (i >= 0 && i < outFlows.length - 1) {
-                oe(alphabet, parameterNode, oe, "!" + activityNode.getName(), " -> SKIP) ||| ");
+                oe(alphabet, parameterNode, oe, "!" + nameResolver(activityNode.getName()), " -> SKIP) ||| ");
             } else {
-                oe(alphabet, parameterNode, oe, "!" + activityNode.getName(), " -> SKIP)");
+                oe(alphabet, parameterNode, oe, "!" + nameResolver(activityNode.getName()), " -> SKIP)");
             }
         }
 
         parameterNode.append(")\n");
 
-        parameterAlphabetNode.put(activityNode.getName(), alphabet);
+        parameterAlphabetNode.put(nameResolver(activityNode.getName()), alphabet);
         allInitial.add(nameParameterNode);
         for (String channel : alphabet) {
             if (!alphabetAllInitialAndParameter.contains(channel)) {
@@ -3890,6 +3903,16 @@ public class ADParser {
         }
 
         return objects;
+    }
+
+    private String nameResolver(String name) {
+        return name.replace(" ", "").replace("!", "_").replace("@", "_")
+                .replace("%", "_").replace("&", "_").replace("*", "_")
+                .replace("(", "_").replace(")", "_").replace("+", "_")
+                .replace("-", "_").replace("=", "_").replace("?", "_")
+                .replace(":", "_").replace("/", "_").replace(";", "_")
+                .replace(">", "_").replace("<", "_").replace(",", "_")
+                .replace("{", "_").replace("}", "_");
     }
 
 }

@@ -1,13 +1,11 @@
 package com.ref.fdr;
 
-import java.awt.geom.Point2D;
 import java.io.File;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -17,14 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.editor.*;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
-import com.change_vision.jude.api.inf.model.*;
-import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.refinement.activityDiagram.DeadlockCounterExample;
+import com.ref.refinement.activityDiagram.DeterminismCounterExample;
 
 public class FdrWrapper {
 
@@ -75,6 +71,8 @@ public class FdrWrapper {
 	private Object session;
 
 	private Class<?> deadlockCounterexampleClass;
+
+    private Class<?> determinismCounterexampleClass;
 	
 	public boolean loadFDR(String path) {
 
@@ -176,6 +174,7 @@ public class FdrWrapper {
 
 		deadlockCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeadlockCounterexample");
 
+        determinismCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeterminismCounterexample");
 	}
 
 	public List<String> getClasses() {
@@ -394,6 +393,28 @@ public class FdrWrapper {
 		return trace;
 	}
 
+    public List<String> describeDeterminismCounterExample(Object session, Object counterExample) throws Exception {
+        Object behaviour = invokeProperty(determinismCounterexampleClass, counterExample, "specificationBehaviour", null, null);
+        List<String> trace = describeBehaviourDeterminism(session, behaviour);
+
+        return trace;
+    }
+
+    private List<String> describeBehaviourDeterminism(Object session, Object behaviour) throws Exception {
+
+        List<String> trace = new ArrayList<>();
+
+        for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
+
+            if (event != 1 && event != 0) {
+                Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
+                trace.add(result.toString());
+            }
+        }
+
+        return trace;
+    }
+
 	public String getErrorEvent(Object counterExample, Object session) {
         String errorEvent = "";
         try {
@@ -520,7 +541,7 @@ public class FdrWrapper {
 		return hasError;
 	}
 
-	public int checkDeterminism(String filename) throws Exception{
+	public int checkDeterminism(String filename, ADParser parser) throws Exception{
 
 	/*
 	0 = error
@@ -540,17 +561,20 @@ public class FdrWrapper {
 			List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
 			Object assertion = assertions.get(2);
 			try {
-				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+                invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-				if (!((boolean) invokeProperty(assertion.getClass(), assertion,
-						"passed", null, null))) {
-					hasError = 2;
-				}
+                for (Object DeterminismCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+                        "counterexamples", null, null)) {
 
-				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-						"counterexamples", null, null)) {
-					hasError = 1;
-				}
+                    List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
+                    DeterminismCounterExample.createDeterminismCounterExample(trace, parser);
+
+                    hasError = 2;
+                }
+
+                if (hasError == 0) {
+                    hasError = 1;
+                }
 
 			} catch (Exception e) {
 				hasError = 2;

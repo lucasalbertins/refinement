@@ -6,15 +6,22 @@ import com.change_vision.jude.api.inf.editor.BasicModelEditor;
 import com.change_vision.jude.api.inf.editor.ModelEditorFactory;
 import com.change_vision.jude.api.inf.editor.TransactionManager;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
+import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.presentation.IPresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADParser;
+import jdk.nashorn.internal.ir.IfNode;
 
+import javax.swing.*;
 import java.awt.geom.Point2D;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,11 +30,16 @@ public class DeadlockCounterExample {
     private static HashMap<String, INodePresentation> objPresent;
     private static List<String> trace;
     private static ADParser parser;
-    //actionNode.setProperty("fill.color", "#FF0000");
-    //flow.setProperty("line.color", "#FF0000");
+    private static IPackage packageCounterExample;
+    private static IActivityDiagram ad;
 
     public static void createDeadlockCounterExample(List<String> traceList, ADParser parserParam) {
         try {
+            Date hoje = new Date();
+            SimpleDateFormat df;
+            df = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
+            String data = df.format(hoje);
+
             nodeAdded = new HashMap<>();
             objPresent = new HashMap<>();
             trace = new ArrayList<>();
@@ -50,9 +62,9 @@ public class DeadlockCounterExample {
             BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
 
             TransactionManager.beginTransaction();
-            IPackage Package = basicModelEditor.createPackage(project, "CounterExample");
+            createPackage(basicModelEditor, project);
             ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
-            IActivityDiagram ad = adEditor.createActivityDiagram(Package, diagram.getName());
+            ad = adEditor.createActivityDiagram(packageCounterExample, diagram.getName() + "#" + data);
 
             for (IActivityNode node : ((IActivityDiagram) diagram).getActivity().getActivityNodes()) {
                 createNode(node, adEditor);
@@ -62,6 +74,85 @@ public class DeadlockCounterExample {
         } catch (Exception e) {
             TransactionManager.abortTransaction();
         }
+    }
+
+    private static void createPackage(BasicModelEditor basicModelEditor, IModel project) {
+        try {
+            packageCounterExample = basicModelEditor.createPackage(project, "DeadlockCounterExample");
+        } catch (InvalidEditingException e) {}
+    }
+
+    private static IActivityNode getIActivityNode(INodePresentation nodePresent) {
+        IActivityNode result = null;
+        try {
+            for (IActivityNode actNode : ad.getActivity().getActivityNodes()) {
+                if (((INodePresentation) actNode.getPresentations()[0]) == nodePresent) {
+                    result = actNode;
+                    break;
+                }
+            }
+        } catch (InvalidUsingException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private static IFlow getIFlow(ILinkPresentation flowPresent) {
+        IFlow result = null;
+        try {
+            for (IActivityNode actNode : ad.getActivity().getActivityNodes()) {
+                if (actNode instanceof IAction) {
+                    IFlow[] outflows = actNode.getOutgoings();
+                    for (IFlow flow : outflows){
+                        if (((ILinkPresentation)flow.getPresentations()[0]) == flowPresent) {
+                            result = flow;
+                            break;
+                        }
+                    }
+
+                    //outPins
+                    IOutputPin[] outPins = ((IAction) actNode).getOutputs();
+                    for (IOutputPin outPin : outPins) {
+                        outflows = outPin.getOutgoings();
+                        for (IFlow flow : outflows){
+                            if (((ILinkPresentation)flow.getPresentations()[0]) == flowPresent) {
+                                result = flow;
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    IFlow[] outflows = actNode.getOutgoings();
+                    for (IFlow flow : outflows){
+                        if (((ILinkPresentation)flow.getPresentations()[0]) == flowPresent) {
+                            result = flow;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (InvalidUsingException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private static void setFlowPoints(ILinkPresentation flow, IFlow targetOutFlow) {
+        try {
+            flow.setAllPoints(((ILinkPresentation) targetOutFlow.getPresentations()[0]).getAllPoints());
+        } catch (Exception e) { }
+    }
+
+    private static String nameResolver(String name) {
+        return name.replace(" ", "").replace("!", "_").replace("@", "_")
+                .replace("%", "_").replace("&", "_").replace("*", "_")
+                .replace("(", "_").replace(")", "_").replace("+", "_")
+                .replace("-", "_").replace("=", "_").replace("?", "_")
+                .replace(":", "_").replace("/", "_").replace(";", "_")
+                .replace(">", "_").replace("<", "_").replace(",", "_")
+                .replace("{", "_").replace("}", "_");
     }
 
     private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor) {
@@ -101,10 +192,13 @@ public class DeadlockCounterExample {
         INodePresentation actionNode = null;
 
         try {
-            actionNode = adEditor.createAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            actionNode = adEditor.createAction(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+            IActivityNode actNode = getIActivityNode(actionNode);
+            actNode.setDefinition(node.getDefinition());
+
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -128,6 +222,13 @@ public class DeadlockCounterExample {
                 ILinkPresentation flow = adEditor.createFlow(actionNode, targetPresent);
                 flow.setLabel(outFlows[i].getGuard());
 
+                IFlow flowPresent = getIFlow(flow);
+                for (String stereotype : outFlows[i].getStereotypes()) {
+                    flowPresent.addStereotype(stereotype);
+                }
+
+                setFlowPoints(flow, outFlows[i]);
+
                 if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                     String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
                     String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
@@ -150,11 +251,17 @@ public class DeadlockCounterExample {
                         INodePresentation pinPresent = objPresent.get(outPins[i].getId());
                         ILinkPresentation flow = adEditor.createFlow(pinPresent, targetPresent);
                         flow.setLabel(targetOutFlows[x].getGuard());
-                        //flow.setPoints(((ILinkPresentation) targetOutFlows[x].getPresentations()[0]).getAllPoints());
 
-                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x]) || parser.syncObjectsEdge.containsKey(targetOutFlows[x])) {
-                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x]);
-                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x]);
+                        IFlow flowPresent = getIFlow(flow);
+                        for (String stereotype : targetOutFlows[x].getStereotypes()) {
+                            flowPresent.addStereotype(stereotype);
+                        }
+
+                        setFlowPoints(flow, targetOutFlows[x]);
+
+                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x].getId()) || parser.syncObjectsEdge.containsKey(targetOutFlows[x].getId())) {
+                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x].getId());
+                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x].getId());
 
                             if (channel != null && trace.contains(channel)) {
                                 flow.setProperty("line.color", "#FF0000");
@@ -172,11 +279,17 @@ public class DeadlockCounterExample {
                         INodePresentation pinPresent = objPresent.get(outPins[i].getId());
                         ILinkPresentation flow = adEditor.createFlow(pinPresent, targetPresent);
                         flow.setLabel(targetOutFlows[x].getGuard());
-                        //flow.setPoints(((ILinkPresentation) targetOutFlows[x].getPresentations()[0]).getAllPoints());
 
-                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x]) || parser.syncObjectsEdge.containsKey(targetOutFlows[x])) {
-                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x]);
-                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x]);
+                        IFlow flowPresent = getIFlow(flow);
+                        for (String stereotype : targetOutFlows[x].getStereotypes()) {
+                            flowPresent.addStereotype(stereotype);
+                        }
+
+                        setFlowPoints(flow, targetOutFlows[x]);
+
+                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x].getId()) || parser.syncObjectsEdge.containsKey(targetOutFlows[x].getId())) {
+                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x].getId());
+                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x].getId());
 
                             if (channel != null && trace.contains(channel)) {
                                 flow.setProperty("line.color", "#FF0000");
@@ -204,10 +317,10 @@ public class DeadlockCounterExample {
         INodePresentation initialNode = null;
 
         try {
-            initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            initialNode = adEditor.createInitialNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -222,7 +335,13 @@ public class DeadlockCounterExample {
                 INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
                 ILinkPresentation flow = adEditor.createFlow(initialNode, targetPresent);
                 flow.setLabel(outFlows[i].getGuard());
-                //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                IFlow flowPresent = getIFlow(flow);
+                for (String stereotype : outFlows[i].getStereotypes()) {
+                    flowPresent.addStereotype(stereotype);
+                }
+
+                setFlowPoints(flow, outFlows[i]);
 
                 if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                     String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -249,10 +368,10 @@ public class DeadlockCounterExample {
         INodePresentation parameterNode = null;
 
         try {
-            parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            parameterNode = adEditor.createActivityParameterNode(nameResolver(node.getName()), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.parameterAlphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.parameterAlphabetNode.get(node.getName());
+            if (parser.parameterAlphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -269,7 +388,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(parameterNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -288,7 +413,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
                     ILinkPresentation flow = adEditor.createFlow(parameterNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -317,10 +448,10 @@ public class DeadlockCounterExample {
 
         try {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
-            decisionNode.setLabel(node.getName());
+            decisionNode.setLabel(nameResolver(node.getName()));
 
-            if (parser.alphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -337,7 +468,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -356,7 +493,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
                     ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -386,10 +529,10 @@ public class DeadlockCounterExample {
         try {
             forkNode = adEditor.createForkNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
-            forkNode.setLabel(node.getName());
+            forkNode.setLabel(nameResolver(node.getName()));
 
-            if (parser.alphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -406,7 +549,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(forkNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -425,7 +574,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
                     ILinkPresentation flow = adEditor.createFlow(forkNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -455,10 +610,10 @@ public class DeadlockCounterExample {
         try {
             joinNode = adEditor.createJoinNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
-            joinNode.setLabel(node.getName());
+            joinNode.setLabel(nameResolver(node.getName()));
 
-            if (parser.alphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -475,7 +630,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -494,7 +655,13 @@ public class DeadlockCounterExample {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
                     ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
-                    //flow.setPoints(((ILinkPresentation) outFlows[i].getPresentations()[0]).getAllPoints());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
 
                     if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
                         String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
@@ -522,7 +689,7 @@ public class DeadlockCounterExample {
         INodePresentation FinalNode = null;
 
         try {
-            FinalNode = adEditor.createFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            FinalNode = adEditor.createFinalNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
             nodeAdded.put(node.getId(), FinalNode);
 
@@ -538,10 +705,10 @@ public class DeadlockCounterExample {
         INodePresentation flowFinalNode = null;
 
         try {
-            flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            flowFinalNode = adEditor.createFlowFinalNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(node.getName())) {
-                List<String> allflowsNode =  parser.alphabetNode.get(node.getName());
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {

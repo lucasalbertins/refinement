@@ -21,9 +21,9 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.FDR3LocationDialog;
 
-public class TemplateActionAD implements IPluginActionDelegate {
+public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 
-	private boolean firstInteration = true;
+	public static boolean firstInteration = true;
 	public Object run(IWindow window) throws UnExpectedException {
 
 		try {
@@ -40,7 +40,7 @@ public class TemplateActionAD implements IPluginActionDelegate {
 
 					if (fdrLocation.exists()) {
 						wrapper.loadFDR(pathFDR);
-						if (firstInteration) {
+						if (firstInteration && TemplateDeterminismActionAD.firstInteration) {
 							wrapper.loadClasses();
 							firstInteration = false;
 						}
@@ -48,7 +48,7 @@ public class TemplateActionAD implements IPluginActionDelegate {
 						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 
 						if (diagram instanceof IActivityDiagram) {
-							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName());
+							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName(), (IActivityDiagram) diagram);
 							String diagramCSP = parser.parserDiagram();
 
 							String fs = System.getProperty("file.separator");

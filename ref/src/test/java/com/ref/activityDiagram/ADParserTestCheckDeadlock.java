@@ -36,6 +36,7 @@ public class ADParserTestCheckDeadlock {
 	private static ADParser parser4;
 	private static ADParser parser5;
 	private static ADParser parser6;
+	public static boolean loadClassFDR = false;
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -122,13 +123,16 @@ public class ADParserTestCheckDeadlock {
 	
 	@BeforeClass
 	public static void loadClassesFDR() {
-		FdrWrapper wrapper = FdrWrapper.getInstance();
-		wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
-		try {
-			wrapper.loadClasses();
-		} catch (MalformedURLException | ClassNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		if (!ADParserTestCheckDeterminism.loadClassFDR) {
+			FdrWrapper wrapper = FdrWrapper.getInstance();
+			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+			try {
+				wrapper.loadClasses();
+			} catch (MalformedURLException | ClassNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			loadClassFDR = true;
 		}
 	}
 	
