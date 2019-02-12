@@ -47,7 +47,7 @@ public class ADParserTestCheckDeadlock {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser1 = new ADParser(ad.getActivity(), ad.getName());
+			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/deadlockFree1.asta");
@@ -55,7 +55,7 @@ public class ADParserTestCheckDeadlock {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/deadlockFree2.asta");
@@ -63,7 +63,7 @@ public class ADParserTestCheckDeadlock {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser3 = new ADParser(ad.getActivity(), ad.getName());
+			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/deadlock2.asta");
@@ -71,7 +71,7 @@ public class ADParserTestCheckDeadlock {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser4 = new ADParser(ad.getActivity(), ad.getName());
+			parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/deadlock3.asta");
@@ -79,7 +79,7 @@ public class ADParserTestCheckDeadlock {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser5 = new ADParser(ad.getActivity(), ad.getName());
+			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/compilationFailed1.asta");
@@ -87,7 +87,7 @@ public class ADParserTestCheckDeadlock {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser6 = new ADParser(ad.getActivity(), ad.getName());
+			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();

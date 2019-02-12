@@ -33,7 +33,7 @@ public class ADParserTesteFlowFinalNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser1 = new ADParser(ad.getActivity(), ad.getName());
+			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/flowFinal2.asta");
@@ -41,7 +41,7 @@ public class ADParserTesteFlowFinalNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/flowFinal3.asta");
@@ -49,7 +49,7 @@ public class ADParserTesteFlowFinalNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser3 = new ADParser(ad.getActivity(), ad.getName());
+			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/flowFinal4.asta");
@@ -57,7 +57,7 @@ public class ADParserTesteFlowFinalNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser4 = new ADParser(ad.getActivity(), ad.getName());
+			parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/flowFinal5.asta");
@@ -65,7 +65,7 @@ public class ADParserTesteFlowFinalNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser5 = new ADParser(ad.getActivity(), ad.getName());
+			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();

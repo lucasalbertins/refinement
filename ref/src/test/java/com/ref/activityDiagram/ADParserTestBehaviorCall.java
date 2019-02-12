@@ -31,7 +31,7 @@ public class ADParserTestBehaviorCall {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser1 = new ADParser(ad.getActivity(), ad.getName());
+			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/behavior2.asta");
@@ -39,7 +39,7 @@ public class ADParserTestBehaviorCall {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/behavior3.asta");
@@ -47,7 +47,7 @@ public class ADParserTestBehaviorCall {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser3 = new ADParser(ad.getActivity(), ad.getName());
+			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();

@@ -35,7 +35,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser1 = new ADParser(ad.getActivity(), ad.getName());
+			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/initial2.asta");
@@ -43,7 +43,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/join1.asta");
@@ -51,7 +51,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser3 = new ADParser(ad.getActivity(), ad.getName());
+			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/decision1.asta");
@@ -59,7 +59,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser4 = new ADParser(ad.getActivity(), ad.getName());
+			parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/decision3.asta");
@@ -67,7 +67,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser5 = new ADParser(ad.getActivity(), ad.getName());
+			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/join2.asta");
@@ -75,7 +75,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser6 = new ADParser(ad.getActivity(), ad.getName());
+			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/merge3.asta");
@@ -83,7 +83,7 @@ public class ADParserTestInitialNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser7 = new ADParser(ad.getActivity(), ad.getName());
+			parser7 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();

@@ -31,21 +31,21 @@ public class ADParserTesteDecisionNode {
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser1 = new ADParser(ad.getActivity(), ad.getName());
+			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor.open("src/test/resources/activityDiagram/decision2.asta");
 			findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser2 = new ADParser(ad.getActivity(), ad.getName());
+			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor.open("src/test/resources/activityDiagram/decision3.asta");
 			findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
 			
-			parser3 = new ADParser(ad.getActivity(), ad.getName());
+			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
