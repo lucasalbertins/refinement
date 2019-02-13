@@ -160,7 +160,8 @@ public class DeadlockCounterExample {
                 .replace("-", "_").replace("=", "_").replace("?", "_")
                 .replace(":", "_").replace("/", "_").replace(";", "_")
                 .replace(">", "_").replace("<", "_").replace(",", "_")
-                .replace("{", "_").replace("}", "_");
+                .replace("{", "_").replace("}", "_").replace("|", "_")
+                .replace("\\", "_");
     }
 
     private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor) {
