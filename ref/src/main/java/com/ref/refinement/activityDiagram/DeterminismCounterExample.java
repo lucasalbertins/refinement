@@ -73,7 +73,15 @@ public class DeterminismCounterExample {
     private static void createPackage(BasicModelEditor basicModelEditor, IModel project) {
         try {
             packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
-        } catch (InvalidEditingException e) {}
+        } catch (InvalidEditingException e) {
+            INamedElement[] objects = project.getOwnedElements();
+
+            for (INamedElement object : objects) {
+                if (object.getName().equals("DeterminismCounterExample")) {
+                    packageCounterExample = (IPackage) object;
+                }
+            }
+        }
     }
 
     private static IActivityNode getIActivityNode(INodePresentation nodePresent) {

@@ -79,7 +79,15 @@ public class DeadlockCounterExample {
     private static void createPackage(BasicModelEditor basicModelEditor, IModel project) {
         try {
             packageCounterExample = basicModelEditor.createPackage(project, "DeadlockCounterExample");
-        } catch (InvalidEditingException e) {}
+        } catch (InvalidEditingException e) {
+            INamedElement[] objects = project.getOwnedElements();
+
+            for (INamedElement object : objects) {
+                if (object.getName().equals("DeadlockCounterExample")) {
+                    packageCounterExample = (IPackage) object;
+                }
+            }
+        }
     }
 
     private static IActivityNode getIActivityNode(INodePresentation nodePresent) {

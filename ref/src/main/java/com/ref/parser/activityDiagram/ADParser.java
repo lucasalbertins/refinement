@@ -40,6 +40,7 @@ public class ADParser {
     private HashMap<String, String> parameterNodesOutput;
     private List<Pair<String, String>> memoryLocal;				//nameNode, nameObject
     private List<ArrayList<String>> unionList;
+    private HashMap<String, String> typeUnionList;
 
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
@@ -71,6 +72,7 @@ public class ADParser {
         parameterNodesOutput = new HashMap<>();
         memoryLocal = new ArrayList<>();
         unionList = new ArrayList<>();
+        typeUnionList = new HashMap<>();
     }
 
     public void clearBuffer() {
@@ -99,6 +101,8 @@ public class ADParser {
         parameterNodesInput = new HashMap<>();
         parameterNodesOutput = new HashMap<>();
         memoryLocal = new ArrayList<>();
+        unionList = new ArrayList<>();
+        typeUnionList = new HashMap<>();
     }
 
     private void setName(String nameAD) {
@@ -154,18 +158,7 @@ public class ADParser {
 
     public String defineChannels() {
         StringBuilder channels = new StringBuilder();
-        IActivityNode nodes[] =  ad.getActivityNodes();
         String nameDiagram = ad.getName();
-
-        for (IActivityNode activityNode : nodes) {
-            if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {
-                parameterNodesInput.put(nameResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
-            }
-
-            if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {
-                parameterNodesOutput.put(nameResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
-            }
-        }
 
         if (parameterNodesInput.size() > 0) {
             channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
@@ -434,7 +427,7 @@ public class ADParser {
 
             for (String input : parameterNodesInput.keySet()) {
                 if (i <= 1) {
-                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(0)");
+                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(" + getDefaultValue(parameterNodesInput.get(input)) + ")");
                     if (i % 2 == 0 && parameterNodesInput.size() + parameterNodesOutput.size() > 1 &&
                             i < parameterNodesInput.size() || parameterNodesOutput.size() > 0) {
                         memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
@@ -443,7 +436,7 @@ public class ADParser {
                     }
                 } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(0))");
+                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(" + getDefaultValue(parameterNodesInput.get(input)) + "))");
                 }
 
                 i++;
@@ -451,7 +444,7 @@ public class ADParser {
 
             for (String output : parameterNodesOutput.keySet()) {
                 if (i <= 1) {
-                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(0)");
+                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(" + getDefaultValue(parameterNodesOutput.get(output)) + ")");
                     if (i % 2 == 0 && parameterNodesOutput.size() > 1 &&
                             i <  parameterNodesOutput.size()) {
                         memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
@@ -460,7 +453,7 @@ public class ADParser {
                     }
                 } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(0))");
+                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(" + getDefaultValue(parameterNodesOutput.get(output)) + "))");
                 }
 
                 i++;
@@ -570,7 +563,34 @@ public class ADParser {
         return mainNode.toString();
     }
 
+    private String getDefaultValue(String type) {
+        HashMap<String,String> typesParameter = new HashMap<>();
+        String[] definition = adDiagram.getDefinition().replace(" ", "").split(";");
+
+        for (String def : definition) {
+            String[] keyValue = def.split("=");
+            typesParameter.put(keyValue[0],keyValue[1]);
+        }
+
+        String defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+                .replace(")", "").split(",")[0];
+        System.out.println(defaultValue + " 1");
+        String defaultValueFinal = defaultValue.split("\\.\\.")[0];
+        System.out.println(defaultValueFinal + " 2");
+        return defaultValueFinal;
+    }
+
     public String defineNodesActionAndControl() {
+        for (IActivityNode activityNode : ad.getActivityNodes()) {
+            if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {
+                parameterNodesInput.put(nameResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+            }
+
+            if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {
+                parameterNodesOutput.put(nameResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+            }
+        }
+
         StringBuilder nodes = new StringBuilder();
 
         for (IActivityNode activityNode : ad.getActivityNodes()) {
@@ -1031,6 +1051,7 @@ public class ADParser {
 //		boolean syncBool = false;
 //		boolean sync2Bool = false;
         List<String> namesMemoryLocal = new ArrayList<>();
+        HashMap<String, String> typeMemoryLocal = new HashMap<>();
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
         //ArrayList<Pair<String, String>> ceInitials = new ArrayList<>();
@@ -1071,6 +1092,7 @@ public class ADParser {
                     if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
                         String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
                         //String nameObject = objectEdges.get(oeIn);
+                        String typeNameObject = objectEdges.get(oeIn);
                         String nameObject = inPins[i].getName();
 
                         action.append("(");
@@ -1086,6 +1108,7 @@ public class ADParser {
 
                         if (!namesMemoryLocal.contains(nameObject)) {
                             namesMemoryLocal.add(nameObject);
+                            typeMemoryLocal.put(nameObject, typeNameObject);
                         }
 
                         //oeInitials.add(tupla);
@@ -1152,7 +1175,7 @@ public class ADParser {
             }
 
             String nameObject = "";
-
+            String lastName = "";
             ArrayList<String> union = new ArrayList<>();
 
             for (int i = 0; i < inPins.length; i++) {
@@ -1161,11 +1184,13 @@ public class ADParser {
                     String channel = syncObjectsEdge.get(inFlowPin[x].getId());
                     nameObject += objectEdges.get(channel);
                     union.add(objectEdges.get(channel));
+                    lastName = objectEdges.get(channel);
                 }
             }
 
             if (union.size() > 1) {
                 unionList.add(union);
+                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
             }
 
             for (int i = 0; i <  outPins.length; i++) {	//creates the parallel output channels
@@ -1214,7 +1239,13 @@ public class ADParser {
                     action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                     action.append("endDiagram_" + ad.getName());
                     action.append("|}|] ");
-                    action.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(0)) ");
+
+                    String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
+                    if (typeObj == null) {
+                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
+                    }
+
+                    action.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(" + getDefaultValue(typeObj) + ")) ");
                 }
 
                 action.append("\\{|");
@@ -1339,6 +1370,7 @@ public class ADParser {
             }
 
             String nameObject = "";
+            String lastName = "";
 
             ArrayList<String> union = new ArrayList<>();
             List<String> nameObjects = new ArrayList<>();
@@ -1357,11 +1389,13 @@ public class ADParser {
                 if (!union.contains(nameObj)) {
                     nameObject += nameObj;
                     union.add(nameObj);
+                    lastName = nameObj;
                 }
             }
 
             if (union.size() > 1) {
                 unionList.add(union);
+                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
             }
 
             for (int i = 0; i <  outPins.length; i++) {	//creates the parallel output channels
@@ -1506,6 +1540,7 @@ public class ADParser {
                     if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
                         String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
                         //String nameObject = objectEdges.get(oeIn);
+                        String typeNameObject = objectEdges.get(oeIn);
                         String nameObject = inPins[i].getName();
 
                         action.append("(");
@@ -1521,6 +1556,7 @@ public class ADParser {
 
                         if (!namesMemoryLocal.contains(nameObject)) {
                             namesMemoryLocal.add(nameObject);
+                            typeMemoryLocal.put(nameObject, typeNameObject);
                         }
 
                         //oeInitials.add(tupla);
@@ -1629,7 +1665,13 @@ public class ADParser {
                     action.append("set_" + namesMemoryLocal.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                     action.append("endDiagram_" + ad.getName());
                     action.append("|}|] ");
-                    action.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(0)) ");
+
+                    String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
+                    if (typeObj == null) {
+                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
+                    }
+
+                    action.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + namesMemoryLocal.get(i) + "_t(" + getDefaultValue(typeObj) + ")) ");
                 }
 
                 action.append("\\{|");
@@ -2391,7 +2433,7 @@ public class ADParser {
                 joinNode.append("get_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 joinNode.append("set_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 joinNode.append("endDiagram_" + ad.getName() + "|}|] ");
-                joinNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
+                joinNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + objects.get(i) + "_t(" + getDefaultValue(parameterNodesInput.get(objects.get(i))) + "))");
             }
 
             if (objects.size() > 0) {
@@ -2461,17 +2503,20 @@ public class ADParser {
             }
 
             ArrayList<String> union = new ArrayList<>();
+            String lastName = "";
 
             for (String nameObj : nameObjs) {
                 if (!nameObjectAdded.contains(nameObj)) {
                     nameObjectAdded.add(nameObj);
                     nameObject += nameObj;
                     union.add(nameObj);
+                    lastName = nameObj;
                 }
             }
 
             if (union.size() > 1) {
                 unionList.add(union);
+                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
             }
 
 			System.out.println("sync2Bool " + sync2Bool);
@@ -2633,7 +2678,7 @@ public class ADParser {
                 joinNode.append("get_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 joinNode.append("set_" + objects.get(i) + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 joinNode.append("endDiagram_" + ad.getName() + "|}|] ");
-                joinNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + objects.get(i) + "_t(0))");
+                joinNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + objects.get(i) + "_t(" + getDefaultValue(parameterNodesInput.get(objects.get(i))) + "))");
             }
 
             if (objects.size() > 0) {
@@ -2690,6 +2735,7 @@ public class ADParser {
         List<String> nameObjectAdded = new ArrayList<>();
         HashMap<String, String> nameObjects = new HashMap<>();
         List<String> namesMemoryLocal = new ArrayList<>();
+        String typeMemoryLocal = null;
 
         if (code == 0) {
             ArrayList<String> ceInitials = new ArrayList<>();
@@ -2712,6 +2758,7 @@ public class ADParser {
                     if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
                         nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
                         nameObjectUnique += nameObjects.get(ceInitials.get(i));
+                        typeMemoryLocal = nameObjects.get(ceInitials.get(i));
                     }
                 }
             }
@@ -2770,7 +2817,7 @@ public class ADParser {
                 merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 merge.append("endDiagram_" + ad.getName());
                 merge.append("|}|] ");
-                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
+                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(" + getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
@@ -2838,11 +2885,13 @@ public class ADParser {
                 if (!union.contains(nameObj)) {
                     nameObjectUnique += nameObj;
                     union.add(nameObj);
+                    typeMemoryLocal = nameObj;
                 }
             }
 
             if (union.size() > 1) {
                 unionList.add(union);
+                typeUnionList.put(nameObjectUnique, parameterNodesInput.get(typeMemoryLocal));
             }
 
             if (!nameObjectUnique.equals("")) {
@@ -2866,7 +2915,7 @@ public class ADParser {
                 merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 merge.append("endDiagram_" + ad.getName());
                 merge.append("|}|] ");
-                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
+                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(" + getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
@@ -2919,6 +2968,7 @@ public class ADParser {
                     if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
                         nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
                         nameObjectUnique += nameObjects.get(ceInitials.get(i));
+                        typeMemoryLocal = nameObjects.get(ceInitials.get(i));
                     }
                 }
             }
@@ -2976,7 +3026,7 @@ public class ADParser {
                 merge.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 merge.append("endDiagram_" + ad.getName());
                 merge.append("|}|] ");
-                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(0)) ");
+                merge.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + nameObjectUnique + "_t(" + getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
@@ -3193,7 +3243,7 @@ public class ADParser {
                 decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 decision.append("endDiagram_" + ad.getName());
                 decision.append("|}|] ");
-                decision.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + decisionInputFlow + "_t(0)) ");
+                decision.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + decisionInputFlow + "_t(" + getDefaultValue(parameterNodesInput.get(decisionInputFlow)) + ")) ");
 
                 decision.append("\\{|");
                 decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
@@ -3519,7 +3569,7 @@ public class ADParser {
                 decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
                 decision.append("endDiagram_" + ad.getName());
                 decision.append("|}|] ");
-                decision.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + decisionInputFlow + "_t(0)) ");
+                decision.append("Mem_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + "_" + decisionInputFlow + "_t(" + getDefaultValue(parameterNodesInput.get(decisionInputFlow)) + ")) ");
 
                 decision.append("\\{|");
                 decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + ad.getName() + ",");
