@@ -1,0 +1,38 @@
+ID_decision2 = {1..1}
+datatype T = lock | unlock
+countCe_decision2 = {1..5}
+countUpdate_decision2 = {1..4}
+countClear_decision2 = {1..1}
+limiteUpdate_decision2 = {(0)..(1)}
+channel startActivity_decision2: ID_decision2
+channel endActivity_decision2: ID_decision2
+channel ce_decision2: countCe_decision2
+channel clear_decision2: countClear_decision2
+channel update_decision2: countUpdate_decision2.limiteUpdate_decision2
+channel endDiagram_decision2
+channel event_act1_decision2,event_act2_decision2
+channel lock_act1_decision2,lock_act2_decision2: T
+channel loop
+MAIN = decision2(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_decision2 = endDiagram_decision2 -> SKIP
+decision2(ID_decision2) = (((Internal_decision2(ID_decision2) [|{|update_decision2,clear_decision2,endDiagram_decision2|}|] TokenManager_decision2_t(0,0))) [|{|lock_act1_decision2,lock_act2_decision2,endDiagram_decision2|}|] Lock_decision2)
+Internal_decision2(ID_decision2) = StartActivity_decision2(ID_decision2); Node_decision2; EndActivity_decision2(ID_decision2)
+StartActivity_decision2(ID_decision2) = startActivity_decision2.ID_decision2 -> SKIP
+EndActivity_decision2(ID_decision2) = endActivity_decision2.ID_decision2 -> SKIP
+Node_decision2 = ((((dec1_decision2_t [{|ce_decision2.1,update_decision2.2,ce_decision2.2,ce_decision2.3,endDiagram_decision2|}||{|update_decision2.1,ce_decision2.1,endDiagram_decision2|}] init_decision2_t) [{|ce_decision2.1,update_decision2.2,ce_decision2.2,ce_decision2.3,endDiagram_decision2,update_decision2.1|}||{|ce_decision2.2,lock_act1_decision2,event_act1_decision2,update_decision2.3,ce_decision2.4,endDiagram_decision2|}] act1_decision2_t) [{|ce_decision2.1,update_decision2.2,ce_decision2.2,ce_decision2.3,endDiagram_decision2,update_decision2.1,lock_act1_decision2,event_act1_decision2,update_decision2.3,ce_decision2.4|}||{|ce_decision2.5,ce_decision2.4,clear_decision2.1,endDiagram_decision2|}] fin1_decision2_t) [{|ce_decision2.1,update_decision2.2,ce_decision2.2,ce_decision2.3,endDiagram_decision2,update_decision2.1,lock_act1_decision2,event_act1_decision2,update_decision2.3,ce_decision2.4,ce_decision2.5,clear_decision2.1|}||{|ce_decision2.3,lock_act2_decision2,event_act2_decision2,update_decision2.4,ce_decision2.5,endDiagram_decision2|}] act2_decision2_t)
+init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))
+dec1_decision2 = ce_decision2.1 -> update_decision2.2!(1-1) -> ((ce_decision2.2 -> SKIP) [] (ce_decision2.3 -> SKIP)); dec1_decision2
+dec1_decision2_t = dec1_decision2 /\ END_DIAGRAM_decision2
+act1_decision2 = ((ce_decision2.2 -> SKIP)); lock_act1_decision2.lock -> event_act1_decision2 -> lock_act1_decision2.unlock -> update_decision2.3!(1-1) -> ((ce_decision2.4 -> SKIP)); act1_decision2
+act1_decision2_t = act1_decision2 /\ END_DIAGRAM_decision2
+act2_decision2 = ((ce_decision2.3 -> SKIP)); lock_act2_decision2.lock -> event_act2_decision2 -> lock_act2_decision2.unlock -> update_decision2.4!(1-1) -> ((ce_decision2.5 -> SKIP)); act2_decision2
+act2_decision2_t = act2_decision2 /\ END_DIAGRAM_decision2
+fin1_decision2 = ((ce_decision2.4 -> SKIP) [] (ce_decision2.5 -> SKIP)); clear_decision2.1 -> SKIP
+fin1_decision2_t = fin1_decision2 /\ END_DIAGRAM_decision2
+init_decision2_t = (init1_decision2_t) /\ END_DIAGRAM_decision2
+TokenManager_decision2(x,init) = update_decision2?c?y:limiteUpdate_decision2 -> x+y < 10 & x+y > -10 & TokenManager_decision2(x+y,1) [] clear_decision2?c -> endDiagram_decision2 -> SKIP [] x == 0 & init == 1 & endDiagram_decision2 -> SKIP
+TokenManager_decision2_t(x,init) = TokenManager_decision2(x,init)
+Lock_act1_decision2 = lock_act1_decision2.lock -> lock_act1_decision2.unlock -> Lock_act1_decision2 [] endDiagram_decision2 -> SKIP
+Lock_act2_decision2 = lock_act2_decision2.lock -> lock_act2_decision2.unlock -> Lock_act2_decision2 [] endDiagram_decision2 -> SKIP
+Lock_decision2 = (Lock_act1_decision2 [|{|endDiagram_decision2|}|] Lock_act2_decision2)

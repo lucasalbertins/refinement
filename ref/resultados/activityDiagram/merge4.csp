@@ -1,0 +1,58 @@
+ID_merge4 = {1..1}
+datatype T = lock | unlock
+x_merge4 = {0..1}
+countGet_merge4 = {1..4}
+countSet_merge4 = {1..5}
+countOe_merge4 = {1..5}
+countUpdate_merge4 = {1..4}
+countClear_merge4 = {1..1}
+limiteUpdate_merge4 = {(0)..2}
+channel startActivity_merge4: ID_merge4.x_merge4
+channel endActivity_merge4: ID_merge4
+channel get_x_merge4: countGet_merge4.x_merge4
+channel get_x_act1_merge4: countGet_merge4.x_merge4
+channel get_x_act2_merge4: countGet_merge4.x_merge4
+channel get_x_merge1_merge4: countGet_merge4.x_merge4
+channel set_x_merge4: countSet_merge4.x_merge4
+channel set_x_act1_merge4: countSet_merge4.x_merge4
+channel set_x_act2_merge4: countSet_merge4.x_merge4
+channel set_x_merge1_merge4: countSet_merge4.x_merge4
+channel oe_x_merge4: countOe_merge4.x_merge4
+channel clear_merge4: countClear_merge4
+channel update_merge4: countUpdate_merge4.limiteUpdate_merge4
+channel endDiagram_merge4
+channel event_act1_merge4,event_act2_merge4
+channel lock_act1_merge4,lock_act2_merge4: T
+channel loop
+MAIN = merge4(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_merge4 = endDiagram_merge4 -> SKIP
+merge4(ID_merge4) = ((((Internal_merge4(ID_merge4) [|{|update_merge4,clear_merge4,endDiagram_merge4|}|] TokenManager_merge4_t(0,0))) [|{|lock_act1_merge4,lock_act2_merge4,endDiagram_merge4|}|] Lock_merge4) [|{|get_x_merge4,set_x_merge4,endActivity_merge4|}|] Mem_merge4)
+Internal_merge4(ID_merge4) = StartActivity_merge4(ID_merge4); Node_merge4; EndActivity_merge4(ID_merge4)
+StartActivity_merge4(ID_merge4) = startActivity_merge4.ID_merge4?x -> set_x_merge4.5!x -> SKIP
+EndActivity_merge4(ID_merge4) = endActivity_merge4.ID_merge4 -> SKIP
+Node_merge4 = ((((init_merge4_t [{|update_merge4.1,oe_x_merge4.1,oe_x_merge4.2,get_x_merge4.1,endDiagram_merge4|}||{|oe_x_merge4.1,lock_act1_merge4,event_act1_merge4,update_merge4.2,oe_x_merge4.3,endDiagram_merge4|}] act1_merge4_t) [{|get_x_merge4.1,update_merge4.1,oe_x_merge4.1,oe_x_merge4.2,endDiagram_merge4,lock_act1_merge4,event_act1_merge4,update_merge4.2,oe_x_merge4.3|}||{|oe_x_merge4.5,clear_merge4.1,endDiagram_merge4|}] fin1_merge4_t) [{|get_x_merge4.1,update_merge4.1,oe_x_merge4.1,oe_x_merge4.2,endDiagram_merge4,lock_act1_merge4,event_act1_merge4,update_merge4.2,oe_x_merge4.3,oe_x_merge4.5,clear_merge4.1|}||{|oe_x_merge4.2,lock_act2_merge4,event_act2_merge4,update_merge4.3,oe_x_merge4.4,endDiagram_merge4|}] act2_merge4_t) [{|get_x_merge4.1,update_merge4.1,oe_x_merge4.1,oe_x_merge4.2,endDiagram_merge4,lock_act1_merge4,event_act1_merge4,update_merge4.2,oe_x_merge4.3,oe_x_merge4.5,clear_merge4.1,lock_act2_merge4,event_act2_merge4,update_merge4.3,oe_x_merge4.4|}||{|oe_x_merge4.3,oe_x_merge4.4,update_merge4.4,oe_x_merge4.5,endDiagram_merge4|}] merge1_merge4_t)
+parameter_x_t = update_merge4.1!(2-0) -> get_x_merge4.1?x -> ((oe_x_merge4.1!x -> SKIP) ||| (oe_x_merge4.2!x -> SKIP))
+act1_merge4 = ((oe_x_merge4.1?x -> set_x_act1_merge4.1!x -> SKIP)); lock_act1_merge4.lock -> event_act1_merge4 -> lock_act1_merge4.unlock -> update_merge4.2!(1-1) -> get_x_act1_merge4.2?x -> ((oe_x_merge4.3!(x) -> SKIP)); act1_merge4
+act1_merge4_t = ((act1_merge4 /\ END_DIAGRAM_merge4) [|{|get_x_act1_merge4,set_x_act1_merge4,endDiagram_merge4|}|] Mem_act1_merge4_x_t(0)) \{|get_x_act1_merge4,set_x_act1_merge4|}
+act2_merge4 = ((oe_x_merge4.2?x -> set_x_act2_merge4.2!x -> SKIP)); lock_act2_merge4.lock -> event_act2_merge4 -> lock_act2_merge4.unlock -> update_merge4.3!(1-1) -> get_x_act2_merge4.3?x -> ((oe_x_merge4.4!(x) -> SKIP)); act2_merge4
+act2_merge4_t = ((act2_merge4 /\ END_DIAGRAM_merge4) [|{|get_x_act2_merge4,set_x_act2_merge4,endDiagram_merge4|}|] Mem_act2_merge4_x_t(0)) \{|get_x_act2_merge4,set_x_act2_merge4|}
+merge1_merge4 = ((oe_x_merge4.3?x -> set_x_merge1_merge4.3!x -> SKIP) [] (oe_x_merge4.4?x -> set_x_merge1_merge4.4!x -> SKIP)); update_merge4.4!(1-1) -> get_x_merge1_merge4.4?x -> oe_x_merge4.5!x -> merge1_merge4
+merge1_merge4_t = ((merge1_merge4 /\ END_DIAGRAM_merge4) [|{|get_x_merge1_merge4,set_x_merge1_merge4,endDiagram_merge4|}|] Mem_merge1_merge4_x_t(0)) \{|get_x_merge1_merge4,set_x_merge1_merge4|}
+fin1_merge4 = ((oe_x_merge4.5?x -> SKIP)); clear_merge4.1 -> SKIP
+fin1_merge4_t = fin1_merge4 /\ END_DIAGRAM_merge4
+init_merge4_t = (parameter_x_t) /\ END_DIAGRAM_merge4
+Mem_act1_merge4_x(x) = get_x_act1_merge4?c!x -> Mem_act1_merge4_x(x) [] set_x_act1_merge4?c?x -> Mem_act1_merge4_x(x)
+Mem_act1_merge4_x_t(x) = Mem_act1_merge4_x(x) /\ END_DIAGRAM_merge4
+Mem_act2_merge4_x(x) = get_x_act2_merge4?c!x -> Mem_act2_merge4_x(x) [] set_x_act2_merge4?c?x -> Mem_act2_merge4_x(x)
+Mem_act2_merge4_x_t(x) = Mem_act2_merge4_x(x) /\ END_DIAGRAM_merge4
+Mem_merge1_merge4_x(x) = get_x_merge1_merge4?c!x -> Mem_merge1_merge4_x(x) [] set_x_merge1_merge4?c?x -> Mem_merge1_merge4_x(x)
+Mem_merge1_merge4_x_t(x) = (Mem_merge1_merge4_x(x)) /\ END_DIAGRAM_merge4
+Mem_merge4_x(x) = get_x_merge4?c!x -> Mem_merge4_x(x) [] set_x_merge4?c?x -> Mem_merge4_x(x)
+Mem_merge4_x_t(x) = Mem_merge4_x(x) /\ (endActivity_merge4?x -> SKIP)
+Mem_merge4 = Mem_merge4_x_t(0)
+TokenManager_merge4(x,init) = update_merge4?c?y:limiteUpdate_merge4 -> x+y < 10 & x+y > -10 & TokenManager_merge4(x+y,1) [] clear_merge4?c -> endDiagram_merge4 -> SKIP [] x == 0 & init == 1 & endDiagram_merge4 -> SKIP
+TokenManager_merge4_t(x,init) = TokenManager_merge4(x,init)
+Lock_act1_merge4 = lock_act1_merge4.lock -> lock_act1_merge4.unlock -> Lock_act1_merge4 [] endDiagram_merge4 -> SKIP
+Lock_act2_merge4 = lock_act2_merge4.lock -> lock_act2_merge4.unlock -> Lock_act2_merge4 [] endDiagram_merge4 -> SKIP
+Lock_merge4 = (Lock_act1_merge4 [|{|endDiagram_merge4|}|] Lock_act2_merge4)
