@@ -15,12 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.editor.*;
-import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.ref.log.Logador;
-import com.ref.parser.activityDiagram.ADParser;
-import com.ref.refinement.activityDiagram.DeadlockCounterExample;
-import com.ref.refinement.activityDiagram.DeterminismCounterExample;
 
 public class FdrWrapper {
 
@@ -68,12 +63,6 @@ public class FdrWrapper {
 
 	private List<String> classes;
 
-	private Object session;
-
-	private Class<?> deadlockCounterexampleClass;
-
-    private Class<?> determinismCounterexampleClass;
-	
 	public boolean loadFDR(String path) {
 
 		File file = new File(path);
@@ -172,9 +161,6 @@ public class FdrWrapper {
 
 		classes.add(Canceller.getName());
 
-		deadlockCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeadlockCounterexample");
-
-        determinismCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeterminismCounterexample");
 	}
 
 	public List<String> getClasses() {
@@ -367,234 +353,6 @@ public class FdrWrapper {
 			throw new Exception(e.getMessage());
 		}
 
-	}
-	
-	/*  Activity Diagram  */
-
-	public List<String> describeDeadlockCounterExample(Object session, Object counterExample) throws Exception {
-		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "behaviour", null, null);
-		List<String> trace = describeBehaviourDeadLock(session, behaviour);
-
-		return trace;
-	}
-
-	private List<String> describeBehaviourDeadLock(Object session, Object behaviour) throws Exception {
-
-		List<String> trace = new ArrayList<>();
-
-		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-
-			if (event != 1 && event != 0) {
-				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-				trace.add(result.toString());
-			}
-		}
-
-		return trace;
-	}
-
-    public List<String> describeDeterminismCounterExample(Object session, Object counterExample) throws Exception {
-        Object behaviour = invokeProperty(determinismCounterexampleClass, counterExample, "specificationBehaviour", null, null);
-        List<String> trace = describeBehaviourDeterminism(session, behaviour);
-
-        return trace;
-    }
-
-    private List<String> describeBehaviourDeterminism(Object session, Object behaviour) throws Exception {
-
-        List<String> trace = new ArrayList<>();
-
-        for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-
-            if (event != 1 && event != 0) {
-                Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-                trace.add(result.toString());
-            }
-        }
-
-        return trace;
-    }
-
-	public String getErrorEvent(Object counterExample, Object session) {
-        String errorEvent = "";
-        try {
-            Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
-            if ((Long) error != 1 && (Long) error != 0) {
-                errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) error).toString();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return errorEvent;
-    }
-
-	
-	public int checkDeadlock(String filename, ADParser parser) throws Exception{
-		
-	/*
-	0 = error
-	1 = deadlock free
-	2 = deadlock detected
-	3 = compilation failed
-	*/
-	
-		int hasError = 0;
-
-			try {
-
-				session = sessionClass.newInstance();
-
-				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-				
-				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-				Object assertion = assertions.get(0);
-				try {
-					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
-					for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-							"counterexamples", null, null)) {
-
-						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-                        DeadlockCounterExample.createDeadlockCounterExample(trace, parser);
-
-						hasError = 2;
-					}
-
-					if (hasError == 0) {
-						hasError = 1;
-					}
-
-				}catch (InvalidEditingException e) {
-					TransactionManager.abortTransaction();
-				} catch (Exception e) {
-					TransactionManager.abortTransaction();
-					hasError = 3;
-				}
-				
-			} catch (InstantiationException e) {
-				throw new Exception("Set your fdr path 1");
-			} catch (IllegalAccessException e) {
-				throw new Exception("Set your fdr path 2");
-			} catch (Exception e) {
-				Logador logger = Logador.getInstance();
-				logger.log("LOG FDRWRAPPER");
-				for(StackTraceElement element :e.getStackTrace()){
-					logger.log(element.toString());						
-				}
-				//throw new Exception(e.getMessage());
-			}
-
-   
-		return hasError;
-	}
-
-	public int checkLivelock(String filename) throws Exception{
-
-	/*
-	0 = error
-	1 = deadlock free
-	2 = deadlock detected
-	3 = compilation failed
-	*/
-
-		int hasError = 0;
-
-		try {
-
-			session = sessionClass.newInstance();
-
-			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-			List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-			Object assertion = assertions.get(1);
-			try {
-				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
-				if (!((boolean) invokeProperty(assertion.getClass(), assertion,
-						"passed", null, null))) {
-					hasError = 2;
-				}
-
-				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-						"counterexamples", null, null)) {
-					hasError = 1;
-				}
-
-			} catch (Exception e) {
-				hasError = 2;
-			}
-
-		} catch (InstantiationException e) {
-			throw new Exception("Set your fdr path 1");
-		} catch (IllegalAccessException e) {
-			throw new Exception("Set your fdr path 2");
-		} catch (Exception e) {
-			Logador logger = Logador.getInstance();
-			logger.log("LOG FDRWRAPPER");
-			for(StackTraceElement element :e.getStackTrace()){
-				logger.log(element.toString());
-			}
-			//throw new Exception(e.getMessage());
-		}
-
-
-		return hasError;
-	}
-
-	public int checkDeterminism(String filename, ADParser parser) throws Exception{
-
-	/*
-	0 = error
-	1 = deadlock free
-	2 = deadlock detected
-	3 = compilation failed
-	*/
-
-		int hasError = 0;
-
-		try {
-
-			session = sessionClass.newInstance();
-
-			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-			List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-			Object assertion = assertions.get(2);
-			try {
-                invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
-                for (Object DeterminismCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-                        "counterexamples", null, null)) {
-
-                    List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
-                    DeterminismCounterExample.createDeterminismCounterExample(trace, parser);
-
-                    hasError = 2;
-                }
-
-                if (hasError == 0) {
-                    hasError = 1;
-                }
-
-			} catch (Exception e) {
-				hasError = 2;
-			}
-
-		} catch (InstantiationException e) {
-			throw new Exception("Set your fdr path 1");
-		} catch (IllegalAccessException e) {
-			throw new Exception("Set your fdr path 2");
-		} catch (Exception e) {
-			Logador logger = Logador.getInstance();
-			logger.log("LOG FDRWRAPPER");
-			for(StackTraceElement element :e.getStackTrace()){
-				logger.log(element.toString());
-			}
-			//throw new Exception(e.getMessage());
-		}
-
-
-		return hasError;
 	}
 
 }

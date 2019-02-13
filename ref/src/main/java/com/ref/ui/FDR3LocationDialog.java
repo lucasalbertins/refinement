@@ -27,7 +27,8 @@ import javax.swing.WindowConstants;
 import com.ref.fdr.FdrWrapper;
 
 public class FDR3LocationDialog extends JDialog {
-	public static final String FDR3_PROPERTY_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "ref.properties";
+
+	public static final String FDR3_PROPERTY_FILE = "ref.properties";
 	public static final String FDR3_LOCATION_PROPERTY = "fdr3_location";
 	public static final String FDR3_JAR_LOCATION_PROPERTY = "fdr3_jar_location";
 

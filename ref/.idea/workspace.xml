@@ -2,24 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeadlockCounterExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeadlockCounterExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeterminismCounterExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeterminismCounterExample.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/action3.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/action3.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/action4.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/action4.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/action5.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/action5.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/action6.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/action6.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/final1.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/final1.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/flowFinal3.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/flowFinal3.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/flowFinal4.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/flowFinal4.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/flowFinal5.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/flowFinal5.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/fork2.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/fork2.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/join2.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/join2.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/join3.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/join3.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/join4.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/join4.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/merge3.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/merge3.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/merge4.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/merge4.asta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.classpath" beforeDir="false" afterPath="$PROJECT_DIR$/.classpath" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resultado2.csp" beforeDir="false" afterPath="$PROJECT_DIR$/resultado2.csp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/FileTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/FileTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/ReflectionTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/ReflectionTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/bankExample.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/bankExample.asta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/testRef3.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/testRef3.asta" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,81 +23,118 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_DATA_SOURCES" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <option name="HIDDEN_KINDS">
-      <set />
-    </option>
-    <expand />
-    <select />
+  <component name="FUSProjectUsageTrigger">
+    <session id="547090754">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="9" />
+          <entry key="project.open.time.1" value="3" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.12" value="1" />
+          <entry key="project.open.time.15" value="2" />
+          <entry key="project.open.time.18" value="1" />
+          <entry key="project.open.time.2" value="1" />
+          <entry key="project.opened" value="9" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="java" value="27" />
+          <entry key="xml" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="JAVA" value="27" />
+          <entry key="XML" value="1" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="38" />
+          <entry key="java" value="1941" />
+          <entry key="xml" value="5" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="1941" />
+          <entry key="PLAIN_TEXT" value="38" />
+          <entry key="XML" value="5" />
+        </counts>
+      </usages-collector>
+    </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="1247" column="166" selection-start-line="1247" selection-start-column="159" selection-end-line="1247" selection-end-column="166" />
+            <state relative-caret-position="469">
+              <caret line="248" lean-forward="true" selection-start-line="239" selection-end-line="248" />
+              <folding>
+                <element signature="e#1706#2154#0" />
+                <element signature="e#2160#3196#0" />
+                <element signature="e#3202#3765#0" />
+                <element signature="e#8677#8696#0" expanded="true" />
+                <element signature="e#8491#11169#0" />
+                <element signature="e#8688#8707#0" expanded="true" />
+                <element signature="method#BuildMessage#0;class#CounterexampleDescriptor#0" />
+                <element signature="e#12091#12398#0" />
+                <element signature="e#12404#13127#0" />
+                <element signature="e#13133#13457#0" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AllTests.java">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="153">
-              <caret line="11" column="77" selection-start-line="11" selection-start-column="77" selection-end-line="11" selection-end-column="77" />
+            <state relative-caret-position="156">
+              <caret line="65" column="13" lean-forward="true" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="83">
+              <caret line="54" column="28" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1495">
+              <caret line="67" column="18" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="18" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setpro</find>
-      <find>setProperty</find>
-      <find>System</find>
-      <find>outFlows[i]</find>
-      <find>channelObj</find>
-      <find>DeadlockCounterExample</find>
-      <find>dead</find>
-      <find>ILinkPresentation</find>
-      <find>setPoints</find>
-      <find>ILinkPresentation flow</find>
-      <find>activityNode.getName()</find>
-      <find>node.getName()</find>
-      <find>int</find>
-      <find>{0..1}</find>
-      <find>new ADParser(ad.getActivity(), ad.getName())</find>
-      <find>new ADParser(ad.getActivity(), ad.getName());</find>
-      <find>(0)</find>
-      <find>_t(0)</find>
-      <find>memoryLocal</find>
-      <find>MemoryLocal</find>
-      <find>namesMemoryLocal</find>
-      <find>typesMemoryLocal</find>
-      <find>namesMemoryLocal.add(nameObject);</find>
-      <find>unionType</find>
-      <find>_t(&quot; + getDefaultValue(&quot;int&quot;) + &quot;)</find>
-      <find>parameterNodesInput</find>
-      <find>typeUnionList</find>
-      <find>unionList</find>
-      <find>parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)))</find>
-      <find>&quot;Mem_&quot; + nameResolver(activityNode.getName()) + &quot;_&quot; + ad.getName()</find>
+      <find>sortMAp</find>
+      <find>sortmap</find>
+      <find>sorted</find>
+      <find>counterexamplede</find>
+      <find>lifelines</find>
+      <find>descriptor</find>
+      <find>counter</find>
+      <find>lifelines3</find>
+      <find>getOpe</find>
+      <find>getop</find>
+      <find>create</find>
+      <find>sequence</find>
+      <find>ids</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -112,60 +144,20 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/ReflectionTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateActionAD.java" />
-        <option value="$PROJECT_DIR$/src/main/resources/plugin.xml" />
-        <option value="$PROJECT_DIR$/src/main/resources/plugin.properties" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AllTests.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateDeterminismActionAD.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateDeadlockActionAD.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestBehaviorCall.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestChannel.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeadlock.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeterminism.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestForkNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestInitialNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestJoinNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestLock.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMainNodes.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMemory.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMergeNode.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestProcessSync.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestTokenManager.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestType.java" />
-        <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeadlockCounterExample.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeterminismCounterExample.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java" />
       </list>
     </option>
   </component>
-  <component name="MavenImportPreferences">
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="importAutomatically" value="true" />
-      </MavenImportingSettings>
-    </option>
-  </component>
-  <component name="MavenProjectNavigator">
-    <treeState>
-      <expand>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="%bundle.name" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-        </path>
-      </expand>
-      <select />
-    </treeState>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="89" />
@@ -179,6 +171,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -195,55 +188,56 @@
               <item name="ref" type="b2602c69:ProjectViewProjectNode" />
               <item name="ref" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ref" type="b2602c69:ProjectViewProjectNode" />
               <item name="ref" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ref" type="b2602c69:ProjectViewProjectNode" />
               <item name="ref" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="ref" type="b2602c69:ProjectViewProjectNode" />
               <item name="ref" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-              <item name="resources" type="462c0819:PsiDirectoryNode" />
-              <item name="activityDiagram" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="ref" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ref" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ref" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="ref" type="462c0819:PsiDirectoryNode" />
+              <item name="refinement" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1550018737711" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1538486003471" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="nodejs_package_manager_path" value="npm" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="com.ref.activityDiagram" />
-      <recent name="com.ref.refinement.activityDiagram" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Amaury\git\refinement\ref\src\test\resources\activityDiagram" />
-    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -257,41 +251,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.AllTests">
-    <configuration name="ADParserTestCheckDeterminism" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-      <module name="ref" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ref.activityDiagram.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
-      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTestCheckDeterminism" />
-      <option name="METHOD_NAME" value="" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="PARAMETERS" value="" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="AllTests" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
-      <module name="ref" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.ref.activityDiagram.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
-      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.AllTests" />
-      <option name="METHOD_NAME" value="" />
-      <option name="TEST_OBJECT" value="class" />
-      <option name="PARAMETERS" value="" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.FileTest">
     <configuration name="FileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="ref" />
       <extension name="coverage">
@@ -302,7 +262,6 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.ref" />
       <option name="MAIN_CLASS_NAME" value="com.ref.FileTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -317,7 +276,6 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.ref" />
       <option name="MAIN_CLASS_NAME" value="com.ref.ReflectionTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -332,7 +290,6 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.ref" />
       <option name="MAIN_CLASS_NAME" value="com.ref.SDGeneratorTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -347,7 +304,6 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.ref" />
       <option name="MAIN_CLASS_NAME" value="com.ref.SDParserTest" />
-      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -369,8 +325,6 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="JUnit.ADParserTestCheckDeterminism" />
-      <item itemvalue="JUnit.AllTests" />
       <item itemvalue="JUnit.SDParserTest" />
       <item itemvalue="JUnit.ReflectionTest" />
       <item itemvalue="JUnit.SDParserTest.testDefineTypes" />
@@ -406,88 +360,57 @@
       <workItem from="1538150190277" duration="3200000" />
       <workItem from="1538348371995" duration="25000" />
       <workItem from="1538483127396" duration="3474000" />
-      <workItem from="1548626706341" duration="4888000" />
-      <workItem from="1548641057555" duration="5488000" />
-      <workItem from="1548703927318" duration="6564000" />
-      <workItem from="1548723561641" duration="472000" />
-      <workItem from="1548878987331" duration="4229000" />
-      <workItem from="1548897784708" duration="5089000" />
-      <workItem from="1548980343101" duration="2243000" />
-      <workItem from="1549305490445" duration="5600000" />
-      <workItem from="1549311272823" duration="6396000" />
-      <workItem from="1549393585585" duration="29379000" />
-      <workItem from="1549426118662" duration="203000" />
-      <workItem from="1549546116221" duration="340000" />
-      <workItem from="1549547618429" duration="1325000" />
-      <workItem from="1549915286336" duration="22747000" />
-      <workItem from="1550004969822" duration="13607000" />
     </task>
-    <task id="LOCAL-00001" summary="Criação de função de nao-determinismo, correção no contra-exemplo e correção na tradução dos textos de nomes do nós do diagrama">
-      <created>1549938404869</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1549938404869</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Correção de testes">
-      <created>1549939351177</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1549939351177</updated>
-    </task>
-    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="AllTests - 2019.02.11 at 23h 31m 30s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="SDParserTest - 2018.09.26 at 08h 14m 41s.xml">
+      <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.11 at 23h 39m 18s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="SDParserTest - 2018.09.26 at 08h 19m 57s.xml">
+      <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.11 at 23h 41m 56s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="ReflectionTest - 2018.09.26 at 08h 22m 26s.xml">
+      <configuration name="ReflectionTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 20h 08m 04s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="ReflectionTest - 2018.09.26 at 08h 23m 15s.xml">
+      <configuration name="ReflectionTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 20h 26m 46s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="SDParserTest_testDefineTypes - 2018.09.26 at 08h 23m 37s.xml">
+      <configuration name="SDParserTest.testDefineTypes" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 20h 30m 07s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="SDParserTest - 2018.09.26 at 08h 23m 51s.xml">
+      <configuration name="SDParserTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 20h 35m 26s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="ReflectionTest - 2018.09.26 at 08h 26m 51s.xml">
+      <configuration name="ReflectionTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 21h 21m 38s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="ReflectionTest - 2018.09.26 at 08h 27m 20s.xml">
+      <configuration name="ReflectionTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 21h 32m 12s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="SDGeneratorTest - 2018.09.26 at 08h 28m 06s.xml">
+      <configuration name="SDGeneratorTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="AllTests - 2019.02.12 at 21h 33m 25s.xml">
-      <configuration name="AllTests" configurationId="JUnit" />
+    <history-entry file="FileTest - 2018.09.26 at 08h 28m 24s.xml">
+      <configuration name="FileTest" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="128152000" />
+    <option name="totallyTimeSpent" value="19582000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="696" extended-state="7" />
-    <editor active="true" />
+    <frame x="0" y="0" width="1366" height="768" extended-state="6" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49113476" weight="0.22168285" />
-      <window_info id="Structure" order="1" sideWeight="0.50886524" side_tool="true" weight="0.2184466" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.27575758" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32978722" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.088652484" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32988167" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.42486086" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -496,30 +419,28 @@
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="11" weight="0.3280142" />
-      <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.3283859" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="right" id="Palette&#9;" order="6" />
-      <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info anchor="right" id="Database" order="8" weight="0.32928804" />
-      <window_info anchor="right" id="Maven" order="9" weight="0.32928804" />
+      <window_info anchor="right" id="Database" order="5" />
+      <window_info anchor="right" id="Theme Preview" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
+      <window_info anchor="right" id="Maven Projects" order="8" />
     </layout>
     <layout-to-restore>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49113476" visible="true" weight="0.22168285" />
-      <window_info id="Structure" order="1" sideWeight="0.50886524" side_tool="true" weight="0.2184466" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.26666668" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
       <window_info id="UI Designer" order="4" />
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32978722" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.05319149" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.42486086" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -528,37 +449,36 @@
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="11" weight="0.3280142" />
-      <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Messages" order="11" weight="0.3283859" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Palette" order="3" />
       <window_info anchor="right" id="Capture Analysis" order="4" />
-      <window_info anchor="right" id="Theme Preview" order="5" />
-      <window_info anchor="right" id="Palette&#9;" order="6" />
-      <window_info anchor="right" id="Maven Projects" order="7" />
-      <window_info anchor="right" id="Database" order="8" weight="0.32928804" />
-      <window_info anchor="right" id="Maven" order="9" weight="0.32928804" />
+      <window_info anchor="right" id="Database" order="5" />
+      <window_info anchor="right" id="Theme Preview" order="6" />
+      <window_info anchor="right" id="Palette&#9;" order="7" />
+      <window_info anchor="right" id="Maven Projects" order="8" />
     </layout-to-restore>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
   </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="Criação de função de nao-determinismo, correção no contra-exemplo e correção na tradução dos textos de nomes do nós do diagrama" />
-    <MESSAGE value="Correção de testes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correção de testes" />
-  </component>
-  <component name="antWorkspaceConfiguration">
-    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
-    <option name="FILTER_TARGETS" value="false" />
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="492">
           <caret line="279" column="46" selection-start-line="279" selection-start-column="46" selection-end-line="279" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="483">
+          <caret line="120" column="43" selection-start-line="120" selection-start-column="43" selection-end-line="120" selection-end-column="43" />
         </state>
       </provider>
     </entry>
@@ -597,6 +517,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/Activator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="115">
+          <caret line="13" column="13" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/TemplateAction.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
@@ -618,16 +545,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="156">
-          <caret line="65" column="13" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="482">
+        <state relative-caret-position="1495">
           <caret line="67" column="18" selection-start-line="67" selection-start-column="8" selection-end-line="67" selection-end-column="18" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -635,263 +555,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_181/src.zip!/java/util/HashMap.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/SDGeneratorTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="610" column="13" selection-start-line="610" selection-start-column="13" selection-end-line="610" selection-end-column="13" />
-          <folding>
-            <element signature="e#24329#24330#0" expanded="true" />
-            <element signature="e#24394#24395#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/astah-UML/astah-api.jar!/com/change_vision/jude/api/inf/model/IFlow.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="9" column="17" selection-start-line="9" selection-start-column="17" selection-end-line="9" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/plugin_ja.properties">
-      <provider editor-type-id="ResourceBundle" />
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="45" column="41" selection-start-line="45" selection-start-column="41" selection-end-line="45" selection-end-column="41" />
+        <state relative-caret-position="156">
+          <caret line="65" column="13" lean-forward="true" selection-start-line="65" selection-start-column="13" selection-end-line="65" selection-end-column="13" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="150" column="99" selection-start-line="150" selection-start-column="84" selection-end-line="150" selection-end-column="99" />
+        <state relative-caret-position="83">
+          <caret line="54" column="28" selection-start-line="54" selection-start-column="28" selection-end-line="54" selection-end-column="28" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
-          <caret line="155" column="39" lean-forward="true" selection-start-line="155" selection-start-column="39" selection-end-line="155" selection-end-column="39" />
+        <state relative-caret-position="469">
+          <caret line="248" lean-forward="true" selection-start-line="239" selection-end-line="248" />
           <folding>
-            <element signature="method#CounterexampleDescriptor#0;class#CounterexampleDescriptor#0" />
-            <element signature="method#preProcess#0;class#CounterexampleDescriptor#0" />
+            <element signature="e#1706#2154#0" />
+            <element signature="e#2160#3196#0" />
+            <element signature="e#3202#3765#0" />
+            <element signature="e#8677#8696#0" expanded="true" />
+            <element signature="e#8491#11169#0" />
+            <element signature="e#8688#8707#0" expanded="true" />
+            <element signature="method#BuildMessage#0;class#CounterexampleDescriptor#0" />
+            <element signature="e#12091#12398#0" />
+            <element signature="e#12404#13127#0" />
+            <element signature="e#13133#13457#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="465">
-          <caret line="57" column="44" selection-start-line="57" selection-start-column="44" selection-end-line="57" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/Activator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-62">
-          <caret line="17" column="46" lean-forward="true" selection-start-line="17" selection-start-column="46" selection-end-line="17" selection-end-column="46" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/resources/plugin.properties">
-      <provider editor-type-id="ResourceBundle" />
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="32" selection-start-line="13" selection-start-column="32" selection-end-line="13" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/astah-UML/astah-api.jar!/com/change_vision/jude/api/inf/model/IElement.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="38" column="20" selection-start-line="38" selection-start-column="20" selection-end-line="38" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1644">
-          <caret line="454" column="44" selection-start-line="454" selection-start-column="29" selection-end-line="454" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateDeterminismActionAD.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="44" column="33" selection-start-line="44" selection-start-column="33" selection-end-line="44" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/activityDiagram/TemplateDeadlockActionAD.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="56" column="47" lean-forward="true" selection-start-line="56" selection-start-column="47" selection-end-line="56" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestBehaviorCall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="49" column="69" selection-start-line="49" selection-start-column="69" selection-end-line="49" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestChannel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="48" column="69" selection-start-line="48" selection-start-column="69" selection-end-line="48" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="33" column="22" selection-start-line="33" selection-start-column="22" selection-end-line="33" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestForkNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="40" column="71" selection-start-line="40" selection-start-column="71" selection-end-line="40" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestJoinNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="43" column="12" lean-forward="true" selection-start-line="43" selection-start-column="12" selection-end-line="43" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestLock.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="33" column="71" lean-forward="true" selection-start-line="33" selection-start-column="71" selection-end-line="33" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMemory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="36" column="75" selection-start-line="36" selection-start-column="75" selection-end-line="36" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMergeNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="215">
-          <caret line="36" column="72" lean-forward="true" selection-start-line="36" selection-start-column="72" selection-end-line="36" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestProcessSync.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="33" column="71" lean-forward="true" selection-start-line="33" selection-start-column="71" selection-end-line="33" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestTokenManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="32" column="71" lean-forward="true" selection-start-line="32" selection-start-column="71" selection-end-line="32" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestType.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="171" column="49" selection-start-line="171" selection-start-column="49" selection-end-line="171" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeadlock.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="298" selection-start-line="298" selection-end-line="298" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeterminism.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="109" selection-start-line="109" selection-end-line="109" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeterminismCounterExample.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="78" column="50" selection-start-line="78" selection-start-column="50" selection-end-line="78" selection-end-column="50" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/activityDiagram/DeadlockCounterExample.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="84" column="50" selection-start-line="84" selection-start-column="50" selection-end-line="84" selection-end-column="50" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="182" column="44" lean-forward="true" selection-start-line="182" selection-start-column="44" selection-end-line="182" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMainNodes.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="155" selection-start-line="155" selection-end-line="155" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestInitialNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-354">
-          <caret line="226" selection-start-line="226" selection-end-line="226" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="141" selection-start-line="141" selection-end-line="141" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="160" column="161" selection-start-line="160" selection-start-column="160" selection-end-line="160" selection-end-column="161" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AllTests.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="11" column="77" selection-start-line="11" selection-start-column="77" selection-end-line="11" selection-end-column="77" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="1247" column="166" selection-start-line="1247" selection-start-column="159" selection-end-line="1247" selection-end-column="166" />
         </state>
       </provider>
     </entry>
