@@ -15,8 +15,9 @@ public class SDprocessParser {
     private MessageParser msgParser;
     private FragmentParser fragmentParser;
     private ParallelParser parallelParser;
+    private Map<INamedElement,String> altMapping;
 
-    public SDprocessParser(ISequenceDiagram seq1, ISequenceDiagram seq2, Map<String, String> lfsWithUnderscore) {
+    public SDprocessParser(ISequenceDiagram seq1, ISequenceDiagram seq2, Map<String, String> lfsWithUnderscore, Map<INamedElement, String> altMapping) {
         this.seq1 = seq1;
         this.seq2 = seq2;
         this.lfsWithUnderscore = lfsWithUnderscore;
@@ -25,6 +26,7 @@ public class SDprocessParser {
         this.msgParser = MessageParser.getInstance();
         this.msgParser.init(lfsWithUnderscore);
         this.parallelParser = new ParallelParser(lfsWithUnderscore);
+        this.altMapping = altMapping;
     }
 
     public String parseSD(ISequenceDiagram seq) {
@@ -98,13 +100,13 @@ public class SDprocessParser {
     }
 
     private String translateFragment(INamedElement fragment, ILifeline lifeline, ISequenceDiagram seq) {
-        if (fragment instanceof IMessage){
+        if (fragment instanceof IMessage && !fragmentParser.getParsedMsgs().contains(fragment)){
             return "(" + msgParser.translateMessageForLifeline((IMessage) fragment, lifeline, seq)
                     + ");";
         } else if (fragment instanceof ICombinedFragment) {
             ICombinedFragment frag = (ICombinedFragment) fragment;
             if (frag.isAlt()){
-              return fragmentParser.parseAlt(frag,lifeline,seq);
+              return fragmentParser.parseAlt(frag,lifeline,seq,altMapping);
             }
         } else if (fragment instanceof IStateInvariant) {
             return null;
@@ -120,6 +122,10 @@ public class SDprocessParser {
 
     public List<String> getSd2Alphabet() {
         return sd2Alphabet;
+    }
+
+    public void setAltMapping(Map<INamedElement, String> altMapping) {
+        this.altMapping = altMapping;
     }
 
 }

@@ -61,7 +61,8 @@ public class SDParser {
         process.append(this.channels);
 
         //Generate lifeline and message processes
-        SDprocessParser processParser = new SDprocessParser(seq1,seq2,lfsWithUnderscore);
+        SDprocessParser processParser = new SDprocessParser(seq1,seq2,lfsWithUnderscore,channelParser.getAltMapping());
+
         this.sd1Parse = processParser.parseSD(seq1);
         process.append(sd1Parse);
         process.append("\n");
