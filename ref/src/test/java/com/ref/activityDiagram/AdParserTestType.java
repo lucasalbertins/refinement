@@ -90,6 +90,7 @@ public class AdParserTestType {
 	@Test
 	public void TestDefineTypes1() {
 		parser1.clearBuffer();
+		parser1.checkCountCallInitial();
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
 		parser1.defineMainNodes();
@@ -110,6 +111,7 @@ public class AdParserTestType {
 	@Test
 	public void TestDefineTypes2() {
 		parser2.clearBuffer();
+		parser2.checkCountCallInitial();
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
 		parser2.defineMainNodes();
@@ -134,6 +136,7 @@ public class AdParserTestType {
 	@Test
 	public void TestDefineTypes3() {
 		parser3.clearBuffer();
+		parser3.checkCountCallInitial();
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();
 		parser3.defineMainNodes();
@@ -154,6 +157,7 @@ public class AdParserTestType {
 	@Test
 	public void TestDefineTypes4() {
 		parser4.clearBuffer();
+		parser4.checkCountCallInitial();
 		parser4.defineNodesActionAndControl();
 		parser4.defineChannels();
 		parser4.defineMainNodes();
