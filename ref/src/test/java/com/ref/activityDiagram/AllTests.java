@@ -9,7 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		ADParserTesteFlowFinalNode.class, ADParserTestFinalNode.class, ADParserTestForkNode.class,
 		ADParserTestInitialNode.class, ADParserTestJoinNode.class, ADParserTestLock.class, AdParserTestMergeNode.class,
 		ADParserTestProcessSync.class, AdParserTestTokenManager.class, AdParserTestType.class, AdParserTestMemory.class, AdParserTestMainNodes.class,
-		ADParserTestCheckDeadlock.class, ADParserTestCheckDeterminism.class, ADParserTestBehaviourCall.class})
+		ADParserTestCheckDeadlock.class, ADParserTestCheckDeterminism.class, ADParserTestBehaviourCall.class,  AdParserTestObjectNode.class})
 public class AllTests {
 
 }

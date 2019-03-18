@@ -80,7 +80,12 @@ public class ADParserTestCheckDeterminism {
 	public static void loadClassesFDR() {
 		if (!ADParserTestCheckDeadlock.loadClassFDR) {
 			FdrWrapper wrapper = FdrWrapper.getInstance();
-			wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+			String os = System.getProperty("os.name").toLowerCase();
+			if (os.indexOf("win") >= 0) {
+				wrapper.loadFDR("C:\\Program Files\\FDR\\bin\\fdr.jar");
+			} else if (os.indexOf("mac") >= 0) {
+				wrapper.loadFDR("/Applications/FDR4.app/Contents/Frameworks/fdr.jar");
+			}
 			try {
 				wrapper.loadClasses();
 			} catch (MalformedURLException | ClassNotFoundException e1) {

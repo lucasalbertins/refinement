@@ -122,7 +122,8 @@ public class ADParserTestBehaviourCall {
 	public void TestNodesBehavior1() {
 		String actual = parser1.parserDiagram();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_behavior1 = {1..1}\n" +
+		expected.append("ID_CB1 = {1..1}\n" +
+                "ID_behavior1 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"countCe_behavior1 = {1..2}\n" +
 				"countUpdate_behavior1 = {1..2}\n" +
@@ -153,7 +154,6 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior1(x,init) = update_behavior1?c?y:limiteUpdate_behavior1 -> x+y < 10 & x+y > -10 & TokenManager_behavior1(x+y,1) [] clear_behavior1?c -> endDiagram_behavior1 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior1 -> SKIP\n" +
 				"TokenManager_behavior1_t(x,init) = TokenManager_behavior1(x,init)\n" +
 				"\n" +
-				"ID_CB1 = {1..1}\n" +
 				"countCe_CB1 = {1..2}\n" +
 				"countUpdate_CB1 = {1..2}\n" +
 				"countClear_CB1 = {1..1}\n" +
@@ -198,7 +198,8 @@ public class ADParserTestBehaviourCall {
 	public void TestNodesBehavior2() {
 		String actual = parser2.parserDiagram();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_behavior2 = {1..1}\n" +
+		expected.append("ID_CB1 = {1..2}\n" +
+                "ID_behavior2 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"countCe_behavior2 = {1..3}\n" +
 				"countUpdate_behavior2 = {1..3}\n" +
@@ -231,7 +232,6 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior2(x,init) = update_behavior2?c?y:limiteUpdate_behavior2 -> x+y < 10 & x+y > -10 & TokenManager_behavior2(x+y,1) [] clear_behavior2?c -> endDiagram_behavior2 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior2 -> SKIP\n" +
 				"TokenManager_behavior2_t(x,init) = TokenManager_behavior2(x,init)\n" +
 				"\n" +
-				"ID_CB1 = {1..2}\n" +
 				"countCe_CB1 = {1..2}\n" +
 				"countUpdate_CB1 = {1..2}\n" +
 				"countClear_CB1 = {1..1}\n" +
@@ -278,7 +278,9 @@ public class ADParserTestBehaviourCall {
 	public void TestNodesBehavior3() {
 		String actual = parser3.parserDiagram();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_behavior3 = {1..1}\n" +
+		expected.append("ID_CB2 = {1..1}\n" +
+                "ID_CB1 = {1..1}\n" +
+                "ID_behavior3 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"countCe_behavior3 = {1..3}\n" +
 				"countUpdate_behavior3 = {1..3}\n" +
@@ -311,7 +313,6 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior3(x,init) = update_behavior3?c?y:limiteUpdate_behavior3 -> x+y < 10 & x+y > -10 & TokenManager_behavior3(x+y,1) [] clear_behavior3?c -> endDiagram_behavior3 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior3 -> SKIP\n" +
 				"TokenManager_behavior3_t(x,init) = TokenManager_behavior3(x,init)\n" +
 				"\n" +
-				"ID_CB1 = {1..1}\n" +
 				"countCe_CB1 = {1..2}\n" +
 				"countUpdate_CB1 = {1..2}\n" +
 				"countClear_CB1 = {1..1}\n" +
@@ -342,7 +343,6 @@ public class ADParserTestBehaviourCall {
 				"Lock_act1_CB1 = lock_act1_CB1.lock -> lock_act1_CB1.unlock -> Lock_act1_CB1 [] endDiagram_CB1 -> SKIP\n" +
 				"Lock_CB1 = Lock_act1_CB1\n" +
 				"\n" +
-				"ID_CB2 = {1..1}\n" +
 				"countCe_CB2 = {1..2}\n" +
 				"countUpdate_CB2 = {1..2}\n" +
 				"countClear_CB2 = {1..1}\n" +
@@ -387,7 +387,8 @@ public class ADParserTestBehaviourCall {
 	public void TestNodesBehavior4() {
 		String actual = parser4.parserDiagram();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_behavior4 = {1..1}\n" +
+		expected.append("ID_CB1 = {1..1}\n" +
+                "ID_behavior4 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"x_behavior4 = {0..1}\n" +
 				"z_behavior4 = {0..1}\n" +
@@ -430,7 +431,6 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior4(x,init) = update_behavior4?c?y:limiteUpdate_behavior4 -> x+y < 10 & x+y > -10 & TokenManager_behavior4(x+y,1) [] clear_behavior4?c -> endDiagram_behavior4 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior4 -> SKIP\n" +
 				"TokenManager_behavior4_t(x,init) = TokenManager_behavior4(x,init)\n" +
 				"\n" +
-				"ID_CB1 = {1..1}\n" +
 				"z_CB1 = {0..1}\n" +
 				"y_CB1 = {0..1}\n" +
 				"x_CB1 = {0..1}\n" +
@@ -496,7 +496,8 @@ public class ADParserTestBehaviourCall {
 	public void TestNodesBehavior5() {
 		String actual = parser5.parserDiagram();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_behavior5 = {1..1}\n" +
+		expected.append("ID_CB1 = {1..1}\n" +
+                "ID_behavior5 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"m_behavior5 = {0..1}\n" +
 				"n_behavior5 = {0..1}\n" +
@@ -553,7 +554,6 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior5(x,init) = update_behavior5?c?y:limiteUpdate_behavior5 -> x+y < 10 & x+y > -10 & TokenManager_behavior5(x+y,1) [] clear_behavior5?c -> endDiagram_behavior5 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior5 -> SKIP\n" +
 				"TokenManager_behavior5_t(x,init) = TokenManager_behavior5(x,init)\n" +
 				"\n" +
-				"ID_CB1 = {1..1}\n" +
 				"b_CB1 = {0..1}\n" +
 				"x_CB1 = {0..1}\n" +
 				"y_CB1 = {0..1}\n" +

@@ -130,6 +130,17 @@ public class ADParser {
         firstChannel = true;
     }
 
+    private void resetStatic() {
+        firstChannel = true;
+        firstMain = true;
+        firstLock = true;
+        countCall = new HashMap<>();
+        callBehaviourList = new ArrayList<>();
+        callBehaviourInputs = new HashMap<>();
+        callBehaviourOutputs = new HashMap<>();
+        callBehaviourListCreated = new ArrayList<>();
+    }
+
     private void setName(String nameAD) {
         try {
             this.ad.setName(nameAD);
@@ -155,6 +166,7 @@ public class ADParser {
 
     public String parserDiagram() {
 
+        boolean reset = false;
         String check = "";
         String callBehaviour = "";
 
@@ -163,6 +175,7 @@ public class ADParser {
             check = "\nassert MAIN :[deadlock free]" +
                     "\nassert MAIN :[divergence free]" +
                     "\nassert MAIN :[deterministic]";
+            reset = true;
         }
 
         checkCountCallInitial();
@@ -193,6 +206,10 @@ public class ADParser {
                 lock +
                 callBehaviour +
                 check;
+
+        if (reset) {
+            resetStatic();
+        }
 
         return parser;
     }
@@ -345,9 +362,12 @@ public class ADParser {
 //            }
 //        }
 
-        types.append("ID_" + nameResolver(ad.getName()) + " = {1.." + countCall.get(nameResolver(ad.getName())) + "}\n");
-
         if (firstLock) { // igual a primeira ocorrencia
+
+            for (String id : countCall.keySet()) {
+                types.append("ID_" + id + " = {1.." + countCall.get(id) + "}\n");
+            }
+
             types.append("datatype T = lock | unlock\n");
             firstLock = false;
         }
@@ -388,18 +408,22 @@ public class ADParser {
                 if (!buffer.contains(objectUnion)) {
                     types.append(objectUnion + "_" + nameDiagram + " = ");
                     types.append(typesParameter.get(parameterNodesInput.get(nameLast)) + "\n");
-                    System.out.println("### " + objectUnion + "_" + nameDiagram +  " # " + typesParameter.get(parameterNodesInput.get(nameLast)));
+                    //System.out.println("### " + objectUnion + "_" + nameDiagram +  " # " + typesParameter.get(parameterNodesInput.get(nameLast)));
                     buffer.add(objectUnion);
                 }
 
             }
 
-            for (Pair<String, String> pair : memoryLocalChannel) { //teste***
+            for (Pair<String, String> pair : memoryLocalChannel) {
                 if (!parameterNodesInput.containsKey(pair.getValue()) && !parameterNodesOutput.containsKey(pair.getValue()) && !buffer.contains(pair.getValue())) {
                     types.append(pair.getValue() + "_" + nameDiagram + " = ");
-
+                    System.out.println("### " + pair.getKey() + " " + pair.getValue());
                     if (objectEdges.containsKey(pair.getKey())) {
-                        types.append(typesParameter.get(parameterNodesInput.get(objectEdges.get(pair.getKey()))) + "\n");
+                        if (typeUnionList.containsKey(objectEdges.get(pair.getKey()))) {
+                            types.append(typesParameter.get(typeUnionList.get(objectEdges.get(pair.getKey()))) + "\n");
+                        } else {
+                            types.append(typesParameter.get(parameterNodesInput.get(objectEdges.get(pair.getKey()))) + "\n");
+                        }
                     } else {
                         types.append(typesParameter.get(parameterNodesInput.get(pair.getValue())) + "\n");
                     }
@@ -551,12 +575,18 @@ public class ADParser {
         mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
 
         if (parameterNodesInput.size() + parameterNodesOutput.size() > 0) {
-            mainNode.append("(((");
-        } else {
-            mainNode.append("((");
+            mainNode.append("(");
         }
 
-        for (int i = 0; i < callBehaviourNumber.size() - 1; i++) {
+        if (countUpdate_ad > 0) {
+            mainNode.append("(");
+        }
+
+        if (lockChannel.size() > 0) {
+            mainNode.append("(");
+        }
+
+        for (int i = 0; i < callBehaviourNumber.size(); i++) {
             mainNode.append("(");
         }
 
@@ -778,6 +808,8 @@ public class ADParser {
                             activityNode = defineOutputParameterNode(activityNode, nodes);
                         }
 
+                    } else if (activityNode instanceof IObjectNode) {
+                        activityNode = defineObjectNode(activityNode, nodes, 0);
                     }
                     input = countAmount(activityNode);
 
@@ -842,6 +874,9 @@ public class ADParser {
                                 }
                             }
                         }
+                    } else if (activityNode instanceof IObjectNode) {
+                        queueRecreateNode.add(activityNode);
+                        activityNode = defineObjectNode(activityNode, nodes, 1);
                     }
 
                     input = countAmount(activityNode);
@@ -923,6 +958,8 @@ public class ADParser {
                             }
                         }
                     }
+                } else if (activityNode instanceof IObjectNode) {
+                    activityNode = defineObjectNode(activityNode, nodes, 2);
                 }
 
                 input = countAmount(activityNode);
@@ -4049,7 +4086,7 @@ public class ADParser {
                     decision.append("(");
 
                     if (i >= 0 && i < outFlows.length - 1) {
-                        ce(alphabet, decision, ce, " -> SKIP) [] ");
+                        ce(alphabet, decision, ce, " -> SKIP) |~| ");
                     } else {
                         ce(alphabet, decision, ce, " -> SKIP)");
                     }
@@ -4171,7 +4208,7 @@ public class ADParser {
                     decision.append("(");
 
                     if (i >= 0 && i < outFlows.length - 1) {
-                        ce(alphabet, decision, ce, " -> SKIP) [] ");
+                        ce(alphabet, decision, ce, " -> SKIP) |~| ");
                     } else {
                         ce(alphabet, decision, ce, " -> SKIP)");
                     }
@@ -4368,7 +4405,7 @@ public class ADParser {
                     decision.append("(");
 
                     if (i >= 0 && i < outFlows.length - 1) {
-                        ce(alphabet, decision, ce, " -> SKIP) [] ");
+                        ce(alphabet, decision, ce, " -> SKIP) |~| ");
                     } else {
                         ce(alphabet, decision, ce, " -> SKIP)");
                     }
@@ -4659,6 +4696,368 @@ public class ADParser {
         activityNode = null;
 
         nodes.append(outParameter.toString());
+
+        return activityNode;
+    }
+
+    private IActivityNode defineObjectNode(IActivityNode activityNode, StringBuilder nodes, int code) {
+        StringBuilder objectNode = new StringBuilder();
+        ArrayList<String> alphabet = new ArrayList<>();
+        String nameObjectNode = nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName());
+        String nameObjectNodeTermination = nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + "_t";
+        String endDiagram = "END_DIAGRAM_" + nameResolver(ad.getName());
+        IFlow outFlows[] = activityNode.getOutgoings();
+        IFlow inFlows[] = activityNode.getIncomings();
+        String nameObject = null;
+        String nameObjectUnique = "";
+        List<String> nameObjectAdded = new ArrayList<>();
+        HashMap<String, String> nameObjects = new HashMap<>();
+        List<String> namesMemoryLocal = new ArrayList<>();
+        String typeMemoryLocal = null;
+
+        if (code == 0) {
+            ArrayList<String> ceInitials = new ArrayList<>();
+            for (int i = 0; i < inFlows.length; i++) {
+                ceInitials.add(inFlows[i].getId());
+
+                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
+                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
+                    nameObjects.put(inFlows[i].getId(), objectEdges.get(ceIn2));
+                }
+            }
+
+            objectNode.append(nameObjectNode + " = ");
+
+            objectNode.append("(");
+
+
+            for (int i = 0; i < ceInitials.size(); i++) {        //get unique channel
+                if (nameObjects.get(ceInitials.get(i)) != null) {
+                    if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
+                        nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
+                        nameObjectUnique += nameObjects.get(ceInitials.get(i));
+                        typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+                    }
+                }
+            }
+
+            if (!nameObjectUnique.equals("")) {
+                namesMemoryLocal.add(nameObjectUnique);
+            }
+
+            for (int i = 0; i < ceInitials.size(); i++) {
+                String oeIn = syncObjectsEdge.get(ceInitials.get(i)); //get the parallel input channels
+
+                nameObject = nameObjects.get(ceInitials.get(i));
+                objectNode.append("(");
+
+                if (i >= 0 && i < ceInitials.size() - 1) {
+                    ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
+                    setLocalInput(alphabet, objectNode, nameObjectUnique, nameResolver(activityNode.getName()), nameObject, oeIn);
+                    objectNode.append("SKIP) [] ");
+                } else {
+                    ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
+                    setLocalInput(alphabet, objectNode, nameObjectUnique, nameResolver(activityNode.getName()), nameObject, oeIn);
+                    objectNode.append("SKIP)");
+                }
+            }
+
+            objectNode.append("); ");
+
+            update(alphabet, objectNode, 1, activityNode.getOutgoings().length);
+
+            getLocal(alphabet, objectNode, nameObjectUnique, nameResolver(activityNode.getName()), nameObjectUnique);
+
+            objectNode.append("(");
+
+            for (int i = 0; i < outFlows.length; i++) {
+               String oe = createOE(nameObjectUnique); //creates output channels
+               syncObjectsEdge.put(outFlows[i].getId(), oe);
+               objectEdges.put(oe, nameObjectUnique);
+               objectNode.append("(");
+
+               if (i >= 0 && (i < outFlows.length - 1)) {
+                   oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP) ||| ");
+               } else {
+                   oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP)");
+               }
+            }
+
+            objectNode.append("); ");
+
+            objectNode.append(nameObjectNode + "\n");
+            objectNode.append(nameObjectNodeTermination + " = ");
+
+            objectNode.append("((" + nameObjectNode + " /\\ " + endDiagram + ") ");
+
+            objectNode.append("[|{|");
+            objectNode.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+            objectNode.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+            objectNode.append("endDiagram_" + nameResolver(ad.getName()));
+            objectNode.append("|}|] ");
+            objectNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
+
+            objectNode.append("\\{|");
+            objectNode.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+            objectNode.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()));
+            objectNode.append("|}\n");
+
+            //
+
+            alphabet.add("endDiagram_" + nameResolver(ad.getName()));
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
+
+            if (outFlows[0].getTarget() instanceof IInputPin) {
+                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+                    if (activityNodeSearch instanceof IAction) {
+                        IInputPin inPins[] = ((IAction) activityNodeSearch).getInputs();
+                        for (int y = 0; y < inPins.length; y++) {
+                            if (inPins[y].getId().equals(outFlows[0].getTarget().getId())) {
+                                activityNode = activityNodeSearch;
+                            }
+                        }
+                    }
+                }
+            } else {
+                activityNode = outFlows[0].getTarget();
+            }
+
+            for (int i = 1; i < outFlows.length; i++) {    //creates the parallel output channels
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+                        if (activityNodeSearch instanceof IAction) {
+                            IInputPin inFlowPin[] = ((IAction) activityNodeSearch).getInputs();
+                            for (int y = 0; y < inFlowPin.length; y++) {
+                                if (inFlowPin[y].getId().equals(outFlows[i].getTarget().getId())) {
+                                    if (!queueNode.contains(activityNodeSearch)) {
+                                        queueNode.add(activityNodeSearch);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (!queueNode.contains(outFlows[i].getTarget())) {
+                        queueNode.add(outFlows[i].getTarget());
+                    }
+                }
+            }
+
+            nodes.append(objectNode.toString());
+        } else if (code == 1) {
+            ArrayList<String> union = new ArrayList<>();
+            List<String> nameObjs = new ArrayList<>();
+            List<String> nodesAdded = new ArrayList<>();
+
+            for (int i = 0; i < inFlows.length; i++) {
+                nameObjs.addAll(getObjects(inFlows[i], nodesAdded));
+            }
+
+            for (String nameObj : nameObjs) {
+                if (!union.contains(nameObj)) {
+                    nameObjectUnique += nameObj;
+                    union.add(nameObj);
+                    typeMemoryLocal = nameObj;
+                }
+            }
+
+            if (union.size() > 1) {
+                unionList.add(union);
+                typeUnionList.put(nameObjectUnique, parameterNodesInput.get(typeMemoryLocal));
+            }
+
+            if (!nameObjectUnique.equals("")) {
+                namesMemoryLocal.add(nameObjectUnique);
+            }
+
+            for (int i = 0; i < outFlows.length; i++) {
+                String oe = createOE(nameObjectUnique); //creates output channels
+                syncObjectsEdge.put(outFlows[i].getId(), oe);
+                objectEdges.put(oe, nameObjectUnique);
+
+                if (i >= 0 && (i < outFlows.length - 1)) {
+                    oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP) ||| ");
+                } else {
+                    oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP)");
+                }
+            }
+
+            if (outFlows[0].getTarget() instanceof IInputPin) {
+                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+                    if (activityNodeSearch instanceof IAction) {
+                        IInputPin inPins[] = ((IAction) activityNodeSearch).getInputs();
+                        for (int y = 0; y < inPins.length; y++) {
+                            if (inPins[y].getId().equals(outFlows[0].getTarget().getId())) {
+                                activityNode = activityNodeSearch;
+                            }
+                        }
+                    }
+                }
+            } else {
+                activityNode = outFlows[0].getTarget();
+            }
+
+            for (int i = 1; i < outFlows.length; i++) {    //creates the parallel output channels
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+                        if (activityNodeSearch instanceof IAction) {
+                            IInputPin inFlowPin[] = ((IAction) activityNodeSearch).getInputs();
+                            for (int y = 0; y < inFlowPin.length; y++) {
+                                if (inFlowPin[y].getId().equals(outFlows[i].getTarget().getId())) {
+                                    if (!queueNode.contains(activityNodeSearch)) {
+                                        queueNode.add(activityNodeSearch);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (!queueNode.contains(outFlows[i].getTarget())) {
+                        queueNode.add(outFlows[i].getTarget());
+                    }
+                }
+            }
+
+        } else if (code == 2) {
+            ArrayList<String> ceInitials = new ArrayList<>();
+            for (int i = 0; i < inFlows.length; i++) {
+                ceInitials.add(inFlows[i].getId());
+
+                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
+                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
+                    nameObjects.put(inFlows[i].getId(), objectEdges.get(ceIn2));
+                }
+            }
+
+            objectNode.append(nameObjectNode + " = ");
+
+            objectNode.append("(");
+
+
+            for (int i = 0; i < ceInitials.size(); i++) {        //get unique channel
+                if (nameObjects.get(ceInitials.get(i)) != null) {
+                    if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
+                        nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
+                        nameObjectUnique += nameObjects.get(ceInitials.get(i));
+                        typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+                    }
+                }
+            }
+
+            if (!nameObjectUnique.equals("")) {
+                namesMemoryLocal.add(nameObjectUnique);
+            }
+
+            for (int i = 0; i < ceInitials.size(); i++) {
+                String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
+                String oeIn = syncObjectsEdge.get(ceInitials.get(i));
+
+                if (ceIn != null) {
+                    objectNode.append("(");
+
+                    if (i >= 0 && i < ceInitials.size() - 1) {
+                        ce(alphabet, objectNode, ceIn, " -> SKIP) [] ");
+                    } else {
+                        ce(alphabet, objectNode, ceIn, " -> SKIP)");
+                    }
+                } else {
+
+                    nameObject = nameObjects.get(ceInitials.get(i));
+                    objectNode.append("(");
+
+                    if (i >= 0 && i < ceInitials.size() - 1) {
+                        ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
+                        setLocalInput(alphabet, objectNode, nameObjectUnique, nameResolver(activityNode.getName()), nameObject, oeIn);
+                        objectNode.append("SKIP) [] ");
+                    } else {
+                        ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
+                        setLocalInput(alphabet, objectNode, nameObjectUnique, nameResolver(activityNode.getName()), nameObject, oeIn);
+                        objectNode.append("SKIP)");
+                    }
+                }
+            }
+
+            objectNode.append("); ");
+
+            update(alphabet, objectNode, 1, outFlows.length);
+
+            getLocal(alphabet, objectNode, nameObjectUnique, nameResolver(activityNode.getName()), nameObjectUnique);
+
+            objectNode.append("(");
+
+            for (int i = 0; i < outFlows.length; i++) {
+                String oe = syncObjectsEdge.get(outFlows[i].getId());
+                objectNode.append("(");
+
+                if (i >= 0 && (i < outFlows.length - 1)) {
+                    oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP) ||| ");
+                } else {
+                    oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP)");
+                }
+            }
+
+            objectNode.append("); ");
+
+            objectNode.append(nameObjectNode + "\n");
+            objectNode.append(nameObjectNodeTermination + " = ");
+
+            objectNode.append("((" + nameObjectNode + " /\\ " + endDiagram + ") ");
+
+            objectNode.append("[|{|");
+            objectNode.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+            objectNode.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+            objectNode.append("endDiagram_" + nameResolver(ad.getName()));
+            objectNode.append("|}|] ");
+            objectNode.append("Mem_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
+
+            objectNode.append("\\{|");
+            objectNode.append("get_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+            objectNode.append("set_" + nameObjectUnique + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()));
+            objectNode.append("|}\n");
+
+            //
+
+            alphabet.add("endDiagram_" + nameResolver(ad.getName()));
+            alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
+
+            if (outFlows[0].getTarget() instanceof IInputPin) {
+                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+                    if (activityNodeSearch instanceof IAction) {
+                        IInputPin inPins[] = ((IAction) activityNodeSearch).getInputs();
+                        for (int y = 0; y < inPins.length; y++) {
+                            if (inPins[y].getId().equals(outFlows[0].getTarget().getId())) {
+                                activityNode = activityNodeSearch;
+                            }
+                        }
+                    }
+                }
+            } else {
+                activityNode = outFlows[0].getTarget();
+            }
+
+            for (int i = 1; i < outFlows.length; i++) {    //creates the parallel output channels
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+                        if (activityNodeSearch instanceof IAction) {
+                            IInputPin inFlowPin[] = ((IAction) activityNodeSearch).getInputs();
+                            for (int y = 0; y < inFlowPin.length; y++) {
+                                if (inFlowPin[y].getId().equals(outFlows[i].getTarget().getId())) {
+                                    if (!queueNode.contains(activityNodeSearch)) {
+                                        queueNode.add(activityNodeSearch);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    if (!queueNode.contains(outFlows[i].getTarget())) {
+                        queueNode.add(outFlows[i].getTarget());
+                    }
+                }
+            }
+
+            nodes.append(objectNode.toString());
+        }
 
         return activityNode;
     }

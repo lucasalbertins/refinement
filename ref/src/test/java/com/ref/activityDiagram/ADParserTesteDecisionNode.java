@@ -106,7 +106,7 @@ public class ADParserTesteDecisionNode {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))\n" + 
-				"dec1_decision2 = ce_decision2.1 -> update_decision2.2!(1-1) -> ((ce_decision2.2 -> SKIP) [] (ce_decision2.3 -> SKIP)); dec1_decision2\n" + 
+				"dec1_decision2 = ce_decision2.1 -> update_decision2.2!(1-1) -> ((ce_decision2.2 -> SKIP) |~| (ce_decision2.3 -> SKIP)); dec1_decision2\n" +
 				"dec1_decision2_t = dec1_decision2 /\\ END_DIAGRAM_decision2\n" + 
 				"act1_decision2 = ((ce_decision2.2 -> SKIP)); lock_act1_decision2.lock -> event_act1_decision2 -> lock_act1_decision2.unlock -> update_decision2.3!(1-1) -> ((ce_decision2.4 -> SKIP)); act1_decision2\n" + 
 				"act1_decision2_t = act1_decision2 /\\ END_DIAGRAM_decision2\n" + 

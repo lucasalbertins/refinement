@@ -169,7 +169,11 @@ public class DeadlockCounterExample {
 
         if (!nodeAdded.containsKey(node.getId())) {
             if (node instanceof IAction) {
-                nodePresent = createAction(node, adEditor);
+                if (((IAction) node).isCallBehaviorAction()) {
+                    nodePresent = createAction(node, adEditor, true);
+                } else {
+                    nodePresent = createAction(node, adEditor, false);
+                }
             } else if (node instanceof IControlNode) {
                 if (((IControlNode) node).isFinalNode()) {
                     nodePresent = createFinal(node, adEditor);
@@ -186,6 +190,8 @@ public class DeadlockCounterExample {
                 }
             } else if (node instanceof IActivityParameterNode) {
                 nodePresent = createParameter(node, adEditor);
+            } else if (node instanceof IObjectNode && !(node instanceof IPin)) {
+                nodePresent = createObjectNode(node, adEditor);
             }
         } else {
             nodePresent = nodeAdded.get(node.getId());
@@ -194,14 +200,18 @@ public class DeadlockCounterExample {
         return nodePresent;
     }
 
-    private static INodePresentation createAction(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createAction(IActivityNode node, ActivityDiagramEditor adEditor, boolean callBehaviour) {
         IFlow outFlows[] = node.getOutgoings();
         IInputPin inPins[] = ((IAction) node).getInputs();
         IOutputPin outPins[] = ((IAction) node).getOutputs();
         INodePresentation actionNode = null;
 
         try {
-            actionNode = adEditor.createAction(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            if (callBehaviour) {
+                actionNode = adEditor.createCallBehaviorAction(nameResolver(node.getName()), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
+            } else {
+                actionNode = adEditor.createAction(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            }
 
             IActivityNode actNode = getIActivityNode(actionNode);
             actNode.setDefinition(node.getDefinition());
@@ -766,6 +776,85 @@ public class DeadlockCounterExample {
         objPresent.put(pin.getId(), targetPresent);
 
         return targetPresent;
+    }
+
+    private static INodePresentation createObjectNode(IActivityNode node, ActivityDiagramEditor adEditor) {
+        IFlow outFlows[] = node.getOutgoings();
+        INodePresentation objectNode = null;
+
+        try {
+            objectNode = adEditor.createObjectNode(nameResolver(node.getName()), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
+
+            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+
+                for (String objTrace : trace) {
+                    if (allflowsNode.contains(objTrace)) {
+                        objectNode.setProperty("fill.color", "#FF0000");
+                    }
+                }
+            }
+
+            nodeAdded.put(node.getId(), objectNode);
+
+            for (int i = 0; i < outFlows.length; i++) {
+                if (outFlows[i].getTarget() instanceof IInputPin) {
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
+                    ILinkPresentation flow = adEditor.createFlow(objectNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                            targetPresent.setProperty("fill.color", "#FF0000");
+                        }
+                    }
+
+                } else {
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    ILinkPresentation flow = adEditor.createFlow(objectNode, targetPresent);
+                    flow.setLabel(outFlows[i].getGuard());
+
+                    IFlow flowPresent = getIFlow(flow);
+                    for (String stereotype : outFlows[i].getStereotypes()) {
+                        flowPresent.addStereotype(stereotype);
+                    }
+
+                    setFlowPoints(flow, outFlows[i]);
+
+                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
+                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
+                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+
+                        if (channel != null && trace.contains(channel)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        } else if (channelObj != null && trace.contains(channelObj)) {
+                            flow.setProperty("line.color", "#FF0000");
+                        }
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return objectNode;
     }
 
 }
