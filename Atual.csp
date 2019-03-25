@@ -23,8 +23,6 @@ channel A_mSIG: COM.ID.ID.A_SIG
 channel B_mOP: COM.ID.ID.B_OPS
 channel C_mSIG: COM.ID.ID.C_SIG
 
-
-
 Seq0_A(sd_id,lf1_id,lf2_id) =(B_mOP.s!lf1_id!lf2_id.m0_I -> SKIP);(B_mOP.r!lf2_id!lf1_id?out:{x | x <-B_OPS,(x == m0_O)} -> SKIP) if g1 then else if g2 then else SKIP
 
 Seq0_B(sd_id,lf1_id,lf2_id,lf3_id) =(B_mOP.r!lf1_id!lf2_id?oper:{x | x <- B_OPS,(get_id(x) == m0_I)} -> SKIP);(B_mOP.s!lf2_id!lf1_id.m0_O -> SKIP);(C_mSIG.s!lf2_id!lf3_id.m2 -> SKIP)

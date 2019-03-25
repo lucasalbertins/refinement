@@ -2,6 +2,7 @@ package com.ref.parser;
 
 import com.change_vision.jude.api.inf.model.*;
 
+import javax.swing.text.html.parser.Parser;
 import java.util.*;
 
 public class SDchannelParser {
@@ -54,6 +55,7 @@ public class SDchannelParser {
     }
 
     private String fragmentChannels() {
+        String altName = "";
         altMapping = new HashMap<>();
         int currentAlt = 1;
         List<ILifeline> lifelines = ParserUtilities.getInstance().getLifelines(seq1, seq2);
@@ -62,11 +64,14 @@ public class SDchannelParser {
             INamedElement[] aux = lf.getFragments();
             for (INamedElement frag : aux) {
                 if (frag instanceof ICombinedFragment && !altMapping.containsKey(frag)) {
-                    String altName = parseAlt(frag, currentAlt);
+                    altName = parseAlt(frag, currentAlt);
                     altMapping.put(frag,"alt"+currentAlt);
                     altChannels.append(altName);
                     currentAlt++;
+                    ParserHelper.getInstance().addLifelineFrag(lf,altName);
                 }
+                if(altMapping.containsKey(frag))
+                    ParserHelper.getInstance().addLifelineFrag(lf,altName);
             }
         }
 //        System.out.println(altChannels);

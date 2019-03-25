@@ -9,6 +9,7 @@ import com.change_vision.jude.api.inf.presentation.IPresentation;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -23,54 +24,38 @@ public class FragmentParser {
         sb.append("\n");
         sb.append(altMapping.get(fragment));
 
-        IPresentation sdPresentations[] = new IPresentation[0];
-        try {
-            sdPresentations = seq.getPresentations();
-        } catch (InvalidUsingException e) {
-            e.printStackTrace();
-        }
-        INodePresentation combinedFragmentPresentation = getCombinedFragmentPresentation(sdPresentations, fragment);
-
-        showIncludedMsgs(sdPresentations ,combinedFragmentPresentation);
-
         IInteractionOperand[] operands = fragment.getInteractionOperands();
+        for(int i = 0; i < operands.length; i++){
+            sb.append("?").append(operands[i].getGuard());
+        }
+        sb.append(" -> ");
+        sb.append("(");
+
         for(IInteractionOperand operand : operands){
-            sb.append("?").append(operand.getGuard());
-        }
-        return "null";
-    }
+            sb.append(operand.getGuard());
+            sb.append(" & ");
+//            System.out.println("guard : " + operand.getGuard());
+            IMessage[] messages = operand.getMessages();
 
-    private void showIncludedMsgs(IPresentation[] sdPresentations, INodePresentation combinedFragmentPresentation) {
-        Rectangle2D combinedFragmentRectangle = combinedFragmentPresentation.getRectangle();
-        for (IPresentation presentation : sdPresentations) {
-            if (presentation.getType().equals("Message")) {
-                ILinkPresentation messagePresentation = (ILinkPresentation) presentation;
-                Point2D[] messagePoints = messagePresentation.getPoints();
-                if(combinedFragmentRectangle.contains(messagePoints[0]) && combinedFragmentRectangle.contains(messagePoints[1]))
-                    System.out.println("includes message : " + ((IMessage)messagePresentation.getModel()).getName() + " presentation : " + combinedFragmentPresentation.getLabel() + " " + combinedFragmentPresentation.getID());
+            for (IMessage message: messages) {
+                sb.append("(");
+//                System.out.println(message.getName());
+                sb.append(MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq));
+                this.parsedMsgs.add(message);
+                sb.append(")");
+                sb.append(";");
             }
+            sb.delete(sb.length()-1, sb.length());
+            sb.append("\n").append("[]").append("\n");
         }
-    }
+        sb.delete(sb.length()-4,sb.length());
+        sb.append(")\n");
 
-    private static INodePresentation getCombinedFragmentPresentation(
-            IPresentation[] presentations, ICombinedFragment fragment) {
-        INodePresentation combinedFragmentPresentation = null;
-        for (IPresentation presentation : presentations) {
-            if (presentation.getType().equals("CombinedFragment") && presentation.getModel().equals(fragment)) {
-                if (presentation instanceof INodePresentation) {
-                    combinedFragmentPresentation = (INodePresentation) presentation;
-                }
-            }
-        }
-        return combinedFragmentPresentation;
+        return sb.toString();
     }
 
     public Set<IMessage> getParsedMsgs() {
-        return parsedMsgs;
-    }
-
-    public void setParsedMsgs(Set<IMessage> parsedMsgs) {
-        this.parsedMsgs = parsedMsgs;
+        return this.parsedMsgs;
     }
 
 }
