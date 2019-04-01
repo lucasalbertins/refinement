@@ -32,6 +32,17 @@ public class ParserHelper {
         }
     }
 
+    public Set<String> getAllFrags(){
+        Set<String> frags = new HashSet<>();
+        for(String key : this.lifelineFrags.keySet()){
+            Set<String> fragsSet = this.lifelineFrags.get(key);
+            frags.addAll(fragsSet);
+            for(String frag : fragsSet){
+                }
+        }
+        return frags;
+    }
+
     public String getLifelineFrags(ILifeline lifeline){
         StringBuilder sb = new StringBuilder();
         Set<String> frags = this.lifelineFrags.get(lifeline.getId());

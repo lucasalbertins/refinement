@@ -102,7 +102,9 @@ public class ParallelParser {
         numLife = i - 1;
 
         StringBuilder sb = new StringBuilder();
-        sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(0))).append(",");
+        if(ParserHelper.getInstance().getAllFrags().size() > 0){
+            sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(0))).append(",");
+        }
         sb.append(alphabetMap.get(bases.get(0).getBase().toString()));
 
         for (int x = 2; x < i - 1; x++) {
@@ -119,14 +121,19 @@ public class ParallelParser {
             sbAux.append("[ {|");
             sbAux.append(sb.toString());
             sbAux.append("|} || {|");
-            sbAux.append(ParserHelper.getInstance().getLifelineFrags(bases.get(j+1))).append(",");
+            if(ParserHelper.getInstance().getAllFrags().size() > 0){
+                sbAux.append(ParserHelper.getInstance().getLifelineFrags(bases.get(j+1))).append(",");
+                sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(j+1)));
+            }
             sbAux.append(alphabetMap.get(bases.get(j + 1).getBase().toString()));
-            sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(j+1)));
             sb.append(", ").append(alphabetMap.get(bases.get(j + 1).getBase().toString()));
             sbAux.append("|} ]");
             sbAux.append(processes.get(j + 1));
         }
         processes.clear();
+        if(ParserHelper.getInstance().getAllFrags().size() > 0){
+            sbAux.append("\\Hidden");
+        }
 
         return sbAux.toString();
     }

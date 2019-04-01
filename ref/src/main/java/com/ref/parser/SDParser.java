@@ -57,11 +57,24 @@ public class SDParser {
 
         // Generate channels
         SDchannelParser channelParser = new SDchannelParser(seq1, seq2);
-        this.channels = channelParser.parseChannels();
+        String parsedChannels = channelParser.parseChannels();
+        this.channels="";
+        if(ParserHelper.getInstance().getAllFrags().size() > 0){
+            String hiddenSet = "Hidden = ";
+            hiddenSet += ParserHelper.getInstance().getAllFrags().toString().replace("[", "{").replace("]", "}");
+            this.channels = hiddenSet + "\n";
+        }
+
+        this.channels += parsedChannels;
+
+        // Generate hidden set
+//        process.append("Hidden = ");
+//        process.append(ParserHelper.getInstance().getAllFrags().toString().replace("[", "{").replace("]", "}"));
+
         process.append(this.channels);
 
         //Generate lifeline and message processes
-        SDprocessParser processParser = new SDprocessParser(seq1,seq2,lfsWithUnderscore,channelParser.getAltMapping());
+        SDprocessParser processParser = new SDprocessParser(seq1, seq2, lfsWithUnderscore, channelParser.getAltMapping());
 
         this.sd1Parse = processParser.parseSD(seq1);
         process.append(sd1Parse);
@@ -77,8 +90,8 @@ public class SDParser {
 
     public String getRefinementAssertion() {
         StringBuilder sb = new StringBuilder();
-        sb.append(ParserUtilities.getInstance().buildAssertions(seq1, seq2, 1, sd1Alphabet,sd2Alphabet,lfsWithUnderscore));
-        sb.append(ParserUtilities.getInstance().buildAssertions(seq2, seq1, 0,sd1Alphabet,sd2Alphabet,lfsWithUnderscore));
+        sb.append(ParserUtilities.getInstance().buildAssertions(seq1, seq2, 1, sd1Alphabet, sd2Alphabet, lfsWithUnderscore));
+        sb.append(ParserUtilities.getInstance().buildAssertions(seq2, seq1, 0, sd1Alphabet, sd2Alphabet, lfsWithUnderscore));
         return sb.toString();
     }
 
@@ -100,7 +113,7 @@ public class SDParser {
 
     //public static List<String> getMsgProcesses() {
     //    return msgProcesses;
-   // }
+    // }
 
     public Map<String, String> getLifelineMapping() {
         return lifelineMapping;

@@ -102,7 +102,7 @@ public class SDParserTest {
 		//expected.append("CharParams = {'a'}\n");
 		expected.append("datatype MSG = m1|m0_I|m0_O\n");
 		expected.append("subtype A_SIG = m1\n");
-		expected.append("subtype B_OPS = m0_I | m	0_O\n");
+		expected.append("subtype B_OPS = m0_I | m0_O\n");
 		//expected.append("subtype C_SIG = m2\n");
 		expected.append("get_id(m1) = m1\n");
 		expected.append("get_id(m0_I) = m0_I\n");
