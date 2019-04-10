@@ -1,6 +1,8 @@
 package com.ref.parser;
 
 import com.change_vision.jude.api.inf.model.*;
+import com.ref.parser.process.parsers.FragmentParser;
+import com.ref.parser.process.parsers.FragmentParserFactory;
 
 import java.util.*;
 
@@ -13,7 +15,7 @@ public class SDprocessParser {
     private List<String> sd1Alphabet;
     private List<String> sd2Alphabet;
     private MessageParser msgParser;
-    private FragmentParser fragmentParser;
+    private FragmentParserFactory fragmentFactory;
     private ParallelParser parallelParser;
     private Map<INamedElement,String> altMapping;
 
@@ -22,7 +24,7 @@ public class SDprocessParser {
         this.seq2 = seq2;
         this.lfsWithUnderscore = lfsWithUnderscore;
         this.processes = new ArrayList<>();
-        this.fragmentParser = new FragmentParser();
+        this.fragmentFactory = new FragmentParserFactory();
         this.msgParser = MessageParser.getInstance();
         this.msgParser.init(lfsWithUnderscore);
         this.parallelParser = new ParallelParser(lfsWithUnderscore);
@@ -100,14 +102,17 @@ public class SDprocessParser {
     }
 
     private String translateFragment(INamedElement fragment, ILifeline lifeline, ISequenceDiagram seq) {
-        if (fragment instanceof IMessage && !fragmentParser.getParsedMsgs().contains(fragment)){
+
+
+        if (fragment instanceof IMessage && !fragmentFactory.getParsedMsgs().contains(fragment)){
             return "(" + msgParser.translateMessageForLifeline((IMessage) fragment, lifeline, seq)
                     + ");";
         } else if (fragment instanceof ICombinedFragment) {
             ICombinedFragment frag = (ICombinedFragment) fragment;
-            if (frag.isAlt()){
-              return fragmentParser.parseAlt(frag,lifeline,seq,altMapping);
-            }
+            FragmentParser fragParser = this.fragmentFactory.getFragmentParser(frag);
+            String fragResult = fragParser.parseFrag(frag, lifeline, seq, altMapping);
+            fragmentFactory.addParsedMsgs(fragParser.getParsedMsgs());
+            return fragResult;
         } else if (fragment instanceof IStateInvariant) {
             return null;
         } else if (fragment instanceof IInteractionUse) {
