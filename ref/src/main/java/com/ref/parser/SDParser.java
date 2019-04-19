@@ -61,7 +61,7 @@ public class SDParser {
         this.channels="";
         if(ParserHelper.getInstance().getAllFrags().size() > 0){
             String hiddenSet = "Hidden = ";
-            hiddenSet += ParserHelper.getInstance().getAllFrags().toString().replace("[", "{").replace("]", "}");
+            hiddenSet += ParserHelper.getInstance().getAllFrags().toString().replace("[", "{|").replace("]", "|}");
             this.channels = hiddenSet + "\n";
         }
 

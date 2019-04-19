@@ -42,7 +42,7 @@ public class AltParser extends FragmentParser{
             sb.append("\n").append("[]").append("\n");
         }
         sb.delete(sb.length()-4,sb.length());
-        sb.append(")\n");
+        sb.append(");");
 
         return sb.toString();
     }

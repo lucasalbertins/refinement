@@ -43,7 +43,7 @@ public class FileTest {
 //			br = new BufferedReader(fr);
 
             ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-            projectAccessor.open("src/test/resources/testRef3.asta");
+            projectAccessor.open("src/test/resources/testRef4.asta");
             INamedElement[] findSequence = findSequence(projectAccessor);
             // buildCounterExample(projectAccessor);
 
@@ -80,7 +80,7 @@ public class FileTest {
     public void gerarArquivo() {
 
         try {
-            FileWriter fw = new FileWriter(new File("testFiles/resultado2.csp"));
+            FileWriter fw = new FileWriter(new File("testFiles/result.csp"));
             BufferedWriter bw = new BufferedWriter(fw);
             String actual = parser.getDefinedTypes();
             bw.write(actual);
