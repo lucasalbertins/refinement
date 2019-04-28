@@ -136,6 +136,7 @@ public class ADParserTestBehaviourCall {
 				"channel update_behavior1: countUpdate_behavior1.limiteUpdate_behavior1\n" +
 				"channel endDiagram_behavior1\n" +
 				"channel loop\n" +
+				"channel dc\n" +
 				"MAIN = behavior1(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_behavior1 = endDiagram_behavior1 -> SKIP\n" +
@@ -212,6 +213,7 @@ public class ADParserTestBehaviourCall {
 				"channel update_behavior2: countUpdate_behavior2.limiteUpdate_behavior2\n" +
 				"channel endDiagram_behavior2\n" +
 				"channel loop\n" +
+				"channel dc\n" +
 				"MAIN = behavior2(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_behavior2 = endDiagram_behavior2 -> SKIP\n" +
@@ -293,6 +295,7 @@ public class ADParserTestBehaviourCall {
 				"channel update_behavior3: countUpdate_behavior3.limiteUpdate_behavior3\n" +
 				"channel endDiagram_behavior3\n" +
 				"channel loop\n" +
+				"channel dc\n" +
 				"MAIN = behavior3(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_behavior3 = endDiagram_behavior3 -> SKIP\n" +
@@ -409,6 +412,7 @@ public class ADParserTestBehaviourCall {
 				"channel update_behavior4: countUpdate_behavior4.limiteUpdate_behavior4\n" +
 				"channel endDiagram_behavior4\n" +
 				"channel loop\n" +
+				"channel dc\n" +
 				"MAIN = behavior4(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_behavior4 = endDiagram_behavior4 -> SKIP\n" +
@@ -527,6 +531,7 @@ public class ADParserTestBehaviourCall {
 				"channel update_behavior5: countUpdate_behavior5.limiteUpdate_behavior5\n" +
 				"channel endDiagram_behavior5\n" +
 				"channel loop\n" +
+				"channel dc\n" +
 				"MAIN = behavior5(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_behavior5 = endDiagram_behavior5 -> SKIP\n" +

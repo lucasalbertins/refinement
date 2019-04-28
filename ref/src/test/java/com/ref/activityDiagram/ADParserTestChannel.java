@@ -92,7 +92,9 @@ public class ADParserTestChannel {
 				"channel endDiagram_action1\n" + 
 				"channel event_act1_action1\n" + 
 				"channel lock_act1_action1: T\n" + 
-				"channel loop\n");
+				"channel loop\n" +
+				"channel dc\n");
+
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -118,7 +120,8 @@ public class ADParserTestChannel {
 				"channel endDiagram_decision1\n" + 
 				"channel event_act1_decision1,event_act2_decision1\n" + 
 				"channel lock_act1_decision1,lock_act2_decision1: T\n" + 
-				"channel loop\n");
+				"channel loop\n" +
+				"channel dc\n");
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -145,7 +148,8 @@ public class ADParserTestChannel {
 				"channel endDiagram_decision3\n" + 
 				"channel event_act1_decision3,event_act2_decision3\n" + 
 				"channel lock_act1_decision3,lock_act2_decision3: T\n" + 
-				"channel loop\n");
+				"channel loop\n" +
+				"channel dc\n");
 
 		assertEquals(expected.toString(), actual);
 	}

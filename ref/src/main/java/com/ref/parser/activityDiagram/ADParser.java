@@ -26,6 +26,7 @@ public class ADParser {
     private static boolean firstLock = true;
     private static boolean firstMain = true;
     private static boolean firstChannel = true;
+    private static boolean dcChannel = true;
 
     public static HashMap<String, Integer> countCall = new HashMap<>();
     public HashMap<String, ArrayList<String>> alphabetNode;
@@ -128,12 +129,14 @@ public class ADParser {
         firstLock = true;
         firstMain = true;
         firstChannel = true;
+        dcChannel = true;
     }
 
     private void resetStatic() {
         firstChannel = true;
         firstMain = true;
         firstLock = true;
+        dcChannel = true;
         countCall = new HashMap<>();
         callBehaviourList = new ArrayList<>();
         callBehaviourInputs = new HashMap<>();
@@ -345,6 +348,11 @@ public class ADParser {
         if (firstChannel) {
             channels.append("channel loop\n");
             firstChannel = false;
+        }
+
+        if (dcChannel) {
+            channels.append("channel dc\n");
+            dcChannel = false;
         }
 
         System.out.println(channels);
@@ -3907,7 +3915,10 @@ public class ADParser {
                     syncObjectsEdge.put(outFlows[i].getId(), oe);
                     objectEdges.put(oe, decisionInputFlow);
 
-                    decision.append(outFlows[i].getGuard() + " & (");
+                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
@@ -3921,7 +3932,7 @@ public class ADParser {
                 decision.append(nameDecision + "\n");
 
                 decision.append(nameDecisionTermination + " = ");
-                decision.append(nameDecision + " /\\ " + endDiagram + "\n");
+                decision.append("(" + nameDecision + " /\\ " + endDiagram + ") \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + nameResolver(ad.getName()));
                 alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
@@ -4020,7 +4031,10 @@ public class ADParser {
                     String ce = createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
 
-                    decision.append(outFlows[i].getGuard() + " & (");
+                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         ce(alphabet, decision, ce, " -> SKIP) [] ");
@@ -4045,7 +4059,8 @@ public class ADParser {
 
                 decision.append("\\{|");
                 decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()));
+                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+                decision.append("dc");
                 decision.append("|}\n");
 
                 alphabet.add("endDiagram_" + nameResolver(ad.getName()));
@@ -4133,7 +4148,10 @@ public class ADParser {
                     syncObjectsEdge.put(outFlows[i].getId(), oe);
                     objectEdges.put(oe, decisionInputFlow);
 
-                    decision.append(outFlows[i].getGuard() + " & (");
+                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
@@ -4183,7 +4201,10 @@ public class ADParser {
                     String ce = createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
 
-                    decision.append(outFlows[i].getGuard() + " & (");
+                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         ce(alphabet, decision, ce, " -> SKIP) [] ");
@@ -4252,7 +4273,10 @@ public class ADParser {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = syncObjectsEdge.get(outFlows[i].getId());
 
-                    decision.append(outFlows[i].getGuard() + " & (");
+                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
@@ -4266,7 +4290,7 @@ public class ADParser {
                 decision.append(nameDecision + "\n");
 
                 decision.append(nameDecisionTermination + " = ");
-                decision.append(nameDecision + " /\\ " + endDiagram + "\n");
+                decision.append("(" + nameDecision + " /\\ " + endDiagram + ") \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + nameResolver(ad.getName()));
                 alphabetNode.put(nameResolver(activityNode.getName()), alphabet);
@@ -4345,7 +4369,10 @@ public class ADParser {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = syncChannelsEdge.get(outFlows[i].getId());
 
-                    decision.append(outFlows[i].getGuard() + " & (");
+                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         ce(alphabet, decision, ce, " -> SKIP) [] ");
@@ -4370,7 +4397,8 @@ public class ADParser {
 
                 decision.append("\\{|");
                 decision.append("get_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()));
+                decision.append("set_" + decisionInputFlow + "_" + nameResolver(activityNode.getName()) + "_" + nameResolver(ad.getName()) + ",");
+                decision.append("dc");
                 decision.append("|}\n");
 
                 alphabet.add("endDiagram_" + nameResolver(ad.getName()));
