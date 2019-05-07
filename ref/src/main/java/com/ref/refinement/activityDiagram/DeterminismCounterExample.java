@@ -70,6 +70,17 @@ public class DeterminismCounterExample {
         }
     }
 
+    private static String nameNodeResolver(String name) {
+        return name.replace(" ", "").replace("!", "_").replace("@", "_")
+                .replace("%", "_").replace("&", "_").replace("*", "_")
+                .replace("(", "_").replace(")", "_").replace("+", "_")
+                .replace("-", "_").replace("=", "_").replace("?", "_")
+                .replace(":", "_").replace("/", "_").replace(";", "_")
+                .replace(">", "_").replace("<", "_").replace(",", "_")
+                .replace("{", "_").replace("}", "_").replace("|", "_")
+                .replace("\\", "_");
+    }
+
     private static void createPackage(BasicModelEditor basicModelEditor, IModel project) {
         try {
             packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
@@ -147,17 +158,6 @@ public class DeterminismCounterExample {
         } catch (Exception e) { }
     }
 
-    private static String nameResolver(String name) {
-        return name.replace(" ", "").replace("!", "_").replace("@", "_")
-                .replace("%", "_").replace("&", "_").replace("*", "_")
-                .replace("(", "_").replace(")", "_").replace("+", "_")
-                .replace("-", "_").replace("=", "_").replace("?", "_")
-                .replace(":", "_").replace("/", "_").replace(";", "_")
-                .replace(">", "_").replace("<", "_").replace(",", "_")
-                .replace("{", "_").replace("}", "_").replace("|", "_")
-                .replace("\\", "_");
-    }
-
     private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor) {
         INodePresentation nodePresent = null;
 
@@ -195,13 +195,13 @@ public class DeterminismCounterExample {
         INodePresentation actionNode = null;
 
         try {
-            actionNode = adEditor.createAction(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            actionNode = adEditor.createAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
             IActivityNode actNode = getIActivityNode(actionNode);
             actNode.setDefinition(node.getDefinition());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -320,10 +320,10 @@ public class DeterminismCounterExample {
         INodePresentation initialNode = null;
 
         try {
-            initialNode = adEditor.createInitialNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -371,10 +371,10 @@ public class DeterminismCounterExample {
         INodePresentation parameterNode = null;
 
         try {
-            parameterNode = adEditor.createActivityParameterNode(nameResolver(node.getName()), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.parameterAlphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameResolver(node.getName()));
+            if (parser.parameterAlphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -451,10 +451,10 @@ public class DeterminismCounterExample {
 
         try {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
-            decisionNode.setLabel(nameResolver(node.getName()));
+            decisionNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -532,10 +532,10 @@ public class DeterminismCounterExample {
         try {
             forkNode = adEditor.createForkNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
-            forkNode.setLabel(nameResolver(node.getName()));
+            forkNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -613,10 +613,10 @@ public class DeterminismCounterExample {
         try {
             joinNode = adEditor.createJoinNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
-            joinNode.setLabel(nameResolver(node.getName()));
+            joinNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -692,7 +692,7 @@ public class DeterminismCounterExample {
         INodePresentation FinalNode = null;
 
         try {
-            FinalNode = adEditor.createFinalNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            FinalNode = adEditor.createFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
             nodeAdded.put(node.getId(), FinalNode);
 
@@ -708,10 +708,10 @@ public class DeterminismCounterExample {
         INodePresentation flowFinalNode = null;
 
         try {
-            flowFinalNode = adEditor.createFlowFinalNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {

@@ -10,16 +10,10 @@ import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
-import com.change_vision.jude.api.inf.presentation.IPresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADParser;
-import jdk.nashorn.internal.ir.IfNode;
 
-import javax.swing.*;
-import java.awt.geom.Point2D;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -74,6 +68,17 @@ public class DeadlockCounterExample {
         } catch (Exception e) {
             TransactionManager.abortTransaction();
         }
+    }
+
+    private static String nameNodeResolver(String name) {
+        return name.replace(" ", "").replace("!", "_").replace("@", "_")
+                .replace("%", "_").replace("&", "_").replace("*", "_")
+                .replace("(", "_").replace(")", "_").replace("+", "_")
+                .replace("-", "_").replace("=", "_").replace("?", "_")
+                .replace(":", "_").replace("/", "_").replace(";", "_")
+                .replace(">", "_").replace("<", "_").replace(",", "_")
+                .replace("{", "_").replace("}", "_").replace("|", "_")
+                .replace("\\", "_");
     }
 
     private static void createPackage(BasicModelEditor basicModelEditor, IModel project) {
@@ -153,17 +158,6 @@ public class DeadlockCounterExample {
         } catch (Exception e) { }
     }
 
-    private static String nameResolver(String name) {
-        return name.replace(" ", "").replace("!", "_").replace("@", "_")
-                .replace("%", "_").replace("&", "_").replace("*", "_")
-                .replace("(", "_").replace(")", "_").replace("+", "_")
-                .replace("-", "_").replace("=", "_").replace("?", "_")
-                .replace(":", "_").replace("/", "_").replace(";", "_")
-                .replace(">", "_").replace("<", "_").replace(",", "_")
-                .replace("{", "_").replace("}", "_").replace("|", "_")
-                .replace("\\", "_");
-    }
-
     private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor) {
         INodePresentation nodePresent = null;
 
@@ -208,16 +202,16 @@ public class DeadlockCounterExample {
 
         try {
             if (callBehaviour) {
-                actionNode = adEditor.createCallBehaviorAction(nameResolver(node.getName()), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
+                actionNode = adEditor.createCallBehaviorAction(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             } else {
-                actionNode = adEditor.createAction(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+                actionNode = adEditor.createAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
             }
 
             IActivityNode actNode = getIActivityNode(actionNode);
             actNode.setDefinition(node.getDefinition());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -336,10 +330,10 @@ public class DeadlockCounterExample {
         INodePresentation initialNode = null;
 
         try {
-            initialNode = adEditor.createInitialNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -387,10 +381,10 @@ public class DeadlockCounterExample {
         INodePresentation parameterNode = null;
 
         try {
-            parameterNode = adEditor.createActivityParameterNode(nameResolver(node.getName()), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.parameterAlphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameResolver(node.getName()));
+            if (parser.parameterAlphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -467,10 +461,10 @@ public class DeadlockCounterExample {
 
         try {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
-            decisionNode.setLabel(nameResolver(node.getName()));
+            decisionNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -548,10 +542,10 @@ public class DeadlockCounterExample {
         try {
             forkNode = adEditor.createForkNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
-            forkNode.setLabel(nameResolver(node.getName()));
+            forkNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -629,10 +623,10 @@ public class DeadlockCounterExample {
         try {
             joinNode = adEditor.createJoinNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation(),
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
-            joinNode.setLabel(nameResolver(node.getName()));
+            joinNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -708,7 +702,7 @@ public class DeadlockCounterExample {
         INodePresentation FinalNode = null;
 
         try {
-            FinalNode = adEditor.createFinalNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            FinalNode = adEditor.createFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
             nodeAdded.put(node.getId(), FinalNode);
 
@@ -724,10 +718,10 @@ public class DeadlockCounterExample {
         INodePresentation flowFinalNode = null;
 
         try {
-            flowFinalNode = adEditor.createFlowFinalNode(nameResolver(node.getName()), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -783,10 +777,10 @@ public class DeadlockCounterExample {
         INodePresentation objectNode = null;
 
         try {
-            objectNode = adEditor.createObjectNode(nameResolver(node.getName()), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
+            objectNode = adEditor.createObjectNode(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameResolver(node.getName()));
+            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
@@ -856,5 +850,4 @@ public class DeadlockCounterExample {
 
         return objectNode;
     }
-
 }

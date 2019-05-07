@@ -83,9 +83,9 @@ public class AdParserTestObjectNode {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_objectNode1_t = update_objectNode1.1!(1-0) -> get_x_objectNode1.1?x -> ((oe_x_objectNode1.1!x -> SKIP))\n" +
-				"obj1_objectNode1 = ((oe_x_objectNode1.1?x -> set_x_obj1_objectNode1.1!x -> SKIP)); update_objectNode1.2!(1-1) -> get_x_obj1_objectNode1.2?x -> ((oe_x_objectNode1.2!x -> SKIP)); obj1_objectNode1\n" +
+				"obj1_objectNode1 = ((oe_x_objectNode1.1?x -> set_x_obj1_objectNode1.1!x -> SKIP)); get_x_obj1_objectNode1.2?x -> ((oe_x_objectNode1.2!x -> SKIP)); obj1_objectNode1\n" +
 				"obj1_objectNode1_t = ((obj1_objectNode1 /\\ END_DIAGRAM_objectNode1) [|{|get_x_obj1_objectNode1,set_x_obj1_objectNode1,endDiagram_objectNode1|}|] Mem_obj1_objectNode1_x_t(0)) \\{|get_x_obj1_objectNode1,set_x_obj1_objectNode1|}\n" +
-				"act1_objectNode1 = ((oe_x_objectNode1.2?w -> set_w_act1_objectNode1.2!w -> SKIP)); lock_act1_objectNode1.lock -> event_act1_objectNode1 -> lock_act1_objectNode1.unlock -> update_objectNode1.3!(1-1) -> get_w_act1_objectNode1.3?w -> ((oe_x_objectNode1.3!(w) -> SKIP)); act1_objectNode1\n" +
+				"act1_objectNode1 = ((oe_x_objectNode1.2?w -> set_w_act1_objectNode1.2!w -> SKIP)); event_act1_objectNode1 -> get_w_act1_objectNode1.3?w -> ((oe_x_objectNode1.3!(w) -> SKIP)); act1_objectNode1\n" +
 				"act1_objectNode1_t = ((act1_objectNode1 /\\ END_DIAGRAM_objectNode1) [|{|get_w_act1_objectNode1,set_w_act1_objectNode1,endDiagram_objectNode1|}|] Mem_act1_objectNode1_w_t(0)) \\{|get_w_act1_objectNode1,set_w_act1_objectNode1|}\n" +
 				"fin1_objectNode1 = ((oe_x_objectNode1.3?x -> SKIP)); clear_objectNode1.1 -> SKIP\n" +
 				"fin1_objectNode1_t = fin1_objectNode1 /\\ END_DIAGRAM_objectNode1\n" +
@@ -101,12 +101,12 @@ public class AdParserTestObjectNode {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_objectNode2_t = update_objectNode2.1!(1-0) -> get_x_objectNode2.1?x -> ((oe_x_objectNode2.1!x -> SKIP))\n" +
-				"act1_objectNode2 = ((oe_xy_objectNode2.2?w -> set_w_act1_objectNode2.1!w -> SKIP)); lock_act1_objectNode2.lock -> event_act1_objectNode2 -> lock_act1_objectNode2.unlock -> update_objectNode2.2!(1-1) -> get_w_act1_objectNode2.2?w -> ((oe_xy_objectNode2.3!(w) -> SKIP)); act1_objectNode2\n" +
+				"act1_objectNode2 = ((oe_xy_objectNode2.2?w -> set_w_act1_objectNode2.1!w -> SKIP)); event_act1_objectNode2 -> get_w_act1_objectNode2.2?w -> ((oe_xy_objectNode2.3!(w) -> SKIP)); act1_objectNode2\n" +
 				"act1_objectNode2_t = ((act1_objectNode2 /\\ END_DIAGRAM_objectNode2) [|{|get_w_act1_objectNode2,set_w_act1_objectNode2,endDiagram_objectNode2|}|] Mem_act1_objectNode2_w_t(0)) \\{|get_w_act1_objectNode2,set_w_act1_objectNode2|}\n" +
 				"fin1_objectNode2 = ((oe_xy_objectNode2.3?xy -> SKIP)); clear_objectNode2.1 -> SKIP\n" +
 				"fin1_objectNode2_t = fin1_objectNode2 /\\ END_DIAGRAM_objectNode2\n" +
-				"parameter_y_objectNode2_t = update_objectNode2.3!(1-0) -> get_y_objectNode2.3?y -> ((oe_y_objectNode2.4!y -> SKIP))\n" +
-				"obj1_objectNode2 = ((oe_x_objectNode2.1?x -> set_xy_obj1_objectNode2.2!x -> SKIP) [] (oe_y_objectNode2.4?y -> set_xy_obj1_objectNode2.3!y -> SKIP)); update_objectNode2.4!(1-1) -> get_xy_obj1_objectNode2.4?xy -> ((oe_xy_objectNode2.2!xy -> SKIP)); obj1_objectNode2\n" +
+				"parameter_y_objectNode2_t = update_objectNode2.2!(1-0) -> get_y_objectNode2.3?y -> ((oe_y_objectNode2.4!y -> SKIP))\n" +
+				"obj1_objectNode2 = ((oe_x_objectNode2.1?x -> set_xy_obj1_objectNode2.2!x -> SKIP) [] (oe_y_objectNode2.4?y -> set_xy_obj1_objectNode2.3!y -> SKIP)); get_xy_obj1_objectNode2.4?xy -> ((oe_xy_objectNode2.2!xy -> SKIP)); obj1_objectNode2\n" +
 				"obj1_objectNode2_t = ((obj1_objectNode2 /\\ END_DIAGRAM_objectNode2) [|{|get_xy_obj1_objectNode2,set_xy_obj1_objectNode2,endDiagram_objectNode2|}|] Mem_obj1_objectNode2_xy_t(0)) \\{|get_xy_obj1_objectNode2,set_xy_obj1_objectNode2|}\n" +
 				"init_objectNode2_t = (parameter_x_objectNode2_t ||| parameter_y_objectNode2_t) /\\ END_DIAGRAM_objectNode2\n");
 
@@ -120,14 +120,14 @@ public class AdParserTestObjectNode {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_y_objectNode3_t = update_objectNode3.1!(1-0) -> get_y_objectNode3.1?y -> ((oe_y_objectNode3.1!y -> SKIP))\n" +
-				"act1_objectNode3 = ((oe_yx_objectNode3.2?w -> set_w_act1_objectNode3.1!w -> SKIP)); lock_act1_objectNode3.lock -> event_act1_objectNode3 -> lock_act1_objectNode3.unlock -> update_objectNode3.2!(1-1) -> get_w_act1_objectNode3.2?w -> ((oe_yx_objectNode3.4!(w) -> SKIP)); act1_objectNode3\n" +
+				"act1_objectNode3 = ((oe_yx_objectNode3.2?w -> set_w_act1_objectNode3.1!w -> SKIP)); event_act1_objectNode3 -> get_w_act1_objectNode3.2?w -> ((oe_yx_objectNode3.4!(w) -> SKIP)); act1_objectNode3\n" +
 				"act1_objectNode3_t = ((act1_objectNode3 /\\ END_DIAGRAM_objectNode3) [|{|get_w_act1_objectNode3,set_w_act1_objectNode3,endDiagram_objectNode3|}|] Mem_act1_objectNode3_w_t(0)) \\{|get_w_act1_objectNode3,set_w_act1_objectNode3|}\n" +
 				"fin1_objectNode3 = ((oe_yx_objectNode3.4?yx -> SKIP)); clear_objectNode3.1 -> SKIP\n" +
 				"fin1_objectNode3_t = fin1_objectNode3 /\\ END_DIAGRAM_objectNode3\n" +
-				"parameter_x_objectNode3_t = update_objectNode3.3!(1-0) -> get_x_objectNode3.3?x -> ((oe_x_objectNode3.5!x -> SKIP))\n" +
-				"flowFinal1_objectNode3 = ((oe_yx_objectNode3.3?yx -> SKIP)); update_objectNode3.4!(0-1) -> flowFinal1_objectNode3\n" +
+				"parameter_x_objectNode3_t = update_objectNode3.2!(1-0) -> get_x_objectNode3.3?x -> ((oe_x_objectNode3.5!x -> SKIP))\n" +
+				"flowFinal1_objectNode3 = ((oe_yx_objectNode3.3?yx -> SKIP)); update_objectNode3.3!(0-1) -> flowFinal1_objectNode3\n" +
 				"flowFinal1_objectNode3_t = flowFinal1_objectNode3 /\\ END_DIAGRAM_objectNode3\n" +
-				"obj1_objectNode3 = ((oe_y_objectNode3.1?y -> set_yx_obj1_objectNode3.2!y -> SKIP) [] (oe_x_objectNode3.5?x -> set_yx_obj1_objectNode3.3!x -> SKIP)); update_objectNode3.5!(2-1) -> get_yx_obj1_objectNode3.4?yx -> ((oe_yx_objectNode3.2!yx -> SKIP) ||| (oe_yx_objectNode3.3!yx -> SKIP)); obj1_objectNode3\n" +
+				"obj1_objectNode3 = ((oe_y_objectNode3.1?y -> set_yx_obj1_objectNode3.2!y -> SKIP) [] (oe_x_objectNode3.5?x -> set_yx_obj1_objectNode3.3!x -> SKIP)); update_objectNode3.4!(2-1) -> get_yx_obj1_objectNode3.4?yx -> ((oe_yx_objectNode3.2!yx -> SKIP) ||| (oe_yx_objectNode3.3!yx -> SKIP)); obj1_objectNode3\n" +
 				"obj1_objectNode3_t = ((obj1_objectNode3 /\\ END_DIAGRAM_objectNode3) [|{|get_yx_obj1_objectNode3,set_yx_obj1_objectNode3,endDiagram_objectNode3|}|] Mem_obj1_objectNode3_yx_t(0)) \\{|get_yx_obj1_objectNode3,set_yx_obj1_objectNode3|}\n" +
 				"init_objectNode3_t = (parameter_y_objectNode3_t ||| parameter_x_objectNode3_t) /\\ END_DIAGRAM_objectNode3\n");
 

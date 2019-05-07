@@ -90,8 +90,7 @@ public class ADParserTestChannel {
 				"channel clear_action1: countClear_action1\n" + 
 				"channel update_action1: countUpdate_action1.limiteUpdate_action1\n" + 
 				"channel endDiagram_action1\n" + 
-				"channel event_act1_action1\n" + 
-				"channel lock_act1_action1: T\n" + 
+				"channel event_act1_action1\n" +
 				"channel loop\n" +
 				"channel dc\n");
 
@@ -118,8 +117,7 @@ public class ADParserTestChannel {
 				"channel clear_decision1: countClear_decision1\n" + 
 				"channel update_decision1: countUpdate_decision1.limiteUpdate_decision1\n" + 
 				"channel endDiagram_decision1\n" + 
-				"channel event_act1_decision1,event_act2_decision1\n" + 
-				"channel lock_act1_decision1,lock_act2_decision1: T\n" + 
+				"channel event_act1_decision1,event_act2_decision1\n" +
 				"channel loop\n" +
 				"channel dc\n");
 
@@ -146,8 +144,7 @@ public class ADParserTestChannel {
 				"channel clear_decision3: countClear_decision3\n" + 
 				"channel update_decision3: countUpdate_decision3.limiteUpdate_decision3\n" + 
 				"channel endDiagram_decision3\n" + 
-				"channel event_act1_decision3,event_act2_decision3\n" + 
-				"channel lock_act1_decision3,lock_act2_decision3: T\n" + 
+				"channel event_act1_decision3,event_act2_decision3\n" +
 				"channel loop\n" +
 				"channel dc\n");
 

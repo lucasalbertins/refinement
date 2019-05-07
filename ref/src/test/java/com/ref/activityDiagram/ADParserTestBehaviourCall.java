@@ -123,12 +123,12 @@ public class ADParserTestBehaviourCall {
 		String actual = parser1.parserDiagram();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_CB1 = {1..1}\n" +
-                "ID_behavior1 = {1..1}\n" +
+				"ID_behavior1 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"countCe_behavior1 = {1..2}\n" +
-				"countUpdate_behavior1 = {1..2}\n" +
+				"countUpdate_behavior1 = {1..1}\n" +
 				"countClear_behavior1 = {1..1}\n" +
-				"limiteUpdate_behavior1 = {(0)..(1)}\n" +
+				"limiteUpdate_behavior1 = {(1)..(1)}\n" +
 				"channel startActivity_behavior1: ID_behavior1\n" +
 				"channel endActivity_behavior1: ID_behavior1\n" +
 				"channel ce_behavior1: countCe_behavior1\n" +
@@ -144,9 +144,9 @@ public class ADParserTestBehaviourCall {
 				"Internal_behavior1(ID_behavior1) = StartActivity_behavior1(ID_behavior1); Node_behavior1; EndActivity_behavior1(ID_behavior1)\n" +
 				"StartActivity_behavior1(ID_behavior1) = startActivity_behavior1.ID_behavior1 -> SKIP\n" +
 				"EndActivity_behavior1(ID_behavior1) = endActivity_behavior1.ID_behavior1 -> SKIP\n" +
-				"Node_behavior1 = ((init_behavior1_t [{|update_behavior1.1,ce_behavior1.1,endDiagram_behavior1|}||{|ce_behavior1.1,startActivity_CB1.1,endActivity_CB1.1,update_behavior1.2,ce_behavior1.2,endDiagram_behavior1|}] CB1_behavior1_t) [{|update_behavior1.1,ce_behavior1.1,endDiagram_behavior1,startActivity_CB1.1,endActivity_CB1.1,update_behavior1.2,ce_behavior1.2|}||{|ce_behavior1.2,clear_behavior1.1,endDiagram_behavior1|}] fin1_behavior1_t)\n" +
+				"Node_behavior1 = ((init_behavior1_t [{|update_behavior1.1,ce_behavior1.1,endDiagram_behavior1|}||{|ce_behavior1.1,startActivity_CB1.1,endActivity_CB1.1,ce_behavior1.2,endDiagram_behavior1|}] CB1_behavior1_t) [{|update_behavior1.1,ce_behavior1.1,endDiagram_behavior1,startActivity_CB1.1,endActivity_CB1.1,ce_behavior1.2|}||{|ce_behavior1.2,clear_behavior1.1,endDiagram_behavior1|}] fin1_behavior1_t)\n" +
 				"init1_behavior1_t = update_behavior1.1!(1-0) -> ((ce_behavior1.1 -> SKIP))\n" +
-				"CB1_behavior1 = ((ce_behavior1.1 -> SKIP)); startActivity_CB1.1 -> endActivity_CB1.1 -> update_behavior1.2!(1-1) -> ((ce_behavior1.2 -> SKIP)); CB1_behavior1\n" +
+				"CB1_behavior1 = ((ce_behavior1.1 -> SKIP)); startActivity_CB1.1 -> endActivity_CB1.1 -> ((ce_behavior1.2 -> SKIP)); CB1_behavior1\n" +
 				"CB1_behavior1_t = CB1_behavior1 /\\ END_DIAGRAM_behavior1\n" +
 				"fin1_behavior1 = ((ce_behavior1.2 -> SKIP)); clear_behavior1.1 -> SKIP\n" +
 				"fin1_behavior1_t = fin1_behavior1 /\\ END_DIAGRAM_behavior1\n" +
@@ -156,9 +156,9 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior1_t(x,init) = TokenManager_behavior1(x,init)\n" +
 				"\n" +
 				"countCe_CB1 = {1..2}\n" +
-				"countUpdate_CB1 = {1..2}\n" +
+				"countUpdate_CB1 = {1..1}\n" +
 				"countClear_CB1 = {1..1}\n" +
-				"limiteUpdate_CB1 = {(0)..(1)}\n" +
+				"limiteUpdate_CB1 = {(1)..(1)}\n" +
 				"channel startActivity_CB1: ID_CB1\n" +
 				"channel endActivity_CB1: ID_CB1\n" +
 				"channel ce_CB1: countCe_CB1\n" +
@@ -172,9 +172,9 @@ public class ADParserTestBehaviourCall {
 				"Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)\n" +
 				"StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1 -> SKIP\n" +
 				"EndActivity_CB1(ID_CB1) = endActivity_CB1.ID_CB1 -> SKIP\n" +
-				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,ce_CB1.1,endDiagram_CB1|}||{|ce_CB1.1,lock_act1_CB1,event_act1_CB1,update_CB1.2,ce_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,ce_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,update_CB1.2,ce_CB1.2|}||{|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t)\n" +
+				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,ce_CB1.1,endDiagram_CB1|}||{|ce_CB1.1,lock_act1_CB1,event_act1_CB1,ce_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,ce_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,ce_CB1.2|}||{|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t)\n" +
 				"init1_CB1_t = update_CB1.1!(1-0) -> ((ce_CB1.1 -> SKIP))\n" +
-				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> update_CB1.2!(1-1) -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = act1_CB1 /\\ END_DIAGRAM_CB1\n" +
 				"fin1_CB1 = ((ce_CB1.2 -> SKIP)); clear_CB1.1 -> SKIP\n" +
 				"fin1_CB1_t = fin1_CB1 /\\ END_DIAGRAM_CB1\n" +
@@ -200,12 +200,12 @@ public class ADParserTestBehaviourCall {
 		String actual = parser2.parserDiagram();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_CB1 = {1..2}\n" +
-                "ID_behavior2 = {1..1}\n" +
+				"ID_behavior2 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"countCe_behavior2 = {1..3}\n" +
-				"countUpdate_behavior2 = {1..3}\n" +
+				"countUpdate_behavior2 = {1..1}\n" +
 				"countClear_behavior2 = {1..1}\n" +
-				"limiteUpdate_behavior2 = {(0)..(1)}\n" +
+				"limiteUpdate_behavior2 = {(1)..(1)}\n" +
 				"channel startActivity_behavior2: ID_behavior2\n" +
 				"channel endActivity_behavior2: ID_behavior2\n" +
 				"channel ce_behavior2: countCe_behavior2\n" +
@@ -221,11 +221,11 @@ public class ADParserTestBehaviourCall {
 				"Internal_behavior2(ID_behavior2) = StartActivity_behavior2(ID_behavior2); Node_behavior2; EndActivity_behavior2(ID_behavior2)\n" +
 				"StartActivity_behavior2(ID_behavior2) = startActivity_behavior2.ID_behavior2 -> SKIP\n" +
 				"EndActivity_behavior2(ID_behavior2) = endActivity_behavior2.ID_behavior2 -> SKIP\n" +
-				"Node_behavior2 = (((init_behavior2_t [{|update_behavior2.1,ce_behavior2.1,endDiagram_behavior2|}||{|ce_behavior2.2,startActivity_CB1.2,endActivity_CB1.2,update_behavior2.3,ce_behavior2.3,endDiagram_behavior2|}] CB2_behavior2_t) [{|update_behavior2.1,ce_behavior2.1,endDiagram_behavior2,ce_behavior2.2,startActivity_CB1.2,endActivity_CB1.2,update_behavior2.3,ce_behavior2.3|}||{|ce_behavior2.1,startActivity_CB1.1,endActivity_CB1.1,update_behavior2.2,ce_behavior2.2,endDiagram_behavior2|}] CB1_behavior2_t) [{|update_behavior2.1,ce_behavior2.1,endDiagram_behavior2,ce_behavior2.2,startActivity_CB1.2,endActivity_CB1.2,update_behavior2.3,ce_behavior2.3,startActivity_CB1.1,endActivity_CB1.1,update_behavior2.2|}||{|ce_behavior2.3,clear_behavior2.1,endDiagram_behavior2|}] fin1_behavior2_t)\n" +
+				"Node_behavior2 = (((init_behavior2_t [{|update_behavior2.1,ce_behavior2.1,endDiagram_behavior2|}||{|ce_behavior2.2,startActivity_CB1.2,endActivity_CB1.2,ce_behavior2.3,endDiagram_behavior2|}] CB2_behavior2_t) [{|update_behavior2.1,ce_behavior2.1,endDiagram_behavior2,ce_behavior2.2,startActivity_CB1.2,endActivity_CB1.2,ce_behavior2.3|}||{|ce_behavior2.1,startActivity_CB1.1,endActivity_CB1.1,ce_behavior2.2,endDiagram_behavior2|}] CB1_behavior2_t) [{|update_behavior2.1,ce_behavior2.1,endDiagram_behavior2,ce_behavior2.2,startActivity_CB1.2,endActivity_CB1.2,ce_behavior2.3,startActivity_CB1.1,endActivity_CB1.1|}||{|ce_behavior2.3,clear_behavior2.1,endDiagram_behavior2|}] fin1_behavior2_t)\n" +
 				"init1_behavior2_t = update_behavior2.1!(1-0) -> ((ce_behavior2.1 -> SKIP))\n" +
-				"CB1_behavior2 = ((ce_behavior2.1 -> SKIP)); startActivity_CB1.1 -> endActivity_CB1.1 -> update_behavior2.2!(1-1) -> ((ce_behavior2.2 -> SKIP)); CB1_behavior2\n" +
+				"CB1_behavior2 = ((ce_behavior2.1 -> SKIP)); startActivity_CB1.1 -> endActivity_CB1.1 -> ((ce_behavior2.2 -> SKIP)); CB1_behavior2\n" +
 				"CB1_behavior2_t = CB1_behavior2 /\\ END_DIAGRAM_behavior2\n" +
-				"CB2_behavior2 = ((ce_behavior2.2 -> SKIP)); startActivity_CB1.2 -> endActivity_CB1.2 -> update_behavior2.3!(1-1) -> ((ce_behavior2.3 -> SKIP)); CB2_behavior2\n" +
+				"CB2_behavior2 = ((ce_behavior2.2 -> SKIP)); startActivity_CB1.2 -> endActivity_CB1.2 -> ((ce_behavior2.3 -> SKIP)); CB2_behavior2\n" +
 				"CB2_behavior2_t = CB2_behavior2 /\\ END_DIAGRAM_behavior2\n" +
 				"fin1_behavior2 = ((ce_behavior2.3 -> SKIP)); clear_behavior2.1 -> SKIP\n" +
 				"fin1_behavior2_t = fin1_behavior2 /\\ END_DIAGRAM_behavior2\n" +
@@ -235,9 +235,9 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior2_t(x,init) = TokenManager_behavior2(x,init)\n" +
 				"\n" +
 				"countCe_CB1 = {1..2}\n" +
-				"countUpdate_CB1 = {1..2}\n" +
+				"countUpdate_CB1 = {1..1}\n" +
 				"countClear_CB1 = {1..1}\n" +
-				"limiteUpdate_CB1 = {(0)..(1)}\n" +
+				"limiteUpdate_CB1 = {(1)..(1)}\n" +
 				"channel startActivity_CB1: ID_CB1\n" +
 				"channel endActivity_CB1: ID_CB1\n" +
 				"channel ce_CB1: countCe_CB1\n" +
@@ -251,9 +251,9 @@ public class ADParserTestBehaviourCall {
 				"Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)\n" +
 				"StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1 -> SKIP\n" +
 				"EndActivity_CB1(ID_CB1) = endActivity_CB1.ID_CB1 -> SKIP\n" +
-				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,ce_CB1.1,endDiagram_CB1|}||{|ce_CB1.1,lock_act1_CB1,event_act1_CB1,update_CB1.2,ce_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,ce_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,update_CB1.2,ce_CB1.2|}||{|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t)\n" +
+				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,ce_CB1.1,endDiagram_CB1|}||{|ce_CB1.1,lock_act1_CB1,event_act1_CB1,ce_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,ce_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,ce_CB1.2|}||{|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t)\n" +
 				"init1_CB1_t = update_CB1.1!(1-0) -> ((ce_CB1.1 -> SKIP))\n" +
-				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> update_CB1.2!(1-1) -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = act1_CB1 /\\ END_DIAGRAM_CB1\n" +
 				"fin1_CB1 = ((ce_CB1.2 -> SKIP)); clear_CB1.1 -> SKIP\n" +
 				"fin1_CB1_t = fin1_CB1 /\\ END_DIAGRAM_CB1\n" +
@@ -281,13 +281,13 @@ public class ADParserTestBehaviourCall {
 		String actual = parser3.parserDiagram();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_CB2 = {1..1}\n" +
-                "ID_CB1 = {1..1}\n" +
-                "ID_behavior3 = {1..1}\n" +
+				"ID_CB1 = {1..1}\n" +
+				"ID_behavior3 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"countCe_behavior3 = {1..3}\n" +
-				"countUpdate_behavior3 = {1..3}\n" +
+				"countUpdate_behavior3 = {1..1}\n" +
 				"countClear_behavior3 = {1..1}\n" +
-				"limiteUpdate_behavior3 = {(0)..(1)}\n" +
+				"limiteUpdate_behavior3 = {(1)..(1)}\n" +
 				"channel startActivity_behavior3: ID_behavior3\n" +
 				"channel endActivity_behavior3: ID_behavior3\n" +
 				"channel ce_behavior3: countCe_behavior3\n" +
@@ -303,11 +303,11 @@ public class ADParserTestBehaviourCall {
 				"Internal_behavior3(ID_behavior3) = StartActivity_behavior3(ID_behavior3); Node_behavior3; EndActivity_behavior3(ID_behavior3)\n" +
 				"StartActivity_behavior3(ID_behavior3) = startActivity_behavior3.ID_behavior3 -> SKIP\n" +
 				"EndActivity_behavior3(ID_behavior3) = endActivity_behavior3.ID_behavior3 -> SKIP\n" +
-				"Node_behavior3 = (((init_behavior3_t [{|update_behavior3.1,ce_behavior3.1,endDiagram_behavior3|}||{|ce_behavior3.2,startActivity_CB2.1,endActivity_CB2.1,update_behavior3.3,ce_behavior3.3,endDiagram_behavior3|}] CB2_behavior3_t) [{|update_behavior3.1,ce_behavior3.1,endDiagram_behavior3,ce_behavior3.2,startActivity_CB2.1,endActivity_CB2.1,update_behavior3.3,ce_behavior3.3|}||{|ce_behavior3.1,startActivity_CB1.1,endActivity_CB1.1,update_behavior3.2,ce_behavior3.2,endDiagram_behavior3|}] CB1_behavior3_t) [{|update_behavior3.1,ce_behavior3.1,endDiagram_behavior3,ce_behavior3.2,startActivity_CB2.1,endActivity_CB2.1,update_behavior3.3,ce_behavior3.3,startActivity_CB1.1,endActivity_CB1.1,update_behavior3.2|}||{|ce_behavior3.3,clear_behavior3.1,endDiagram_behavior3|}] fin1_behavior3_t)\n" +
+				"Node_behavior3 = (((init_behavior3_t [{|update_behavior3.1,ce_behavior3.1,endDiagram_behavior3|}||{|ce_behavior3.2,startActivity_CB2.1,endActivity_CB2.1,ce_behavior3.3,endDiagram_behavior3|}] CB2_behavior3_t) [{|update_behavior3.1,ce_behavior3.1,endDiagram_behavior3,ce_behavior3.2,startActivity_CB2.1,endActivity_CB2.1,ce_behavior3.3|}||{|ce_behavior3.1,startActivity_CB1.1,endActivity_CB1.1,ce_behavior3.2,endDiagram_behavior3|}] CB1_behavior3_t) [{|update_behavior3.1,ce_behavior3.1,endDiagram_behavior3,ce_behavior3.2,startActivity_CB2.1,endActivity_CB2.1,ce_behavior3.3,startActivity_CB1.1,endActivity_CB1.1|}||{|ce_behavior3.3,clear_behavior3.1,endDiagram_behavior3|}] fin1_behavior3_t)\n" +
 				"init1_behavior3_t = update_behavior3.1!(1-0) -> ((ce_behavior3.1 -> SKIP))\n" +
-				"CB1_behavior3 = ((ce_behavior3.1 -> SKIP)); startActivity_CB1.1 -> endActivity_CB1.1 -> update_behavior3.2!(1-1) -> ((ce_behavior3.2 -> SKIP)); CB1_behavior3\n" +
+				"CB1_behavior3 = ((ce_behavior3.1 -> SKIP)); startActivity_CB1.1 -> endActivity_CB1.1 -> ((ce_behavior3.2 -> SKIP)); CB1_behavior3\n" +
 				"CB1_behavior3_t = CB1_behavior3 /\\ END_DIAGRAM_behavior3\n" +
-				"CB2_behavior3 = ((ce_behavior3.2 -> SKIP)); startActivity_CB2.1 -> endActivity_CB2.1 -> update_behavior3.3!(1-1) -> ((ce_behavior3.3 -> SKIP)); CB2_behavior3\n" +
+				"CB2_behavior3 = ((ce_behavior3.2 -> SKIP)); startActivity_CB2.1 -> endActivity_CB2.1 -> ((ce_behavior3.3 -> SKIP)); CB2_behavior3\n" +
 				"CB2_behavior3_t = CB2_behavior3 /\\ END_DIAGRAM_behavior3\n" +
 				"fin1_behavior3 = ((ce_behavior3.3 -> SKIP)); clear_behavior3.1 -> SKIP\n" +
 				"fin1_behavior3_t = fin1_behavior3 /\\ END_DIAGRAM_behavior3\n" +
@@ -317,9 +317,9 @@ public class ADParserTestBehaviourCall {
 				"TokenManager_behavior3_t(x,init) = TokenManager_behavior3(x,init)\n" +
 				"\n" +
 				"countCe_CB1 = {1..2}\n" +
-				"countUpdate_CB1 = {1..2}\n" +
+				"countUpdate_CB1 = {1..1}\n" +
 				"countClear_CB1 = {1..1}\n" +
-				"limiteUpdate_CB1 = {(0)..(1)}\n" +
+				"limiteUpdate_CB1 = {(1)..(1)}\n" +
 				"channel startActivity_CB1: ID_CB1\n" +
 				"channel endActivity_CB1: ID_CB1\n" +
 				"channel ce_CB1: countCe_CB1\n" +
@@ -333,9 +333,9 @@ public class ADParserTestBehaviourCall {
 				"Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)\n" +
 				"StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1 -> SKIP\n" +
 				"EndActivity_CB1(ID_CB1) = endActivity_CB1.ID_CB1 -> SKIP\n" +
-				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,ce_CB1.1,endDiagram_CB1|}||{|ce_CB1.1,lock_act1_CB1,event_act1_CB1,update_CB1.2,ce_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,ce_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,update_CB1.2,ce_CB1.2|}||{|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t)\n" +
+				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,ce_CB1.1,endDiagram_CB1|}||{|ce_CB1.1,lock_act1_CB1,event_act1_CB1,ce_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,ce_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,ce_CB1.2|}||{|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}] fin1_CB1_t)\n" +
 				"init1_CB1_t = update_CB1.1!(1-0) -> ((ce_CB1.1 -> SKIP))\n" +
-				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> update_CB1.2!(1-1) -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = act1_CB1 /\\ END_DIAGRAM_CB1\n" +
 				"fin1_CB1 = ((ce_CB1.2 -> SKIP)); clear_CB1.1 -> SKIP\n" +
 				"fin1_CB1_t = fin1_CB1 /\\ END_DIAGRAM_CB1\n" +
@@ -347,9 +347,9 @@ public class ADParserTestBehaviourCall {
 				"Lock_CB1 = Lock_act1_CB1\n" +
 				"\n" +
 				"countCe_CB2 = {1..2}\n" +
-				"countUpdate_CB2 = {1..2}\n" +
+				"countUpdate_CB2 = {1..1}\n" +
 				"countClear_CB2 = {1..1}\n" +
-				"limiteUpdate_CB2 = {(0)..(1)}\n" +
+				"limiteUpdate_CB2 = {(1)..(1)}\n" +
 				"channel startActivity_CB2: ID_CB2\n" +
 				"channel endActivity_CB2: ID_CB2\n" +
 				"channel ce_CB2: countCe_CB2\n" +
@@ -363,9 +363,9 @@ public class ADParserTestBehaviourCall {
 				"Internal_CB2(ID_CB2) = StartActivity_CB2(ID_CB2); Node_CB2; EndActivity_CB2(ID_CB2)\n" +
 				"StartActivity_CB2(ID_CB2) = startActivity_CB2.ID_CB2 -> SKIP\n" +
 				"EndActivity_CB2(ID_CB2) = endActivity_CB2.ID_CB2 -> SKIP\n" +
-				"Node_CB2 = ((init_CB2_t [{|update_CB2.1,ce_CB2.1,endDiagram_CB2|}||{|ce_CB2.1,lock_act1_CB2,event_act1_CB2,update_CB2.2,ce_CB2.2,endDiagram_CB2|}] act1_CB2_t) [{|update_CB2.1,ce_CB2.1,endDiagram_CB2,lock_act1_CB2,event_act1_CB2,update_CB2.2,ce_CB2.2|}||{|ce_CB2.2,clear_CB2.1,endDiagram_CB2|}] fin1_CB2_t)\n" +
+				"Node_CB2 = ((init_CB2_t [{|update_CB2.1,ce_CB2.1,endDiagram_CB2|}||{|ce_CB2.1,lock_act1_CB2,event_act1_CB2,ce_CB2.2,endDiagram_CB2|}] act1_CB2_t) [{|update_CB2.1,ce_CB2.1,endDiagram_CB2,lock_act1_CB2,event_act1_CB2,ce_CB2.2|}||{|ce_CB2.2,clear_CB2.1,endDiagram_CB2|}] fin1_CB2_t)\n" +
 				"init1_CB2_t = update_CB2.1!(1-0) -> ((ce_CB2.1 -> SKIP))\n" +
-				"act1_CB2 = ((ce_CB2.1 -> SKIP)); lock_act1_CB2.lock -> event_act1_CB2 -> lock_act1_CB2.unlock -> update_CB2.2!(1-1) -> ((ce_CB2.2 -> SKIP)); act1_CB2\n" +
+				"act1_CB2 = ((ce_CB2.1 -> SKIP)); lock_act1_CB2.lock -> event_act1_CB2 -> lock_act1_CB2.unlock -> ((ce_CB2.2 -> SKIP)); act1_CB2\n" +
 				"act1_CB2_t = act1_CB2 /\\ END_DIAGRAM_CB2\n" +
 				"fin1_CB2 = ((ce_CB2.2 -> SKIP)); clear_CB2.1 -> SKIP\n" +
 				"fin1_CB2_t = fin1_CB2 /\\ END_DIAGRAM_CB2\n" +
@@ -391,16 +391,16 @@ public class ADParserTestBehaviourCall {
 		String actual = parser4.parserDiagram();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_CB1 = {1..1}\n" +
-                "ID_behavior4 = {1..1}\n" +
+				"ID_behavior4 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"x_behavior4 = {0..1}\n" +
 				"z_behavior4 = {0..1}\n" +
 				"countGet_behavior4 = {1..2}\n" +
 				"countSet_behavior4 = {1..2}\n" +
 				"countOe_behavior4 = {1..2}\n" +
-				"countUpdate_behavior4 = {1..2}\n" +
+				"countUpdate_behavior4 = {1..1}\n" +
 				"countClear_behavior4 = {1..1}\n" +
-				"limiteUpdate_behavior4 = {(0)..(1)}\n" +
+				"limiteUpdate_behavior4 = {(1)..(1)}\n" +
 				"channel startActivity_behavior4: ID_behavior4.x_behavior4\n" +
 				"channel endActivity_behavior4: ID_behavior4\n" +
 				"channel get_x_behavior4: countGet_behavior4.x_behavior4\n" +
@@ -420,9 +420,9 @@ public class ADParserTestBehaviourCall {
 				"Internal_behavior4(ID_behavior4) = StartActivity_behavior4(ID_behavior4); Node_behavior4; EndActivity_behavior4(ID_behavior4)\n" +
 				"StartActivity_behavior4(ID_behavior4) = startActivity_behavior4.ID_behavior4?x -> set_x_behavior4.2!x -> SKIP\n" +
 				"EndActivity_behavior4(ID_behavior4) = endActivity_behavior4.ID_behavior4 -> SKIP\n" +
-				"Node_behavior4 = ((init_behavior4_t [{|update_behavior4.1,get_x_behavior4.1,oe_x_behavior4.1,endDiagram_behavior4|}||{|oe_x_behavior4.1,startActivity_CB1.1,endActivity_CB1.1,update_behavior4.2,oe_x_behavior4.2,endDiagram_behavior4|}] CB1_behavior4_t) [{|update_behavior4.1,get_x_behavior4.1,oe_x_behavior4.1,endDiagram_behavior4,startActivity_CB1.1,endActivity_CB1.1,update_behavior4.2,oe_x_behavior4.2|}||{|oe_x_behavior4.2,clear_behavior4.1,endDiagram_behavior4|}] fin1_behavior4_t)\n" +
+				"Node_behavior4 = ((init_behavior4_t [{|update_behavior4.1,get_x_behavior4.1,oe_x_behavior4.1,endDiagram_behavior4|}||{|oe_x_behavior4.1,startActivity_CB1.1,endActivity_CB1.1,oe_x_behavior4.2,endDiagram_behavior4|}] CB1_behavior4_t) [{|update_behavior4.1,get_x_behavior4.1,oe_x_behavior4.1,endDiagram_behavior4,startActivity_CB1.1,endActivity_CB1.1,oe_x_behavior4.2|}||{|oe_x_behavior4.2,clear_behavior4.1,endDiagram_behavior4|}] fin1_behavior4_t)\n" +
 				"parameter_x_behavior4_t = update_behavior4.1!(1-0) -> get_x_behavior4.1?x -> ((oe_x_behavior4.1!x -> SKIP))\n" +
-				"CB1_behavior4 = ((oe_x_behavior4.1?z -> set_z_CB1_behavior4.1!z -> SKIP)); get_z_CB1_behavior4.2?z -> startActivity_CB1.1!z -> endActivity_CB1.1?y -> update_behavior4.2!(1-1) -> ((oe_x_behavior4.2!(y) -> SKIP)); CB1_behavior4\n" +
+				"CB1_behavior4 = ((oe_x_behavior4.1?z -> set_z_CB1_behavior4.1!z -> SKIP)); get_z_CB1_behavior4.2?z -> startActivity_CB1.1!z -> endActivity_CB1.1?y -> ((oe_x_behavior4.2!(y) -> SKIP)); CB1_behavior4\n" +
 				"CB1_behavior4_t = ((CB1_behavior4 /\\ END_DIAGRAM_behavior4) [|{|get_z_CB1_behavior4,set_z_CB1_behavior4,endDiagram_behavior4|}|] Mem_CB1_behavior4_z_t(0)) \\{|get_z_CB1_behavior4,set_z_CB1_behavior4|}\n" +
 				"fin1_behavior4 = ((oe_x_behavior4.2?x -> SKIP)); clear_behavior4.1 -> SKIP\n" +
 				"fin1_behavior4_t = fin1_behavior4 /\\ END_DIAGRAM_behavior4\n" +
@@ -441,7 +441,7 @@ public class ADParserTestBehaviourCall {
 				"countGet_CB1 = {1..4}\n" +
 				"countSet_CB1 = {1..4}\n" +
 				"countOe_CB1 = {1..2}\n" +
-				"countUpdate_CB1 = {1..3}\n" +
+				"countUpdate_CB1 = {1..2}\n" +
 				"countClear_CB1 = {1..0}\n" +
 				"limiteUpdate_CB1 = {(-1)..(1)}\n" +
 				"channel startActivity_CB1: ID_CB1.z_CB1\n" +
@@ -465,11 +465,11 @@ public class ADParserTestBehaviourCall {
 				"Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)\n" +
 				"StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1?z -> set_z_CB1.4!z -> SKIP\n" +
 				"EndActivity_CB1(ID_CB1) = get_y_CB1.4?y -> endActivity_CB1.ID_CB1!y -> SKIP\n" +
-				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,get_z_CB1.1,oe_z_CB1.1,endDiagram_CB1|}||{|oe_z_CB1.1,lock_act1_CB1,event_act1_CB1,update_CB1.2,oe_z_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,get_z_CB1.1,oe_z_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,update_CB1.2,oe_z_CB1.2|}||{|oe_z_CB1.2,set_y_CB1.3,update_CB1.3,endDiagram_CB1|}] parameter_y_CB1_t)\n" +
+				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,get_z_CB1.1,oe_z_CB1.1,endDiagram_CB1|}||{|oe_z_CB1.1,lock_act1_CB1,event_act1_CB1,oe_z_CB1.2,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,get_z_CB1.1,oe_z_CB1.1,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,oe_z_CB1.2|}||{|oe_z_CB1.2,set_y_CB1.3,update_CB1.2,endDiagram_CB1|}] parameter_y_CB1_t)\n" +
 				"parameter_z_CB1_t = update_CB1.1!(1-0) -> get_z_CB1.1?z -> ((oe_z_CB1.1!z -> SKIP))\n" +
-				"act1_CB1 = ((oe_z_CB1.1?x -> set_x_act1_CB1.1!x -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> update_CB1.2!(1-1) -> get_x_act1_CB1.2?x -> ((oe_z_CB1.2!(x) -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((oe_z_CB1.1?x -> set_x_act1_CB1.1!x -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> get_x_act1_CB1.2?x -> ((oe_z_CB1.2!(x) -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = ((act1_CB1 /\\ END_DIAGRAM_CB1) [|{|get_x_act1_CB1,set_x_act1_CB1,endDiagram_CB1|}|] Mem_act1_CB1_x_t(0)) \\{|get_x_act1_CB1,set_x_act1_CB1|}\n" +
-				"parameter_y_CB1 = ((oe_z_CB1.2?z -> set_z_y_CB1.2!z -> SKIP)); get_z_y_CB1.3?z -> set_y_CB1.3!z -> update_CB1.3!(0-1) -> parameter_y_CB1\n" +
+				"parameter_y_CB1 = ((oe_z_CB1.2?z -> set_z_y_CB1.2!z -> SKIP)); get_z_y_CB1.3?z -> set_y_CB1.3!z -> update_CB1.2!(0-1) -> parameter_y_CB1\n" +
 				"parameter_y_CB1_t = ((parameter_y_CB1 /\\ END_DIAGRAM_CB1) [|{|get_z_y_CB1,set_z_y_CB1,endDiagram_CB1|}|] Mem_y_CB1_z_t(0)) \\{|get_z_y_CB1,set_z_y_CB1|}\n" +
 				"init_CB1_t = (parameter_z_CB1_t) /\\ END_DIAGRAM_CB1\n" +
 				"Mem_act1_CB1_x(x) = get_x_act1_CB1?c!x -> Mem_act1_CB1_x(x) [] set_x_act1_CB1?c?x -> Mem_act1_CB1_x(x)\n" +
@@ -501,7 +501,7 @@ public class ADParserTestBehaviourCall {
 		String actual = parser5.parserDiagram();
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_CB1 = {1..1}\n" +
-                "ID_behavior5 = {1..1}\n" +
+				"ID_behavior5 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
 				"m_behavior5 = {0..1}\n" +
 				"n_behavior5 = {0..1}\n" +
@@ -567,7 +567,7 @@ public class ADParserTestBehaviourCall {
 				"countGet_CB1 = {1..6}\n" +
 				"countSet_CB1 = {1..7}\n" +
 				"countOe_CB1 = {1..4}\n" +
-				"countUpdate_CB1 = {1..4}\n" +
+				"countUpdate_CB1 = {1..3}\n" +
 				"countClear_CB1 = {1..0}\n" +
 				"limiteUpdate_CB1 = {(-1)..(1)}\n" +
 				"channel startActivity_CB1: ID_CB1.b_CB1.x_CB1\n" +
@@ -597,12 +597,12 @@ public class ADParserTestBehaviourCall {
 				"Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)\n" +
 				"StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1?b?x -> set_b_CB1.6!b -> set_x_CB1.7!x -> SKIP\n" +
 				"EndActivity_CB1(ID_CB1) = get_y_CB1.6?y -> endActivity_CB1.ID_CB1!y -> SKIP\n" +
-				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,get_x_CB1.1,oe_x_CB1.1,update_CB1.3,get_b_CB1.3,oe_b_CB1.4,endDiagram_CB1|}||{|oe_x_CB1.1,oe_b_CB1.4,lock_act1_CB1,event_act1_CB1,update_CB1.4,oe_xb_CB1.2,oe_xb_CB1.3,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,get_x_CB1.1,oe_x_CB1.1,update_CB1.3,get_b_CB1.3,oe_b_CB1.4,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,update_CB1.4,oe_xb_CB1.2,oe_xb_CB1.3|}||{|oe_xb_CB1.3,oe_xb_CB1.2,set_y_CB1.3,update_CB1.2,endDiagram_CB1|}] parameter_y_CB1_t)\n" +
+				"Node_CB1 = ((init_CB1_t [{|update_CB1.1,get_x_CB1.1,oe_x_CB1.1,update_CB1.3,get_b_CB1.3,oe_b_CB1.4,endDiagram_CB1|}||{|oe_x_CB1.1,oe_b_CB1.4,lock_act1_CB1,event_act1_CB1,oe_xb_CB1.2,oe_xb_CB1.3,endDiagram_CB1|}] act1_CB1_t) [{|update_CB1.1,get_x_CB1.1,oe_x_CB1.1,update_CB1.3,get_b_CB1.3,oe_b_CB1.4,endDiagram_CB1,lock_act1_CB1,event_act1_CB1,oe_xb_CB1.2,oe_xb_CB1.3|}||{|oe_xb_CB1.3,oe_xb_CB1.2,set_y_CB1.3,update_CB1.2,endDiagram_CB1|}] parameter_y_CB1_t)\n" +
 				"parameter_x_CB1_t = update_CB1.1!(1-0) -> get_x_CB1.1?x -> ((oe_x_CB1.1!x -> SKIP))\n" +
 				"parameter_y_CB1 = ((oe_xb_CB1.3?xb -> set_xb_y_CB1.1!xb -> SKIP) [] (oe_xb_CB1.2?xb -> set_xb_y_CB1.2!xb -> SKIP)); get_xb_y_CB1.2?xb -> set_y_CB1.3!xb -> update_CB1.2!(0-1) -> parameter_y_CB1\n" +
 				"parameter_y_CB1_t = ((parameter_y_CB1 /\\ END_DIAGRAM_CB1) [|{|get_xb_y_CB1,set_xb_y_CB1,endDiagram_CB1|}|] Mem_y_CB1_xb_t(0)) \\{|get_xb_y_CB1,set_xb_y_CB1|}\n" +
 				"parameter_b_CB1_t = update_CB1.3!(1-0) -> get_b_CB1.3?b -> ((oe_b_CB1.4!b -> SKIP))\n" +
-				"act1_CB1 = ((oe_x_CB1.1?x -> set_x_act1_CB1.4!x -> SKIP) ||| (oe_b_CB1.4?a -> set_a_act1_CB1.5!a -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> update_CB1.4!(2-2) -> get_x_act1_CB1.4?x -> get_a_act1_CB1.5?a -> ((oe_xb_CB1.2!(a) -> SKIP) ||| (oe_xb_CB1.3!(x) -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((oe_x_CB1.1?x -> set_x_act1_CB1.4!x -> SKIP) ||| (oe_b_CB1.4?a -> set_a_act1_CB1.5!a -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> get_x_act1_CB1.4?x -> get_a_act1_CB1.5?a -> ((oe_xb_CB1.2!(a) -> SKIP) ||| (oe_xb_CB1.3!(x) -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = (((act1_CB1 /\\ END_DIAGRAM_CB1) [|{|get_x_act1_CB1,set_x_act1_CB1,endDiagram_CB1|}|] Mem_act1_CB1_x_t(0)) [|{|get_a_act1_CB1,set_a_act1_CB1,endDiagram_CB1|}|] Mem_act1_CB1_a_t(0)) \\{|get_x_act1_CB1,set_x_act1_CB1,get_a_act1_CB1,set_a_act1_CB1|}\n" +
 				"init_CB1_t = (parameter_x_CB1_t ||| parameter_b_CB1_t) /\\ END_DIAGRAM_CB1\n" +
 				"Mem_y_CB1_xb(xb) = get_xb_y_CB1?c!xb -> Mem_y_CB1_xb(xb) [] set_xb_y_CB1?c?xb -> Mem_y_CB1_xb(xb)\n" +

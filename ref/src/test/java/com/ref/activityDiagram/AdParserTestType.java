@@ -96,12 +96,12 @@ public class AdParserTestType {
 		parser1.defineMainNodes();
 		String actual = parser1.defineTypes();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_action1 = {1..1}\n" + 
-				"datatype T = lock | unlock\n" + 
-				"countCe_action1 = {1..2}\n" + 
-				"countUpdate_action1 = {1..2}\n" + 
-				"countClear_action1 = {1..1}\n" + 
-				"limiteUpdate_action1 = {(0)..(1)}\n");
+		expected.append("ID_action1 = {1..1}\n" +
+				"datatype T = lock | unlock\n" +
+				"countCe_action1 = {1..2}\n" +
+				"countUpdate_action1 = {1..1}\n" +
+				"countClear_action1 = {1..1}\n" +
+				"limiteUpdate_action1 = {(1)..(1)}\n");
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -117,15 +117,15 @@ public class AdParserTestType {
 		parser2.defineMainNodes();
 		String actual = parser2.defineTypes();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_decision1 = {1..1}\n" + 
-				"datatype T = lock | unlock\n" + 
-				"x_decision1 = {0..1}\n" + 
-				"countGet_decision1 = {1..2}\n" + 
-				"countSet_decision1 = {1..2}\n" + 
-				"countCe_decision1 = {1..5}\n" + 
-				"countOe_decision1 = {1..1}\n" + 
-				"countUpdate_decision1 = {1..5}\n" + 
-				"countClear_decision1 = {1..1}\n" + 
+		expected.append("ID_decision1 = {1..1}\n" +
+				"datatype T = lock | unlock\n" +
+				"x_decision1 = {0..1}\n" +
+				"countGet_decision1 = {1..2}\n" +
+				"countSet_decision1 = {1..2}\n" +
+				"countCe_decision1 = {1..5}\n" +
+				"countOe_decision1 = {1..1}\n" +
+				"countUpdate_decision1 = {1..3}\n" +
+				"countClear_decision1 = {1..1}\n" +
 				"limiteUpdate_decision1 = {(-1)..(1)}\n");
 
 		assertEquals(expected.toString(), actual);
@@ -142,11 +142,11 @@ public class AdParserTestType {
 		parser3.defineMainNodes();
 		String actual = parser3.defineTypes();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_join1 = {1..1}\n" + 
-				"datatype T = lock | unlock\n" + 
-				"countCe_join1 = {1..5}\n" + 
-				"countUpdate_join1 = {1..4}\n" + 
-				"countClear_join1 = {1..1}\n" + 
+		expected.append("ID_join1 = {1..1}\n" +
+				"datatype T = lock | unlock\n" +
+				"countCe_join1 = {1..5}\n" +
+				"countUpdate_join1 = {1..2}\n" +
+				"countClear_join1 = {1..1}\n" +
 				"limiteUpdate_join1 = {(-1)..(2)}\n");
 
 		assertEquals(expected.toString(), actual);
@@ -163,15 +163,15 @@ public class AdParserTestType {
 		parser4.defineMainNodes();
 		String actual = parser4.defineTypes();
 		StringBuffer expected = new StringBuffer();
-		expected.append("ID_decision3 = {1..1}\n" + 
-				"datatype T = lock | unlock\n" + 
-				"z_decision3 = {0..1}\n" + 
-				"countGet_decision3 = {1..3}\n" + 
-				"countSet_decision3 = {1..3}\n" + 
-				"countOe_decision3 = {1..5}\n" + 
-				"countUpdate_decision3 = {1..4}\n" + 
-				"countClear_decision3 = {1..1}\n" + 
-				"limiteUpdate_decision3 = {(0)..(1)}\n");
+		expected.append("ID_decision3 = {1..1}\n" +
+				"datatype T = lock | unlock\n" +
+				"z_decision3 = {0..1}\n" +
+				"countGet_decision3 = {1..3}\n" +
+				"countSet_decision3 = {1..3}\n" +
+				"countOe_decision3 = {1..5}\n" +
+				"countUpdate_decision3 = {1..1}\n" +
+				"countClear_decision3 = {1..1}\n" +
+				"limiteUpdate_decision3 = {(1)..(1)}\n");
 
 		assertEquals(expected.toString(), actual);
 	}
