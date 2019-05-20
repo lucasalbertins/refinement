@@ -75,14 +75,6 @@ public class AdParserTestMainNodes {
 		return foundElements;
 	}
 	
-	@Before
-	public void clearBuffer() {
-		parser1.clearBuffer();
-		parser2.clearBuffer();
-		parser3.clearBuffer();
-		parser4.clearBuffer();
-	}
-	
 	@AfterClass
 	public static void CloseProject() throws Exception {
 		AstahAPI.getAstahAPI().getProjectAccessor().close();
@@ -93,6 +85,7 @@ public class AdParserTestMainNodes {
 	 * */
 	@Test
 	public void TestMainNodeNode1() {
+		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
 		String actual = parser1.defineMainNodes();
@@ -113,6 +106,7 @@ public class AdParserTestMainNodes {
 	 * */
 	@Test
 	public void TestMainNodeNode2() {
+		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
 		String actual = parser2.defineMainNodes();
@@ -133,6 +127,7 @@ public class AdParserTestMainNodes {
 	 * */
 	@Test
 	public void TestMainNodeNode3() {
+		parser3.clearBuffer();
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();
 		String actual = parser3.defineMainNodes();
@@ -153,6 +148,7 @@ public class AdParserTestMainNodes {
 	 * */
 	@Test
 	public void TestMainNodeNode4() {
+		parser4.clearBuffer();
 		parser4.defineNodesActionAndControl();
 		parser4.defineChannels();
 		String actual = parser4.defineMainNodes();

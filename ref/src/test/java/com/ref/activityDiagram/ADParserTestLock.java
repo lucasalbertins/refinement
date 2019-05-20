@@ -30,7 +30,7 @@ public class ADParserTestLock {
 			ad = (IActivityDiagram) findElements[0];
 			
 			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
-			
+
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

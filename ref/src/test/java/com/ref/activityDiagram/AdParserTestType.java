@@ -98,6 +98,7 @@ public class AdParserTestType {
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_action1 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
+				"datatype alphabet_action1 = init_action1_t_alphabet | act1_action1_t_alphabet| fin1_action1_t_alphabet\n" +
 				"countCe_action1 = {1..2}\n" +
 				"countUpdate_action1 = {1..1}\n" +
 				"countClear_action1 = {1..1}\n" +
@@ -119,6 +120,7 @@ public class AdParserTestType {
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_decision1 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
+				"datatype alphabet_decision1 = dec1_decision1_t_alphabet | init_decision1_t_alphabet| act1_decision1_t_alphabet| fin1_decision1_t_alphabet| act2_decision1_t_alphabet\n" +
 				"x_decision1 = {0..1}\n" +
 				"countGet_decision1 = {1..2}\n" +
 				"countSet_decision1 = {1..2}\n" +
@@ -144,6 +146,7 @@ public class AdParserTestType {
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_join1 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
+				"datatype alphabet_join1 = init_join1_t_alphabet | act1_join1_t_alphabet| fin1_join1_t_alphabet| act2_join1_t_alphabet| join1_join1_t_alphabet\n" +
 				"countCe_join1 = {1..5}\n" +
 				"countUpdate_join1 = {1..2}\n" +
 				"countClear_join1 = {1..1}\n" +
@@ -165,6 +168,7 @@ public class AdParserTestType {
 		StringBuffer expected = new StringBuffer();
 		expected.append("ID_decision3 = {1..1}\n" +
 				"datatype T = lock | unlock\n" +
+				"datatype alphabet_decision3 = dec1_decision3_t_alphabet | init_decision3_t_alphabet| act1_decision3_t_alphabet| fin1_decision3_t_alphabet| act2_decision3_t_alphabet\n" +
 				"z_decision3 = {0..1}\n" +
 				"countGet_decision3 = {1..3}\n" +
 				"countSet_decision3 = {1..3}\n" +

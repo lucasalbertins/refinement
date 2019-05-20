@@ -66,13 +66,6 @@ public class AdParserTestMemory {
 		return foundElements;
 	}
 	
-	@Before
-	public void clearBuffer() {
-		parser1.clearBuffer();
-		parser2.clearBuffer();
-		parser3.clearBuffer();
-	}
-	
 	@AfterClass
 	public static void CloseProject() throws Exception {
 		AstahAPI.getAstahAPI().getProjectAccessor().close();
@@ -83,6 +76,7 @@ public class AdParserTestMemory {
 	 * */
 	@Test
 	public void TestMemoryNode1() {
+		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
 		String actual = parser1.defineMemories();
@@ -105,6 +99,7 @@ public class AdParserTestMemory {
 	 * */
 	@Test
 	public void TestMemoryNode2() {
+		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
 		String actual = parser2.defineMemories();
@@ -131,6 +126,7 @@ public class AdParserTestMemory {
 	 * */
 	@Test
 	public void TestMemoryNode3() {
+		parser3.clearBuffer();
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();
 		String actual = parser3.defineMemories();
