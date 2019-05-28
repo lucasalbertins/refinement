@@ -62,16 +62,7 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 							writer.flush();
 							writer.close();
 
-							int result = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", parser);
-							System.out.println(result);
-
-							if (result == 1) {
-								JOptionPane.showMessageDialog(window.getParent(), ((IActivityDiagram) diagram).getName() + " is deadlock free!","Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
-							} else if (result == 2) {
-								JOptionPane.showMessageDialog(window.getParent(), "Deadlock detected in " + ((IActivityDiagram) diagram).getName(),"Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
-							} else if (result == 3 || result == 0) {
-								JOptionPane.showMessageDialog(window.getParent(), "Compilation failed in " + ((IActivityDiagram) diagram).getName(),"Check Deadlock", JOptionPane.INFORMATION_MESSAGE);
-							}
+							FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", parser, ((IActivityDiagram) diagram).getName());
 						}
 
 					} else {
