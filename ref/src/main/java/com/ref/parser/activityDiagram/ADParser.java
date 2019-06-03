@@ -56,6 +56,7 @@ public class ADParser {
     private List<String> localSignalChannelsSync = new ArrayList<>();
     private List<String> createdSignal;
     private List<String> createdAccept;
+    private HashMap<String,Integer> allGuards;
 
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
@@ -92,6 +93,7 @@ public class ADParser {
         localSignalChannelsSync = new ArrayList<>();
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
+        allGuards = new HashMap<>();
     }
 
     private void setFirstDiagram() {
@@ -139,6 +141,7 @@ public class ADParser {
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         resetStatic();
+        allGuards = new HashMap<>();
         firstDiagram = ad.getId(); //set first diagram
     }
 
@@ -165,12 +168,24 @@ public class ADParser {
 
     private int addCountCall(String name) {
         int i = 1;
-        if (countCall.containsKey(nameDiagramResolver(name))) {
-            i = countCall.get(nameDiagramResolver(name));
-            countCall.put(nameDiagramResolver(name), ++i);
+        if (countCall.containsKey(name)) {
+            i = countCall.get(name);
+            countCall.put(name, ++i);
         } else {
-            countCall.put(nameDiagramResolver(name), 1);
+            countCall.put(name, i);
         }
+        return i;
+    }
+
+    private int addCountGuard(String guard) {
+        int i = 1;
+        if (allGuards.containsKey(guard)) {
+            i = allGuards.get(guard);
+            allGuards.put(guard, ++i);
+        } else {
+            allGuards.put(guard, i);
+        }
+
         return i;
     }
 
@@ -236,6 +251,18 @@ public class ADParser {
     public String defineChannels() {
         StringBuilder channels = new StringBuilder();
         String nameDiagram = nameDiagramResolver(ad.getName());
+
+        for (String guard : allGuards.keySet()) {
+            channels.append("channel " + guard + ": ");
+            for (int i = 0; i < allGuards.get(guard); i++) {
+                if (i > 0) {
+                    channels.append(".Bool");
+                } else {
+                    channels.append("Bool");
+                }
+            }
+            channels.append("\n");
+        }
 
         if (parameterNodesInput.size() > 0) {
             channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
@@ -3972,16 +3999,55 @@ public class ADParser {
                 ce(alphabet, decision, ceIn, " -> ");
                 update(alphabet, decision, 1, 1, false);
 
+                String allGuards = "";
+                int countGuards = 0;
+
+                for (int i = 0; i < outFlows.length; i++) {
+                    if (outFlows[i].getGuard().length() > 0 &&
+                            !nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {
+                        countGuards = addCountGuard(nameDecision + "_guard");
+                        allGuards += "?" + nameDiagramResolver(outFlows[i].getGuard());
+                    }
+                }
+
+                if (countGuards > 0) {
+                    decision.append(nameDecision + "_guard" + allGuards + " -> ");
+                    alphabet.add(nameDecision + "_guard");
+                }
+
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
 
-                    decision.append("(");
+                    // tratamento de guarda
+                    if (outFlows[i].getGuard().length() == 0) {
+                        decision.append("(dc -> ");
+                    } else if (nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {
+                        boolean first = true;
+                        for (int x = 0; x < outFlows.length; x++) {
+                            if (!nameDiagramResolver(outFlows[x].getGuard()).equalsIgnoreCase("else")) {
+                                if (first) {
+                                    decision.append("not(" + nameDiagramResolver(outFlows[x].getGuard()) + ") ");
+                                    first = false;
+                                } else {
+                                    decision.append("and not(" + nameDiagramResolver(outFlows[x].getGuard()) + ") ");
+                                }
+                            }
+                        }
+
+                        decision.append("& (dc -> ");
+                    } else {
+                        decision.append(nameDiagramResolver(outFlows[i].getGuard()) + " & (dc -> ");
+                    }
+
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
-                        ce(alphabet, decision, ce, " -> SKIP) |~| ");
+                        ce(alphabet, decision, ce, " -> SKIP) [] ");
                     } else {
                         ce(alphabet, decision, ce, " -> SKIP)");
                     }
@@ -4105,10 +4171,12 @@ public class ADParser {
                     String ce = createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
 
-                    decision.append("(");
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
-                        ce(alphabet, decision, ce, " -> SKIP) |~| ");
+                        ce(alphabet, decision, ce, " -> SKIP) [] ");
                     } else {
                         ce(alphabet, decision, ce, " -> SKIP)");
                     }
@@ -4304,15 +4372,54 @@ public class ADParser {
                 ce(alphabet, decision, ceIn, " -> ");
                 update(alphabet, decision, 1, 1, false);
 
+                String allGuards = "";
+                int countGuards = 0;
+
+                for (int i = 0; i < outFlows.length; i++) {
+                    if (outFlows[i].getGuard().length() > 0 &&
+                            !nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {
+                        countGuards = addCountGuard(nameDecision + "_guard");
+                        allGuards += "?" + nameDiagramResolver(outFlows[i].getGuard());
+                    }
+                }
+
+                if (countGuards > 0) {
+                    decision.append(nameDecision + "_guard" + allGuards + " -> ");
+                    alphabet.add(nameDecision + "_guard");
+                }
+
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = syncChannelsEdge.get(outFlows[i].getId());
 
-                    decision.append("(");
+                    // tratamento de guarda
+                    if (outFlows[i].getGuard().length() == 0) {
+                        decision.append("(dc -> ");
+                    } else if (nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {
+                        boolean first = true;
+                        for (int x = 0; x < outFlows.length; x++) {
+                            if (!nameDiagramResolver(outFlows[x].getGuard()).equalsIgnoreCase("else")) {
+                                if (first) {
+                                    decision.append("not(" + nameDiagramResolver(outFlows[x].getGuard()) + ") ");
+                                    first = false;
+                                } else {
+                                    decision.append("and not(" + nameDiagramResolver(outFlows[x].getGuard()) + ") ");
+                                }
+                            }
+                        }
+
+                        decision.append("& (dc -> ");
+                    } else {
+                        decision.append(nameDiagramResolver(outFlows[i].getGuard()) + " & (dc -> ");
+                    }
+
+                    if (!alphabet.contains("dc")) {
+                        alphabet.add("dc");
+                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
-                        ce(alphabet, decision, ce, " -> SKIP) |~| ");
+                        ce(alphabet, decision, ce, " -> SKIP) [] ");
                     } else {
                         ce(alphabet, decision, ce, " -> SKIP)");
                     }

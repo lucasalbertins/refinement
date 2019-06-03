@@ -21,6 +21,8 @@ public class ADParserTesteDecisionNode {
 	private static ADParser parser1;
 	private static ADParser parser2;
 	private static ADParser parser3;
+	private static ADParser parser4;
+	private static ADParser parser5;
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -46,6 +48,20 @@ public class ADParserTesteDecisionNode {
 			ad = (IActivityDiagram) findElements[0];
 			
 			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
+
+			projectAccessor.open("src/test/resources/activityDiagram/decision4.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+
+			parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);
+
+			projectAccessor.open("src/test/resources/activityDiagram/decision5.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+
+			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -69,6 +85,8 @@ public class ADParserTesteDecisionNode {
 		parser1.clearBuffer();
 		parser2.clearBuffer();
 		parser3.clearBuffer();
+		parser4.clearBuffer();
+		parser5.clearBuffer();
 	}
 	
 	@AfterClass
@@ -76,9 +94,7 @@ public class ADParserTesteDecisionNode {
 		AstahAPI.getAstahAPI().getProjectAccessor().close();
 	}
 	
-	/*
-	 * Teste de Tradução dos tipos de elementos
-	 * */
+
 	@Test
 	public void TestNodesDecision1() {
 		String actual = parser1.defineNodesActionAndControl();
@@ -97,16 +113,13 @@ public class ADParserTesteDecisionNode {
 		
 		assertEquals(expected.toString(), actual);
 	}
-	
-	/*
-	 * Teste de Tradução dos tipos de elementos
-	 * */
+
 	@Test
 	public void TestNodesDecision2() {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))\n" +
-				"dec1_decision2 = ce_decision2.1 -> ((ce_decision2.2 -> SKIP) |~| (ce_decision2.3 -> SKIP)); dec1_decision2\n" +
+				"dec1_decision2 = ce_decision2.1 -> ((dc -> ce_decision2.2 -> SKIP) [] (dc -> ce_decision2.3 -> SKIP)); dec1_decision2\n" +
 				"dec1_decision2_t = dec1_decision2 /\\ END_DIAGRAM_decision2\n" +
 				"act1_decision2 = ((ce_decision2.2 -> SKIP)); event_act1_decision2 -> ((ce_decision2.4 -> SKIP)); act1_decision2\n" +
 				"act1_decision2_t = act1_decision2 /\\ END_DIAGRAM_decision2\n" +
@@ -119,9 +132,7 @@ public class ADParserTesteDecisionNode {
 		assertEquals(expected.toString(), actual);
 	}
 	
-	/*
-	 * Teste de Tradução dos tipos de elementos
-	 * */
+
 	@Test
 	public void TestNodesDecision3() {
 		String actual = parser3.defineNodesActionAndControl();
@@ -136,8 +147,45 @@ public class ADParserTesteDecisionNode {
 				"fin1_decision3 = ((oe_z_decision3.5?z -> SKIP) [] (oe_z_decision3.4?z -> SKIP)); clear_decision3.1 -> SKIP\n" +
 				"fin1_decision3_t = fin1_decision3 /\\ END_DIAGRAM_decision3\n" +
 				"init_decision3_t = (parameter_z_decision3_t) /\\ END_DIAGRAM_decision3\n");
-		
+
 		assertEquals(expected.toString(), actual);
 	}
-	
+
+	@Test
+	public void TestNodesDecision4() {
+		String actual = parser4.defineNodesActionAndControl();
+		StringBuffer expected = new StringBuffer();
+		expected.append("init1_decision4_t = update_decision4.1!(1-0) -> ((ce_decision4.1 -> SKIP))\n" +
+				"dec1_decision4 = ce_decision4.1 -> dec1_decision4_guard?teste2?teste1 -> (teste2 & (dc -> ce_decision4.2 -> SKIP) [] teste1 & (dc -> ce_decision4.3 -> SKIP)); dec1_decision4\n" +
+				"dec1_decision4_t = dec1_decision4 /\\ END_DIAGRAM_decision4\n" +
+				"act2_decision4 = ((ce_decision4.2 -> SKIP)); event_act2_decision4 -> ((ce_decision4.4 -> SKIP)); act2_decision4\n" +
+				"act2_decision4_t = act2_decision4 /\\ END_DIAGRAM_decision4\n" +
+				"act1_decision4 = ((ce_decision4.3 -> SKIP)); event_act1_decision4 -> ((ce_decision4.5 -> SKIP)); act1_decision4\n" +
+				"act1_decision4_t = act1_decision4 /\\ END_DIAGRAM_decision4\n" +
+				"fin1_decision4 = ((ce_decision4.4 -> SKIP) [] (ce_decision4.5 -> SKIP)); clear_decision4.1 -> SKIP\n" +
+				"fin1_decision4_t = fin1_decision4 /\\ END_DIAGRAM_decision4\n" +
+				"init_decision4_t = (init1_decision4_t) /\\ END_DIAGRAM_decision4\n");
+
+		assertEquals(expected.toString(), actual);
+	}
+
+	@Test
+	public void TestNodesDecision5() {
+		String actual = parser5.defineNodesActionAndControl();
+		StringBuffer expected = new StringBuffer();
+		expected.append("init1_decision5_t = update_decision5.1!(1-0) -> ((ce_decision5.1 -> SKIP))\n" +
+				"dec1_decision5 = ce_decision5.1 -> dec1_decision5_guard?teste2?teste1 -> (teste2 & (dc -> ce_decision5.2 -> SKIP) [] teste1 & (dc -> ce_decision5.3 -> SKIP) [] not(teste2) and not(teste1) & (dc -> ce_decision5.4 -> SKIP)); dec1_decision5\n" +
+				"dec1_decision5_t = dec1_decision5 /\\ END_DIAGRAM_decision5\n" +
+				"act2_decision5 = ((ce_decision5.2 -> SKIP)); event_act2_decision5 -> ((ce_decision5.5 -> SKIP)); act2_decision5\n" +
+				"act2_decision5_t = act2_decision5 /\\ END_DIAGRAM_decision5\n" +
+				"act1_decision5 = ((ce_decision5.3 -> SKIP)); event_act1_decision5 -> ((ce_decision5.6 -> SKIP)); act1_decision5\n" +
+				"act1_decision5_t = act1_decision5 /\\ END_DIAGRAM_decision5\n" +
+				"act3_decision5 = ((ce_decision5.4 -> SKIP)); event_act3_decision5 -> ((ce_decision5.7 -> SKIP)); act3_decision5\n" +
+				"act3_decision5_t = act3_decision5 /\\ END_DIAGRAM_decision5\n" +
+				"fin1_decision5 = ((ce_decision5.5 -> SKIP) [] (ce_decision5.6 -> SKIP) [] (ce_decision5.7 -> SKIP)); clear_decision5.1 -> SKIP\n" +
+				"fin1_decision5_t = fin1_decision5 /\\ END_DIAGRAM_decision5\n" +
+				"init_decision5_t = (init1_decision5_t) /\\ END_DIAGRAM_decision5\n");
+
+		assertEquals(expected.toString(), actual);
+	}
 }

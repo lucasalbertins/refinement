@@ -179,7 +179,7 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste1.csp", parser1);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste1.csp", parser1, "deadlock1");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -215,7 +215,7 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste2.csp", parser2);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste2.csp", parser2, "deadlock2");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -251,7 +251,7 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", parser5);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", parser5, "deadlock3");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -287,7 +287,7 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", parser2);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", parser2, "deadlockFree1");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -323,7 +323,7 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", parser3);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", parser3, "deadlockFree2");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -359,7 +359,7 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", parser6);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", parser6, "FailedCompilation1");
         } catch (Exception e) {
             e.printStackTrace();
         }

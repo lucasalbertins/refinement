@@ -88,18 +88,4 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 		return null;
 	}
 
-	private void getAllClasses(INamedElement element, List<IClass> classList)
-			throws ClassNotFoundException, ProjectNotFoundException {
-		if (element instanceof IPackage && !element.getName().equals("java")) {
-			for (INamedElement ownedNamedElement : ((IPackage) element).getOwnedElements()) {
-				getAllClasses(ownedNamedElement, classList);
-			}
-		} else if (element instanceof IClass) {
-			classList.add((IClass) element);
-			for (IClass nestedClasses : ((IClass) element).getNestedClasses()) {
-				getAllClasses(nestedClasses, classList);
-			}
-		}
-	}
-
 }

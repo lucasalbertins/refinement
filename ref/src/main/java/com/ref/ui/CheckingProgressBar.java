@@ -5,17 +5,21 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
-public class CheckingProgressBar extends JFrame {
-    public CheckingProgressBar(String title, int assertion) {
-        typeAssertion = assertion;
-        setTitle(title);
+public class CheckingProgressBar extends JFrame implements Runnable, FocusListener {
+    public void CheckingProgressBar() {
         setSize(380, 200);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e){
-                System.exit(0);
+        startElements();
+
+        closeButton.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                setVisible(false);
             }
         });
 
+        setVisible(true);
+    }
+
+    private void startElements() {
         Container contentPane = getContentPane();
         // this text area holds the activity output
         textArea = new JTextArea();
@@ -31,14 +35,15 @@ public class CheckingProgressBar extends JFrame {
         panel.add(closeButton);
         contentPane.add(new JScrollPane(textArea), "Center");
         contentPane.add(panel, "South");
+        contentPane.setVisible(true);
+    }
 
-        closeButton.addActionListener( new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                hide();
-            }
-        });
+    public void setNewTitle(String title) {
+        this.setTitle(title);
+    }
 
-        show();
+    public void setAssertion(int assertion) {
+        this.typeAssertion = assertion;
     }
 
     private void reset() {
@@ -49,7 +54,6 @@ public class CheckingProgressBar extends JFrame {
         step5 = false;
         progressBar.setValue(0);
         closeButton.setEnabled(false);
-        this.setUndecorated(true);
         this.setLocationRelativeTo(null);
         this.setResizable(false);
         this.setAlwaysOnTop(true);
@@ -99,4 +103,19 @@ public class CheckingProgressBar extends JFrame {
     private JProgressBar progressBar;
     private JButton closeButton;
     private JTextArea textArea;
+
+    @Override
+    public void run() {
+        CheckingProgressBar();
+    }
+
+    @Override
+    public void focusGained(FocusEvent e) {
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        setAlwaysOnTop(false);
+        setAlwaysOnTop(true);
+    }
 }

@@ -434,7 +434,7 @@ public class FdrWrapper {
     }
 
 	
-	public void checkDeadlock(String filename, ADParser parser, String nameDiagram) throws Exception{
+	public int checkDeadlock(String filename, ADParser parser, String nameDiagram) throws Exception{
 		
 	/*
 	0 = error
@@ -443,70 +443,74 @@ public class FdrWrapper {
 	3 = compilation failed
 	4 = invalid license
 	*/
-		CheckingProgressBar progressBar = new CheckingProgressBar("Checking deadlock", 0);
+		CheckingProgressBar progressBar = new CheckingProgressBar();
+        progressBar.run();
+		progressBar.setNewTitle("Checking deadlock");
+		progressBar.setAssertion(0);
+
 		progressBar.setProgress(1, "");
 
 		int hasError = 0;
 
-			try {
+		try {
 
-				Object fdr = fdrClass.newInstance();
-				boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
+			Object fdr = fdrClass.newInstance();
+			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
 
-				if (!hasValidLicense) {
-					hasError = 4;
-				}
-
-				if (hasError == 0) { // has valid license
-					session = sessionClass.newInstance();
-
-					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-					Object assertion = assertions.get(0);
-					try {
-						progressBar.setProgress(2, "");
-						invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
-						for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-								"counterexamples", null, null)) {
-
-							progressBar.setProgress(3, "");
-							List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-							DeadlockCounterExample.createDeadlockCounterExample(trace, parser);
-
-							hasError = 2;
-						}
-
-						if (hasError == 0) {
-							hasError = 1;
-						}
-
-						progressBar.setProgress(4, "");
-
-					}catch (InvalidEditingException e) {
-						TransactionManager.abortTransaction();
-					} catch (Exception e) {
-						TransactionManager.abortTransaction();
-						hasError = 3;
-					}
-				}
-
-			} catch (InstantiationException e) {
-				throw new Exception("Set your fdr path 1");
-			} catch (IllegalAccessException e) {
-				throw new Exception("Set your fdr path 2");
-			} catch (Exception e) {
-				Logador logger = Logador.getInstance();
-				logger.log("LOG FDRWRAPPER");
-				for(StackTraceElement element :e.getStackTrace()){
-					logger.log(element.toString());						
-				}
-				//throw new Exception(e.getMessage());
+			if (!hasValidLicense) {
+				hasError = 4;
 			}
 
+			if (hasError == 0) { // has valid license
+				session = sessionClass.newInstance();
+
+				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+				Object assertion = assertions.get(0);
+				try {
+					progressBar.setProgress(2, "");
+					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+
+					for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+							"counterexamples", null, null)) {
+
+						progressBar.setProgress(3, "");
+						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
+						DeadlockCounterExample.createDeadlockCounterExample(trace, parser);
+
+						hasError = 2;
+					}
+
+					if (hasError == 0) {
+						hasError = 1;
+					}
+
+					progressBar.setProgress(4, "");
+
+				}catch (InvalidEditingException e) {
+					TransactionManager.abortTransaction();
+				} catch (Exception e) {
+					TransactionManager.abortTransaction();
+					hasError = 3;
+				}
+			}
+
+		} catch (InstantiationException e) {
+			throw new Exception("Set your fdr path 1");
+		} catch (IllegalAccessException e) {
+			throw new Exception("Set your fdr path 2");
+		} catch (Exception e) {
+			Logador logger = Logador.getInstance();
+			logger.log("LOG FDRWRAPPER");
+			for(StackTraceElement element :e.getStackTrace()){
+				logger.log(element.toString());
+			}
+			//throw new Exception(e.getMessage());
+		}
 
 		progressBar.setProgress(5, handleLogDeadlock(hasError, nameDiagram));
+		return hasError;
 	}
 
 	public int checkLivelock(String filename) throws Exception{
@@ -572,7 +576,7 @@ public class FdrWrapper {
 		return hasError;
 	}
 
-	public void checkDeterminism(String filename, ADParser parser, String nameDiagram) throws Exception{
+	public int checkDeterminism(String filename, ADParser parser, String nameDiagram) throws Exception{
 
 	/*
 	0 = error
@@ -582,7 +586,10 @@ public class FdrWrapper {
 	4 = invalid license
 	*/
 
-		CheckingProgressBar progressBar = new CheckingProgressBar("Checking non-determinism", 1);
+		CheckingProgressBar progressBar = new CheckingProgressBar();
+		progressBar.setNewTitle("Checking non-determinism");
+		progressBar.setAssertion(1);
+		progressBar.setVisible(true);
 		progressBar.setProgress(1, "");
 
 		int hasError = 0;
@@ -642,6 +649,8 @@ public class FdrWrapper {
 		}
 
 		progressBar.setProgress(5, handleLogDeterminism(hasError, nameDiagram));
+
+		return hasError;
 	}
 
 	private String handleLogDeadlock(int hasError, String nameDiagram) {
@@ -653,7 +662,8 @@ public class FdrWrapper {
 		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {
-			log = "FDR license is not valid!";
+			log = "FDR license is not valid!\n" +
+					"Please activate FDR license and restart Astah.";
 		}
 
 		return log;
@@ -668,7 +678,8 @@ public class FdrWrapper {
 		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {
-			log = "FDR license is not valid!";
+			log = "FDR license is not valid!\n" +
+					"Please activate FDR license and restart Astah.";
 		}
 
 		return log;
