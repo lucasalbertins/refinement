@@ -8,6 +8,7 @@ import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.ui.CheckingProgressBar;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -133,7 +134,10 @@ public class ADParserTestCheckDeterminism {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + "teste1.csp", parser1, "Determinism1");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking non-determinism");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + "teste1.csp", parser1, "Determinism1", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,7 +173,10 @@ public class ADParserTestCheckDeterminism {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + "teste2.csp", parser2, "Determinism2");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking non-determinism");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + "teste2.csp", parser2, "Determinism2", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }

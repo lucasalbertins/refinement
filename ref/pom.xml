@@ -144,6 +144,13 @@
 		<testOutputDirectory>target/test-classes</testOutputDirectory>
 		<resources>
 			<resource>
+				<directory>src/main/java/com/ref/ui/images</directory>
+				<includes>
+					<include>*.png</include>
+					<include>*.gif</include>
+				</includes>
+			</resource>
+			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
 		</resources>

@@ -39,7 +39,7 @@ public class DeterminismCounterExample {
             trace = new ArrayList<>();
 
             for (String objTrace : traceList) {
-                String objTracePartition[] = objTrace.split("\\.");
+                String[] objTracePartition = objTrace.split("\\.");
                 if (objTracePartition.length > 2) {
                     trace.add(objTracePartition[0] + "." + objTracePartition[1]);
                 } else {
@@ -99,7 +99,7 @@ public class DeterminismCounterExample {
         IActivityNode result = null;
         try {
             for (IActivityNode actNode : ad.getActivity().getActivityNodes()) {
-                if (((INodePresentation) actNode.getPresentations()[0]) == nodePresent) {
+                if (actNode.getPresentations()[0] == nodePresent) {
                     result = actNode;
                     break;
                 }
@@ -118,7 +118,7 @@ public class DeterminismCounterExample {
                 if (actNode instanceof IAction) {
                     IFlow[] outflows = actNode.getOutgoings();
                     for (IFlow flow : outflows){
-                        if (((ILinkPresentation)flow.getPresentations()[0]) == flowPresent) {
+                        if (flow.getPresentations()[0] == flowPresent) {
                             result = flow;
                             break;
                         }
@@ -129,7 +129,7 @@ public class DeterminismCounterExample {
                     for (IOutputPin outPin : outPins) {
                         outflows = outPin.getOutgoings();
                         for (IFlow flow : outflows){
-                            if (((ILinkPresentation)flow.getPresentations()[0]) == flowPresent) {
+                            if (flow.getPresentations()[0] == flowPresent) {
                                 result = flow;
                                 break;
                             }
@@ -138,7 +138,7 @@ public class DeterminismCounterExample {
                 } else {
                     IFlow[] outflows = actNode.getOutgoings();
                     for (IFlow flow : outflows){
-                        if (((ILinkPresentation)flow.getPresentations()[0]) == flowPresent) {
+                        if (flow.getPresentations()[0] == flowPresent) {
                             result = flow;
                             break;
                         }
@@ -189,9 +189,9 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createAction(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
-        IInputPin inPins[] = ((IAction) node).getInputs();
-        IOutputPin outPins[] = ((IAction) node).getOutputs();
+        IFlow[] outFlows = node.getOutgoings();
+        IInputPin[] inPins = ((IAction) node).getInputs();
+        IOutputPin[] outPins = ((IAction) node).getOutputs();
         INodePresentation actionNode = null;
 
         try {
@@ -246,7 +246,7 @@ public class DeterminismCounterExample {
             }
 
             for (int i = 0; i < outPins.length; i++) {
-                IFlow targetOutFlows[] = outPins[i].getOutgoings();
+                IFlow[] targetOutFlows = outPins[i].getOutgoings();
                 for (int x = 0; x < targetOutFlows.length; x++) {
                     if (targetOutFlows[x].getTarget() instanceof IInputPin) {
                         createNode((IActivityNode) targetOutFlows[x].getTarget().getOwner(), adEditor);
@@ -316,7 +316,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation initialNode = null;
 
         try {
@@ -367,7 +367,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createParameter(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation parameterNode = null;
 
         try {
@@ -446,7 +446,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createDecisionAndMerge(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation decisionNode = null;
 
         try {
@@ -526,7 +526,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createFork(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation forkNode = null;
 
         try {
@@ -607,7 +607,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createJoin(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation joinNode = null;
 
         try {
@@ -688,7 +688,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation FinalNode = null;
 
         try {
@@ -704,7 +704,7 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow outFlows[] = node.getOutgoings();
+        IFlow[] outFlows = node.getOutgoings();
         INodePresentation flowFinalNode = null;
 
         try {
@@ -729,9 +729,9 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createInputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IInputPin pin) {
-        IFlow outFlows[] = node.getOutgoings();
-        IInputPin inPins[] = ((IAction) node).getInputs();
-        IOutputPin outPins[] = ((IAction) node).getOutputs();
+        IFlow[] outFlows = node.getOutgoings();
+        IInputPin[] inPins = ((IAction) node).getInputs();
+        IOutputPin[] outPins = ((IAction) node).getOutputs();
         INodePresentation targetPresent = null;
 
         try{
@@ -746,9 +746,9 @@ public class DeterminismCounterExample {
     }
 
     private static INodePresentation createOutputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IOutputPin pin) {
-        IFlow outFlows[] = node.getOutgoings();
-        IInputPin inPins[] = ((IAction) node).getInputs();
-        IOutputPin outPins[] = ((IAction) node).getOutputs();
+        IFlow[] outFlows = node.getOutgoings();
+        IInputPin[] inPins = ((IAction) node).getInputs();
+        IOutputPin[] outPins = ((IAction) node).getOutputs();
         INodePresentation targetPresent = null;
 
         try {

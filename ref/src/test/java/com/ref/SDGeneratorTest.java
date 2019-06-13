@@ -57,7 +57,7 @@ public class SDGeneratorTest {
 			ISequenceDiagram seq1;
 			ISequenceDiagram seq2;
 
-			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
+			if (findSequence[0].getName().equals("Seq0")) {
 				seq1 = (ISequenceDiagram) findSequence[0];
 				seq2 = (ISequenceDiagram) findSequence[1];
 			} else {
@@ -89,7 +89,7 @@ public class SDGeneratorTest {
 
 	@Test
 	public void diagramNameTest() {
-		assertEquals("Sequence Diagram1", ((ISequenceDiagram) findSequence[0]).getName());
+		assertEquals("Sequence Diagram1", findSequence[0].getName());
 	}
 	
 	@Test

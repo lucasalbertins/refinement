@@ -53,7 +53,7 @@ public class SDParser {
 		lifelines3 = new TreeMap<>();
 		alfabets = new HashMap<String, String>();
 		procs = new ArrayList<String>(); {
-		};
+		}
 		// alfabetosd1 = new ArrayList<String>();
 		// alfabetosd2 = new ArrayList<String>();
 	}
@@ -64,7 +64,7 @@ public class SDParser {
 	
 	public void lifelineMapping(ILifeline lifeline,int aux){
 		String base = getLifelineBase(lifeline);
-		String instance = lifeline.getName().toString();System.out.println("Adicionou " + base);
+		String instance = lifeline.getName();System.out.println("Adicionou " + base);
 		lifelines3.put("lf"+aux+"id", base+"_"+instance);
 	}
 	
@@ -484,17 +484,11 @@ public class SDParser {
 	}
 
 	private boolean isChar(String param) {
-		if (param.contains("\'"))
-			return true;
-		else
-			return false;
+		return param.contains("\'");
 	}
 
 	private boolean isString(String param) {
-		if (param.contains("\""))
-			return true;
-		else
-			return false;
+		return param.contains("\"");
 	}
 
 	public String parseChannels() {
@@ -587,7 +581,6 @@ public class SDParser {
 		}
 
 		alfabeto.clear();
-		;
 		paralel = "";
 
 		return process.toString();

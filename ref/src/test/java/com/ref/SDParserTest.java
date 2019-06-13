@@ -49,7 +49,7 @@ public class SDParserTest {
 			INamedElement[] findSequence = findSequence(projectAccessor);
 			// buildCounterExample(projectAccessor);
 
-			if (((ISequenceDiagram) findSequence[0]).getName().equals("Seq0")) {
+			if (findSequence[0].getName().equals("Seq0")) {
 				seq1 = (ISequenceDiagram) findSequence[0];
 				seq2 = (ISequenceDiagram) findSequence[1];
 			} else {

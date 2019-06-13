@@ -119,7 +119,7 @@ public class ADParserTesteDecisionNode {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))\n" +
-				"dec1_decision2 = ce_decision2.1 -> ((dc -> ce_decision2.2 -> SKIP) [] (dc -> ce_decision2.3 -> SKIP)); dec1_decision2\n" +
+				"dec1_decision2 = ce_decision2.1 -> ((ce_decision2.2 -> SKIP) [] (ce_decision2.3 -> SKIP)); dec1_decision2\n" +
 				"dec1_decision2_t = dec1_decision2 /\\ END_DIAGRAM_decision2\n" +
 				"act1_decision2 = ((ce_decision2.2 -> SKIP)); event_act1_decision2 -> ((ce_decision2.4 -> SKIP)); act1_decision2\n" +
 				"act1_decision2_t = act1_decision2 /\\ END_DIAGRAM_decision2\n" +
@@ -156,7 +156,7 @@ public class ADParserTesteDecisionNode {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision4_t = update_decision4.1!(1-0) -> ((ce_decision4.1 -> SKIP))\n" +
-				"dec1_decision4 = ce_decision4.1 -> dec1_decision4_guard?teste2?teste1 -> (teste2 & (dc -> ce_decision4.2 -> SKIP) [] teste1 & (dc -> ce_decision4.3 -> SKIP)); dec1_decision4\n" +
+				"dec1_decision4 = ce_decision4.1 -> dec1_decision4_guard?teste2?teste1 -> (teste2 & (ce_decision4.2 -> SKIP) [] teste1 & (ce_decision4.3 -> SKIP)); dec1_decision4\n" +
 				"dec1_decision4_t = dec1_decision4 /\\ END_DIAGRAM_decision4\n" +
 				"act2_decision4 = ((ce_decision4.2 -> SKIP)); event_act2_decision4 -> ((ce_decision4.4 -> SKIP)); act2_decision4\n" +
 				"act2_decision4_t = act2_decision4 /\\ END_DIAGRAM_decision4\n" +
@@ -174,7 +174,7 @@ public class ADParserTesteDecisionNode {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision5_t = update_decision5.1!(1-0) -> ((ce_decision5.1 -> SKIP))\n" +
-				"dec1_decision5 = ce_decision5.1 -> dec1_decision5_guard?teste2?teste1 -> (teste2 & (dc -> ce_decision5.2 -> SKIP) [] teste1 & (dc -> ce_decision5.3 -> SKIP) [] not(teste2) and not(teste1) & (dc -> ce_decision5.4 -> SKIP)); dec1_decision5\n" +
+				"dec1_decision5 = ce_decision5.1 -> dec1_decision5_guard?teste2?teste1 -> (teste2 & (ce_decision5.2 -> SKIP) [] teste1 & (ce_decision5.3 -> SKIP) [] not(teste2) and not(teste1) & (ce_decision5.4 -> SKIP)); dec1_decision5\n" +
 				"dec1_decision5_t = dec1_decision5 /\\ END_DIAGRAM_decision5\n" +
 				"act2_decision5 = ((ce_decision5.2 -> SKIP)); event_act2_decision5 -> ((ce_decision5.5 -> SKIP)); act2_decision5\n" +
 				"act2_decision5_t = act2_decision5 /\\ END_DIAGRAM_decision5\n" +

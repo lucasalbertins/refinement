@@ -8,6 +8,7 @@ import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 
 import org.junit.AfterClass;
@@ -36,6 +37,7 @@ public class ADParserTestCheckDeadlock {
 	private static ADParser parser4;
 	private static ADParser parser5;
 	private static ADParser parser6;
+	private static ADParser parser7;
 	public static boolean loadClassFDR = false;
 	
 	@BeforeClass
@@ -88,6 +90,14 @@ public class ADParserTestCheckDeadlock {
 			ad = (IActivityDiagram) findElements[0];
 			
 			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
+
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/e-commerc.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+
+			parser7 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -104,12 +114,6 @@ public class ADParserTestCheckDeadlock {
 			}
 		});
 		return foundElements;
-	}
-	
-	@Before
-	public void clearBuffer() {
-		
-		
 	}
 	
 	@AfterClass
@@ -179,7 +183,10 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste1.csp", parser1, "deadlock1");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste1.csp", parser1, "deadlock1", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -215,7 +222,10 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste2.csp", parser2, "deadlock2");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste2.csp", parser2, "deadlock2", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -251,7 +261,10 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", parser5, "deadlock3");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste3.csp", parser5, "deadlock3", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -287,7 +300,10 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", parser2, "deadlockFree1");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste4.csp", parser2, "deadlockFree1", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -323,7 +339,10 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", parser3, "deadlockFree2");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste5.csp", parser3, "deadlockFree2", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -359,7 +378,10 @@ public class ADParserTestCheckDeadlock {
 
         int actual = -1;
         try {
-            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", parser6, "FailedCompilation1");
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+            actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste6.csp", parser6, "FailedCompilation1", progressBar);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -367,5 +389,45 @@ public class ADParserTestCheckDeadlock {
 
 		assertEquals(expected, actual);
 	}
-	
+
+	/*
+	 * Teste de Check Failed Compilation
+	 * */
+	@Ignore
+	@Test
+	public void TestCheckECommerc() {
+		parser7.clearBuffer();
+		String diagramCSP = parser7.parserDiagram();
+
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh+fs+"TempAstah");
+		directory.mkdirs();
+
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter(uh + fs + "TempAstah" + fs + "teste7.csp", "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+		int actual = -1;
+		try {
+			CheckingProgressBar progressBar = new CheckingProgressBar();
+			progressBar.setNewTitle("Checking deadlock");
+			progressBar.setAssertion(0);
+			actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste7.csp", parser7, "e-commerc", progressBar);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		int expected = 2;
+
+		assertEquals(expected, actual);
+	}
+
 }

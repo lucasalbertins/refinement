@@ -8,6 +8,7 @@ import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 
 import javax.swing.*;
@@ -42,7 +43,7 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 
 						if (diagram instanceof IActivityDiagram) {
-							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), ((IActivityDiagram) diagram).getName(), (IActivityDiagram) diagram);
+							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), diagram.getName(), (IActivityDiagram) diagram);
 							String diagramCSP = parser.parserDiagram();
 
 							String fs = System.getProperty("file.separator");
@@ -56,7 +57,21 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 							writer.flush();
 							writer.close();
 
-							FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", parser, ((IActivityDiagram) diagram).getName());
+							CheckingProgressBar progressBar = new CheckingProgressBar();
+							progressBar.setNewTitle("Checking non-determinism");
+							progressBar.setAssertion(1);
+
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									try {
+										FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", parser, diagram.getName(), progressBar);
+									} catch (Exception e) {
+										JOptionPane.showMessageDialog( window.getParent(), "An error occurred during checking non-determinism.","Checking Non-determinism Error", JOptionPane.ERROR_MESSAGE);
+										e.printStackTrace();
+									}
+								}
+							}).start();
 						}
 
 					} else {

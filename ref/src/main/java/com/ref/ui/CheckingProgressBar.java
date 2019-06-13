@@ -2,28 +2,37 @@ package com.ref.ui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import javax.swing.*;
-import javax.swing.Timer;
 
-public class CheckingProgressBar extends JFrame implements Runnable, FocusListener {
-    public void CheckingProgressBar() {
-        setSize(380, 200);
+public class CheckingProgressBar extends JFrame implements FocusListener {
+
+    private boolean step1;
+    private boolean step2;
+    private boolean step3;
+    private boolean step4;
+    private boolean step5;
+
+    private int typeAssertion;
+    private JProgressBar progressBar;
+    private JButton closeButton;
+    private JLabel textLabel;
+    private StringBuilder text = new StringBuilder();
+    private ImageIcon loadGif = new ImageIcon(getPath(new String[]{"src", "main", "java", "com", "ref", "ui", "icons", "loading.gif"}));
+    private ImageIcon correctIco = new ImageIcon(getPath(new String[]{"src", "main", "java", "com", "ref", "ui", "icons", "ico_correct.png"}));
+    private ImageIcon errorIco = new ImageIcon(getPath(new String[]{"src", "main", "java", "com", "ref", "ui", "icons", "ico_error.png"}));
+    public CheckingProgressBar() {
         startElements();
-
-        closeButton.addActionListener( new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                setVisible(false);
-            }
-        });
-
-        setVisible(true);
     }
 
     private void startElements() {
+        setSize(380, 200);
         Container contentPane = getContentPane();
-        // this text area holds the activity output
-        textArea = new JTextArea();
-        textArea.setEnabled(false);
+        textLabel = new JLabel();
+        System.out.println(getClass().getResource(""));
+        textLabel.setIcon(loadGif);
+        textLabel.setHorizontalAlignment(JLabel.LEFT);
+        textLabel.setVerticalAlignment(JLabel.TOP);
         // set up panel with button and progress bar
         JPanel panel = new JPanel();
         closeButton = new JButton("Close");
@@ -33,9 +42,17 @@ public class CheckingProgressBar extends JFrame implements Runnable, FocusListen
         reset();
         panel.add(progressBar);
         panel.add(closeButton);
-        contentPane.add(new JScrollPane(textArea), "Center");
-        contentPane.add(panel, "South");
+        contentPane.add(new JScrollPane(textLabel), "Center");
+        contentPane.add(panel, "North");
         contentPane.setVisible(true);
+
+        closeButton.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                setVisible(false);
+            }
+        });
+
+        setVisible(true);
     }
 
     public void setNewTitle(String title) {
@@ -59,54 +76,59 @@ public class CheckingProgressBar extends JFrame implements Runnable, FocusListen
         this.setAlwaysOnTop(true);
     }
 
-    private void handleValue(String log){
+    private void handleValue(String log, boolean correct){
         int value = progressBar.getValue();
 
         if (!step1 && value == 1) {
-            textArea.append("Translating diagram to CSP...\n");
+            text.append("Translating diagram to CSP...<br>");
             step1 = true;
         } else if (!step2 && value == 2) {
             if (typeAssertion == 0) {
-                textArea.append("Checking for deadlock...\n");
+                text.append("Checking for deadlock...<br>");
             } else {
-                textArea.append("Checking for non-determinism...\n");
+                text.append("Checking for non-determinism...<br>");
             }
             step2 = true;
         } else if (!step3 && value == 3) {
-            textArea.append("Creating counterexamples...\n");
+            text.append("Creating counterexamples...<br>");
             step3 = true;
         } else if (!step4 && value == 4) {
-            textArea.append("Finished!\n");
+            text.append("Finished!<br>");
             step4 = true;
         } else if (!step5 && value == 5) {
-            textArea.append(log);
+            text.append(log);
+
+            if (correct) {
+                textLabel.setIcon(correctIco);
+            } else {
+                textLabel.setIcon(errorIco);
+            }
+
             step5 = true;
         }
+
+        textLabel.setText("<html>" + text.toString() + "</html>");
+
 
         if (value == 5) {
             closeButton.setEnabled(true);
         }
     }
 
-    public void setProgress(int value, String log) {
+    public void setProgress(int value, String log, boolean correct) {
         progressBar.setValue(value);
-        handleValue(log);
+        handleValue(log, correct);
     }
 
-    private boolean step1;
-    private boolean step2;
-    private boolean step3;
-    private boolean step4;
-    private boolean step5;
+    private String getPath(String[] path) {
+        String fs = System.getProperty("file.separator");
+        String pathText = System.getProperty("user.dir");
 
-    private int typeAssertion;
-    private JProgressBar progressBar;
-    private JButton closeButton;
-    private JTextArea textArea;
+        for (int i = 0; i < path.length; i++) {
+            pathText += fs + path[i];
+        }
 
-    @Override
-    public void run() {
-        CheckingProgressBar();
+        return pathText;
     }
 
     @Override

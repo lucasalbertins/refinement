@@ -39,13 +39,13 @@ public class MessageParser {
 	}
 	
 	private void addInstancesAndBases(StringBuilder sb, IMessage msg){
-		if(!((ILifeline) msg.getSource()).getName().equals(""))
-			sb.append(((ILifeline) msg.getSource()).getName()).append("_");
+		if(!msg.getSource().getName().equals(""))
+			sb.append(msg.getSource().getName()).append("_");
 		
 		sb.append(((ILifeline) msg.getSource()).getBase()).append("_");
 		
-		if(!((ILifeline) msg.getTarget()).getName().equals("")){
-			sb.append(((ILifeline) msg.getTarget()).getName()).append("_");
+		if(!msg.getTarget().getName().equals("")){
+			sb.append(msg.getTarget().getName()).append("_");
 		}
 		
 		sb.append(((ILifeline) msg.getTarget()).getBase());
@@ -202,13 +202,13 @@ public class MessageParser {
 				e.printStackTrace();
 			}
 			sb.append(seq.getName()).append("_");
-			if(!((ILifeline) syncMsg.getTarget()).getName().equals(""))
-				sb.append(((ILifeline) syncMsg.getTarget()).getName()).append("_");
+			if(!syncMsg.getTarget().getName().equals(""))
+				sb.append(syncMsg.getTarget().getName()).append("_");
 			
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_");
 			
-			if(!((ILifeline) syncMsg.getSource()).getName().equals(""))
-				sb.append(((ILifeline) syncMsg.getSource()).getName()).append("_");
+			if(!syncMsg.getSource().getName().equals(""))
+				sb.append(syncMsg.getSource().getName()).append("_");
 			
 			sb.append(((ILifeline) syncMsg.getSource()).getBase());
 			sb.append("_").append(syncMsg.getName());
@@ -255,13 +255,13 @@ public class MessageParser {
 			//sb.append("!"+msg.getName()+"_O");
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_");
-			if(!((ILifeline) syncMsg.getTarget()).getName().equals(""))
-				sb.append(((ILifeline) syncMsg.getTarget()).getName()).append("_");
+			if(!syncMsg.getTarget().getName().equals(""))
+				sb.append(syncMsg.getTarget().getName()).append("_");
 			
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_");
 			
-			if(!((ILifeline) syncMsg.getSource()).getName().equals(""))
-				sb.append(((ILifeline) syncMsg.getSource()).getName()).append("_");
+			if(!syncMsg.getSource().getName().equals(""))
+				sb.append(syncMsg.getSource().getName()).append("_");
 			
 			sb.append(((ILifeline) syncMsg.getSource()).getBase());
 
@@ -467,13 +467,13 @@ public class MessageParser {
 				}
 //				process.append(seq1.getName()).append("_").append(syncMsg.getName()).append("_r");
 				aux.append(seq1.getName()).append("_");
-				if(!((ILifeline) syncMsg.getTarget()).getName().equals(""))
-					aux.append(((ILifeline) syncMsg.getTarget()).getName()).append("_");
+				if(!syncMsg.getTarget().getName().equals(""))
+					aux.append(syncMsg.getTarget().getName()).append("_");
 				
 				aux.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_");
 				
-				if(!((ILifeline) syncMsg.getSource()).getName().equals(""))
-					aux.append(((ILifeline) syncMsg.getSource()).getName()).append("_");
+				if(!syncMsg.getSource().getName().equals(""))
+					aux.append(syncMsg.getSource().getName()).append("_");
 				
 				aux.append(((ILifeline) syncMsg.getSource()).getBase());
 

@@ -142,7 +142,7 @@ public class AdParserTestMainNodes {
 		
 		assertEquals(expected.toString(), actual);
 	}
-	
+
 	/*
 	 * Teste de Tradução MainNode
 	 * */

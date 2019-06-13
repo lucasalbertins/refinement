@@ -41,7 +41,7 @@ public class Logador {
 	}
 
 	public void log(String value) {
-		this.logger.info(value);
+		logger.info(value);
 	}
 
 }

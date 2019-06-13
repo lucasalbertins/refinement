@@ -39,7 +39,7 @@ public class FDR3LocationDialog extends JDialog {
 	private Properties prop;
 
 	public FDR3LocationDialog(JFrame frame, boolean modal)
-			throws FileNotFoundException, IOException, ClassNotFoundException {
+			throws IOException, ClassNotFoundException {
 		super(frame, modal);
 		File propertyFile = new File(FDR3_PROPERTY_FILE);
 		if (!propertyFile.exists()) {

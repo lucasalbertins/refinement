@@ -250,7 +250,7 @@ public class FdrWrapper {
 		if ((Long) error == 1 || (Long) error == 0) {
 
 		} else {
-			errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) error).toString();
+			errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, error).toString();
 			result.add(errorEvent);
 		}
 
@@ -334,7 +334,7 @@ public class FdrWrapper {
 			transitionList = invokeProperty(Machine, machine, "transitions", Node, node);
 			Object evento = invokeProperty(TransitionList, transitionList, "get", int.class, 0);
 			Object eventID = invokeProperty(Transition, evento, "event", null, null);
-			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) eventID);
+			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, eventID);
 			// System.out.println(result.toString());
 			if (!result.equals("τ")) {
 				sb.append(result.toString());
@@ -425,7 +425,7 @@ public class FdrWrapper {
         try {
             Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
             if ((Long) error != 1 && (Long) error != 0) {
-                errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long) error).toString();
+                errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, error).toString();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -434,7 +434,7 @@ public class FdrWrapper {
     }
 
 	
-	public int checkDeadlock(String filename, ADParser parser, String nameDiagram) throws Exception{
+	public int checkDeadlock(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
 		
 	/*
 	0 = error
@@ -443,12 +443,8 @@ public class FdrWrapper {
 	3 = compilation failed
 	4 = invalid license
 	*/
-		CheckingProgressBar progressBar = new CheckingProgressBar();
-        progressBar.run();
-		progressBar.setNewTitle("Checking deadlock");
-		progressBar.setAssertion(0);
 
-		progressBar.setProgress(1, "");
+		progressBar.setProgress(1, "", false);
 
 		int hasError = 0;
 
@@ -469,13 +465,13 @@ public class FdrWrapper {
 				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
 				Object assertion = assertions.get(0);
 				try {
-					progressBar.setProgress(2, "");
+					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
 					for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 							"counterexamples", null, null)) {
 
-						progressBar.setProgress(3, "");
+						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
 						DeadlockCounterExample.createDeadlockCounterExample(trace, parser);
 
@@ -486,7 +482,7 @@ public class FdrWrapper {
 						hasError = 1;
 					}
 
-					progressBar.setProgress(4, "");
+					progressBar.setProgress(4, "", false);
 
 				}catch (InvalidEditingException e) {
 					TransactionManager.abortTransaction();
@@ -509,7 +505,11 @@ public class FdrWrapper {
 			//throw new Exception(e.getMessage());
 		}
 
-		progressBar.setProgress(5, handleLogDeadlock(hasError, nameDiagram));
+		if (hasError == 1) {
+			progressBar.setProgress(5, handleLogDeadlock(hasError, nameDiagram), true);
+		} else {
+			progressBar.setProgress(5, handleLogDeadlock(hasError, nameDiagram), false);
+		}
 		return hasError;
 	}
 
@@ -576,7 +576,7 @@ public class FdrWrapper {
 		return hasError;
 	}
 
-	public int checkDeterminism(String filename, ADParser parser, String nameDiagram) throws Exception{
+	public int checkDeterminism(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
 
 	/*
 	0 = error
@@ -586,11 +586,7 @@ public class FdrWrapper {
 	4 = invalid license
 	*/
 
-		CheckingProgressBar progressBar = new CheckingProgressBar();
-		progressBar.setNewTitle("Checking non-determinism");
-		progressBar.setAssertion(1);
-		progressBar.setVisible(true);
-		progressBar.setProgress(1, "");
+		progressBar.setProgress(1, "", false);
 
 		int hasError = 0;
 
@@ -611,13 +607,13 @@ public class FdrWrapper {
 				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
 				Object assertion = assertions.get(2);
 				try {
-					progressBar.setProgress(2, "");
+					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
 					for (Object DeterminismCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 							"counterexamples", null, null)) {
 
-						progressBar.setProgress(3, "");
+						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
 						DeterminismCounterExample.createDeterminismCounterExample(trace, parser);
 
@@ -628,7 +624,7 @@ public class FdrWrapper {
 						hasError = 1;
 					}
 
-					progressBar.setProgress(4, "");
+					progressBar.setProgress(4, "", false);
 
 				} catch (Exception e) {
 					hasError = 2;
@@ -648,7 +644,11 @@ public class FdrWrapper {
 			//throw new Exception(e.getMessage());
 		}
 
-		progressBar.setProgress(5, handleLogDeterminism(hasError, nameDiagram));
+		if (hasError == 1) {
+			progressBar.setProgress(5, handleLogDeterminism(hasError, nameDiagram), true);
+		} else {
+			progressBar.setProgress(5, handleLogDeterminism(hasError, nameDiagram), false);
+		}
 
 		return hasError;
 	}
