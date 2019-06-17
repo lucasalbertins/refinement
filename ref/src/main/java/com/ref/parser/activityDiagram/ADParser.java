@@ -53,7 +53,8 @@ public class ADParser {
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
     private static List<String> signalChannels = new ArrayList<>();
-    private List<String> localSignalChannelsSync = new ArrayList<>();
+    private List<String> signalChannelsLocal;
+    private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
@@ -66,6 +67,7 @@ public class ADParser {
     public ADDefineLocks dLocks;
     public ADDefineTokenManager dTokenManager;
     public ADDefineProcessSync dProcessSync;
+    public ADDefinePool dPool;
 
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
@@ -100,6 +102,7 @@ public class ADParser {
         typeUnionList = new HashMap<>();
         callBehaviourNumber = new ArrayList<>();
         localSignalChannelsSync = new ArrayList<>();
+        signalChannelsLocal = new ArrayList<>();
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
@@ -149,6 +152,7 @@ public class ADParser {
         callBehaviourInputs = new HashMap<>();
         callBehaviourNumber = new ArrayList<>();
         localSignalChannelsSync = new ArrayList<>();
+        signalChannelsLocal = new ArrayList<>();
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         resetStatic();
@@ -212,6 +216,7 @@ public class ADParser {
         String tokenManager = defineTokenManager();
         String memory = defineMemories();
         String processSync = defineProcessSync();
+        String pool = definePool();
 
         String parser = type +
                 channel +
@@ -221,6 +226,7 @@ public class ADParser {
                 memory +
                 tokenManager +
                 lock +
+                pool +
                 callBehaviour +
                 check;
 
@@ -238,7 +244,7 @@ public class ADParser {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge,
-                this);
+                signalChannelsLocal, this);
         return adUtils;
     }
 
@@ -276,7 +282,7 @@ public class ADParser {
                 syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode, queueRecreateNode, callBehaviourList, eventChannel,
                 lockChannel, allInitial, alphabetAllInitialAndParameter, parameterNodesInput, parameterNodesOutput, parameterNodesOutputObject,
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
-                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, adUtils, this);
+                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this);
 
         return dNodesActionAndControl.defineNodesActionAndControl();
     }
@@ -297,6 +303,14 @@ public class ADParser {
         return dTokenManager.defineTokenManager();
     }
 
+    public String definePool() {
+        ADUtils adUtils = defineADUtils();
+
+        dPool = new ADDefinePool(ad, signalChannels, firstDiagram, countAccept, adUtils);
+
+        return dPool.definePool();
+    }
+
     public String defineProcessSync() {
         ADUtils adUtils = defineADUtils();
 
@@ -309,7 +323,7 @@ public class ADParser {
         ADUtils adUtils = defineADUtils();
 
         dMainNodes = new ADDefineMainNodes(ad, firstDiagram, lockChannel, parameterNodesInput, parameterNodesOutput, callBehaviourNumber,
-                callBehaviourInputs, localSignalChannelsSync, adUtils, this);
+                callBehaviourInputs, localSignalChannelsSync, signalChannelsLocal, adUtils, this);
 
         return dMainNodes.defineMainNodes();
     }

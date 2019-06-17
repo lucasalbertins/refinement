@@ -37,7 +37,6 @@ public class ADParserTestCheckDeadlock {
 	private static ADParser parser4;
 	private static ADParser parser5;
 	private static ADParser parser6;
-	private static ADParser parser7;
 	public static boolean loadClassFDR = false;
 	
 	@BeforeClass
@@ -90,14 +89,6 @@ public class ADParserTestCheckDeadlock {
 			ad = (IActivityDiagram) findElements[0];
 			
 			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
-
-			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/e-commerc.asta");
-			findElements = findElements(projectAccessor);
-
-			ad = (IActivityDiagram) findElements[0];
-
-			parser7 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -386,46 +377,6 @@ public class ADParserTestCheckDeadlock {
             e.printStackTrace();
         }
         int expected = 3;
-
-		assertEquals(expected, actual);
-	}
-
-	/*
-	 * Teste de Check Failed Compilation
-	 * */
-	@Ignore
-	@Test
-	public void TestCheckECommerc() {
-		parser7.clearBuffer();
-		String diagramCSP = parser7.parserDiagram();
-
-		String fs = System.getProperty("file.separator");
-		String uh = System.getProperty("user.home");
-		File directory = new File(uh+fs+"TempAstah");
-		directory.mkdirs();
-
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter(uh + fs + "TempAstah" + fs + "teste7.csp", "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		writer.print(diagramCSP);
-		writer.flush();
-		writer.close();
-
-		int actual = -1;
-		try {
-			CheckingProgressBar progressBar = new CheckingProgressBar();
-			progressBar.setNewTitle("Checking deadlock");
-			progressBar.setAssertion(0);
-			actual = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + "teste7.csp", parser7, "e-commerc", progressBar);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		int expected = 2;
 
 		assertEquals(expected, actual);
 	}

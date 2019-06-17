@@ -24,6 +24,7 @@ public class ADUtils {
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private List<String> signalChannels;
+    private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
@@ -38,7 +39,7 @@ public class ADUtils {
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
                    List<String> signalChannels, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<String, String> syncChannelsEdge,
-                   HashMap<String, String> syncObjectsEdge, ADParser adParser) {
+                   HashMap<String, String> syncObjectsEdge, List<String> signalChannelsLocal, ADParser adParser) {
 
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -60,6 +61,7 @@ public class ADUtils {
         this.createdAccept = createdAccept;
         this.syncChannelsEdge = syncChannelsEdge;
         this.syncObjectsEdge = syncObjectsEdge;
+        this.signalChannelsLocal = signalChannelsLocal;
         this.adParser = adParser;
     }
 
@@ -268,8 +270,12 @@ public class ADUtils {
             localSignalChannelsSync.add("signal_" + nameSignal);
         }
 
-        if (!signalChannels.contains("signal_" + nameSignal)) {
-            signalChannels.add("signal_" + nameSignal);
+        if (!signalChannels.contains(nameSignal)) {
+            signalChannels.add(nameSignal);
+        }
+
+        if (!signalChannelsLocal.contains(nameSignal)) {
+            signalChannelsLocal.add(nameSignal);
         }
 
         int idSignal = 1;
@@ -283,8 +289,8 @@ public class ADUtils {
             }
         }
 
-        alphabet.add("signal_" + nameSignal);
-        signal.append("((signal_" + nameSignal + "!" + idSignal + "?x -> SKIP) [] (SKIP)); ");
+        alphabet.add("signal_" + nameSignal + "." + idSignal);
+        signal.append("signal_" + nameSignal + "!" + idSignal + " -> ");
 
         if (index >= 0) {
             countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
@@ -299,8 +305,8 @@ public class ADUtils {
             localSignalChannelsSync.add("signal_" + nameAccept);
         }
 
-        if (!signalChannels.contains("signal_" + nameAccept)) {
-            signalChannels.add("signal_" + nameAccept);
+        if (!signalChannels.contains(nameAccept)) {
+            signalChannels.add(nameAccept);
         }
 
         int idAccept = 1;
@@ -314,8 +320,8 @@ public class ADUtils {
             }
         }
 
-        alphabet.add("signal_" + nameAccept);
-        accept.append("signal_" + nameAccept + "?x!" + idAccept + " -> ");
+        alphabet.add("accept_" + nameAccept + "." + idAccept);
+        accept.append("accept_" + nameAccept + "." + idAccept + "?x -> ");
 
         if (index >= 0) {
             countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));

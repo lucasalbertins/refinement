@@ -179,7 +179,8 @@ public class ADDefineChannels {
         if (firstDiagram.equals(ad.getId())) {
 
             for (String signalChannel : signalChannels) {
-                channels.append("channel " + signalChannel + ": countSignal_" + signalChannel + ".countAccept_" + signalChannel + "\n");
+                channels.append("channel signal_" + signalChannel + ": countSignal_" + signalChannel + "\n");
+                channels.append("channel accept_" + signalChannel + ": countAccept_" + signalChannel + ".countSignal_" + signalChannel + "\n");
             }
 
             channels.append("channel loop\n");

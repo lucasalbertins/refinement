@@ -38,6 +38,7 @@ public class ADDefineNodesActionAndControl {
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private List<String> signalChannels;
+    private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
@@ -68,7 +69,7 @@ public class ADDefineNodesActionAndControl {
                                          List<Pair<String, String>> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
                                          List<Pair<String, Integer>> countAccept, List<String> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
-                                         HashMap<String, Integer> allGuards, ADUtils adUtils, ADParser adParser) {
+                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.countCall = countCall;
@@ -101,6 +102,7 @@ public class ADDefineNodesActionAndControl {
         this.createdSignal = createdSignal;
         this.createdAccept = createdAccept;
         this.allGuards = allGuards;
+        this.signalChannelsLocal = signalChannelsLocal;
         this.adUtils = adUtils;
         this.adParser = adParser;
         this.dAction = dAction;
@@ -553,7 +555,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge,
-                adParser);
+                signalChannelsLocal, adParser);
         return adUtils;
     }
 }

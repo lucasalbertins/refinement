@@ -18,12 +18,13 @@ public class ADDefineMainNodes {
     private List<Pair<String, Integer>> callBehaviourNumber;
     private HashMap<String, List<String>> callBehaviourInputs;
     private List<String> localSignalChannelsSync;
+    private List<String> signalChannelsLocal;
     private ADUtils adUtils;
     private ADParser adParser;
 
     public ADDefineMainNodes(IActivity ad, String firstDiagram, List<String> lockChannel, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                              List<Pair<String, Integer>> callBehaviourNumber, HashMap<String, List<String>> callBehaviourInputs,
-                             List<String> localSignalChannelsSync, ADUtils adUtils, ADParser adParser) {
+                             List<String> localSignalChannelsSync, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
         this.firstDiagram = firstDiagram;
         this.lockChannel = lockChannel;
@@ -32,6 +33,7 @@ public class ADDefineMainNodes {
         this.callBehaviourNumber = callBehaviourNumber;
         this.callBehaviourInputs = callBehaviourInputs;
         this.localSignalChannelsSync = localSignalChannelsSync;
+        this.signalChannelsLocal = signalChannelsLocal;
         this.adUtils = adUtils;
         this.adParser = adParser;
     }
@@ -65,15 +67,15 @@ public class ADDefineMainNodes {
             mainNode.append("(");
         }
 
+        for (int i = 0; i < signalChannelsLocal.size(); i++) {
+            mainNode.append("(");
+        }
+
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ")");
 
         for (Pair<String, Integer> callBehaviourAD : callBehaviourNumber) {
             mainNode.append(" [|{|startActivity_" + callBehaviourAD.getKey() + "." + callBehaviourAD.getValue() +
                     ",endActivity_" + callBehaviourAD.getKey() + "." + callBehaviourAD.getValue());
-
-            for (String signalChannel : localSignalChannelsSync) {
-                mainNode.append("," + signalChannel);
-            }
 
             mainNode.append("|}|] ");
 
@@ -82,6 +84,12 @@ public class ADDefineMainNodes {
 
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
         mainNode.append("TokenManager_" + nameDiagram + "_t(0,0))");
+
+        for (String signal: signalChannelsLocal) {
+            mainNode.append(" [|{|");
+            mainNode.append("signal_" + signal + "," + "accept_" + signal + "," + "endDiagram_" + nameDiagram);
+            mainNode.append("|}|] pool_" + signal + "_t(<>))");
+        }
 
         if (lockChannel.size() > 0) {
             mainNode.append(" [|{|");
@@ -116,7 +124,6 @@ public class ADDefineMainNodes {
         } else {
             mainNode.append("\n");
         }
-
 
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
         mainNode.append("StartActivity_" + nameDiagram + "(ID_" + nameDiagram + "); Node_" + nameDiagram + "; EndActivity_" + nameDiagram + "(ID_" + nameDiagram + ")\n");

@@ -62,11 +62,15 @@ public class ADDefineTypes {
             types.append("datatype T = lock | unlock\n");
 
             for (Pair<String, Integer> signal : countSignal) {
-                types.append("countSignal_signal_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+                types.append("countSignal_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
             }
 
-            for (Pair<String, Integer> accept : countAccept) {
-                types.append("countAccept_signal_" + accept.getKey() + " = {1.." + (accept.getValue() - 1) + "}\n");
+            for (Pair<String, Integer> signal : countAccept) {
+                types.append("countAccept_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+            }
+
+            for (Pair<String, Integer> signal : countSignal) {
+                types.append("datatype event_" + signal.getKey() + "_" + nameDiagram + " = Int\n");
             }
 
         }
