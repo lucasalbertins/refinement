@@ -250,7 +250,10 @@ public class ADDefineDecision {
 
                     // tratamento de guarda
                     if (outFlows[i].getGuard().length() == 0) {
-                        decision.append("(");
+                        decision.append("(dc -> ");
+                        if (!alphabet.contains("dc")) {
+                            alphabet.add("dc");
+                        }
                     } else if (adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {
                         boolean first = true;
                         for (int x = 0; x < outFlows.length; x++) {
@@ -394,9 +397,9 @@ public class ADDefineDecision {
                     String ce = adUtils.createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
 
-                    if (!alphabet.contains("dc")) {
-                        alphabet.add("dc");
-                    }
+//                    if (!alphabet.contains("dc")) {
+//                        alphabet.add("dc");
+//                    }
 
                     if (i >= 0 && i < outFlows.length - 1) {
                         adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
@@ -618,7 +621,10 @@ public class ADDefineDecision {
 
                     // tratamento de guarda
                     if (outFlows[i].getGuard().length() == 0) {
-                        decision.append("(");
+                        decision.append("(dc -> ");
+                        if (!alphabet.contains("dc")) {
+                            alphabet.add("dc");
+                        }
                     } else if (adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {
                         boolean first = true;
                         for (int x = 0; x < outFlows.length; x++) {
