@@ -103,7 +103,10 @@ public class ParallelParser {
 
         StringBuilder sb = new StringBuilder();
         if(ParserHelper.getInstance().getAllFrags().size() > 0){
-            sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(0))).append(",");
+            String frags = ParserHelper.getInstance().getLifelineFrags(bases.get(0));
+            if(!frags.equals("")){
+                sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(0))).append(",");
+            }
         }
         sb.append(alphabetMap.get(bases.get(0).getBase().toString()));
 
@@ -122,8 +125,11 @@ public class ParallelParser {
             sbAux.append(sb.toString());
             sbAux.append("|} || {|");
             if(ParserHelper.getInstance().getAllFrags().size() > 0){
-                sbAux.append(ParserHelper.getInstance().getLifelineFrags(bases.get(j+1))).append(",");
-                sb.append(ParserHelper.getInstance().getLifelineFrags(bases.get(j+1)));
+                String frags = ParserHelper.getInstance().getLifelineFrags(bases.get(j+1));
+                if(!frags.equals("")){
+                    sbAux.append(frags).append(",");
+                    sb.append(frags);
+                }
             }
             sbAux.append(alphabetMap.get(bases.get(j + 1).getBase().toString()));
             sb.append(", ").append(alphabetMap.get(bases.get(j + 1).getBase().toString()));

@@ -229,6 +229,7 @@ public class FdrWrapper {
 
     public List<String> traceCounterExample(Object counterExample) {
         List<String> trace = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
         try {
             Constructor[] constructors = debugContextClass.getConstructors();
             Constructor constructor = null;
@@ -239,15 +240,32 @@ public class FdrWrapper {
                 }
             }
             Object debugContext = constructor.newInstance(counterExample, true);
+            int iteration = 0;
             invokeProperty(debugContextClass, debugContext, "initialise", Canceller, null);
             for (Object behaviour : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "rootBehaviours",
                     null, null)) {
-                trace.add(describeBehaviour(behaviour));
-                break;
+                if(iteration == 1) {
+                    System.out.println("Started behaviour " + iteration);
+                    for (Object event : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "revealTausInTrace",
+                            behaviourClass, behaviour)) {
+                        if ((Long) event != 0) {
+                            Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
+                            System.out.println("added " + result.toString());
+                            sb.append(result.toString() + ", ");
+                        }
+//                    Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
+//                    System.out.println("loop Tau " + event);
+                    }
+                }
+                iteration++;
+//                trace.add(describeBehaviour(behaviour));
+
+//                break; só realiza uma assertion
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        trace.add(sb.toString());
         return trace;
     }
 
@@ -255,11 +273,16 @@ public class FdrWrapper {
 
         StringBuilder sb = new StringBuilder();
 
+
         for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
+            System.out.println("loop trace" + event);
             if (event == 1 || event == 0) {
+                System.out.println("Tal :" + event);
+//                Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
                 // sb.append("-, ");
             } else {
                 Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
+                System.out.println(result.toString());
                 sb.append(result.toString() + ", ");
             }
         }
@@ -288,12 +311,8 @@ public class FdrWrapper {
         return sb.toString();
     }
 
-    private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass,
-
-                                         Object paramValue) throws Exception {
-
+    private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass, Object paramValue) throws Exception {
         Method method;
-
         try {
 
             if (paramClass != null) {

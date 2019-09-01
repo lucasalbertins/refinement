@@ -10,7 +10,6 @@ public class SDRefinementChecker {
     public boolean checkRefinement(String filename) {
         FdrWrapper.getInstance().loadFile(filename);
         List<Object> assertions = FdrWrapper.getInstance().getAssertions();
-        System.out.println("Numero de assertions : " + assertions.size());
 
         return FdrWrapper.getInstance().executeAssertions(assertions);
     }
@@ -20,9 +19,8 @@ public class SDRefinementChecker {
         Map<Integer, List<String>> result = new HashMap<Integer,List<String>>();
 
         for(int i = 0; i < counterExamples.size(); i++){
-            if(refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak") && i == 1)){
+            if( (refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak")) && i == 1)){
                 result.put(i, buildCounterExample(counterExamples.get(i)));
-                System.out.println("Preencheu no id " + i);
             }
         }
         return result;
@@ -42,6 +40,7 @@ public class SDRefinementChecker {
         }else{
             trace = FdrWrapper.getInstance().traceCounterExample(counterExample);
             trace.add(0, errorEvent);
+            System.out.println("Trace :" + trace.toString());
         }
         return trace;
     }

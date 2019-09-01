@@ -1,10 +1,8 @@
 package com.ref.refinement;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.change_vision.jude.api.inf.editor.BasicModelEditor;
 import com.change_vision.jude.api.inf.editor.ModelEditorFactory;
@@ -15,24 +13,22 @@ import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.exception.LicenseNotFoundException;
 import com.change_vision.jude.api.inf.exception.ProjectLockedException;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
-import com.change_vision.jude.api.inf.model.IClass;
-import com.change_vision.jude.api.inf.model.ILifeline;
-import com.change_vision.jude.api.inf.model.IMessage;
-import com.change_vision.jude.api.inf.model.IModel;
-import com.change_vision.jude.api.inf.model.INamedElement;
-import com.change_vision.jude.api.inf.model.IOperation;
-import com.change_vision.jude.api.inf.model.ISequenceDiagram;
+import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.presentation.IPresentation;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.change_vision.jude.api.inf.project.ProjectAccessorFactory;
+import com.ref.parser.ParserHelper;
+import com.ref.parser.process.parsers.FragmentInfo;
 
 public class CounterexampleDescriptor {
 
     private Map<String, String> lifelinesMap;
     private List<String> lifelineBases;
+    private static final int SPACE_BETWEEN_MSGS = 50;
+    private static final int SPACE_BETWEEN_LFS = 200;
 
     /*
         The counterExampleDescriptor needs a map of all lifelines contained in the current project.
@@ -96,6 +92,7 @@ public class CounterexampleDescriptor {
         // Creates the lifelines and position them properly in the sequence diagram
         List<INodePresentation> myLifelines = CreateLifelines(project, de);
         // create messages, combinedFragment, interactionUse, stateInvariant
+//        CreateFragments(events, de, myLifelines);
         CreateMessages(events, de, myLifelines);
     }
 
@@ -114,8 +111,50 @@ public class CounterexampleDescriptor {
         return myLifelines;
     }
 
+    private void CreateFragment(String frag, int position ,SequenceDiagramEditor de, List<INodePresentation> myLifelines) throws InvalidEditingException {
+
+        Map<IClass, Double> lifelinesPos = new HashMap<>();
+        for (INodePresentation lf : myLifelines) {
+            lifelinesPos.put(((ILifeline) lf.getModel()).getBase(), lf.getLocation().getX());
+        }
+        System.out.println("LifelinesPos :" + lifelinesPos.toString());
+
+//        System.out.println(event);
+//        String[] eventSplit = event.split("\\.");
+        List<ILifeline> lfbases = ParserHelper.getInstance().getLifelinesByFrag(frag);
+        double[] bounds = getFragmentBoundaries(lfbases, lifelinesPos);
+        FragmentInfo fragInfo = ParserHelper.getInstance().getFragmentInfo(frag);
+
+        Point2D point = new Point2D.Double(bounds[0] + 28, position);
+        INodePresentation fragment = de.createCombinedFragment("opt1", "opt", point, bounds[1] + 56 - bounds[0], 50 + fragInfo.getNumberOfMessages() * SPACE_BETWEEN_MSGS);
+        fragment.setProperty("test", "value");
+        ICombinedFragment fragment1 = (ICombinedFragment) fragment.getModel();
+        IInteractionOperand[] operands = fragment1.getInteractionOperands();
+        operands[0].setGuard("test");
+    }
+
+    private double[] getFragmentBoundaries(List<ILifeline> lifelines, Map<IClass, Double> lifelinesPos) {
+        double[] bounds = new double[2];
+        double minBound = Double.MAX_VALUE;
+        double maxBoud = Double.MIN_VALUE;
+        for (ILifeline lf : lifelines) {
+            System.out.println("Base :" + lf.getBase());
+            double pos = lifelinesPos.get(lf.getBase());
+            if (pos < minBound)
+                minBound = pos;
+            if (pos > maxBoud)
+                maxBoud = pos;
+        }
+        bounds[0] = minBound;
+        bounds[1] = maxBoud;
+
+        return bounds;
+    }
+
     private void CreateMessages(List<String> events, SequenceDiagramEditor de, List<INodePresentation> myLifelines) throws InvalidEditingException {
         List<ILinkPresentation> msgs = new ArrayList<ILinkPresentation>();
+
+//        System.out.println("Events :" + events.toString());
 
         List<String> msgsSpecification = getMessages(events.get(1));
         List<String> msgsImplementation;
@@ -127,20 +166,23 @@ public class CounterexampleDescriptor {
             msgsImplementation = null;
         }
 
-        int msgType;
+        int msgType; // pode ser substituido por um boolean "isOpt"
         int msgPosition = 160;
 
         for (int i = 0; i < msgsSpecification.size(); i++) {
             String[] msgSplit = msgsSpecification.get(i).split("\\.");
 
-            // Checks if the message is asynchronous(SIG) or synchronous(OP)
-            if (msgSplit[0].contains("SIG")) {
-                msgType = 1;
+            if (msgSplit[0].contains("opt")) {
+                CreateFragment(msgSplit[0], msgPosition - SPACE_BETWEEN_MSGS, de, myLifelines);
+                continue;
             }
-            else {
+            // Checks if the message is asynchronous(SIG) or synchronous(OP)
+            else if (msgSplit[0].contains("SIG")) {
+                msgType = 1;
+            } else {
                 msgType = 0;
             }
-            msgPosition =  BuildMessage(msgPosition,events, de, myLifelines, msgs, msgsSpecification, msgsImplementation, msgType, i, msgSplit);
+            msgPosition = BuildMessage(msgPosition, events, de, myLifelines, msgs, msgsSpecification, msgsImplementation, msgType, i, msgSplit);
         }
     }
 
@@ -156,8 +198,7 @@ public class CounterexampleDescriptor {
                     ILinkPresentation msg = de.createMessage(msgName[0], myLifelines.get(ids[0]),
                             myLifelines.get(ids[1]), msgPosition);
 
-                    if (events.get(0).equals("endInteraction")
-                            && !msgsImplementation.get(i).equals(msgsSpecification.get(i))) {
+                    if (events.get(0).equals("endInteraction") && !msgsImplementation.get(i).equals(msgsSpecification.get(i))) {
                         msg.setProperty("line.color", "#FF0000");
                     }
 
@@ -179,6 +220,7 @@ public class CounterexampleDescriptor {
                         message = (IMessage) msg.getModel();
                         if (msgName[0].equals(message.getName())) {
                             de.createReturnMessage("", msg);
+                            msgPosition = msgPosition + 50;
                             break;
                         }
                     }

@@ -42,7 +42,7 @@ public class FDR3LocationDialog extends JDialog {
 	public FDR3LocationDialog(JFrame frame, boolean modal)
 			throws FileNotFoundException, IOException, ClassNotFoundException {
 		super(frame, modal);
-		File propertyFile = new File(FDR3_PROPERTY_FILE);
+		File propertyFile = new File("C:\\log\\" + FDR3_PROPERTY_FILE);
 		if (!propertyFile.exists()) {
 			propertyFile.createNewFile();
 			prop = new Properties();
@@ -118,7 +118,7 @@ public class FDR3LocationDialog extends JDialog {
 				if (tf.getText().equals("")) {
 					msg.setText("Please select a valid folder!");
 				} else {
-					String filename = null;
+					String filename;
 					if (System.getProperty("os.name").startsWith("Mac OS X")) {
 						filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
 
@@ -137,7 +137,7 @@ public class FDR3LocationDialog extends JDialog {
 							FdrWrapper wrapper = FdrWrapper.getInstance();
 							wrapper.loadFDR(filename);
 							wrapper.loadClasses();
-							prop.store(new FileOutputStream(new File(FDR3_PROPERTY_FILE)), null);
+							prop.store(new FileOutputStream(new File("C:\\log\\" + FDR3_PROPERTY_FILE)), null);
 						} catch (FileNotFoundException e1) {
 							e1.printStackTrace();
 						} catch (IOException e1) {

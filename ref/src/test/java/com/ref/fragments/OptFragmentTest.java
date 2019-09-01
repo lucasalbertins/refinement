@@ -51,7 +51,7 @@ public class OptFragmentTest {
     public void channelsWithFragment() {
         String actual = parser.getChannels();
 
-        String expected = "Hidden = {opt1, opt2}\nchannel beginInteraction,endInteraction\nchannel A_mSIG: COM.ID.ID.A_SIG\nchannel B_mOP: COM.ID.ID.B_OPS\nchannel B_mSIG: COM.ID.ID.B_SIG\nchannel opt1: Bool\nchannel opt2: Bool\n";
+        String expected = "Hidden = {|opt1, opt2|}\nchannel beginInteraction,endInteraction\nchannel A_mSIG: COM.ID.ID.A_SIG\nchannel B_mOP: COM.ID.ID.B_OPS\nchannel B_mSIG: COM.ID.ID.B_SIG\nchannel opt1: Bool\nchannel opt2: Bool\n";
         assertEquals(expected, actual);
     }
 

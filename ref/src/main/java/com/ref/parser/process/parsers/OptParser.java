@@ -2,6 +2,7 @@ package com.ref.parser.process.parsers;
 
 import com.change_vision.jude.api.inf.model.*;
 import com.ref.parser.MessageParser;
+import com.ref.parser.ParserHelper;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Set;
 public class OptParser extends FragmentParser {
 
     private Set<IMessage> parsedMsgs = new HashSet<>();
+    private FragmentInfo fragInfo = new FragmentInfo();
+
 
     @Override
     public String parseFrag(ICombinedFragment fragment, ILifeline lifeline, ISequenceDiagram seq, Map<INamedElement, String> fragMapping) {
@@ -19,22 +22,24 @@ public class OptParser extends FragmentParser {
         sb.append(fragMapping.get(fragment));
 
         IInteractionOperand[] operands = fragment.getInteractionOperands();
-
+        fragInfo.setNumberOfOperands(operands.length);
         for(int i = 0; i < operands.length; i++){
             sb.append("?").append(operands[i].getGuard());
         }
         sb.append(" -> ");
         sb.append("(");
 
+        int numberOfMsgs = 0;
         for(IInteractionOperand operand : operands){
             sb.append(operand.getGuard());
             sb.append(" & ");
 //            System.out.println("guard : " + operand.getGuard());
             IMessage[] messages = operand.getMessages();
+            numberOfMsgs += messages.length;
 
             for (IMessage message: messages) {
                 sb.append("(");
-                System.out.println(message.getName());
+//                System.out.println(message.getName());
 //                System.out.println(message.getName());
                 sb.append(MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq));
                 this.parsedMsgs.add(message);
@@ -42,6 +47,8 @@ public class OptParser extends FragmentParser {
             }
         }
         sb.append(");");
+        fragInfo.setNumberOfMessages(numberOfMsgs);
+        ParserHelper.getInstance().addFragmentInfo(fragMapping.get(fragment), this.fragInfo);
 
         return sb.toString();
     }
