@@ -18,8 +18,12 @@ public class OptParser extends FragmentParser {
     public String parseFrag(ICombinedFragment fragment, ILifeline lifeline, ISequenceDiagram seq, Map<INamedElement, String> fragMapping) {
 
         StringBuilder sb = new StringBuilder();
+        String fragname = fragMapping.get(fragment);
         sb.append("\n");
-        sb.append(fragMapping.get(fragment));
+        sb.append(fragname);
+
+        fragInfo.setName(fragname);
+        fragInfo.setType("opt");
 
         IInteractionOperand[] operands = fragment.getInteractionOperands();
         fragInfo.setNumberOfOperands(operands.length);

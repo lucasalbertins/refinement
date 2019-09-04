@@ -119,14 +119,12 @@ public class CounterexampleDescriptor {
         }
         System.out.println("LifelinesPos :" + lifelinesPos.toString());
 
-//        System.out.println(event);
-//        String[] eventSplit = event.split("\\.");
         List<ILifeline> lfbases = ParserHelper.getInstance().getLifelinesByFrag(frag);
         double[] bounds = getFragmentBoundaries(lfbases, lifelinesPos);
         FragmentInfo fragInfo = ParserHelper.getInstance().getFragmentInfo(frag);
 
         Point2D point = new Point2D.Double(bounds[0] + 28, position);
-        INodePresentation fragment = de.createCombinedFragment("opt1", "opt", point, bounds[1] + 56 - bounds[0], 50 + fragInfo.getNumberOfMessages() * SPACE_BETWEEN_MSGS);
+        INodePresentation fragment = de.createCombinedFragment(fragInfo.getName(), fragInfo.getType(), point, bounds[1] + 56 - bounds[0], 50 + fragInfo.getNumberOfMessages() * SPACE_BETWEEN_MSGS);
         fragment.setProperty("test", "value");
         ICombinedFragment fragment1 = (ICombinedFragment) fragment.getModel();
         IInteractionOperand[] operands = fragment1.getInteractionOperands();
@@ -172,7 +170,7 @@ public class CounterexampleDescriptor {
         for (int i = 0; i < msgsSpecification.size(); i++) {
             String[] msgSplit = msgsSpecification.get(i).split("\\.");
 
-            if (msgSplit[0].contains("opt")) {
+            if (msgSplit[0].contains("opt") || msgSplit[0].contains("alt")) {
                 CreateFragment(msgSplit[0], msgPosition - SPACE_BETWEEN_MSGS, de, myLifelines);
                 continue;
             }

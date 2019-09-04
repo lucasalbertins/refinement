@@ -131,35 +131,40 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                boolean isRefinement = false;
                 try {
                     if (strictRefinementType.isSelected()) {
                         logger.log("iniciou");
                         executeRefinement();
-                        sdchecker.checkRefinement(cspFile.getAbsolutePath());
-                        Map<Integer, List<String>> res = sdchecker.describeCounterExample("strict");
-                        System.out.println(res.toString());
-                        for (Map.Entry entry : res.entrySet()) {
-                            if (entry.getValue() != null) {
-                                descriptor.buildCounterExample("SD_result", res.get(entry.getKey()), projectAccessor);
-                                break;
+                        isRefinement = sdchecker.checkRefinement(cspFile.getAbsolutePath());
+                        if(!isRefinement){
+                            Map<Integer, List<String>> res = sdchecker.describeCounterExample("strict");
+                            System.out.println(res.toString());
+                            for (Map.Entry entry : res.entrySet()) {
+                                if (entry.getValue() != null) {
+                                    descriptor.buildCounterExample("SD_result", res.get(entry.getKey()), projectAccessor);
+                                    break;
+                                }
                             }
                         }
                     } else if (weakRefinementType.isSelected()) {
                         executeRefinement();
-                        sdchecker.checkRefinement(cspFile.getAbsolutePath());
-                        Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
-                        descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
+                        isRefinement = sdchecker.checkRefinement(cspFile.getAbsolutePath());
+                        if(!isRefinement) {
+                            Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
+                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
+                        }
                     } else {
                         JOptionPane.showMessageDialog(null, "Select a type of Refinement!", "Error",
                                 JOptionPane.WARNING_MESSAGE);
                     }
 
-//                    if (!result) {
-//                        JOptionPane.showMessageDialog(null, "No Counter Examples found !", "Result",
-//                                JOptionPane.INFORMATION_MESSAGE);
-//                    }
+                    if (isRefinement) {
+                        JOptionPane.showMessageDialog(null, "No Counter Examples found !", "Result",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
 
-                    cspFile.delete();
+//                    cspFile.delete();
 
                 } catch (Exception ex) {
                     for (StackTraceElement element : ex.getStackTrace()) {
