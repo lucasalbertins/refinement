@@ -35,6 +35,7 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.fdr.SDRefinementChecker;
 import com.ref.log.Logador;
 import com.ref.parser.SDParser;
+import com.ref.refinement.CounterExampleDescriptor2;
 import com.ref.refinement.CounterexampleDescriptor;
 
 //import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
@@ -52,7 +53,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
     private FdrWrapper wrapper;
     private Logador logger;
     private File cspFile;
-    private CounterexampleDescriptor descriptor;
+    private CounterExampleDescriptor2 descriptor;
     private ProjectAccessor projectAccessor;
     private SDRefinementChecker sdchecker;
 
@@ -142,7 +143,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                             System.out.println(res.toString());
                             for (Map.Entry entry : res.entrySet()) {
                                 if (entry.getValue() != null) {
-                                    descriptor.buildCounterExample("SD_result", res.get(entry.getKey()), projectAccessor);
+//                                    descriptor.buildCounterExample("SD_result", res.get(entry.getKey()), projectAccessor);
+                                    descriptor.buildCounterExample(projectAccessor, res.get(entry.getKey()));
                                     break;
                                 }
                             }
@@ -152,7 +154,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                         isRefinement = sdchecker.checkRefinement(cspFile.getAbsolutePath());
                         if(!isRefinement) {
                             Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
-                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
+//                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
+                            descriptor.buildCounterExample(projectAccessor, res.get(1));
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Select a type of Refinement!", "Error",
@@ -199,8 +202,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
 
             SDParser parser = new SDParser(seq1, seq2);
             //parser.carregaLifelines();
-            this.descriptor = new CounterexampleDescriptor(parser.getLifelineMapping());
-
+//            this.descriptor = new CounterexampleDescriptor(parser.getLifelineMapping(),seq1);
+            this.descriptor = new CounterExampleDescriptor2(seq1);
             String resultado = parser.parseSDs();
 
             cspFile = new File("C:\\log\\test.csp");
@@ -267,7 +270,6 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                 break;
             }
         }
-
     }
 
     @Override

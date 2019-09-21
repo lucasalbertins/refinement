@@ -24,7 +24,7 @@ public class AltFragmentTest {
         try {
 
             ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-            projectAccessor.open("src/test/resources/testRef4.asta");
+            projectAccessor.open("src/test/resources/oldTest.asta");
             INamedElement[] findSequence = findSequence(projectAccessor);
             // buildCounterExample(projectAccessor);
 

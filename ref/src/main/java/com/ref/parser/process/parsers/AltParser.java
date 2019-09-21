@@ -4,6 +4,7 @@ import com.change_vision.jude.api.inf.model.*;
 import com.ref.parser.MessageParser;
 import com.ref.parser.ParserHelper;
 
+import javax.swing.text.html.parser.Parser;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -32,7 +33,7 @@ public class AltParser extends FragmentParser{
         sb.append("(");
 
         int numberOfMsgs = 0;
-        System.out.println("Number of operands " + operands.length);
+//        System.out.println("Number of operands " + operands.length);
         for(IInteractionOperand operand : operands){
             sb.append(operand.getGuard());
             sb.append(" & ");
@@ -44,8 +45,9 @@ public class AltParser extends FragmentParser{
             for (IMessage message: messages) {
 //                System.out.println(message.getName());
                 sb.append("(");
-//                System.out.println("Traduzindo " + message.getName() + " lifeline:" + lifeline.getName());
-                sb.append(MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq));
+                String parsedMsg = MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq);
+                ParserHelper.getInstance().addMsgInfo(new MessageInfo(message, parsedMsg, true));
+                sb.append(parsedMsg);
                 this.parsedMsgs.add(message);
                 sb.append(")");
                 sb.append(";");

@@ -43,9 +43,9 @@ public class OptParser extends FragmentParser {
 
             for (IMessage message: messages) {
                 sb.append("(");
-//                System.out.println(message.getName());
-//                System.out.println(message.getName());
-                sb.append(MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq));
+                String parsedMsg = MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq);
+                ParserHelper.getInstance().addMsgInfo(new MessageInfo(message,parsedMsg,true));
+                sb.append(parsedMsg);
                 this.parsedMsgs.add(message);
                 sb.append(")");
             }

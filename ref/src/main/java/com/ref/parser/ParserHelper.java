@@ -2,6 +2,7 @@ package com.ref.parser;
 
 import com.change_vision.jude.api.inf.model.ILifeline;
 import com.ref.parser.process.parsers.FragmentInfo;
+import com.ref.parser.process.parsers.MessageInfo;
 
 import java.util.*;
 
@@ -11,11 +12,14 @@ public class ParserHelper {
     private Map<String, Set<String>> lifelineFrags;
     private Map<ILifeline, Set<String>> lifelineBaseFrags;
     private Map<String, FragmentInfo> fragmentsInfo;
+    private Map<Integer, MessageInfo> msgsInfo;
+    private int currentMsg = 0;
 
     private ParserHelper(){
         this.lifelineFrags = new HashMap<>();
         this.lifelineBaseFrags = new HashMap<>();
         this.fragmentsInfo = new HashMap<>();
+        this.msgsInfo = new HashMap<>();
     }
 
     public static ParserHelper getInstance(){
@@ -86,5 +90,36 @@ public class ParserHelper {
 
     public FragmentInfo getFragmentInfo(String fragment) {
         return this.fragmentsInfo.get(fragment);
+    }
+
+    public void addMsgInfo(MessageInfo msginfo) {
+        this.msgsInfo.put(this.currentMsg + 1, msginfo);
+        this.currentMsg++;
+    }
+
+    public List<String> getCounterExampleMsgs(String firstTraceMsg, String errorMsg) {
+
+        System.out.println("Map : " + this.msgsInfo.toString());
+
+        int firstMsgIndex = Integer.MAX_VALUE;
+        int errorMsgIndex = Integer.MAX_VALUE;
+
+        List<String> allTraceMsgs = new ArrayList<>();
+
+        for(Map.Entry<Integer, MessageInfo> entry : this.msgsInfo.entrySet()) {
+            if(entry.getValue().getTranslation().equals(firstTraceMsg)){
+                firstMsgIndex = entry.getKey();
+                allTraceMsgs.add(entry.getValue().getTranslation());
+            }else if (entry.getValue().getTranslation().equals(errorMsg)) {
+                errorMsgIndex = entry.getKey();
+                allTraceMsgs.add(entry.getValue().getTranslation());
+                break;
+            }
+
+            if(entry.getKey() > firstMsgIndex){
+                allTraceMsgs.add(entry.getValue().getTranslation());
+            }
+        }
+        return  allTraceMsgs;
     }
 }

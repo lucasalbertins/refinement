@@ -3,6 +3,7 @@ package com.ref.parser;
 import com.change_vision.jude.api.inf.model.*;
 import com.ref.parser.process.parsers.FragmentParser;
 import com.ref.parser.process.parsers.FragmentParserFactory;
+import com.ref.parser.process.parsers.MessageInfo;
 
 import java.util.*;
 
@@ -105,8 +106,9 @@ public class SDprocessParser {
 
 
         if (fragment instanceof IMessage && !fragmentFactory.getParsedMsgs().contains(fragment)){
-            return "(" + msgParser.translateMessageForLifeline((IMessage) fragment, lifeline, seq)
-                    + ");";
+            String parsedMsg = msgParser.translateMessageForLifeline((IMessage) fragment, lifeline, seq);
+            ParserHelper.getInstance().addMsgInfo(new MessageInfo((IMessage) fragment,parsedMsg, false ));
+            return "(" + parsedMsg + ");";
         } else if (fragment instanceof ICombinedFragment) {
             ICombinedFragment frag = (ICombinedFragment) fragment;
             FragmentParser fragParser = this.fragmentFactory.getFragmentParser(frag);
