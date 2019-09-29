@@ -187,7 +187,7 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "\n");
 
                 decision.append(nameDecisionTermination + " = ");
-                decision.append("((" + nameDecision + " /\\ " + endDiagram + ") ");
+                decision.append("((" + nameDecision + " /\\ " + endDiagram + ") \\{|dc|}");
 
                 decision.append("[|{|");
                 decision.append("get_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -284,7 +284,7 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "\n");
 
                 decision.append(nameDecisionTermination + " = ");
-                decision.append(nameDecision + " /\\ " + endDiagram + "\n");
+                decision.append(nameDecision + " /\\ " + endDiagram + " \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
@@ -559,7 +559,7 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "\n");
 
                 decision.append(nameDecisionTermination + " = ");
-                decision.append("((" + nameDecision + " /\\ " + endDiagram + ") ");
+                decision.append("((" + nameDecision + " /\\ " + endDiagram + " \\{|dc|}");
 
                 decision.append("[|{|");
                 decision.append("get_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -655,7 +655,7 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "\n");
 
                 decision.append(nameDecisionTermination + " = ");
-                decision.append(nameDecision + " /\\ " + endDiagram + "\n");
+                decision.append(nameDecision + " /\\ " + endDiagram + " \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
