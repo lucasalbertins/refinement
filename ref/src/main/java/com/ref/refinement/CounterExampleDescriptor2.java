@@ -55,6 +55,31 @@ public class CounterExampleDescriptor2 {
         }
     }
 
+    public void clearMsgs(ProjectAccessor projectAccessor) {
+        System.out.println("Clearing msgs");
+        try {
+            TransactionManager.beginTransaction();
+            IMessage[] msgs = referenceDiagram.getInteraction().getMessages();
+
+            for (IMessage msg : msgs) {
+                IPresentation[] presentations = msg.getPresentations();
+                for (IPresentation p : presentations) {
+                    if(p instanceof ILinkPresentation){
+                        System.out.println(msg.getName());
+                        p.setProperty("line.color", "#00000");
+                    }
+                }
+            }
+            TransactionManager.endTransaction();
+            projectAccessor.save();
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            TransactionManager.abortTransaction();
+            // projectAccessor.close();
+        }
+    }
+
     private String getErrorMsgName(List<String> msgs) {
         String errorMsg = "";
         String error = msgs.get(0);

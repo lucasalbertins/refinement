@@ -148,6 +148,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                                     break;
                                 }
                             }
+                        }else {
+                            descriptor.clearMsgs(projectAccessor);
                         }
                     } else if (weakRefinementType.isSelected()) {
                         executeRefinement();
@@ -155,7 +157,10 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                         if(!isRefinement) {
                             Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
 //                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
-                            descriptor.buildCounterExample(projectAccessor, res.get(1));
+//                            descriptor.buildCounterExample(projectAccessor, res.get(1));
+                            descriptor.clearMsgs(projectAccessor);
+                        }else{
+                            descriptor.clearMsgs(projectAccessor);
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Select a type of Refinement!", "Error",
