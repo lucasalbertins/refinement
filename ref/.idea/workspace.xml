@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterExampleDescriptor2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterExampleDescriptor2.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParserFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParserFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/newTest.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/newTest.asta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/resources/oldTest.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/oldTest.asta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/oldTest.asta.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/testRef6.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/testRef6.asta" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,42 +32,42 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/ParChannelParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="672">
+              <caret line="28" column="19" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#316#317#0" expanded="true" />
+                <element signature="e#343#344#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/ParParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="21" column="48" selection-start-line="21" selection-start-column="48" selection-end-line="21" selection-end-column="48" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#418#419#0" expanded="true" />
+                <element signature="e#445#446#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterExampleDescriptor2.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="71" column="13" selection-start-line="71" selection-start-column="13" selection-end-line="71" selection-end-column="13" />
+            <state relative-caret-position="294">
+              <caret line="43" column="58" selection-start-line="43" selection-start-column="58" selection-end-line="43" selection-end-column="58" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="209">
-              <caret line="151" column="64" selection-start-line="151" selection-start-column="64" selection-end-line="151" selection-end-column="64" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#8839#8840#0" expanded="true" />
-                <element signature="e#8918#8919#0" expanded="true" />
-                <element signature="e#9790#9791#0" expanded="true" />
-                <element signature="e#10435#10436#0" expanded="true" />
-                <element signature="e#10604#10605#0" expanded="true" />
-                <element signature="e#10701#10702#0" expanded="true" />
-                <element signature="e#10787#10788#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="29" column="44" lean-forward="true" selection-start-line="29" selection-start-column="44" selection-end-line="29" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -73,17 +75,35 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="96">
-              <caret line="39" column="57" lean-forward="true" selection-start-line="39" selection-start-column="57" selection-end-line="39" selection-end-column="57" />
+            <state relative-caret-position="341">
+              <caret line="113" column="19" lean-forward="true" selection-start-line="113" selection-start-column="19" selection-end-line="113" selection-end-column="19" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="72" column="12" selection-start-line="72" selection-start-column="12" selection-end-line="73" selection-end-column="67" />
+            <state relative-caret-position="168">
+              <caret line="7" column="25" lean-forward="true" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/OptParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="192">
+              <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/AltChannelParser.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="438">
+              <caret line="24" column="25" selection-start-line="10" selection-start-column="8" selection-end-line="24" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -152,12 +172,10 @@
         <option value="$PROJECT_DIR$/src/test/java/com/ref/AltFragmentTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/SDParserTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/TestSuiteSD.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannel.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/AltChannelParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/OptChannelParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDchannelParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParserFactory.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/fragments/OptFragmentTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/FDR3LocationDialog.java" />
@@ -169,13 +187,17 @@
         <option value="$PROJECT_DIR$/src/test/java/com/ref/FileTest.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/fragments/AltFragmentTest.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/OptParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/ParserHelper.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/MessageInfo.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/ui/RefinementView.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterExampleDescriptor2.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/ParChannelParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParserFactory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/ParParser.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java" />
       </list>
     </option>
   </component>
@@ -210,7 +232,6 @@
     </navigator>
     <panes>
       <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -282,6 +303,17 @@
               <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="com" type="462c0819:PsiDirectoryNode" />
               <item name="ref" type="462c0819:PsiDirectoryNode" />
+              <item name="parser" type="462c0819:PsiDirectoryNode" />
+              <item name="parsers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="ref" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ref" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="com" type="462c0819:PsiDirectoryNode" />
+              <item name="ref" type="462c0819:PsiDirectoryNode" />
               <item name="refinement" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -328,6 +360,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -554,6 +587,7 @@
       <workItem from="1567637666485" duration="9217000" />
       <workItem from="1568108591298" duration="12841000" />
       <workItem from="1568719594215" duration="10203000" />
+      <workItem from="1569970583022" duration="4914000" />
     </task>
     <servers />
   </component>
@@ -590,10 +624,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="333678000" />
+    <option name="totallyTimeSpent" value="338592000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4984326" weight="0.30635402" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -667,8 +702,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/JP/co/esm/caddies/golf/geom2D/Pnt2d.class" />
-    <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/JP/co/esm/caddies/jomt/jmodel/BinaryRelationPresentation.class" />
     <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/JP/co/esm/caddies/uml/BehavioralElements/Collaborations/UClassifierRoleImp.class" />
     <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/JP/co/esm/caddies/uml/Foundation/Core/UElementImp.class" />
     <entry file="jar:///usr/lib/astah_uml/astah-uml.jar!/xe.class" />
@@ -783,24 +816,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="12" column="20" lean-forward="true" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDdataTypeParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="142" column="9" lean-forward="true" selection-start-line="142" selection-start-column="9" selection-end-line="142" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/AltChannelParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
-          <caret line="17" column="41" lean-forward="true" selection-start-line="17" selection-start-column="41" selection-end-line="17" selection-end-column="41" />
         </state>
       </provider>
     </entry>
@@ -815,13 +834,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="243">
           <caret line="108" column="13" selection-start-line="108" selection-start-column="13" selection-end-line="108" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/OptChannelParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="14" column="53" lean-forward="true" selection-start-line="14" selection-start-column="53" selection-end-line="14" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -871,28 +883,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParserFactory.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="317">
-          <caret line="22" column="16" selection-start-line="22" selection-start-column="16" selection-end-line="22" selection-end-column="16" />
-          <folding>
-            <element signature="e#598#599#0" expanded="true" />
-            <element signature="e#642#643#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParser.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="23" lean-forward="true" selection-start-line="23" selection-end-line="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/OptParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="46" column="95" selection-start-line="46" selection-start-column="95" selection-end-line="46" selection-end-column="95" />
         </state>
       </provider>
     </entry>
@@ -928,33 +922,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterExampleDescriptor2.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="314">
-          <caret line="50" column="45" lean-forward="true" selection-start-line="50" selection-start-column="45" selection-end-line="50" selection-end-column="45" />
+        <state relative-caret-position="198">
+          <caret line="65" column="55" lean-forward="true" selection-start-line="65" selection-start-column="55" selection-end-line="65" selection-end-column="55" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="39" column="57" lean-forward="true" selection-start-line="39" selection-start-column="57" selection-end-line="39" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="29" column="44" lean-forward="true" selection-start-line="29" selection-start-column="44" selection-end-line="29" selection-end-column="44" />
+        <state relative-caret-position="648">
+          <caret line="29" column="44" selection-start-line="29" selection-start-column="44" selection-end-line="29" selection-end-column="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterexampleDescriptor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
+        <state relative-caret-position="1224">
           <caret line="72" column="12" selection-start-line="72" selection-start-column="12" selection-end-line="73" selection-end-column="67" />
         </state>
       </provider>
@@ -965,21 +952,94 @@
           <caret line="151" column="64" selection-start-line="151" selection-start-column="64" selection-end-line="151" selection-end-column="64" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#8839#8840#0" expanded="true" />
-            <element signature="e#8918#8919#0" expanded="true" />
+            <element signature="e#9729#9730#0" expanded="true" />
             <element signature="e#9790#9791#0" expanded="true" />
+            <element signature="e#10401#10402#0" expanded="true" />
             <element signature="e#10435#10436#0" expanded="true" />
+            <element signature="e#10577#10578#0" expanded="true" />
             <element signature="e#10604#10605#0" expanded="true" />
+            <element signature="e#10656#10657#0" expanded="true" />
             <element signature="e#10701#10702#0" expanded="true" />
+            <element signature="e#10747#10748#0" expanded="true" />
             <element signature="e#10787#10788#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/refinement/CounterExampleDescriptor2.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/AltChannelParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="71" column="13" selection-start-line="71" selection-start-column="13" selection-end-line="71" selection-end-column="13" />
+        <state relative-caret-position="438">
+          <caret line="24" column="25" selection-start-line="10" selection-start-column="8" selection-end-line="24" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/OptChannelParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="20" column="45" lean-forward="true" selection-start-line="20" selection-start-column="45" selection-end-line="20" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/ParChannelParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="672">
+          <caret line="28" column="19" selection-start-line="28" selection-start-column="19" selection-end-line="28" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#316#317#0" expanded="true" />
+            <element signature="e#343#344#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/OptParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="14" lean-forward="true" selection-start-line="14" selection-end-line="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/FragmentParserFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="22" column="5" lean-forward="true" selection-start-line="22" selection-start-column="5" selection-end-line="22" selection-end-column="5" />
+          <folding>
+            <element signature="e#598#599#0" expanded="true" />
+            <element signature="e#642#643#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/SDprocessParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="113" column="19" lean-forward="true" selection-start-line="113" selection-start-column="19" selection-end-line="113" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/channel/parsers/FragmentChannelFactory.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="7" column="25" lean-forward="true" selection-start-line="7" selection-start-column="25" selection-end-line="7" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/ParParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="21" column="48" selection-start-line="21" selection-start-column="48" selection-end-line="21" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#418#419#0" expanded="true" />
+            <element signature="e#445#446#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/process/parsers/AltParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="43" column="58" selection-start-line="43" selection-start-column="58" selection-end-line="43" selection-end-column="58" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

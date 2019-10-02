@@ -16,6 +16,8 @@ public class FragmentParserFactory {
         }
         else if(frag.isOpt()){
             return new OptParser();
+        }else if(frag.isPar()){
+            return new ParParser();
         }
         return null;
     }

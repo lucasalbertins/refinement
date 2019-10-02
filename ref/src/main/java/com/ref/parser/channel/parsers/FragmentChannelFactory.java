@@ -9,6 +9,8 @@ public class FragmentChannelFactory {
             return new AltChannelParser();
         }else if(frag.isOpt()){
             return new OptChannelParser();
+        }else if(frag.isPar()){
+            return new ParChannelParser();
         }
         return null;
     }
