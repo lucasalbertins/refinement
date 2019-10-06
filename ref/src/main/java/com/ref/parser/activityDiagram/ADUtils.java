@@ -365,6 +365,41 @@ public class ADUtils {
     }
 
     public String getDefaultValue(String type) {
+        HashMap<String, String> typesParameter = getParameterValueDiagram(type);
+
+        String defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+                .replace(")", "").split(",")[0];
+        String defaultValueFinal = defaultValue.split("\\.\\.")[0];
+
+        return defaultValueFinal;
+    }
+
+    public Pair<String, String> getInitialAndFinalParameterValue(String type) {
+        Pair<String, String> initialAndFinalParameterValue;
+        String[] allValues;
+        String firstValue;
+        String secondValue;
+        HashMap<String, String> typesParameter = getParameterValueDiagram(type);
+
+        String ListValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
+                .replace(")", "");
+
+        if (ListValue.contains("..")) {
+            allValues = ListValue.split("\\.\\.");
+            firstValue = allValues[0];
+            secondValue = allValues[1];
+        } else {
+            allValues = ListValue.split(",");
+            firstValue = allValues[0];
+            secondValue = allValues[allValues.length - 1];
+        }
+
+        initialAndFinalParameterValue = new Pair<>(firstValue, secondValue);
+
+        return initialAndFinalParameterValue;
+    }
+
+    public HashMap<String, String> getParameterValueDiagram(String type) {
         HashMap<String, String> typesParameter = new HashMap<>();
         String[] definition = adDiagram.getDefinition().replace(" ", "").split(";");
 
@@ -373,10 +408,7 @@ public class ADUtils {
             typesParameter.put(keyValue[0], keyValue[1]);
         }
 
-        String defaultValue = typesParameter.get(type).replace("{", "").replace("}", "").replace("(", "")
-                .replace(")", "").split(",")[0];
-        String defaultValueFinal = defaultValue.split("\\.\\.")[0];
-        return defaultValueFinal;
+        return typesParameter;
     }
 
     private boolean isSignal(IActivityNode activityNode) {
@@ -421,4 +453,21 @@ public class ADUtils {
 
         return input;
     }
+
+    public static boolean isInteger(String s) {
+        return isInteger(s,10);
+    }
+
+    private static boolean isInteger(String s, int radix) {
+        if(s.isEmpty()) return false;
+        for(int i = 0; i < s.length(); i++) {
+            if(i == 0 && s.charAt(i) == '-') {
+                if(s.length() == 1) return false;
+                else continue;
+            }
+            if(Character.digit(s.charAt(i),radix) < 0) return false;
+        }
+        return true;
+    }
+
 }

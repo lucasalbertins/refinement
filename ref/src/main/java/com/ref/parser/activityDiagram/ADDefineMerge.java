@@ -122,7 +122,7 @@ public class ADDefineMerge {
                 merge.append(nameMerge + "\n");
                 merge.append(nameMergeTermination + " = ");
 
-                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") \\{|dc|}");
+                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
 
                 merge.append("[|{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -143,7 +143,7 @@ public class ADDefineMerge {
 
                 merge.append(nameMerge + "\n");
                 merge.append(nameMergeTermination + " = ");
-                merge.append(nameMerge + " /\\ " + endDiagram + " \\{|dc|}\n");
+                merge.append(nameMerge + " /\\ " + endDiagram + "\n");
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
@@ -201,7 +201,7 @@ public class ADDefineMerge {
                 merge.append(nameMerge + "\n");
                 merge.append(nameMergeTermination + " = ");
 
-                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") \\{|dc|}");
+                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
 
                 merge.append("[|{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -222,7 +222,7 @@ public class ADDefineMerge {
 
                 merge.append(nameMerge + "\n");
                 merge.append(nameMergeTermination + " = ");
-                merge.append(nameMerge + " /\\ " + endDiagram + " \\{|dc|}\n");
+                merge.append(nameMerge + " /\\ " + endDiagram + "\n");
             }
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
@@ -312,7 +312,7 @@ public class ADDefineMerge {
                 merge.append(nameMerge + "\n");
                 merge.append(nameMergeTermination + " = ");
 
-                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") \\{|dc|}");
+                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
 
                 merge.append("[|{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -332,7 +332,7 @@ public class ADDefineMerge {
 
                 merge.append(nameMerge + "\n");
                 merge.append(nameMergeTermination + " = ");
-                merge.append(nameMerge + " /\\ " + endDiagram + " \\{|dc|}\n");
+                merge.append(nameMerge + " /\\ " + endDiagram + "\n");
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));

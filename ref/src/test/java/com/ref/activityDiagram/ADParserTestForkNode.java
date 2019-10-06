@@ -99,9 +99,9 @@ public class ADParserTestForkNode {
 		expected.append("parameter_x_fork2_t = update_fork2.1!(1-0) -> get_x_fork2.1?x -> ((oe_x_fork2.1!x -> SKIP))\n" +
 				"fork1_fork2 = oe_x_fork2.1?x -> update_fork2.2!(2-1) -> ((oe_x_fork2.2!x -> SKIP) ||| (oe_x_fork2.3!x -> SKIP)); fork1_fork2\n" +
 				"fork1_fork2_t = fork1_fork2 /\\ END_DIAGRAM_fork2\n" +
-				"act1_fork2 = ((oe_x_fork2.2?x -> set_x_act1_fork2.1!x -> SKIP)); event_act1_fork2 -> get_x_act1_fork2.2?x -> ((oe_x_fork2.4!(x) -> SKIP)); act1_fork2\n" +
+				"act1_fork2 = ((oe_x_fork2.2?x -> set_x_act1_fork2.1!x -> SKIP)); event_act1_fork2 -> get_x_act1_fork2.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_fork2.4!(x) -> SKIP)); act1_fork2\n" +
 				"act1_fork2_t = ((act1_fork2 /\\ END_DIAGRAM_fork2) [|{|get_x_act1_fork2,set_x_act1_fork2,endDiagram_fork2|}|] Mem_act1_fork2_x_t(0)) \\{|get_x_act1_fork2,set_x_act1_fork2|}\n" +
-				"act2_fork2 = ((oe_x_fork2.3?x -> set_x_act2_fork2.2!x -> SKIP)); event_act2_fork2 -> get_x_act2_fork2.3?x -> ((oe_x_fork2.5!(x) -> SKIP)); act2_fork2\n" +
+				"act2_fork2 = ((oe_x_fork2.3?x -> set_x_act2_fork2.2!x -> SKIP)); event_act2_fork2 -> get_x_act2_fork2.3?x -> ((((x) >= 0 and (x) <= 1) & oe_x_fork2.5!(x) -> SKIP)); act2_fork2\n" +
 				"act2_fork2_t = ((act2_fork2 /\\ END_DIAGRAM_fork2) [|{|get_x_act2_fork2,set_x_act2_fork2,endDiagram_fork2|}|] Mem_act2_fork2_x_t(0)) \\{|get_x_act2_fork2,set_x_act2_fork2|}\n" +
 				"fin1_fork2 = ((oe_x_fork2.4?x -> SKIP) [] (oe_x_fork2.5?x -> SKIP)); clear_fork2.1 -> SKIP\n" +
 				"fin1_fork2_t = fin1_fork2 /\\ END_DIAGRAM_fork2\n" +

@@ -120,7 +120,7 @@ public class ADParserTesteDecisionNode {
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))\n" +
 				"dec1_decision2 = ce_decision2.1 -> ((dc -> ce_decision2.2 -> SKIP) [] (dc -> ce_decision2.3 -> SKIP)); dec1_decision2\n" +
-				"dec1_decision2_t = dec1_decision2 /\\ END_DIAGRAM_decision2\n" +
+				"dec1_decision2_t = dec1_decision2 /\\ END_DIAGRAM_decision2 \\{|dc|}\n" +
 				"act1_decision2 = ((ce_decision2.2 -> SKIP)); event_act1_decision2 -> ((ce_decision2.4 -> SKIP)); act1_decision2\n" +
 				"act1_decision2_t = act1_decision2 /\\ END_DIAGRAM_decision2\n" +
 				"act2_decision2 = ((ce_decision2.3 -> SKIP)); event_act2_decision2 -> ((ce_decision2.5 -> SKIP)); act2_decision2\n" +
@@ -140,9 +140,9 @@ public class ADParserTesteDecisionNode {
 		expected.append("parameter_z_decision3_t = update_decision3.1!(1-0) -> get_z_decision3.1?z -> ((oe_z_decision3.1!z -> SKIP))\n" +
 				"dec1_decision3 = oe_z_decision3.1?z -> (z > 0 & (dc -> oe_z_decision3.2!z -> SKIP) [] z <= 0 & (dc -> oe_z_decision3.3!z -> SKIP)); dec1_decision3\n" +
 				"dec1_decision3_t = (dec1_decision3 /\\ END_DIAGRAM_decision3) \\{|dc|}\n" +
-				"act1_decision3 = ((oe_z_decision3.2?z -> set_z_act1_decision3.1!z -> SKIP)); event_act1_decision3 -> get_z_act1_decision3.2?z -> ((oe_z_decision3.4!(z) -> SKIP)); act1_decision3\n" +
+				"act1_decision3 = ((oe_z_decision3.2?z -> set_z_act1_decision3.1!z -> SKIP)); event_act1_decision3 -> get_z_act1_decision3.2?z -> ((((z) >= 0 and (z) <= 1) & oe_z_decision3.4!(z) -> SKIP)); act1_decision3\n" +
 				"act1_decision3_t = ((act1_decision3 /\\ END_DIAGRAM_decision3) [|{|get_z_act1_decision3,set_z_act1_decision3,endDiagram_decision3|}|] Mem_act1_decision3_z_t(0)) \\{|get_z_act1_decision3,set_z_act1_decision3|}\n" +
-				"act2_decision3 = ((oe_z_decision3.3?z -> set_z_act2_decision3.2!z -> SKIP)); event_act2_decision3 -> get_z_act2_decision3.3?z -> ((oe_z_decision3.5!(z) -> SKIP)); act2_decision3\n" +
+				"act2_decision3 = ((oe_z_decision3.3?z -> set_z_act2_decision3.2!z -> SKIP)); event_act2_decision3 -> get_z_act2_decision3.3?z -> ((((z) >= 0 and (z) <= 1) & oe_z_decision3.5!(z) -> SKIP)); act2_decision3\n" +
 				"act2_decision3_t = ((act2_decision3 /\\ END_DIAGRAM_decision3) [|{|get_z_act2_decision3,set_z_act2_decision3,endDiagram_decision3|}|] Mem_act2_decision3_z_t(0)) \\{|get_z_act2_decision3,set_z_act2_decision3|}\n" +
 				"fin1_decision3 = ((oe_z_decision3.5?z -> SKIP) [] (oe_z_decision3.4?z -> SKIP)); clear_decision3.1 -> SKIP\n" +
 				"fin1_decision3_t = fin1_decision3 /\\ END_DIAGRAM_decision3\n" +
@@ -157,7 +157,7 @@ public class ADParserTesteDecisionNode {
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision4_t = update_decision4.1!(1-0) -> ((ce_decision4.1 -> SKIP))\n" +
 				"dec1_decision4 = ce_decision4.1 -> dec1_decision4_guard?teste2?teste1 -> (teste2 & (ce_decision4.2 -> SKIP) [] teste1 & (ce_decision4.3 -> SKIP)); dec1_decision4\n" +
-				"dec1_decision4_t = dec1_decision4 /\\ END_DIAGRAM_decision4\n" +
+				"dec1_decision4_t = dec1_decision4 /\\ END_DIAGRAM_decision4 \\{|dc|}\n" +
 				"act2_decision4 = ((ce_decision4.2 -> SKIP)); event_act2_decision4 -> ((ce_decision4.4 -> SKIP)); act2_decision4\n" +
 				"act2_decision4_t = act2_decision4 /\\ END_DIAGRAM_decision4\n" +
 				"act1_decision4 = ((ce_decision4.3 -> SKIP)); event_act1_decision4 -> ((ce_decision4.5 -> SKIP)); act1_decision4\n" +
@@ -175,7 +175,7 @@ public class ADParserTesteDecisionNode {
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision5_t = update_decision5.1!(1-0) -> ((ce_decision5.1 -> SKIP))\n" +
 				"dec1_decision5 = ce_decision5.1 -> dec1_decision5_guard?teste2?teste1 -> (teste2 & (ce_decision5.2 -> SKIP) [] teste1 & (ce_decision5.3 -> SKIP) [] not(teste2) and not(teste1) & (ce_decision5.4 -> SKIP)); dec1_decision5\n" +
-				"dec1_decision5_t = dec1_decision5 /\\ END_DIAGRAM_decision5\n" +
+				"dec1_decision5_t = dec1_decision5 /\\ END_DIAGRAM_decision5 \\{|dc|}\n" +
 				"act2_decision5 = ((ce_decision5.2 -> SKIP)); event_act2_decision5 -> ((ce_decision5.5 -> SKIP)); act2_decision5\n" +
 				"act2_decision5_t = act2_decision5 /\\ END_DIAGRAM_decision5\n" +
 				"act1_decision5 = ((ce_decision5.3 -> SKIP)); event_act1_decision5 -> ((ce_decision5.6 -> SKIP)); act1_decision5\n" +

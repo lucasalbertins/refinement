@@ -529,7 +529,7 @@ public class ADParserTestBehaviourCall {
 				"ProcessDiagram_CB1(parameter_y_CB1_t_alphabet) = parameter_y_CB1_t\n" +
 				"Node_CB1 = || x:alphabet_CB1 @ [AlphabetDiagram_CB1(x)] ProcessDiagram_CB1(x)\n" +
 				"parameter_z_CB1_t = update_CB1.1!(1-0) -> get_z_CB1.1?z -> ((oe_z_CB1.1!z -> SKIP))\n" +
-				"act1_CB1 = ((oe_z_CB1.1?x -> set_x_act1_CB1.1!x -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> get_x_act1_CB1.2?x -> ((oe_z_CB1.2!(x) -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((oe_z_CB1.1?x -> set_x_act1_CB1.1!x -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> get_x_act1_CB1.2?x -> ((((x) >= 0 and (x) <= 1) & oe_z_CB1.2!(x) -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = ((act1_CB1 /\\ END_DIAGRAM_CB1) [|{|get_x_act1_CB1,set_x_act1_CB1,endDiagram_CB1|}|] Mem_act1_CB1_x_t(0)) \\{|get_x_act1_CB1,set_x_act1_CB1|}\n" +
 				"parameter_y_CB1 = ((oe_z_CB1.2?z -> set_z_y_CB1.2!z -> SKIP)); get_z_y_CB1.3?z -> set_y_CB1.3!z -> update_CB1.2!(0-1) -> parameter_y_CB1\n" +
 				"parameter_y_CB1_t = ((parameter_y_CB1 /\\ END_DIAGRAM_CB1) [|{|get_z_y_CB1,set_z_y_CB1,endDiagram_CB1|}|] Mem_y_CB1_z_t(0)) \\{|get_z_y_CB1,set_z_y_CB1|}\n" +
@@ -679,7 +679,7 @@ public class ADParserTestBehaviourCall {
 				"parameter_y_CB1 = ((oe_xb_CB1.3?xb -> set_xb_y_CB1.1!xb -> SKIP) [] (oe_xb_CB1.2?xb -> set_xb_y_CB1.2!xb -> SKIP)); get_xb_y_CB1.2?xb -> set_y_CB1.3!xb -> update_CB1.2!(0-1) -> parameter_y_CB1\n" +
 				"parameter_y_CB1_t = ((parameter_y_CB1 /\\ END_DIAGRAM_CB1) [|{|get_xb_y_CB1,set_xb_y_CB1,endDiagram_CB1|}|] Mem_y_CB1_xb_t(0)) \\{|get_xb_y_CB1,set_xb_y_CB1|}\n" +
 				"parameter_b_CB1_t = update_CB1.3!(1-0) -> get_b_CB1.3?b -> ((oe_b_CB1.4!b -> SKIP))\n" +
-				"act1_CB1 = ((oe_x_CB1.1?x -> set_x_act1_CB1.4!x -> SKIP) ||| (oe_b_CB1.4?a -> set_a_act1_CB1.5!a -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> get_x_act1_CB1.4?x -> get_a_act1_CB1.5?a -> ((oe_xb_CB1.2!(a) -> SKIP) ||| (oe_xb_CB1.3!(x) -> SKIP)); act1_CB1\n" +
+				"act1_CB1 = ((oe_x_CB1.1?x -> set_x_act1_CB1.4!x -> SKIP) ||| (oe_b_CB1.4?a -> set_a_act1_CB1.5!a -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> get_x_act1_CB1.4?x -> get_a_act1_CB1.5?a -> ((((a) >= 0 and (a) <= 1) & oe_xb_CB1.2!(a) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_xb_CB1.3!(x) -> SKIP)); act1_CB1\n" +
 				"act1_CB1_t = (((act1_CB1 /\\ END_DIAGRAM_CB1) [|{|get_x_act1_CB1,set_x_act1_CB1,endDiagram_CB1|}|] Mem_act1_CB1_x_t(0)) [|{|get_a_act1_CB1,set_a_act1_CB1,endDiagram_CB1|}|] Mem_act1_CB1_a_t(0)) \\{|get_x_act1_CB1,set_x_act1_CB1,get_a_act1_CB1,set_a_act1_CB1|}\n" +
 				"init_CB1_t = (parameter_x_CB1_t ||| parameter_b_CB1_t) /\\ END_DIAGRAM_CB1\n" +
 				"Mem_y_CB1_xb(xb) = get_xb_y_CB1?c!xb -> Mem_y_CB1_xb(xb) [] set_xb_y_CB1?c?xb -> Mem_y_CB1_xb(xb)\n" +

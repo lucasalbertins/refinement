@@ -197,7 +197,20 @@ public class ADDefineAction {
                         }
                     }
 
-                    action.append("(");
+                    String typeObj = parameterNodesInput.get(nameObject);
+                    if (typeObj == null) {
+                        typeObj = typeUnionList.get(nameObject);
+                    }
+
+                    Pair<String, String> initialAndFinalParameterValue = adUtils.getInitialAndFinalParameterValue(typeObj);
+
+                    if (adUtils.isInteger(initialAndFinalParameterValue.getKey())) {
+                        action.append("((");
+                        action.append("(" + value + ") >= " + initialAndFinalParameterValue.getKey() + " and (" + value + ") <= "  + initialAndFinalParameterValue.getValue() + ") & ");
+                    } else {
+                        action.append("(");
+                    }
+
                     if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
                         adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
                     } else {
@@ -602,6 +615,16 @@ public class ADDefineAction {
                 }
             }
 
+            String nameObject = "";
+
+            for (int i = 0; i < inPins.length; i++) {
+                IFlow[] inFlowPin = inPins[i].getIncomings();
+                for (int x = 0; x < inFlowPin.length; x++) {
+                    String channel = syncObjectsEdge.get(inFlowPin[x].getId());
+                    nameObject += objectEdges.get(channel);
+                }
+            }
+
             for (int i = 0; i < outPins.length; i++) {    //creates the parallel output channels
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
@@ -616,7 +639,21 @@ public class ADDefineAction {
                         }
                     }
 
-                    action.append("(");
+                    String typeObj = parameterNodesInput.get(nameObject);
+                    if (typeObj == null) {
+                        typeObj = typeUnionList.get(nameObject);
+                    }
+
+                    Pair<String, String> initialAndFinalParameterValue = adUtils.getInitialAndFinalParameterValue(typeObj);
+
+
+                    if (adUtils.isInteger(initialAndFinalParameterValue.getKey())) {
+                        action.append("((");
+                        action.append("(" + value + ") >= " + initialAndFinalParameterValue.getKey() + " and (" + value + ") <= "  + initialAndFinalParameterValue.getValue() + ") & ");
+                    } else {
+                        action.append("(");
+                    }
+
                     if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
                         adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
                     } else {

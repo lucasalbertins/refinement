@@ -154,12 +154,12 @@ public class ADParserTestActionNode {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action3_t = update_action3.1!(1-0) -> ((ce_action3.1 -> SKIP))\n" +
-				"act3_action3 = ((oe_x_action3.1?w -> set_w_act3_action3.1!w -> SKIP)); event_act3_action3 -> get_w_act3_action3.1?w -> ((oe_x_action3.3!(w) -> SKIP)); act3_action3\n" +
+				"act3_action3 = ((oe_x_action3.1?w -> set_w_act3_action3.1!w -> SKIP)); event_act3_action3 -> get_w_act3_action3.1?w -> ((((w) >= 0 and (w) <= 1) & oe_x_action3.3!(w) -> SKIP)); act3_action3\n" +
 				"act3_action3_t = ((act3_action3 /\\ END_DIAGRAM_action3) [|{|get_w_act3_action3,set_w_act3_action3,endDiagram_action3|}|] Mem_act3_action3_w_t(0)) \\{|get_w_act3_action3,set_w_act3_action3|}\n" +
 				"parameter_x_action3_t = update_action3.2!(1-0) -> get_x_action3.2?x -> ((oe_x_action3.4!x -> SKIP))\n" +
-				"act2_action3 = ((oe_x_action3.2?z -> set_z_act2_action3.2!z -> SKIP)); event_act2_action3 -> get_z_act2_action3.3?z -> ((oe_x_action3.5!(z) -> SKIP)); act2_action3\n" +
+				"act2_action3 = ((oe_x_action3.2?z -> set_z_act2_action3.2!z -> SKIP)); event_act2_action3 -> get_z_act2_action3.3?z -> ((((z) >= 0 and (z) <= 1) & oe_x_action3.5!(z) -> SKIP)); act2_action3\n" +
 				"act2_action3_t = ((act2_action3 /\\ END_DIAGRAM_action3) [|{|get_z_act2_action3,set_z_act2_action3,endDiagram_action3|}|] Mem_act2_action3_z_t(0)) \\{|get_z_act2_action3,set_z_act2_action3|}\n" +
-				"act1_action3 = ((ce_action3.1 -> SKIP) ||| (oe_x_action3.4?x -> set_x_act1_action3.3!x -> SKIP)); event_act1_action3 -> get_x_act1_action3.4?x -> ((oe_x_action3.1!(x) -> SKIP) ||| (oe_x_action3.2!(x) -> SKIP)); act1_action3\n" +
+				"act1_action3 = ((ce_action3.1 -> SKIP) ||| (oe_x_action3.4?x -> set_x_act1_action3.3!x -> SKIP)); event_act1_action3 -> get_x_act1_action3.4?x -> ((((x) >= 0 and (x) <= 1) & oe_x_action3.1!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_x_action3.2!(x) -> SKIP)); act1_action3\n" +
 				"act1_action3_t = ((act1_action3 /\\ END_DIAGRAM_action3) [|{|get_x_act1_action3,set_x_act1_action3,endDiagram_action3|}|] Mem_act1_action3_x_t(0)) \\{|get_x_act1_action3,set_x_act1_action3|}\n" +
 				"fin1_action3 = ((oe_x_action3.5?x -> SKIP) [] (oe_x_action3.3?x -> SKIP)); clear_action3.1 -> SKIP\n" +
 				"fin1_action3_t = fin1_action3 /\\ END_DIAGRAM_action3\n" +
@@ -176,12 +176,12 @@ public class ADParserTestActionNode {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_y_action4_t = update_action4.1!(1-0) -> get_y_action4.1?y -> ((oe_y_action4.1!y -> SKIP))\n" +
-				"act2_action4 = ((oe_xy_action4.2?w -> set_w_act2_action4.1!w -> SKIP)); event_act2_action4 -> get_w_act2_action4.2?w -> ((oe_xy_action4.4!(w) -> SKIP)); act2_action4\n" +
+				"act2_action4 = ((oe_xy_action4.2?w -> set_w_act2_action4.1!w -> SKIP)); event_act2_action4 -> get_w_act2_action4.2?w -> ((((w) >= 0 and (w) <= 1) & oe_xy_action4.4!(w) -> SKIP)); act2_action4\n" +
 				"act2_action4_t = ((act2_action4 /\\ END_DIAGRAM_action4) [|{|get_w_act2_action4,set_w_act2_action4,endDiagram_action4|}|] Mem_act2_action4_w_t(0)) \\{|get_w_act2_action4,set_w_act2_action4|}\n" +
 				"parameter_x_action4_t = update_action4.2!(1-0) -> get_x_action4.3?x -> ((oe_x_action4.5!x -> SKIP))\n" +
-				"act3_action4 = ((oe_xy_action4.3?w -> set_w_act3_action4.2!w -> SKIP)); event_act3_action4 -> get_w_act3_action4.4?w -> ((oe_xy_action4.6!(w) -> SKIP)); act3_action4\n" +
+				"act3_action4 = ((oe_xy_action4.3?w -> set_w_act3_action4.2!w -> SKIP)); event_act3_action4 -> get_w_act3_action4.4?w -> ((((w) >= 0 and (w) <= 1) & oe_xy_action4.6!(w) -> SKIP)); act3_action4\n" +
 				"act3_action4_t = ((act3_action4 /\\ END_DIAGRAM_action4) [|{|get_w_act3_action4,set_w_act3_action4,endDiagram_action4|}|] Mem_act3_action4_w_t(0)) \\{|get_w_act3_action4,set_w_act3_action4|}\n" +
-				"act1_action4 = ((oe_x_action4.5?x -> set_x_act1_action4.3!x -> SKIP) ||| (oe_y_action4.1?y -> set_y_act1_action4.4!y -> SKIP)); event_act1_action4 -> get_y_act1_action4.5?y -> set_x_act1_action4.5!(y) -> get_x_act1_action4.6?x -> get_y_act1_action4.7?y -> ((oe_xy_action4.2!(x) -> SKIP) ||| (oe_xy_action4.3!(x) -> SKIP)); act1_action4\n" +
+				"act1_action4 = ((oe_x_action4.5?x -> set_x_act1_action4.3!x -> SKIP) ||| (oe_y_action4.1?y -> set_y_act1_action4.4!y -> SKIP)); event_act1_action4 -> get_y_act1_action4.5?y -> set_x_act1_action4.5!(y) -> get_x_act1_action4.6?x -> get_y_act1_action4.7?y -> ((((x) >= 0 and (x) <= 1) & oe_xy_action4.2!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_xy_action4.3!(x) -> SKIP)); act1_action4\n" +
 				"act1_action4_t = (((act1_action4 /\\ END_DIAGRAM_action4) [|{|get_x_act1_action4,set_x_act1_action4,endDiagram_action4|}|] Mem_act1_action4_x_t(0)) [|{|get_y_act1_action4,set_y_act1_action4,endDiagram_action4|}|] Mem_act1_action4_y_t(0)) \\{|get_x_act1_action4,set_x_act1_action4,get_y_act1_action4,set_y_act1_action4|}\n" +
 				"fin1_action4 = ((oe_xy_action4.6?xy -> SKIP) [] (oe_xy_action4.4?xy -> SKIP)); clear_action4.1 -> SKIP\n" +
 				"fin1_action4_t = fin1_action4 /\\ END_DIAGRAM_action4\n" +
@@ -198,7 +198,7 @@ public class ADParserTestActionNode {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_action5_t = update_action5.1!(1-0) -> get_x_action5.1?x -> ((oe_x_action5.1!x -> SKIP))\n" +
-				"act1_action5 = ((oe_x_action5.1?x -> set_x_act1_action5.1!x -> SKIP)); event_act1_action5 -> get_x_act1_action5.2?x -> ((oe_x_action5.2!(x) -> SKIP)); act1_action5\n" +
+				"act1_action5 = ((oe_x_action5.1?x -> set_x_act1_action5.1!x -> SKIP)); event_act1_action5 -> get_x_act1_action5.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_action5.2!(x) -> SKIP)); act1_action5\n" +
 				"act1_action5_t = ((act1_action5 /\\ END_DIAGRAM_action5) [|{|get_x_act1_action5,set_x_act1_action5,endDiagram_action5|}|] Mem_act1_action5_x_t(0)) \\{|get_x_act1_action5,set_x_act1_action5|}\n" +
 				"fin1_action5 = ((oe_x_action5.2?x -> SKIP)); clear_action5.1 -> SKIP\n" +
 				"fin1_action5_t = fin1_action5 /\\ END_DIAGRAM_action5\n" +
@@ -215,11 +215,11 @@ public class ADParserTestActionNode {
 		String actual = parser6.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_action6_t = update_action6.1!(1-0) -> get_x_action6.1?x -> ((oe_x_action6.1!x -> SKIP))\n" +
-				"act1_action6 = ((oe_x_action6.1?x -> set_x_act1_action6.1!x -> SKIP)); event_act1_action6 -> update_action6.2!(2-1) -> get_x_act1_action6.2?x -> ((oe_x_action6.2!(x) -> SKIP) ||| (oe_x_action6.3!(x) -> SKIP)); act1_action6\n" +
+				"act1_action6 = ((oe_x_action6.1?x -> set_x_act1_action6.1!x -> SKIP)); event_act1_action6 -> update_action6.2!(2-1) -> get_x_act1_action6.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_action6.2!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_x_action6.3!(x) -> SKIP)); act1_action6\n" +
 				"act1_action6_t = ((act1_action6 /\\ END_DIAGRAM_action6) [|{|get_x_act1_action6,set_x_act1_action6,endDiagram_action6|}|] Mem_act1_action6_x_t(0)) \\{|get_x_act1_action6,set_x_act1_action6|}\n" +
-				"act2_action6 = ((oe_x_action6.2?y -> set_y_act2_action6.2!y -> SKIP)); event_act2_action6 -> get_y_act2_action6.3?y -> ((oe_x_action6.4!(y) -> SKIP)); act2_action6\n" +
+				"act2_action6 = ((oe_x_action6.2?y -> set_y_act2_action6.2!y -> SKIP)); event_act2_action6 -> get_y_act2_action6.3?y -> ((((y) >= 0 and (y) <= 1) & oe_x_action6.4!(y) -> SKIP)); act2_action6\n" +
 				"act2_action6_t = ((act2_action6 /\\ END_DIAGRAM_action6) [|{|get_y_act2_action6,set_y_act2_action6,endDiagram_action6|}|] Mem_act2_action6_y_t(0)) \\{|get_y_act2_action6,set_y_act2_action6|}\n" +
-				"act3_action6 = ((oe_x_action6.3?y -> set_y_act3_action6.3!y -> SKIP)); event_act3_action6 -> get_y_act3_action6.4?y -> ((oe_x_action6.5!(y) -> SKIP)); act3_action6\n" +
+				"act3_action6 = ((oe_x_action6.3?y -> set_y_act3_action6.3!y -> SKIP)); event_act3_action6 -> get_y_act3_action6.4?y -> ((((y) >= 0 and (y) <= 1) & oe_x_action6.5!(y) -> SKIP)); act3_action6\n" +
 				"act3_action6_t = ((act3_action6 /\\ END_DIAGRAM_action6) [|{|get_y_act3_action6,set_y_act3_action6,endDiagram_action6|}|] Mem_act3_action6_y_t(0)) \\{|get_y_act3_action6,set_y_act3_action6|}\n" +
 				"fin1_action6 = ((oe_x_action6.4?x -> SKIP) [] (oe_x_action6.5?x -> SKIP)); clear_action6.1 -> SKIP\n" +
 				"fin1_action6_t = fin1_action6 /\\ END_DIAGRAM_action6\n" +

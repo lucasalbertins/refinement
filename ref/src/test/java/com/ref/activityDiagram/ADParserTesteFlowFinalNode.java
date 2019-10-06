@@ -142,7 +142,7 @@ public class ADParserTesteFlowFinalNode {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_flowFinal3_t = update_flowFinal3.1!(1-0) -> get_x_flowFinal3.1?x -> ((oe_x_flowFinal3.1!x -> SKIP))\n" +
-				"act1_flowFinal3 = ((oe_x_flowFinal3.1?x -> set_x_act1_flowFinal3.1!x -> SKIP)); event_act1_flowFinal3 -> get_x_act1_flowFinal3.2?x -> ((oe_x_flowFinal3.2!(x) -> SKIP)); act1_flowFinal3\n" +
+				"act1_flowFinal3 = ((oe_x_flowFinal3.1?x -> set_x_act1_flowFinal3.1!x -> SKIP)); event_act1_flowFinal3 -> get_x_act1_flowFinal3.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_flowFinal3.2!(x) -> SKIP)); act1_flowFinal3\n" +
 				"act1_flowFinal3_t = ((act1_flowFinal3 /\\ END_DIAGRAM_flowFinal3) [|{|get_x_act1_flowFinal3,set_x_act1_flowFinal3,endDiagram_flowFinal3|}|] Mem_act1_flowFinal3_x_t(0)) \\{|get_x_act1_flowFinal3,set_x_act1_flowFinal3|}\n" +
 				"flowFinal1_flowFinal3 = ((oe_x_flowFinal3.2?x -> SKIP)); update_flowFinal3.2!(0-1) -> flowFinal1_flowFinal3\n" +
 				"flowFinal1_flowFinal3_t = flowFinal1_flowFinal3 /\\ END_DIAGRAM_flowFinal3\n" +
@@ -159,11 +159,11 @@ public class ADParserTesteFlowFinalNode {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_flowFinal4_t = update_flowFinal4.1!(1-0) -> get_x_flowFinal4.1?x -> ((oe_x_flowFinal4.1!x -> SKIP))\n" +
-				"act1_flowFinal4 = ((oe_x_flowFinal4.1?x -> set_x_act1_flowFinal4.1!x -> SKIP)); event_act1_flowFinal4 -> update_flowFinal4.2!(2-1) -> get_x_act1_flowFinal4.2?x -> ((oe_x_flowFinal4.2!(x) -> SKIP) ||| (oe_x_flowFinal4.3!(x) -> SKIP)); act1_flowFinal4\n" +
+				"act1_flowFinal4 = ((oe_x_flowFinal4.1?x -> set_x_act1_flowFinal4.1!x -> SKIP)); event_act1_flowFinal4 -> update_flowFinal4.2!(2-1) -> get_x_act1_flowFinal4.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_flowFinal4.2!(x) -> SKIP) ||| (((x) >= 0 and (x) <= 1) & oe_x_flowFinal4.3!(x) -> SKIP)); act1_flowFinal4\n" +
 				"act1_flowFinal4_t = ((act1_flowFinal4 /\\ END_DIAGRAM_flowFinal4) [|{|get_x_act1_flowFinal4,set_x_act1_flowFinal4,endDiagram_flowFinal4|}|] Mem_act1_flowFinal4_x_t(0)) \\{|get_x_act1_flowFinal4,set_x_act1_flowFinal4|}\n" +
-				"act2_flowFinal4 = ((oe_x_flowFinal4.2?x -> set_x_act2_flowFinal4.2!x -> SKIP)); event_act2_flowFinal4 -> get_x_act2_flowFinal4.3?x -> ((oe_x_flowFinal4.4!(x) -> SKIP)); act2_flowFinal4\n" +
+				"act2_flowFinal4 = ((oe_x_flowFinal4.2?x -> set_x_act2_flowFinal4.2!x -> SKIP)); event_act2_flowFinal4 -> get_x_act2_flowFinal4.3?x -> ((((x) >= 0 and (x) <= 1) & oe_x_flowFinal4.4!(x) -> SKIP)); act2_flowFinal4\n" +
 				"act2_flowFinal4_t = ((act2_flowFinal4 /\\ END_DIAGRAM_flowFinal4) [|{|get_x_act2_flowFinal4,set_x_act2_flowFinal4,endDiagram_flowFinal4|}|] Mem_act2_flowFinal4_x_t(0)) \\{|get_x_act2_flowFinal4,set_x_act2_flowFinal4|}\n" +
-				"act3_flowFinal4 = ((oe_x_flowFinal4.3?x -> set_x_act3_flowFinal4.3!x -> SKIP)); event_act3_flowFinal4 -> get_x_act3_flowFinal4.4?x -> ((oe_x_flowFinal4.5!(x) -> SKIP)); act3_flowFinal4\n" +
+				"act3_flowFinal4 = ((oe_x_flowFinal4.3?x -> set_x_act3_flowFinal4.3!x -> SKIP)); event_act3_flowFinal4 -> get_x_act3_flowFinal4.4?x -> ((((x) >= 0 and (x) <= 1) & oe_x_flowFinal4.5!(x) -> SKIP)); act3_flowFinal4\n" +
 				"act3_flowFinal4_t = ((act3_flowFinal4 /\\ END_DIAGRAM_flowFinal4) [|{|get_x_act3_flowFinal4,set_x_act3_flowFinal4,endDiagram_flowFinal4|}|] Mem_act3_flowFinal4_x_t(0)) \\{|get_x_act3_flowFinal4,set_x_act3_flowFinal4|}\n" +
 				"flowFinal1_flowFinal4 = ((oe_x_flowFinal4.4?x -> SKIP) [] (oe_x_flowFinal4.5?x -> SKIP)); update_flowFinal4.3!(0-1) -> flowFinal1_flowFinal4\n" +
 				"flowFinal1_flowFinal4_t = flowFinal1_flowFinal4 /\\ END_DIAGRAM_flowFinal4\n" +
@@ -180,7 +180,7 @@ public class ADParserTesteFlowFinalNode {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_flowFinal5_t = update_flowFinal5.1!(1-0) -> get_x_flowFinal5.1?x -> ((oe_x_flowFinal5.1!x -> SKIP))\n" +
-				"act2_flowFinal5 = ((oe_x_flowFinal5.1?x -> set_x_act2_flowFinal5.1!x -> SKIP)); event_act2_flowFinal5 -> get_x_act2_flowFinal5.2?x -> ((oe_x_flowFinal5.2!(x) -> SKIP)); act2_flowFinal5\n" +
+				"act2_flowFinal5 = ((oe_x_flowFinal5.1?x -> set_x_act2_flowFinal5.1!x -> SKIP)); event_act2_flowFinal5 -> get_x_act2_flowFinal5.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_flowFinal5.2!(x) -> SKIP)); act2_flowFinal5\n" +
 				"act2_flowFinal5_t = ((act2_flowFinal5 /\\ END_DIAGRAM_flowFinal5) [|{|get_x_act2_flowFinal5,set_x_act2_flowFinal5,endDiagram_flowFinal5|}|] Mem_act2_flowFinal5_x_t(0)) \\{|get_x_act2_flowFinal5,set_x_act2_flowFinal5|}\n" +
 				"init1_flowFinal5_t = update_flowFinal5.2!(1-0) -> ((ce_flowFinal5.1 -> SKIP))\n" +
 				"act1_flowFinal5 = ((ce_flowFinal5.1 -> SKIP)); event_act1_flowFinal5 -> ((ce_flowFinal5.2 -> SKIP)); act1_flowFinal5\n" +

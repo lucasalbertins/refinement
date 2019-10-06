@@ -458,13 +458,14 @@ public class FdrWrapper {
 			}
 
 			if (hasError == 0) { // has valid license
-				session = sessionClass.newInstance();
-
-				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-				Object assertion = assertions.get(0);
 				try {
+					session = sessionClass.newInstance();
+
+					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					Object assertion = assertions.get(0);
+
 					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
@@ -535,13 +536,14 @@ public class FdrWrapper {
 			}
 
 			if (hasError == 0) { // has valid license
-				session = sessionClass.newInstance();
-
-				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-				Object assertion = assertions.get(1);
 				try {
+					session = sessionClass.newInstance();
+
+					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					Object assertion = assertions.get(1);
+
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
 					if (!((boolean) invokeProperty(assertion.getClass(), assertion,
@@ -600,13 +602,14 @@ public class FdrWrapper {
 			}
 
 			if (hasError == 0) {
-				session = sessionClass.newInstance();
-
-				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-
-				List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-				Object assertion = assertions.get(2);
 				try {
+					session = sessionClass.newInstance();
+
+					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					Object assertion = assertions.get(2);
+
 					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 

@@ -107,7 +107,7 @@ public class AdParserTestMergeNode {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_merge3_t = update_merge3.1!(1-0) -> get_x_merge3.1?x -> ((oe_x_merge3.1!x -> SKIP))\n" +
-				"act1_merge3 = ((oe_yx_merge3.2?x -> set_x_act1_merge3.1!x -> SKIP)); event_act1_merge3 -> get_x_act1_merge3.2?x -> ((oe_yx_merge3.3!(x) -> SKIP)); act1_merge3\n" +
+				"act1_merge3 = ((oe_yx_merge3.2?x -> set_x_act1_merge3.1!x -> SKIP)); event_act1_merge3 -> get_x_act1_merge3.2?x -> ((((x) >= 0 and (x) <= 1) & oe_yx_merge3.3!(x) -> SKIP)); act1_merge3\n" +
 				"act1_merge3_t = ((act1_merge3 /\\ END_DIAGRAM_merge3) [|{|get_x_act1_merge3,set_x_act1_merge3,endDiagram_merge3|}|] Mem_act1_merge3_x_t(0)) \\{|get_x_act1_merge3,set_x_act1_merge3|}\n" +
 				"fin1_merge3 = ((oe_yx_merge3.3?yx -> SKIP)); clear_merge3.1 -> SKIP\n" +
 				"fin1_merge3_t = fin1_merge3 /\\ END_DIAGRAM_merge3\n" +
@@ -127,11 +127,11 @@ public class AdParserTestMergeNode {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_merge4_t = update_merge4.1!(2-0) -> get_x_merge4.1?x -> ((oe_x_merge4.1!x -> SKIP) ||| (oe_x_merge4.2!x -> SKIP))\n" +
-				"act1_merge4 = ((oe_x_merge4.1?x -> set_x_act1_merge4.1!x -> SKIP)); event_act1_merge4 -> get_x_act1_merge4.2?x -> ((oe_x_merge4.3!(x) -> SKIP)); act1_merge4\n" +
+				"act1_merge4 = ((oe_x_merge4.1?x -> set_x_act1_merge4.1!x -> SKIP)); event_act1_merge4 -> get_x_act1_merge4.2?x -> ((((x) >= 0 and (x) <= 1) & oe_x_merge4.3!(x) -> SKIP)); act1_merge4\n" +
 				"act1_merge4_t = ((act1_merge4 /\\ END_DIAGRAM_merge4) [|{|get_x_act1_merge4,set_x_act1_merge4,endDiagram_merge4|}|] Mem_act1_merge4_x_t(0)) \\{|get_x_act1_merge4,set_x_act1_merge4|}\n" +
 				"fin1_merge4 = ((oe_x_merge4.4?x -> SKIP)); clear_merge4.1 -> SKIP\n" +
 				"fin1_merge4_t = fin1_merge4 /\\ END_DIAGRAM_merge4\n" +
-				"act2_merge4 = ((oe_x_merge4.2?x -> set_x_act2_merge4.2!x -> SKIP)); event_act2_merge4 -> get_x_act2_merge4.3?x -> ((oe_x_merge4.5!(x) -> SKIP)); act2_merge4\n" +
+				"act2_merge4 = ((oe_x_merge4.2?x -> set_x_act2_merge4.2!x -> SKIP)); event_act2_merge4 -> get_x_act2_merge4.3?x -> ((((x) >= 0 and (x) <= 1) & oe_x_merge4.5!(x) -> SKIP)); act2_merge4\n" +
 				"act2_merge4_t = ((act2_merge4 /\\ END_DIAGRAM_merge4) [|{|get_x_act2_merge4,set_x_act2_merge4,endDiagram_merge4|}|] Mem_act2_merge4_x_t(0)) \\{|get_x_act2_merge4,set_x_act2_merge4|}\n" +
 				"merge1_merge4 = ((oe_x_merge4.3?x -> set_x_merge1_merge4.3!x -> SKIP) [] (oe_x_merge4.5?x -> set_x_merge1_merge4.4!x -> SKIP)); get_x_merge1_merge4.4?x -> oe_x_merge4.4!x -> merge1_merge4\n" +
 				"merge1_merge4_t = ((merge1_merge4 /\\ END_DIAGRAM_merge4) [|{|get_x_merge1_merge4,set_x_merge1_merge4,endDiagram_merge4|}|] Mem_merge1_merge4_x_t(0)) \\{|get_x_merge1_merge4,set_x_merge1_merge4|}\n" +

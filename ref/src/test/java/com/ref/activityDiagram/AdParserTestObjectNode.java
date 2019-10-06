@@ -85,7 +85,7 @@ public class AdParserTestObjectNode {
 		expected.append("parameter_x_objectNode1_t = update_objectNode1.1!(1-0) -> get_x_objectNode1.1?x -> ((oe_x_objectNode1.1!x -> SKIP))\n" +
 				"obj1_objectNode1 = ((oe_x_objectNode1.1?x -> set_x_obj1_objectNode1.1!x -> SKIP)); get_x_obj1_objectNode1.2?x -> ((oe_x_objectNode1.2!x -> SKIP)); obj1_objectNode1\n" +
 				"obj1_objectNode1_t = ((obj1_objectNode1 /\\ END_DIAGRAM_objectNode1) [|{|get_x_obj1_objectNode1,set_x_obj1_objectNode1,endDiagram_objectNode1|}|] Mem_obj1_objectNode1_x_t(0)) \\{|get_x_obj1_objectNode1,set_x_obj1_objectNode1|}\n" +
-				"act1_objectNode1 = ((oe_x_objectNode1.2?w -> set_w_act1_objectNode1.2!w -> SKIP)); event_act1_objectNode1 -> get_w_act1_objectNode1.3?w -> ((oe_x_objectNode1.3!(w) -> SKIP)); act1_objectNode1\n" +
+				"act1_objectNode1 = ((oe_x_objectNode1.2?w -> set_w_act1_objectNode1.2!w -> SKIP)); event_act1_objectNode1 -> get_w_act1_objectNode1.3?w -> ((((w) >= 0 and (w) <= 1) & oe_x_objectNode1.3!(w) -> SKIP)); act1_objectNode1\n" +
 				"act1_objectNode1_t = ((act1_objectNode1 /\\ END_DIAGRAM_objectNode1) [|{|get_w_act1_objectNode1,set_w_act1_objectNode1,endDiagram_objectNode1|}|] Mem_act1_objectNode1_w_t(0)) \\{|get_w_act1_objectNode1,set_w_act1_objectNode1|}\n" +
 				"fin1_objectNode1 = ((oe_x_objectNode1.3?x -> SKIP)); clear_objectNode1.1 -> SKIP\n" +
 				"fin1_objectNode1_t = fin1_objectNode1 /\\ END_DIAGRAM_objectNode1\n" +
@@ -101,7 +101,7 @@ public class AdParserTestObjectNode {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_objectNode2_t = update_objectNode2.1!(1-0) -> get_x_objectNode2.1?x -> ((oe_x_objectNode2.1!x -> SKIP))\n" +
-				"act1_objectNode2 = ((oe_xy_objectNode2.2?w -> set_w_act1_objectNode2.1!w -> SKIP)); event_act1_objectNode2 -> get_w_act1_objectNode2.2?w -> ((oe_xy_objectNode2.3!(w) -> SKIP)); act1_objectNode2\n" +
+				"act1_objectNode2 = ((oe_xy_objectNode2.2?w -> set_w_act1_objectNode2.1!w -> SKIP)); event_act1_objectNode2 -> get_w_act1_objectNode2.2?w -> ((((w) >= 0 and (w) <= 1) & oe_xy_objectNode2.3!(w) -> SKIP)); act1_objectNode2\n" +
 				"act1_objectNode2_t = ((act1_objectNode2 /\\ END_DIAGRAM_objectNode2) [|{|get_w_act1_objectNode2,set_w_act1_objectNode2,endDiagram_objectNode2|}|] Mem_act1_objectNode2_w_t(0)) \\{|get_w_act1_objectNode2,set_w_act1_objectNode2|}\n" +
 				"fin1_objectNode2 = ((oe_xy_objectNode2.3?xy -> SKIP)); clear_objectNode2.1 -> SKIP\n" +
 				"fin1_objectNode2_t = fin1_objectNode2 /\\ END_DIAGRAM_objectNode2\n" +
@@ -120,7 +120,7 @@ public class AdParserTestObjectNode {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_y_objectNode3_t = update_objectNode3.1!(1-0) -> get_y_objectNode3.1?y -> ((oe_y_objectNode3.1!y -> SKIP))\n" +
-				"act1_objectNode3 = ((oe_yx_objectNode3.2?w -> set_w_act1_objectNode3.1!w -> SKIP)); event_act1_objectNode3 -> get_w_act1_objectNode3.2?w -> ((oe_yx_objectNode3.4!(w) -> SKIP)); act1_objectNode3\n" +
+				"act1_objectNode3 = ((oe_yx_objectNode3.2?w -> set_w_act1_objectNode3.1!w -> SKIP)); event_act1_objectNode3 -> get_w_act1_objectNode3.2?w -> ((((w) >= 0 and (w) <= 1) & oe_yx_objectNode3.4!(w) -> SKIP)); act1_objectNode3\n" +
 				"act1_objectNode3_t = ((act1_objectNode3 /\\ END_DIAGRAM_objectNode3) [|{|get_w_act1_objectNode3,set_w_act1_objectNode3,endDiagram_objectNode3|}|] Mem_act1_objectNode3_w_t(0)) \\{|get_w_act1_objectNode3,set_w_act1_objectNode3|}\n" +
 				"fin1_objectNode3 = ((oe_yx_objectNode3.4?yx -> SKIP)); clear_objectNode3.1 -> SKIP\n" +
 				"fin1_objectNode3_t = fin1_objectNode3 /\\ END_DIAGRAM_objectNode3\n" +
