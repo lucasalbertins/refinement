@@ -1,7 +1,6 @@
 package com.ref.parser.activityDiagram;
 
 import com.change_vision.jude.api.inf.model.*;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;

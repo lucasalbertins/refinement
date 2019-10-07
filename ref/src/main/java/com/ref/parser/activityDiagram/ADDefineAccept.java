@@ -1,14 +1,13 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.change_vision.jude.api.inf.model.IActivity;
+import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.change_vision.jude.api.inf.model.IFlow;
+
 
 public class ADDefineAccept {
 
@@ -17,7 +16,7 @@ public class ADDefineAccept {
     private HashMap<String, ArrayList<String>> alphabetNode;
     private HashMap<String, String> syncChannelsEdge;
     private List<IActivityNode> queueNode;
-    private List<Pair<String, Integer>> countAccept;
+	private List<Pair<String, Integer>> countAccept;
     private List<String> createdAccept;
     private ADUtils adUtils;
 

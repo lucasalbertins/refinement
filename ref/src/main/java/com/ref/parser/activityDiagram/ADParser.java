@@ -7,8 +7,6 @@ import java.util.List;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.*;
 
-import javafx.util.Pair;
-
 public class ADParser {
 
     private IActivity ad;
