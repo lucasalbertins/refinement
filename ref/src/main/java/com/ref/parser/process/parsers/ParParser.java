@@ -15,9 +15,7 @@ public class ParParser extends FragmentParser {
     public String parseFrag(ICombinedFragment fragment, ILifeline lifeline, ISequenceDiagram seq, Map<INamedElement, String> fragMapping) {
 
         StringBuilder sb = new StringBuilder();
-        String fragName = fragMapping.get(fragment);
         sb.append("\n");
-        sb.append(fragName);
 
         IInteractionOperand[] operands = fragment.getInteractionOperands();
         sb.append("(");
@@ -25,7 +23,6 @@ public class ParParser extends FragmentParser {
         int numberOfMsgs = 0;
         System.out.println("Number of operands " + operands.length);
         for(IInteractionOperand operand : operands){
-            sb.append(operand.getGuard());
 //            System.out.println("guard : " + operand.getGuard());
             IMessage[] messages = operand.getMessages();
             numberOfMsgs += messages.length;
@@ -37,19 +34,20 @@ public class ParParser extends FragmentParser {
             for (IMessage message: messages) {
                 System.out.println("parseando " + message.getName());
                 String parsedMsg = MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq);
+                parsedMsg = parsedMsg.replace("SKIP", "");
                 ParserHelper.getInstance().addMsgInfo(new MessageInfo(message, parsedMsg, true));
                 sb.append(parsedMsg);
                 this.parsedMsgs.add(message);
-                sb.append("->");
             }
+            sb.append("SKIP");
             if(messages.length > 1) {
                 sb.append(")");
             }
 
-            sb.delete(sb.length()-2, sb.length());
+//            sb.delete(sb.length()-2, sb.length());
             sb.append("|||");
         }
-        sb.delete(sb.length()-4,sb.length());
+        sb.delete(sb.length()-3,sb.length());
         sb.append(");");
 
         return sb.toString();

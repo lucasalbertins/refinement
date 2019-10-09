@@ -65,13 +65,15 @@ public class SDchannelParser {
         for (ILifeline lf : lifelines) {
             INamedElement[] aux = lf.getFragments();
             for (INamedElement frag : aux) {
-                if (frag instanceof ICombinedFragment && !fragMapping.containsKey(frag)) {
-                    FragmentChannel channelFragment = fragFactory.getChannelFragment((ICombinedFragment) frag);
-                    fragName = channelFragment.parseFrag(frag, currentFrag);
-                    fragMapping.put(frag,channelFragment.getFragType()+currentFrag);
-                    altChannels.append(fragName);
-                    currentFrag++;
-                    ParserHelper.getInstance().addLifelineFrag(lf,fragName);
+                if (frag instanceof ICombinedFragment &&!fragMapping.containsKey(frag)) {
+                    if(!((ICombinedFragment) frag).isPar()) {
+                        FragmentChannel channelFragment = fragFactory.getChannelFragment((ICombinedFragment) frag);
+                        fragName = channelFragment.parseFrag(frag, currentFrag);
+                        fragMapping.put(frag,channelFragment.getFragType()+currentFrag);
+                        altChannels.append(fragName);
+                        currentFrag++;
+                        ParserHelper.getInstance().addLifelineFrag(lf,fragName);
+                    }
                 }
                 if(fragMapping.containsKey(frag))
                     ParserHelper.getInstance().addLifelineFrag(lf,fragName);
