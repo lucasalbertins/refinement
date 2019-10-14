@@ -18,6 +18,8 @@ public class FragmentParserFactory {
             return new OptParser();
         }else if(frag.isPar()){
             return new ParParser();
+        }else if(frag.isLoop()){
+            return  new LoopParser();
         }
         return null;
     }

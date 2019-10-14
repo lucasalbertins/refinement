@@ -18,9 +18,9 @@ public class SDprocessParser {
     private MessageParser msgParser;
     private FragmentParserFactory fragmentFactory;
     private ParallelParser parallelParser;
-    private Map<INamedElement,String> altMapping;
+    private Map<INamedElement,String> fragMapping;
 
-    public SDprocessParser(ISequenceDiagram seq1, ISequenceDiagram seq2, Map<String, String> lfsWithUnderscore, Map<INamedElement, String> altMapping) {
+    public SDprocessParser(ISequenceDiagram seq1, ISequenceDiagram seq2, Map<String, String> lfsWithUnderscore, Map<INamedElement, String> fragMapping) {
         this.seq1 = seq1;
         this.seq2 = seq2;
         this.lfsWithUnderscore = lfsWithUnderscore;
@@ -29,7 +29,7 @@ public class SDprocessParser {
         this.msgParser = MessageParser.getInstance();
         this.msgParser.init(lfsWithUnderscore);
         this.parallelParser = new ParallelParser(lfsWithUnderscore);
-        this.altMapping = altMapping;
+        this.fragMapping = fragMapping;
     }
 
     public String parseSD(ISequenceDiagram seq) {
@@ -112,7 +112,7 @@ public class SDprocessParser {
         } else if (fragment instanceof ICombinedFragment) {
             ICombinedFragment frag = (ICombinedFragment) fragment;
             FragmentParser fragParser = this.fragmentFactory.getFragmentParser(frag);
-            String fragResult = fragParser.parseFrag(frag, lifeline, seq, altMapping);
+            String fragResult = fragParser.parseFrag(frag, lifeline, seq, fragMapping);
             fragmentFactory.addParsedMsgs(fragParser.getParsedMsgs());
             return fragResult;
         } else if (fragment instanceof IStateInvariant) {
@@ -131,8 +131,8 @@ public class SDprocessParser {
         return sd2Alphabet;
     }
 
-    public void setAltMapping(Map<INamedElement, String> altMapping) {
-        this.altMapping = altMapping;
+    public void setFragMapping(Map<INamedElement, String> fragMapping) {
+        this.fragMapping = fragMapping;
     }
 
 }

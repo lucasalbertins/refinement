@@ -12,6 +12,7 @@ public class SDchannelParser {
     private ISequenceDiagram seq2;
     private FragmentChannelFactory fragFactory;
     private Map<INamedElement, String> fragMapping;
+    private int loopCounter = 1;
 
     public SDchannelParser(ISequenceDiagram seq1, ISequenceDiagram seq2) {
         this.seq1 = seq1;
@@ -66,13 +67,18 @@ public class SDchannelParser {
             INamedElement[] aux = lf.getFragments();
             for (INamedElement frag : aux) {
                 if (frag instanceof ICombinedFragment &&!fragMapping.containsKey(frag)) {
-                    if(!((ICombinedFragment) frag).isPar()) {
+                    if(!((ICombinedFragment) frag).isPar() && !((ICombinedFragment) frag).isLoop() ) {
                         FragmentChannel channelFragment = fragFactory.getChannelFragment((ICombinedFragment) frag);
                         fragName = channelFragment.parseFrag(frag, currentFrag);
                         fragMapping.put(frag,channelFragment.getFragType()+currentFrag);
                         altChannels.append(fragName);
                         currentFrag++;
                         ParserHelper.getInstance().addLifelineFrag(lf,fragName);
+                    }
+                    if (((ICombinedFragment) frag).isLoop()) {
+                        fragName = "LOOP"+loopCounter;
+                        fragMapping.put(frag,fragName);
+                        loopCounter++;
                     }
                 }
                 if(fragMapping.containsKey(frag))

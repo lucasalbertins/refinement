@@ -78,9 +78,13 @@ public class ParserHelper {
     }
 
     private String filterFragment(String frag){
-        String[] split1 = frag.split(":");
-        String[] split2 = split1[0].split(" ");
-        return split2[1];
+        if(frag.contains(":")){
+            String[] split1 = frag.split(":");
+            String[] split2 = split1[0].split(" ");
+            return split2[1];
+        }else {
+            return frag;
+        }
     }
 
     public void addFragmentInfo(String fragment, FragmentInfo info) {
