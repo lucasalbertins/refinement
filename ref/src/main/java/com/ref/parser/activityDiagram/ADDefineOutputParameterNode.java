@@ -1,10 +1,8 @@
 package com.ref.parser.activityDiagram;
 
 import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IFlow;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
 package com.ref.parser.activityDiagram;
 
 import com.change_vision.jude.api.inf.model.*;
-import javafx.util.Pair;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -204,7 +204,7 @@ public class ADDefineAction {
 
                     Pair<String, String> initialAndFinalParameterValue = adUtils.getInitialAndFinalParameterValue(typeObj);
 
-                    if (adUtils.isInteger(initialAndFinalParameterValue.getKey())) {
+                    if (ADUtils.isInteger(initialAndFinalParameterValue.getKey())) {
                         action.append("((");
                         action.append("(" + value + ") >= " + initialAndFinalParameterValue.getKey() + " and (" + value + ") <= "  + initialAndFinalParameterValue.getValue() + ") & ");
                     } else {

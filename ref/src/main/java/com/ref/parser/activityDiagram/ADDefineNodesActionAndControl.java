@@ -1,7 +1,6 @@
 package com.ref.parser.activityDiagram;
 
 import com.change_vision.jude.api.inf.model.*;
-import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -105,20 +104,6 @@ public class ADDefineNodesActionAndControl {
         this.signalChannelsLocal = signalChannelsLocal;
         this.adUtils = adUtils;
         this.adParser = adParser;
-        this.dAction = dAction;
-        this.dFinalNode = dFinalNode;
-        this.dInitialNode = dInitialNode;
-        this.dCallBehavior = dCallBehavior;
-        this.dFork = dFork;
-        this.dJoin = dJoin;
-        this.dMerge = dMerge;
-        this.dDecision = dDecision;
-        this.dFlowFinal = dFlowFinal;
-        this.dInputParameterNode = dInputParameterNode;
-        this.dOutputParameterNode = dOutputParameterNode;
-        this.dObjectNode = dObjectNode;
-        this.dSignal = dSignal;
-        this.dAccept = dAccept;
     }
 
     public String defineNodesActionAndControl() {
