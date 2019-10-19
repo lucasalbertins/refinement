@@ -1,24 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="Correção decisionNode e mergeNode">
+    <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineMerge.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineMerge.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADUtils.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestBehaviourCall.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestBehaviourCall.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestForkNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestForkNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestInitialNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestInitialNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestJoinNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestJoinNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMergeNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestMergeNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestObjectNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestObjectNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/resources/activityDiagram/compilationFailed1.asta" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/resources/activityDiagram/compilationFailed1.asta" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,19 +32,40 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="177">
+              <caret line="320" column="66" selection-start-line="320" selection-start-column="49" selection-end-line="320" selection-end-column="66" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="168">
+              <caret line="142" column="54" selection-start-line="142" selection-start-column="53" selection-end-line="142" selection-end-column="54" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeadlock.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="83">
-              <caret line="374" column="53" selection-start-line="374" selection-start-column="53" selection-end-line="374" selection-end-column="53" />
+            <state relative-caret-position="109">
+              <caret line="335" column="54" selection-start-line="335" selection-start-column="54" selection-end-line="335" selection-end-column="54" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAction.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="167">
-              <caret line="652" column="28" lean-forward="true" selection-start-line="652" selection-start-column="28" selection-end-line="652" selection-end-column="28" />
+            <state relative-caret-position="117">
+              <caret line="436" column="15" selection-start-line="436" selection-start-column="15" selection-end-line="436" selection-end-column="15" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -78,7 +84,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>countCall</find>
       <find>checkCountCallInitial</find>
       <find>adUtils</find>
       <find>System</find>
@@ -108,6 +113,7 @@
       <find>Syste</find>
       <find>{|dc|}</find>
       <find>dc</find>
+      <find>decisionInputType</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Amaury\git\refinement\ref\src\main\java\com\ref\ui\icons</dir>
@@ -157,7 +163,6 @@
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAccept.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineCallBehavior.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestActionNode.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestFinalNode.java" />
@@ -170,6 +175,7 @@
         <option value="$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/AdParserTestObjectNode.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAction.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java" />
       </list>
     </option>
   </component>
@@ -192,7 +198,7 @@
       <select />
     </treeState>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="89" />
     <option name="y" value="42" />
     <option name="width" value="1211" />
@@ -619,6 +625,7 @@
       </method>
     </configuration>
     <list>
+      <item itemvalue="JUnit.ADParserTestActionNode" />
       <item itemvalue="JUnit.ADParserTestBehaviourCall" />
       <item itemvalue="JUnit.ADParserTestCheckDeadlock" />
       <item itemvalue="JUnit.ADParserTestCheckDeterminism" />
@@ -632,7 +639,6 @@
       <item itemvalue="JUnit.ReflectionTest" />
       <item itemvalue="JUnit.SDGeneratorTest" />
       <item itemvalue="JUnit.SDParserTest.testDefineTypes" />
-      <item itemvalue="JUnit.ADParserTestActionNode" />
     </list>
     <recent_temporary>
       <list>
@@ -819,13 +825,17 @@
       <option name="project" value="LOCAL" />
       <updated>1569777887839</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Correção actionNode e decisionNode">
+      <created>1570322146821</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1570322146822</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="ADParserTestActionNode - 2019.10.05 at 20h 40m 41s.xml">
-      <configuration name="ADParserTestActionNode" configurationId="JUnit" />
-    </history-entry>
     <history-entry file="ADParserTestActionNode - 2019.10.05 at 20h 41m 18s.xml">
       <configuration name="ADParserTestActionNode" configurationId="JUnit" />
     </history-entry>
@@ -853,15 +863,17 @@
     <history-entry file="AllTests - 2019.10.05 at 21h 21m 16s.xml">
       <configuration name="AllTests" configurationId="JUnit" />
     </history-entry>
+    <history-entry file="AllTests - 2019.10.05 at 21h 35m 00s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
   </component>
   <component name="TimeTrackingManager">
     <option name="totallyTimeSpent" value="354271000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49113476" visible="true" weight="0.18986385" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49113476" visible="true" weight="0.19591528" />
       <window_info id="Structure" order="1" sideWeight="0.50886524" side_tool="true" weight="0.2184466" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -870,7 +882,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.66775775" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3846154" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3846154" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -985,7 +997,8 @@
     <MESSAGE value="Modificaçã decisionNode (Ce)" />
     <MESSAGE value="Refatoração de código e modificação de ProgressBar" />
     <MESSAGE value="Correção decisionNode e mergeNode" />
-    <option name="LAST_COMMIT_MESSAGE" value="Correção decisionNode e mergeNode" />
+    <MESSAGE value="Correção actionNode e decisionNode" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correção actionNode e decisionNode" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -1281,23 +1294,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="657" column="80" selection-start-line="657" selection-start-column="74" selection-end-line="657" selection-end-column="80" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="129" column="83" selection-start-line="129" selection-start-column="83" selection-end-line="129" selection-end-column="83" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteFlowFinalNode.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="213">
@@ -1364,27 +1360,44 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAction.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="167">
-          <caret line="615" column="48" lean-forward="true" selection-start-line="615" selection-start-column="48" selection-end-line="615" selection-end-column="48" />
+          <caret line="652" column="28" selection-start-line="652" selection-start-column="28" selection-end-line="652" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeadlock.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineDecision.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="83">
-          <caret line="374" column="53" selection-start-line="374" selection-start-column="53" selection-end-line="374" selection-end-column="53" />
+        <state relative-caret-position="177">
+          <caret line="320" column="66" selection-start-line="320" selection-start-column="49" selection-end-line="320" selection-end-column="66" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/parser/activityDiagram/ADDefineAction.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTesteDecisionNode.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="652" column="28" lean-forward="true" selection-start-line="652" selection-start-column="28" selection-end-line="652" selection-end-column="28" />
+        <state relative-caret-position="168">
+          <caret line="142" column="54" selection-start-line="142" selection-start-column="53" selection-end-line="142" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/ref/activityDiagram/ADParserTestCheckDeadlock.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="109">
+          <caret line="335" column="54" selection-start-line="335" selection-start-column="54" selection-end-line="335" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/ref/fdr/FdrWrapper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="117">
+          <caret line="436" column="15" selection-start-line="436" selection-start-column="15" selection-end-line="436" selection-end-column="15" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

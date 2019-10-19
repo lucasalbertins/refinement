@@ -40,6 +40,7 @@ public class ADDefineDecision {
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
+        String decisionInputType = null;
         String decisionInputFlow = null;
 
         if (code == 0) {
@@ -49,12 +50,13 @@ public class ADDefineDecision {
 
                 for (int j = 0; j < stereotype.length; j++) {
                     if (stereotype[j].equals("decisionInputFlow")) {
-                        decisionInputFlow = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputType = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputFlow = inFlows[i].getSource().getName();
                     }
                 }
             }
 
-            if (decisionInputFlow != null && inFlows.length == 1) {    //just object
+            if (decisionInputType != null && inFlows.length == 1) {    //just object
                 decision.append(nameDecision + " = ");
 
                 for (int i = 0; i < inFlows.length; i++) {
@@ -69,9 +71,9 @@ public class ADDefineDecision {
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String oe = adUtils.createOE(decisionInputFlow);
+                    String oe = adUtils.createOE(decisionInputType);
                     syncObjectsEdge.put(outFlows[i].getId(), oe);
-                    objectEdges.put(oe, decisionInputFlow);
+                    objectEdges.put(oe, decisionInputType);
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
@@ -132,7 +134,7 @@ public class ADDefineDecision {
                 }
 
                 nodes.append(decision.toString());
-            } else if (decisionInputFlow != null && inFlows.length > 1) {                    //object and control
+            } else if (decisionInputType != null && inFlows.length > 1) {                    //object and control
                 decision.append(nameDecision + " = ");
 
                 String sync2 = "";
@@ -156,13 +158,13 @@ public class ADDefineDecision {
                 adUtils.ce(alphabet, decision, ceIn2, " -> SKIP");
 
                 decision.append(") ||| (");
-                adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputFlow, " -> ");
+                adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputType, " -> ");
 
-                adUtils.setLocal(alphabet, decision, decisionInputFlow, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputFlow);
+                adUtils.setLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
                 decision.append("SKIP)); ");
 
                 adUtils.update(alphabet, decision, 2, 1, false);
-                adUtils.getLocal(alphabet, decision, decisionInputFlow, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputFlow);
+                adUtils.getLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
 
                 decision.append("(");
 
@@ -190,15 +192,15 @@ public class ADDefineDecision {
                 decision.append("((" + nameDecision + " /\\ " + endDiagram + ") ");
 
                 decision.append("[|{|");
-                decision.append("get_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 decision.append("|}|] ");
-                decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputFlow + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputFlow)) + ")) ");
+                decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputType + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputType)) + ")) ");
 
                 decision.append("\\{|");
-                decision.append("get_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("dc");
                 decision.append("|}\n");
 
@@ -306,18 +308,19 @@ public class ADDefineDecision {
 
                 for (int j = 0; j < stereotype.length; j++) {
                     if (stereotype[j].equals("decisionInputFlow")) {
-                        decisionInputFlow = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputType = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputFlow = inFlows[i].getSource().getName();
                     }
                 }
             }
 
-            if (decisionInputFlow != null && inFlows.length == 1) {    //just object
+            if (decisionInputType != null && inFlows.length == 1) {    //just object
                 decision.append(nameDecision + " = ");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String oe = adUtils.createOE(decisionInputFlow);
+                    String oe = adUtils.createOE(decisionInputType);
                     syncObjectsEdge.put(outFlows[i].getId(), oe);
-                    objectEdges.put(oe, decisionInputFlow);
+                    objectEdges.put(oe, decisionInputType);
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
@@ -367,7 +370,7 @@ public class ADDefineDecision {
                     }
                 }
 
-            } else if (decisionInputFlow != null && inFlows.length > 1) {                    //object and control
+            } else if (decisionInputType != null && inFlows.length > 1) {                    //object and control
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
@@ -423,13 +426,13 @@ public class ADDefineDecision {
 
                 for (int j = 0; j < stereotype.length; j++) {
                     if (stereotype[j].equals("decisionInputFlow")) {
-                        //decisionInputFlow = inFlows[i].getSource().getName();
-                        decisionInputFlow = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputType = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputFlow = inFlows[i].getSource().getName();
                     }
                 }
             }
 
-            if (decisionInputFlow != null && inFlows.length == 1) {    //just object
+            if (decisionInputType != null && inFlows.length == 1) {    //just object
                 decision.append(nameDecision + " = ");
 
                 for (int i = 0; i < inFlows.length; i++) {
@@ -505,7 +508,7 @@ public class ADDefineDecision {
                 }
 
                 nodes.append(decision.toString());
-            } else if (decisionInputFlow != null && inFlows.length > 1) {                    //object and control
+            } else if (decisionInputType != null && inFlows.length > 1) {                    //object and control
                 decision.append(nameDecision + " = ");
 
                 String sync2 = "";
@@ -529,13 +532,13 @@ public class ADDefineDecision {
                 adUtils.ce(alphabet, decision, ceIn2, " -> SKIP");
 
                 decision.append(") ||| (");
-                adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputFlow, " -> ");
+                adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputType, " -> ");
 
-                adUtils.setLocal(alphabet, decision, decisionInputFlow, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputFlow);
+                adUtils.setLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
                 decision.append("SKIP)); ");
 
                 adUtils.update(alphabet, decision, 2, 1, false);
-                adUtils.getLocal(alphabet, decision, decisionInputFlow, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputFlow);
+                adUtils.getLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
 
                 decision.append("(");
 
@@ -562,15 +565,15 @@ public class ADDefineDecision {
                 decision.append("((" + nameDecision + " /\\ " + endDiagram + ") ");
 
                 decision.append("[|{|");
-                decision.append("get_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 decision.append("|}|] ");
-                decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputFlow + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputFlow)) + ")) ");
+                decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputType + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputType)) + ")) ");
 
                 decision.append("\\{|");
-                decision.append("get_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputFlow + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("dc");
                 decision.append("|}\n");
 
