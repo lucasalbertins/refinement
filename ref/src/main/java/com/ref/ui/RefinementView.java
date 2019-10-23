@@ -157,7 +157,8 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                         if(!isRefinement) {
                             Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
 //                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
-                            descriptor.buildCounterExample(projectAccessor, res.get(1));
+                            System.out.println("RES: " + res.toString());
+                            descriptor.buildCounterExample(projectAccessor, res.get(0));
                         }else{
                             descriptor.clearMsgs(projectAccessor);
                         }

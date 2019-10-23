@@ -19,7 +19,8 @@ public class SDRefinementChecker {
         Map<Integer, List<String>> result = new HashMap<Integer,List<String>>();
 
         for(int i = 0; i < counterExamples.size(); i++){
-            if( (refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak")) && i == 1)){
+            System.out.println("entrou");
+            if( (refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak")) && i == 0)){
                 result.put(i, buildCounterExample(counterExamples.get(i)));
             }
         }

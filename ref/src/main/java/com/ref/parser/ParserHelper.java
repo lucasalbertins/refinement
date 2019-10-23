@@ -13,12 +13,14 @@ public class ParserHelper {
     private Map<ILifeline, Set<String>> lifelineBaseFrags;
     private Map<String, FragmentInfo> fragmentsInfo;
     private Map<Integer, MessageInfo> msgsInfo;
+    private StringBuilder extraProcess;
     private int currentMsg = 0;
 
     private ParserHelper(){
         this.lifelineFrags = new HashMap<>();
         this.lifelineBaseFrags = new HashMap<>();
         this.fragmentsInfo = new HashMap<>();
+        this.extraProcess = new StringBuilder();
         this.msgsInfo = new HashMap<>();
     }
 
@@ -47,8 +49,11 @@ public class ParserHelper {
         Set<String> frags = new HashSet<>();
         for(String key : this.lifelineFrags.keySet()){
             Set<String> fragsSet = this.lifelineFrags.get(key);
-            frags.addAll(fragsSet);
+//            frags.addAll(fragsSet);
             for(String frag : fragsSet){
+                if(!frag.contains("LOOP")) {
+                    frags.add(frag);
+                }
                 }
         }
         return frags;
@@ -126,4 +131,15 @@ public class ParserHelper {
         }
         return  allTraceMsgs;
     }
+
+    public void addExtraProcess(String process) {
+        this.extraProcess.append(process).append("\n");
+    }
+
+    public String getExtraProcesses(){
+        String extra = this.extraProcess.toString();
+        this.extraProcess.delete(0, extraProcess.length()-1);
+        return extra;
+    }
+
 }

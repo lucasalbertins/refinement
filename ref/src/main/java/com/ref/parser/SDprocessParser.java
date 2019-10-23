@@ -44,6 +44,10 @@ public class SDprocessParser {
         for (IMessage iMessage : seq.getInteraction().getMessages()) {
             process.append(msgParser.translateMessageForProcess(iMessage, seq));
         }
+
+        //Adds auxiliar processes like Loop
+        process.append(ParserHelper.getInstance().getExtraProcesses());
+
         // Generate MessagesBuffer Process
         process.append(parallelParser.translateMessagesBuffer(seq)).append("\n");
         process.append(parallelParser.getParalelProcess(seq,msgParser.getAlphabetMap(),this.processes));

@@ -28,6 +28,7 @@ public class CounterExampleDescriptor2 {
         try {
             TransactionManager.beginTransaction();
 //            List<String> nameTrace = preProcess(trace);
+            System.out.println("trace:" +  trace);
             String error = getErrorMsgName(trace);
             IMessage[] msgs = referenceDiagram.getInteraction().getMessages();
 
@@ -81,6 +82,7 @@ public class CounterExampleDescriptor2 {
     }
 
     private String getErrorMsgName(List<String> msgs) {
+        System.out.println("error:" + msgs);
         String errorMsg = "";
         String error = msgs.get(0);
         String[] splitPoint = error.split("\\.");
