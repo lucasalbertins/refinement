@@ -1,6 +1,9 @@
 package com.ref.parser.process.parsers;
 
+import com.change_vision.jude.api.inf.exception.InvalidUsingException;
 import com.change_vision.jude.api.inf.model.*;
+import com.change_vision.jude.api.inf.presentation.INodePresentation;
+import com.change_vision.jude.api.inf.presentation.IPresentation;
 import com.ref.parser.MessageParser;
 import com.ref.parser.ParserHelper;
 
@@ -24,6 +27,16 @@ public class OptParser extends FragmentParser {
 
         fragInfo.setName(fragname);
         fragInfo.setType("opt");
+
+        IPresentation[] presentations = new IPresentation[0];
+        try {
+            presentations = fragment.getPresentations();
+            INodePresentation np = (INodePresentation) presentations[0];
+            System.out.println(np.getHeight());
+//            System.out.println("OPT PRESENTATION: " + presentations[0].getProperties());
+        } catch (InvalidUsingException e) {
+            e.printStackTrace();
+        }
 
         IInteractionOperand[] operands = fragment.getInteractionOperands();
         fragInfo.setNumberOfOperands(operands.length);

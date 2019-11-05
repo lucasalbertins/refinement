@@ -35,13 +35,13 @@ public class ParserHelper {
         if(this.lifelineFrags.containsKey(lifeline.getId())){
             this.lifelineFrags.get(lifeline.getId()).add(filterFragment(fragment));
             this.lifelineBaseFrags.get(lifeline).add(filterFragment(fragment));
-            System.out.println("added " + filterFragment(fragment) + " to " + lifeline.getName());
+//            System.out.println("added " + filterFragment(fragment) + " to " + lifeline.getName());
         }else {
             Set<String> fragList = new HashSet<>();
             fragList.add(filterFragment(fragment));
             this.lifelineFrags.put(lifeline.getId(), fragList);
             this.lifelineBaseFrags.put(lifeline,fragList);
-            System.out.println("added " + filterFragment(fragment) + " to " + lifeline.getName());
+//            System.out.println("added " + filterFragment(fragment) + " to " + lifeline.getName());
         }
     }
 
@@ -93,7 +93,7 @@ public class ParserHelper {
     }
 
     public void addFragmentInfo(String fragment, FragmentInfo info) {
-        System.out.println("Setting info for " + fragment);
+//        System.out.println("Setting info for " + fragment);
         this.fragmentsInfo.put(fragment,info);
     }
 
@@ -108,7 +108,7 @@ public class ParserHelper {
 
     public List<String> getCounterExampleMsgs(String firstTraceMsg, String errorMsg) {
 
-        System.out.println("Map : " + this.msgsInfo.toString());
+//        System.out.println("Map : " + this.msgsInfo.toString());
 
         int firstMsgIndex = Integer.MAX_VALUE;
         int errorMsgIndex = Integer.MAX_VALUE;
@@ -138,8 +138,11 @@ public class ParserHelper {
 
     public String getExtraProcesses(){
         String extra = this.extraProcess.toString();
-        this.extraProcess.delete(0, extraProcess.length()-1);
-        return extra;
+        if(extra.length() >0){
+            this.extraProcess.delete(0, extraProcess.length()-1);
+            return extra;
+        }
+        else return "";
     }
 
 }

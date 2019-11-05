@@ -28,11 +28,11 @@ public class CounterExampleDescriptor2 {
         try {
             TransactionManager.beginTransaction();
 //            List<String> nameTrace = preProcess(trace);
-            System.out.println("trace:" +  trace);
+//            System.out.println("trace:" +  trace);
             String error = getErrorMsgName(trace);
             IMessage[] msgs = referenceDiagram.getInteraction().getMessages();
 
-            System.out.println("Error :" + error);
+//            System.out.println("Error :" + error);
 
             for (IMessage msg : msgs) {
                 if (msg.getName().equals(error)) {
@@ -57,7 +57,7 @@ public class CounterExampleDescriptor2 {
     }
 
     public void clearMsgs(ProjectAccessor projectAccessor) {
-        System.out.println("Clearing msgs");
+//        System.out.println("Clearing msgs");
         try {
             TransactionManager.beginTransaction();
             IMessage[] msgs = referenceDiagram.getInteraction().getMessages();
@@ -66,7 +66,7 @@ public class CounterExampleDescriptor2 {
                 IPresentation[] presentations = msg.getPresentations();
                 for (IPresentation p : presentations) {
                     if(p instanceof ILinkPresentation){
-                        System.out.println(msg.getName());
+//                        System.out.println(msg.getName());
                         p.setProperty("line.color", "#00000");
                     }
                 }
@@ -82,7 +82,7 @@ public class CounterExampleDescriptor2 {
     }
 
     private String getErrorMsgName(List<String> msgs) {
-        System.out.println("error:" + msgs);
+//        System.out.println("error:" + msgs);
         String errorMsg = "";
         String error = msgs.get(0);
         String[] splitPoint = error.split("\\.");

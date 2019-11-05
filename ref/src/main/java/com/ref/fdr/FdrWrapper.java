@@ -112,7 +112,7 @@ public class FdrWrapper {
             this.session = sessionClass.newInstance();
             File f = new File(filename);
             if (f.exists()) {
-                System.out.println("O arquivo existe");
+//                System.out.println("O arquivo existe");
             }
             invokeProperty(session.getClass(), this.session, "loadFile", String.class, filename);
         } catch (Exception e) {
@@ -245,12 +245,12 @@ public class FdrWrapper {
             for (Object behaviour : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "rootBehaviours",
                     null, null)) {
                 if(iteration == 1) {
-                    System.out.println("Started behaviour " + iteration);
+//                    System.out.println("Started behaviour " + iteration);
                     for (Object event : (Iterable<?>) invokeProperty(debugContextClass, debugContext, "revealTausInTrace",
                             behaviourClass, behaviour)) {
                         if ((Long) event != 0) {
                             Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
-                            System.out.println("added " + result.toString());
+//                            System.out.println("added " + result.toString());
                             sb.append(result.toString() + ", ");
                         }
 //                    Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
@@ -275,14 +275,14 @@ public class FdrWrapper {
 
 
         for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-            System.out.println("loop trace" + event);
+//            System.out.println("loop trace" + event);
             if (event == 1 || event == 0) {
-                System.out.println("Tal :" + event);
+//                System.out.println("Tal :" + event);
 //                Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
                 // sb.append("-, ");
             } else {
                 Object result = invokeProperty(sessionClass, this.session, "uncompileEvent", long.class, event);
-                System.out.println(result.toString());
+//                System.out.println(result.toString());
                 sb.append(result.toString() + ", ");
             }
         }

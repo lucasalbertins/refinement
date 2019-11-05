@@ -21,18 +21,18 @@ public class ParParser extends FragmentParser {
         sb.append("(");
 
         int numberOfMsgs = 0;
-        System.out.println("Number of operands " + operands.length);
+//        System.out.println("Number of operands " + operands.length);
         for(IInteractionOperand operand : operands){
 //            System.out.println("guard : " + operand.getGuard());
             IMessage[] messages = operand.getMessages();
             numberOfMsgs += messages.length;
 
-            System.out.println(operand.getGuard() + " tem " + messages.length + "mensagem, lifeline " + lifeline.getName());
+//            System.out.println(operand.getGuard() + " tem " + messages.length + "mensagem, lifeline " + lifeline.getName());
             if(messages.length > 1) {
                 sb.append("(");
             }
             for (IMessage message: messages) {
-                System.out.println("parseando " + message.getName());
+//                System.out.println("parseando " + message.getName());
                 String parsedMsg = MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq);
                 parsedMsg = parsedMsg.replace("SKIP", "");
                 ParserHelper.getInstance().addMsgInfo(new MessageInfo(message, parsedMsg, true));

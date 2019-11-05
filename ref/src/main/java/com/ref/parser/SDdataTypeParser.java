@@ -123,8 +123,9 @@ public class SDdataTypeParser {
                         } else if (isString(argument1)) {
                             strings.append(argument1);
                             hasString = true;
-                        } else if (!argument1.equals(""))
-                            System.out.println("ERRO");// jogar exception
+                        } else if (!argument1.equals("")){
+//                            System.out.println("ERRO");// jogar exception
+                        }
                     }
                 }
             }

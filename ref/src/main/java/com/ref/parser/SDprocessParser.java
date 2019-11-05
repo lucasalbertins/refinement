@@ -18,7 +18,7 @@ public class SDprocessParser {
     private MessageParser msgParser;
     private FragmentParserFactory fragmentFactory;
     private ParallelParser parallelParser;
-    private Map<INamedElement,String> fragMapping;
+    private Map<INamedElement, String> fragMapping;
 
     public SDprocessParser(ISequenceDiagram seq1, ISequenceDiagram seq2, Map<String, String> lfsWithUnderscore, Map<INamedElement, String> fragMapping) {
         this.seq1 = seq1;
@@ -50,10 +50,10 @@ public class SDprocessParser {
 
         // Generate MessagesBuffer Process
         process.append(parallelParser.translateMessagesBuffer(seq)).append("\n");
-        process.append(parallelParser.getParalelProcess(seq,msgParser.getAlphabetMap(),this.processes));
+        process.append(parallelParser.getParalelProcess(seq, msgParser.getAlphabetMap(), this.processes));
         msgParser.clearAlphabetMap();
         process.append("\n");
-        process.append(parallelParser.getSDprocess(seq,msgParser.getRefinementAlphabet()));
+        process.append(parallelParser.getSDprocess(seq, msgParser.getRefinementAlphabet()));
 
         if (seq.equals(seq1)) {
             sd1Alphabet = new ArrayList<>(msgParser.getRefinementAlphabet());
@@ -77,8 +77,28 @@ public class SDprocessParser {
 
         List<String> lfs = new ArrayList<>();
 
-        for (INamedElement fragment : lifeline.getFragments()) {
-            if( fragment instanceof IMessage){
+        INamedElement[] fragments = lifeline.getFragments();
+//        System.out.println("FRAGS SIZE:" + fragments.length);
+        for (INamedElement fragment : fragments) {
+
+            if(fragment instanceof  ICombinedFragment){
+//                System.out.println("COMBINEDFRAGMENT");
+                IInteractionOperand[] interactionOperands = ((ICombinedFragment) fragment).getInteractionOperands();
+                for (IInteractionOperand operand : interactionOperands) {
+                    IMessage[] messages = operand.getMessages();
+                    for(IMessage msg : messages) {
+                        ILifeline life1 = (ILifeline) msg.getSource();
+                        ILifeline life2 = (ILifeline) msg.getTarget();
+                        if (!lfs.contains(lfsWithUnderscore.get(life1.getBase().toString())))
+                            lfs.add(lfsWithUnderscore.get(life1.getBase().toString()));
+                        if (!lfs.contains(lfsWithUnderscore.get(life2.getBase().toString())))
+                            lfs.add(lfsWithUnderscore.get(life2.getBase().toString()));
+                    }
+                }
+            }
+
+            if (fragment instanceof IMessage) {
+//                System.out.println("MESSAGE:"  + fragment.getName());
                 IMessage msg = (IMessage) fragment;
                 ILifeline life1 = (ILifeline) msg.getSource();
                 ILifeline life2 = (ILifeline) msg.getTarget();
@@ -109,9 +129,9 @@ public class SDprocessParser {
     private String translateFragment(INamedElement fragment, ILifeline lifeline, ISequenceDiagram seq) {
 
 
-        if (fragment instanceof IMessage && !fragmentFactory.getParsedMsgs().contains(fragment)){
+        if (fragment instanceof IMessage && !fragmentFactory.getParsedMsgs().contains(fragment)) {
             String parsedMsg = msgParser.translateMessageForLifeline((IMessage) fragment, lifeline, seq);
-            ParserHelper.getInstance().addMsgInfo(new MessageInfo((IMessage) fragment,parsedMsg, false ));
+            ParserHelper.getInstance().addMsgInfo(new MessageInfo((IMessage) fragment, parsedMsg, false));
             return "(" + parsedMsg + ");";
         } else if (fragment instanceof ICombinedFragment) {
             ICombinedFragment frag = (ICombinedFragment) fragment;

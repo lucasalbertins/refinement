@@ -19,7 +19,7 @@ public class SDRefinementChecker {
         Map<Integer, List<String>> result = new HashMap<Integer,List<String>>();
 
         for(int i = 0; i < counterExamples.size(); i++){
-            System.out.println("entrou");
+//            System.out.println("entrou");
             if( (refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak")) && i == 0)){
                 result.put(i, buildCounterExample(counterExamples.get(i)));
             }
@@ -41,7 +41,7 @@ public class SDRefinementChecker {
         }else{
             trace = FdrWrapper.getInstance().traceCounterExample(counterExample);
             trace.add(0, errorEvent);
-            System.out.println("Trace :" + trace.toString());
+//            System.out.println("Trace :" + trace.toString());
         }
         return trace;
     }
