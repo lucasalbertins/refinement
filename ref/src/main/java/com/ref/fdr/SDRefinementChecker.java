@@ -20,7 +20,7 @@ public class SDRefinementChecker {
 
         for(int i = 0; i < counterExamples.size(); i++){
 //            System.out.println("entrou");
-            if( (refinementType.toLowerCase().equals("strict") || (refinementType.toLowerCase().equals("weak")) && i == 0)){
+            if( refinementType.toLowerCase().equals("strict") || ((refinementType.toLowerCase().equals("weak")) && i == 1)){
                 result.put(i, buildCounterExample(counterExamples.get(i)));
             }
         }

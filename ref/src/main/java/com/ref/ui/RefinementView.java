@@ -158,7 +158,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                             Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
 //                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
                             System.out.println("RES: " + res.toString());
-                            descriptor.buildCounterExample(projectAccessor, res.get(0));
+                            descriptor.buildCounterExample(projectAccessor, res.get(1));
                         }else{
                             descriptor.clearMsgs(projectAccessor);
                         }
@@ -208,7 +208,7 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
             SDParser parser = new SDParser(seq1, seq2);
             //parser.carregaLifelines();
 //            this.descriptor = new CounterexampleDescriptor(parser.getLifelineMapping(),seq1);
-            this.descriptor = new CounterExampleDescriptor2(seq1);
+            this.descriptor = new CounterExampleDescriptor2(seq1); // não faz muito sentido aqui
             String resultado = parser.parseSDs();
 
             cspFile = new File("C:\\log\\test.csp");
