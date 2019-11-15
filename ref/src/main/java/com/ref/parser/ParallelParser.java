@@ -116,7 +116,7 @@ public class ParallelParser {
 
         for (int j = 0; j < i - 2; j++) {
 
-            if (j % 2 == 0)
+            if (j == 0)
                 sbAux.append(processes.get(j));
             else
                 sbAux.append(")");
