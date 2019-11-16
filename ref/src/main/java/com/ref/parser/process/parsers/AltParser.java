@@ -34,7 +34,12 @@ public class AltParser extends FragmentParser{
         IInteractionOperand[] operands = fragment.getInteractionOperands();
         fragInfo.setNumberOfOperands(operands.length);
         for(int i = 0; i < operands.length; i++){
-            sb.append("?").append(operands[i].getGuard());
+            String guard = operands[i].getGuard();
+            if (guard.equals("") || guard.equals("else")){
+                sb.append(".").append("true");
+            }else{
+                sb.append("?").append(guard);
+            }
         }
         sb.append(" -> ");
         sb.append("(");
@@ -48,9 +53,16 @@ public class AltParser extends FragmentParser{
 
         int numberOfMsgs = 0;
 //        System.out.println("Number of operands " + operands.length);
+        boolean hasElse = false;
         for(IInteractionOperand operand : operands){
 //            System.out.println("Iniciou operand");
-            sb.append(operand.getGuard());
+            String guard = operand.getGuard();
+            if(guard.equals("") || guard.equals("else")){
+                hasElse=true;
+                sb.append("true");
+            }else{
+                sb.append(guard);
+            }
             sb.append(" & ");
 //            System.out.println("guard : " + operand.getGuard());
 
@@ -73,7 +85,11 @@ public class AltParser extends FragmentParser{
             sb.delete(sb.length()-1, sb.length());
             sb.append("\n").append("[]").append("\n");
         }
-        sb.delete(sb.length()-4,sb.length());
+        if(!hasElse){
+            sb.append("SKIP");
+        }else{
+            sb.delete(sb.length()-4,sb.length());
+        }
         sb.append(");");
         fragInfo.setNumberOfMessages(numberOfMsgs);
         ParserHelper.getInstance().addFragmentInfo(altMapping.get(fragment), this.fragInfo);

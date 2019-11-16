@@ -137,9 +137,9 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                     if (strictRefinementType.isSelected()) {
                         logger.log("iniciou");
                         executeRefinement();
-                        isRefinement = sdchecker.checkRefinement(cspFile.getAbsolutePath());
-                        if(!isRefinement){
-                            Map<Integer, List<String>> res = sdchecker.describeCounterExample("strict");
+                        sdchecker.checkRefinement(cspFile.getAbsolutePath());
+                        Map<Integer, List<String>> res = sdchecker.describeCounterExample("strict");
+                        if(res.size() > 0 ){
                             System.out.println(res.toString());
                             for (Map.Entry entry : res.entrySet()) {
                                 if (entry.getValue() != null) {
@@ -149,17 +149,19 @@ public class RefinementView extends JPanel implements IPluginExtraTabView, Proje
                                 }
                             }
                         }else {
+                            isRefinement = true;
                             descriptor.clearMsgs(projectAccessor);
                         }
                     } else if (weakRefinementType.isSelected()) {
                         executeRefinement();
-                        isRefinement = sdchecker.checkRefinement(cspFile.getAbsolutePath());
-                        if(!isRefinement) {
-                            Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
+                        sdchecker.checkRefinement(cspFile.getAbsolutePath());
+                        Map<Integer, List<String>> res = sdchecker.describeCounterExample("weak");
+                        if(res.size() > 0) {
 //                            descriptor.buildCounterExample("SD_result", res.get(1), projectAccessor);
                             System.out.println("RES: " + res.toString());
                             descriptor.buildCounterExample(projectAccessor, res.get(1));
                         }else{
+                            isRefinement = true;
                             descriptor.clearMsgs(projectAccessor);
                         }
                     } else {
