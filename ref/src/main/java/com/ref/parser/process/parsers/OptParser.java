@@ -40,29 +40,40 @@ public class OptParser extends FragmentParser {
 
         IInteractionOperand[] operands = fragment.getInteractionOperands();
         fragInfo.setNumberOfOperands(operands.length);
-        for(int i = 0; i < operands.length; i++){
-            sb.append("?").append(operands[i].getGuard());
+        for (int i = 0; i < operands.length; i++) {
+            String guard = operands[i].getGuard();
+            if (guard.equals("")) {
+                sb.append(".").append("true");
+            } else {
+                sb.append("?").append(guard);
+            }
         }
         sb.append(" -> ");
         sb.append("(");
 
         int numberOfMsgs = 0;
-        for(IInteractionOperand operand : operands){
-            sb.append(operand.getGuard());
+        for (IInteractionOperand operand : operands) {
+            String guard = operand.getGuard();
+            if (guard.equals("")) {
+                sb.append("true");
+            } else {
+                sb.append(guard);
+            }
             sb.append(" & ");
 //            System.out.println("guard : " + operand.getGuard());
             IMessage[] messages = operand.getMessages();
             numberOfMsgs += messages.length;
 
-            for (IMessage message: messages) {
+            for (IMessage message : messages) {
                 sb.append("(");
                 String parsedMsg = MessageParser.getInstance().translateMessageForLifeline(message, lifeline, seq);
-                ParserHelper.getInstance().addMsgInfo(new MessageInfo(message,parsedMsg,true));
+                ParserHelper.getInstance().addMsgInfo(new MessageInfo(message, parsedMsg, true));
                 sb.append(parsedMsg);
                 this.parsedMsgs.add(message);
                 sb.append(")");
             }
         }
+        sb.append(" [] SKIP");
         sb.append(");");
         fragInfo.setNumberOfMessages(numberOfMsgs);
         ParserHelper.getInstance().addFragmentInfo(fragMapping.get(fragment), this.fragInfo);
