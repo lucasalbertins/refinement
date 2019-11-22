@@ -126,6 +126,7 @@ public class ADUtils {
 
     public void setLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data) {
         String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countSet_ad++;
+        alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         if (!memoryLocal.contains(memoryLocalPair)) {
@@ -135,6 +136,7 @@ public class ADUtils {
 
     public void getLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data) {
         String get = "get_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countGet_ad++;
+        alphabetNode.add(get);
         action.append(get + "?" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         if (!memoryLocal.contains(memoryLocalPair)) {
@@ -144,6 +146,7 @@ public class ADUtils {
 
     public void setLocalInput(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String oeIn) {
         String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countSet_ad++;
+        alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         memoryLocalChannel.add(new Pair<String, String>(oeIn, nameObject));
@@ -337,7 +340,7 @@ public class ADUtils {
                 .replace(":", "_").replace("/", "_").replace(";", "_")
                 .replace(">", "_").replace("<", "_").replace(",", "_")
                 .replace("{", "_").replace("}", "_").replace("|", "_")
-                .replace("\\", "_");
+                .replace("\\", "_").replace("\n", "_");
     }
 
     public int addCountCall(String name) {
@@ -400,11 +403,18 @@ public class ADUtils {
 
     public HashMap<String, String> getParameterValueDiagram(String type) {
         HashMap<String, String> typesParameter = new HashMap<>();
-        String[] definition = adDiagram.getDefinition().replace(" ", "").split(";");
+        String[] definition = adDiagram.getDefinition().replace("\n", "").replace(" ", "").split(";");
 
         for (String def : definition) {
             String[] keyValue = def.split("=");
-            typesParameter.put(keyValue[0], keyValue[1]);
+
+            if (keyValue.length == 1) {
+                typesParameter.put(keyValue[0], keyValue[0]);
+            } else {
+                typesParameter.put(keyValue[0], keyValue[1]);
+            }
+
+
         }
 
         return typesParameter;

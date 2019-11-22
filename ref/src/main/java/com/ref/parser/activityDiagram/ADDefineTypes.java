@@ -69,7 +69,7 @@ public class ADDefineTypes {
             }
 
             for (Pair<String, Integer> signal : countSignal) {
-                types.append("datatype event_" + signal.getKey() + "_" + nameDiagram + " = Int\n");
+                types.append("event_" + signal.getKey() + "_" + nameDiagram + " = Int\n");
             }
 
         }
@@ -90,26 +90,32 @@ public class ADDefineTypes {
             types.append("\n");
         }
 
-        if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0) {
+        if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || adDiagram.getDefinition().replace(" ", "").length() > 0) {
             HashMap<String, String> typesParameter = new HashMap<>();
-            String[] definition = adDiagram.getDefinition().replace(" ", "").split(";");
+            String[] definition = adDiagram.getDefinition().replace("\n", "").replace(" ", "").split(";");
 
             for (String def : definition) {
                 String[] keyValue = def.split("=");
-                typesParameter.put(keyValue[0], keyValue[1]);
+
+                if (keyValue.length == 1) {
+                    typesParameter.put(keyValue[0], keyValue[0]);
+                } else {
+                    typesParameter.put(keyValue[0], keyValue[1]);
+                }
+
             }
 
             for (String input : parameterNodesInput.keySet()) {
                 types.append(input + "_" + nameDiagram + " = ");
 
-                types.append(typesParameter.get(parameterNodesInput.get(input)) + "\n"); //Verificar se possivel usar o campo definition para definir o intervalo
+                types.append(typesParameter.get(parameterNodesInput.get(input)) + "\n");
 
             }
 
             for (String output : parameterNodesOutput.keySet()) {
                 types.append(output + "_" + nameDiagram + " = ");
 
-                types.append(typesParameter.get(parameterNodesOutput.get(output)) + "\n"); //Verificar se possivel usar o campo definition para definir o intervalo
+                types.append(typesParameter.get(parameterNodesOutput.get(output)) + "\n");
 
             }
 
@@ -131,22 +137,26 @@ public class ADDefineTypes {
 
             }
 
-            for (Pair<String, String> pair : memoryLocalChannel) {
-                if (!parameterNodesInput.containsKey(pair.getValue()) && !parameterNodesOutput.containsKey(pair.getValue()) && !buffer.contains(pair.getValue())) {
-                    types.append(pair.getValue() + "_" + nameDiagram + " = ");
-                    if (objectEdges.containsKey(pair.getKey())) {
-                        if (typeUnionList.containsKey(objectEdges.get(pair.getKey()))) {
-                            types.append(typesParameter.get(typeUnionList.get(objectEdges.get(pair.getKey()))) + "\n");
-                        } else {
-                            types.append(typesParameter.get(parameterNodesInput.get(objectEdges.get(pair.getKey()))) + "\n");
-                        }
-                    } else {
-                        types.append(typesParameter.get(parameterNodesInput.get(pair.getValue())) + "\n");
-                    }
+//            for (Pair<String, String> pair : memoryLocalChannel) {
+//                if (!parameterNodesInput.containsKey(pair.getValue()) && !parameterNodesOutput.containsKey(pair.getValue()) && !buffer.contains(pair.getValue())) {
+//                    types.append(pair.getValue() + "_" + nameDiagram + " = ");
+//                    if (objectEdges.containsKey(pair.getKey())) {
+//                        if (parameterNodesInput.containsKey(objectEdges.get(pair.getKey()))) {
+//                            types.append(typesParameter.get(parameterNodesInput.get(objectEdges.get(pair.getKey()))) + "\n");
+//                        } else {
+//                            types.append(typesParameter.get(objectEdges.get(pair.getKey())) + "\n");
+//                        }
+//                    } else {
+//                        types.append(typesParameter.get(parameterNodesInput.get(pair.getValue())) + "\n");
+//                    }
+//
+//                    buffer.add(pair.getValue());
+//                }
+//
+//            }
 
-                    buffer.add(pair.getValue());
-                }
-
+            for (String definitionName : typesParameter.keySet()) {
+                types.append(definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
             }
 
 

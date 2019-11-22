@@ -53,7 +53,10 @@ public class ADDefineCallBehavior {
         HashMap<String, String> typeMemoryLocal = new HashMap<>();
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
-        callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+
+        if (!callBehaviourList.contains(((IAction) activityNode).getCallingActivity())) {
+            callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+        }
 
         for (int i = 0; i < outPins.length; i++) {
             namesOutpins.add(outPins[i].getName());
@@ -91,17 +94,18 @@ public class ADDefineCallBehavior {
                 for (int x = 0; x < inFlowPin.length; x++) {
                     if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
                         String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
-                        String typeNameObject = objectEdges.get(oeIn);
+                        //String typeNameObject = objectEdges.get(oeIn);
+                        String typeNameObject = inPins[i].getBase().getName();
                         String nameObject = inPins[i].getName();
 
                         callBehaviour.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
                             callBehaviour.append("SKIP) ||| ");
                         } else {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
                             callBehaviour.append("SKIP)");
                         }
 
@@ -125,7 +129,7 @@ public class ADDefineCallBehavior {
             }
 
             for (String nameObj : namesMemoryLocal) {
-                adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
+                adUtils.getLocal(alphabet, callBehaviour, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
             }
             //call
             int count = adUtils.startActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal);
@@ -152,38 +156,40 @@ public class ADDefineCallBehavior {
 
             String nameObject = "";
             String lastName = "";
-            ArrayList<String> union = new ArrayList<>();
+            //ArrayList<String> union = new ArrayList<>();
 
-            for (int i = 0; i < inPins.length; i++) {
-                IFlow[] inFlowPin = inPins[i].getIncomings();
-                for (int x = 0; x < inFlowPin.length; x++) {
-                    String channel = syncObjectsEdge.get(inFlowPin[x].getId());
-                    nameObject += objectEdges.get(channel);
-                    union.add(objectEdges.get(channel));
-                    lastName = objectEdges.get(channel);
-                }
-            }
-
-            if (union.size() > 1) {
-                unionList.add(union);
-                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
-            }
+//            for (int i = 0; i < inPins.length; i++) {
+//                IFlow[] inFlowPin = inPins[i].getIncomings();
+//                for (int x = 0; x < inFlowPin.length; x++) {
+//                    String channel = syncObjectsEdge.get(inFlowPin[x].getId());
+//                    nameObject += objectEdges.get(channel);
+//                    //union.add(objectEdges.get(channel));
+//                    //lastName = objectEdges.get(channel);
+//                }
+//            }
+//
+//            if (union.size() > 1) {
+//                unionList.add(union);
+//                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
+//            }
 
             for (int i = 0; i < outPins.length; i++) {    //creates the parallel output channels
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
                 for (int x = 0; x < outFlowPin.length; x++) {
+                    nameObject = outPins[i].getBase().getName();
+
                     String oe = adUtils.createOE(nameObject);
                     syncObjectsEdge.put(outFlowPin[x].getId(), oe);
 
                     objectEdges.put(oe, nameObject);
-                    String value = "";
-                    for (int j = 0; j < definitionFinal.length; j++) {
-                        String[] expression = definitionFinal[j].split("=");
-                        if (expression[0].equals(outPins[i].getName())) {
-                            value = expression[1];
-                        }
-                    }
+//                    String value = "";
+//                    for (int j = 0; j < definitionFinal.length; j++) {
+//                        String[] expression = definitionFinal[j].split("=");
+//                        if (expression[0].equals(outPins[i].getName())) {
+//                            value = expression[1];
+//                        }
+//                    }
 
                     callBehaviour.append("(");
                     if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
@@ -211,28 +217,28 @@ public class ADDefineCallBehavior {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     callBehaviour.append("[|{|");
-                    callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                    callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     callBehaviour.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                     callBehaviour.append("|}|] ");
 
-                    String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-                    if (typeObj == null) {
-                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-                    }
+                    String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));
+//                    if (typeObj == null) {
+//                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
+//                    }
 
-                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(" + adUtils.getDefaultValue(typeObj) + ")) ");
+                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_t(" + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
                 callBehaviour.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
+                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
                     } else {
-                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     }
                 }
 
@@ -348,53 +354,55 @@ public class ADDefineCallBehavior {
             String nameObject = "";
             String lastName = "";
 
-            ArrayList<String> union = new ArrayList<>();
-            List<String> nameObjects = new ArrayList<>();
-            List<String> nodesAdded = new ArrayList<>();
+            //ArrayList<String> union = new ArrayList<>();
+//            List<String> nameObjects = new ArrayList<>();
+//            List<String> nodesAdded = new ArrayList<>();
+//
+//            for (int i = 0; i < inPins.length; i++) {
+//                IFlow[] inFlowPin = inPins[i].getIncomings();
+//                for (int x = 0; x < inFlowPin.length; x++) {
+//
+//                    nameObjects.addAll(adUtils.getObjects(inFlowPin[x], nodesAdded));
+//
+//                }
+//            }
 
-            for (int i = 0; i < inPins.length; i++) {
-                IFlow[] inFlowPin = inPins[i].getIncomings();
-                for (int x = 0; x < inFlowPin.length; x++) {
+//            for (String nameObj : nameObjects) {
+//                if (!union.contains(nameObj)) {
+//                    nameObject += nameObj;
+//                    union.add(nameObj);
+//                    lastName = nameObj;
+//                }
+//            }
 
-                    nameObjects.addAll(adUtils.getObjects(inFlowPin[x], nodesAdded));
-
-                }
-            }
-
-            for (String nameObj : nameObjects) {
-                if (!union.contains(nameObj)) {
-                    nameObject += nameObj;
-                    union.add(nameObj);
-                    lastName = nameObj;
-                }
-            }
-
-            if (union.size() > 1) {
-                unionList.add(union);
-                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
-            }
+//            if (union.size() > 1) {
+//                unionList.add(union);
+//                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
+//            }
 
             for (int i = 0; i < outPins.length; i++) {    //creates the parallel output channels
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
                 for (int x = 0; x < outFlowPin.length; x++) {
+                    nameObject = outPins[i].getBase().getName();
+
                     String oe = adUtils.createOE(nameObject);
                     syncObjectsEdge.put(outFlowPin[x].getId(), oe);
 
                     objectEdges.put(oe, nameObject);
-                    String value = "";
-                    for (int j = 0; j < definitionFinal.length; j++) {
-                        String[] expression = definitionFinal[j].split("=");
-                        if (expression[0].equals(outPins[i].getName())) {
-                            value = expression[1];
-                        }
-                    }
+//                    String value = "";
+//                    for (int j = 0; j < definitionFinal.length; j++) {
+//                        String[] expression = definitionFinal[j].split("=");
+//                        if (expression[0].equals(outPins[i].getName())) {
+//                            value = expression[1];
+//                        }
+//                    }
 
                     callBehaviour.append("(");
                     if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
-                        adUtils.oe(alphabet, callBehaviour, oe, "!(" + value + ")", " -> SKIP) ||| ");
+                        adUtils.oe(alphabet, callBehaviour, oe, "!(" + outPins[i].getName() + ")", " -> SKIP) ||| ");
                     } else {
-                        adUtils.oe(alphabet, callBehaviour, oe, "!(" + value + ")", " -> SKIP)");
+                        adUtils.oe(alphabet, callBehaviour, oe, "!(" + outPins[i].getName() + ")", " -> SKIP)");
                     }
 
                 }
@@ -483,11 +491,11 @@ public class ADDefineCallBehavior {
             }
         } else if (code == 2) {
             String definition = activityNode.getDefinition();
-            String[] definitionFinal = new String[0];
+            //String[] definitionFinal = new String[0];
 
-            if (definition != null && !(definition.equals(""))) {
-                definitionFinal = definition.replace(" ", "").split(";");
-            }
+//            if (definition != null && !(definition.equals(""))) {
+//                definitionFinal = definition.replace(" ", "").split(";");
+//            }
 
 
             callBehaviour.append(nameCallBehaviour + " = ");
@@ -512,17 +520,18 @@ public class ADDefineCallBehavior {
                 for (int x = 0; x < inFlowPin.length; x++) {
                     if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
                         String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
-                        String typeNameObject = objectEdges.get(oeIn);
+                        //String typeNameObject = objectEdges.get(oeIn);
+                        String typeNameObject = inPins[i].getBase().getName();
                         String nameObject = inPins[i].getName();
 
                         callBehaviour.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
                             callBehaviour.append("SKIP) ||| ");
                         } else {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
                             callBehaviour.append("SKIP)");
                         }
 
@@ -546,7 +555,7 @@ public class ADDefineCallBehavior {
             }
 
             for (String nameObj : namesMemoryLocal) {
-                adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
+                adUtils.getLocal(alphabet, callBehaviour, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
             }
 
             int count = adUtils.startActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal);
@@ -602,28 +611,28 @@ public class ADDefineCallBehavior {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     callBehaviour.append("[|{|");
-                    callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                    callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     callBehaviour.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                     callBehaviour.append("|}|] ");
 
-                    String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-                    if (typeObj == null) {
-                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-                    }
+                    String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));
+//                    if (typeObj == null) {
+//                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
+//                    }
 
-                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(" + adUtils.getDefaultValue(typeObj) + ")) ");
+                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_t(" + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
                 callBehaviour.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
+                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
                     } else {
-                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     }
                 }
 

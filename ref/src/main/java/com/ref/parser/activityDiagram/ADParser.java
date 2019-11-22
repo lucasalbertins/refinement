@@ -200,10 +200,10 @@ public class ADParser {
 
         String nodes = defineNodesActionAndControl();
 
-        for (IActivity ad: callBehaviourList) {
-            if (!callBehaviourListCreated.contains(ad)) {
-                callBehaviourListCreated.add(ad);
-                callBehaviour += "\n" + (new ADParser(ad, ad.getActivityDiagram().getName(), ad.getActivityDiagram())).parserDiagram();
+        for (IActivity adCalling: callBehaviourList) {
+            if (!callBehaviourListCreated.contains(adCalling)) {
+                callBehaviourListCreated.add(adCalling);
+                callBehaviour += "\n" + (new ADParser(adCalling, adCalling.getActivityDiagram().getName(), adCalling.getActivityDiagram())).parserDiagram();
             }
         }
 

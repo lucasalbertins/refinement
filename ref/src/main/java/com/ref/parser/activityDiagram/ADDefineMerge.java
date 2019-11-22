@@ -69,7 +69,12 @@ public class ADDefineMerge {
                     if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
                         nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
                         nameObjectUnique += nameObjects.get(ceInitials.get(i));
-                        typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+
+                        if (parameterNodesInput.containsKey(nameObjects.get(ceInitials.get(i)))) {
+                            typeMemoryLocal = parameterNodesInput.get(nameObjects.get(ceInitials.get(i)));
+                        } else {
+                            typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+                        }
                     }
                 }
             }
@@ -128,7 +133,7 @@ public class ADDefineMerge {
                 merge.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 merge.append("|}|] ");
-                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
+                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(typeMemoryLocal) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -260,10 +265,16 @@ public class ADDefineMerge {
                     if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
                         nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
                         nameObjectUnique += nameObjects.get(ceInitials.get(i));
-                        typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+
+                        if (parameterNodesInput.containsKey(nameObjects.get(ceInitials.get(i)))) {
+                            typeMemoryLocal = parameterNodesInput.get(nameObjects.get(ceInitials.get(i)));
+                        } else {
+                            typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+                        }
                     }
                 }
             }
+
 
             if (!nameObjectUnique.equals("")) {
                 namesMemoryLocal.add(nameObjectUnique);
@@ -318,7 +329,7 @@ public class ADDefineMerge {
                 merge.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 merge.append("|}|] ");
-                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
+                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(typeMemoryLocal) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");

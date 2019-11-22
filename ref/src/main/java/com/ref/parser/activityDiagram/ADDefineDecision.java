@@ -70,19 +70,36 @@ public class ADDefineDecision {
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String oe = adUtils.createOE(decisionInputType);
-                    syncObjectsEdge.put(outFlows[i].getId(), oe);
-                    objectEdges.put(oe, decisionInputType);
+                    String oe = "";
+                    String ce = "";
+
+                    if (outFlows[i].getTarget() instanceof IPin) {
+                        oe = adUtils.createOE(decisionInputType);
+                        syncObjectsEdge.put(outFlows[i].getId(), oe);
+
+                        objectEdges.put(oe, decisionInputType);
+                    } else {
+                        ce = adUtils.createCE();
+                        syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    }
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
                     }
 
-                    if (i >= 0 && i < outFlows.length - 1) {
-                        adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
+                    if (outFlows[i].getTarget() instanceof IPin) {
+                        if (i >= 0 && i < outFlows.length - 1) {
+                            adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
+                        } else {
+                            adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
+                        }
                     } else {
-                        adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
+                        if (i >= 0 && i < outFlows.length - 1) {
+                            adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
+                        } else {
+                            adUtils.ce(alphabet, decision, ce, " -> SKIP)");
+                        }
                     }
                 }
 
@@ -317,19 +334,36 @@ public class ADDefineDecision {
                 decision.append(nameDecision + " = ");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String oe = adUtils.createOE(decisionInputType);
-                    syncObjectsEdge.put(outFlows[i].getId(), oe);
-                    objectEdges.put(oe, decisionInputType);
+                    String oe = "";
+                    String ce = "";
+
+                    if (outFlows[i].getTarget() instanceof IPin) {
+                        oe = adUtils.createOE(decisionInputType);
+                        syncObjectsEdge.put(outFlows[i].getId(), oe);
+
+                        objectEdges.put(oe, decisionInputType);
+                    } else {
+                        ce = adUtils.createCE();
+                        syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    }
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
                     }
 
-                    if (i >= 0 && i < outFlows.length - 1) {
-                        adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
+                    if (outFlows[i].getTarget() instanceof IPin) {
+                        if (i >= 0 && i < outFlows.length - 1) {
+                            adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
+                        } else {
+                            adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
+                        }
                     } else {
-                        adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
+                        if (i >= 0 && i < outFlows.length - 1) {
+                            adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
+                        } else {
+                            adUtils.ce(alphabet, decision, ce, " -> SKIP)");
+                        }
                     }
                 }
 
@@ -446,17 +480,36 @@ public class ADDefineDecision {
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String oe = syncObjectsEdge.get(outFlows[i].getId());
+                    String oe = "";
+                    String ce = "";
+
+                    if (outFlows[i].getTarget() instanceof IPin) {
+                        oe = syncObjectsEdge.get(outFlows[i].getId());
+                        syncObjectsEdge.put(outFlows[i].getId(), oe);
+
+                        objectEdges.put(oe, decisionInputType);
+                    } else {
+                        ce = syncChannelsEdge.get(outFlows[i].getId());
+                        syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    }
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
                     }
 
-                    if (i >= 0 && i < outFlows.length - 1) {
-                        adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
+                    if (outFlows[i].getTarget() instanceof IPin) {
+                        if (i >= 0 && i < outFlows.length - 1) {
+                            adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
+                        } else {
+                            adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
+                        }
                     } else {
-                        adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
+                        if (i >= 0 && i < outFlows.length - 1) {
+                            adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
+                        } else {
+                            adUtils.ce(alphabet, decision, ce, " -> SKIP)");
+                        }
                     }
                 }
 

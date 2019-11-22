@@ -45,7 +45,7 @@ public class ADDefineJoin {
         IFlow[] inFlows = activityNode.getIncomings();
         HashMap<String, String> nameObjects = new HashMap<>();
         List<String> objects = new ArrayList<>();
-        String nameObject = null;
+        String typeObject = null;
         List<String> nameObjectAdded = new ArrayList<>();
         boolean syncBool = false;
         boolean sync2Bool = false;
@@ -60,8 +60,11 @@ public class ADDefineJoin {
 
                 if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
                     String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
-                    nameObject = objectEdges.get(ceIn2);
-                    nameObjects.put(inFlows[i].getId(), nameObject);
+                    //nameObject = objectEdges.get(ceIn2);
+
+                    typeObject = ((IObjectNode) inFlows[i].getSource()).getBase().getName();
+
+                    nameObjects.put(inFlows[i].getId(), typeObject);
                     sync2Bool = true;
                 }
             }
@@ -82,21 +85,21 @@ public class ADDefineJoin {
                     }
                 } else {
 
-                    nameObject = nameObjects.get(ceInitials.get(i));
+                    typeObject = nameObjects.get(ceInitials.get(i));
 
-                    if (!objects.contains(nameObject)) {
-                        objects.add(nameObject);
+                    if (!objects.contains(typeObject)) {
+                        objects.add(typeObject);
                     }
 
                     joinNode.append("(");
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
-                        adUtils.ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
+                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
                         joinNode.append("SKIP) ||| ");
                     } else {
-                        adUtils.ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
+                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
                         joinNode.append("SKIP)");
                     }
                 }
@@ -115,21 +118,21 @@ public class ADDefineJoin {
 
             joinNode.append("(");
 
-            nameObject = "";
+            typeObject = "";
 
             for (int i = 0; i < inFlows.length; i++) {
                 String channel = syncObjectsEdge.get(inFlows[i].getId());
                 if (objectEdges.get(channel) != null && !nameObjectAdded.contains(objectEdges.get(channel))) {
                     nameObjectAdded.add(objectEdges.get(channel));
-                    nameObject += objectEdges.get(channel);
+                    typeObject += objectEdges.get(channel);
                 }
             }
 
             if (sync2Bool) {
                 for (int i = 0; i < objects.size(); i++) {    //creates the parallel output channels
-                    String oe = adUtils.createOE(nameObject);
+                    String oe = adUtils.createOE(typeObject);
                     syncObjectsEdge.put(outFlows[0].getId(), oe);    //just one output
-                    objectEdges.put(oe, nameObject);
+                    objectEdges.put(oe, typeObject);
                     joinNode.append("(");
 
                     if (i >= 0 && i < objects.size() - 1) {
@@ -171,7 +174,7 @@ public class ADDefineJoin {
                 joinNode.append("get_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 joinNode.append("set_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 joinNode.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] ");
-                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(objects.get(i))) + "))");
+                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(" + adUtils.getDefaultValue(objects.get(i)) + "))");
             }
 
             if (objects.size() > 0) {
@@ -220,19 +223,22 @@ public class ADDefineJoin {
                 }
 
                 if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
-                    nameObject = objectEdges.get(ceIn2);
-                    nameObjects.put(inFlows[i].getId(), nameObject);
+                    //String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
+                    //nameObject = objectEdges.get(ceIn2);
 
-                    if (!obj.contains(nameObject)) {
-                        obj.add(nameObject);
+                    typeObject = ((IObjectNode) inFlows[i].getSource()).getBase().getName();
+
+                    nameObjects.put(inFlows[i].getId(), typeObject);
+
+                    if (!obj.contains(typeObject)) {
+                        obj.add(typeObject);
                     }
 
                     sync2Bool = true;
                 }
             }
 
-            nameObject = "";
+            typeObject = "";
             List<String> nodesAdded = new ArrayList<>();
 
             List<String> nameObjs = new ArrayList<>();
@@ -246,7 +252,7 @@ public class ADDefineJoin {
             for (String nameObj : nameObjs) {
                 if (!nameObjectAdded.contains(nameObj)) {
                     nameObjectAdded.add(nameObj);
-                    nameObject += nameObj;
+                    typeObject += nameObj;
                     union.add(nameObj);
                     lastName = nameObj;
                 }
@@ -254,14 +260,14 @@ public class ADDefineJoin {
 
             if (union.size() > 1) {
                 unionList.add(union);
-                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
+                typeUnionList.put(typeObject, parameterNodesInput.get(lastName));
             }
 
             if (sync2Bool) {
                 for (int i = 0; i < obj.size(); i++) {    //creates the parallel output channels
-                    String oe = adUtils.createOE(nameObject);
+                    String oe = adUtils.createOE(typeObject);
                     syncObjectsEdge.put(outFlows[0].getId(), oe);    //just one output
-                    objectEdges.put(oe, nameObject);
+                    objectEdges.put(oe, typeObject);
                     joinNode.append("(");
 
                     if (i >= 0 && i < obj.size() - 1) {
@@ -310,9 +316,12 @@ public class ADDefineJoin {
                 }
 
                 if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
-                    nameObject = objectEdges.get(ceIn2);
-                    nameObjects.put(inFlows[i].getId(), nameObject);
+                    //String oeIn = syncObjectsEdge.get(inFlows[i].getId());
+                    //nameObject = objectEdges.get(oeIn);
+
+                    typeObject = ((IObjectNode) inFlows[i].getSource()).getBase().getName();
+
+                    nameObjects.put(inFlows[i].getId(), typeObject);
                     sync2Bool = true;
                 }
             }
@@ -333,21 +342,21 @@ public class ADDefineJoin {
                     }
                 } else {
 
-                    nameObject = nameObjects.get(ceInitials.get(i));
+                    typeObject = nameObjects.get(ceInitials.get(i));
 
-                    if (!objects.contains(nameObject)) {
-                        objects.add(nameObject);
+                    if (!objects.contains(typeObject)) {
+                        objects.add(typeObject);
                     }
 
                     joinNode.append("(");
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
-                        adUtils.ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
+                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
                         joinNode.append("SKIP) ||| ");
                     } else {
-                        adUtils.ce(alphabet, joinNode, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, nameObject, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
+                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
                         joinNode.append("SKIP)");
                     }
                 }
@@ -411,7 +420,7 @@ public class ADDefineJoin {
                 joinNode.append("get_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 joinNode.append("set_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 joinNode.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] ");
-                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(objects.get(i))) + "))");
+                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(" + adUtils.getDefaultValue(objects.get(i)) + "))");
             }
 
             if (objects.size() > 0) {

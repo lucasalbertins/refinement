@@ -211,6 +211,8 @@ public class ADDefineNodesActionAndControl {
                             activityNode = defineInputParameterNode(activityNode, nodes);
                         } else if (activityNode.getIncomings().length > 0) {
                             activityNode = defineOutputParameterNode(activityNode, nodes);
+                        } else {
+                            activityNode = null;
                         }
 
                     } else if (activityNode instanceof IObjectNode) {

@@ -2,6 +2,7 @@ package com.ref.parser.activityDiagram;
 
 import com.change_vision.jude.api.inf.model.IActivity;
 import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.change_vision.jude.api.inf.model.IFlow;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ADDefineOutputParameterNode {
                 if (!nameObjectAdded.contains(nameObjects.get(ceInitials.get(i)))) {
                     nameObjectAdded.add(nameObjects.get(ceInitials.get(i)));
                     nameObjectUnique += nameObjects.get(ceInitials.get(i));
-                    typeMemoryLocal = nameObjects.get(ceInitials.get(i));
+                    //typeMemoryLocal = nameObjects.get(ceInitials.get(i));
                 }
             }
         }
@@ -112,11 +113,11 @@ public class ADDefineOutputParameterNode {
 
         adUtils.update(alphabet, outParameter, 1, 0, true);
 
-        String nameObjectReal = parameterNodesInput.get(typeMemoryLocal);
+        String nameObjectReal = ((IActivityParameterNode) activityNode).getBase().getName();
 
-        if (nameObjectReal == null) {
-            nameObjectReal = typeUnionList.get(typeMemoryLocal);
-        }
+//        if (nameObjectReal == null) {
+//            nameObjectReal = typeUnionList.get(typeMemoryLocal);
+//        }
 
         outParameter.append(nameOutParameter + "\n");
         outParameter.append(nameOutParameterTermination + " = ");
