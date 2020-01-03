@@ -66,9 +66,9 @@ public class ADDefineMainNodes {
             mainNode.append("(");
         }
 
-        for (int i = 0; i < signalChannelsLocal.size(); i++) {
-            mainNode.append("(");
-        }
+        //for (int i = 0; i < signalChannelsLocal.size(); i++) {
+            if(signalChannelsLocal.size() > 0) mainNode.append("(");
+        //}
 
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ")");
 
@@ -83,12 +83,20 @@ public class ADDefineMainNodes {
 
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
         mainNode.append("TokenManager_" + nameDiagram + "_t(0,0))");
-
-        for (String signal: signalChannelsLocal) {
+        
+        if(signalChannelsLocal.size()> 0) {
+	        StringBuilder alfabetoPools = new StringBuilder();
+	        for(String signal: signalChannelsLocal) {
+	        	alfabetoPools.append("signal_"+signal+",accept_"+signal+",");
+	        }
+	        alfabetoPools.append("endDiagram_"+nameDiagram);
+	        mainNode.append(" [|{|"+alfabetoPools+"|}|]pools)");
+        }
+        /*for (String signal: signalChannelsLocal) {
             mainNode.append(" [|{|");
             mainNode.append("signal_" + signal + "," + "accept_" + signal + "," + "endDiagram_" + nameDiagram);
             mainNode.append("|}|] pool_" + signal + "_t(<>))");
-        }
+        }*//////
 
         if (lockChannel.size() > 0) {
             mainNode.append(" [|{|");
