@@ -115,7 +115,7 @@ public class ADParserTestSignal {
 				"MAIN = signal1(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_signal1 = endDiagram_signal1 -> SKIP\n" +
-				"signal1(ID_signal1) = ((Internal_signal1(ID_signal1) [|{|update_signal1,clear_signal1,endDiagram_signal1|}|] TokenManager_signal1_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal1|}|] pool_signal1_t(<>))\n" +
+				"signal1(ID_signal1) = ((Internal_signal1(ID_signal1) [|{|update_signal1,clear_signal1,endDiagram_signal1|}|] TokenManager_signal1_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal1|}|] pools)\n" +
 				"Internal_signal1(ID_signal1) = StartActivity_signal1(ID_signal1); Node_signal1; EndActivity_signal1(ID_signal1)\n" +
 				"StartActivity_signal1(ID_signal1) = startActivity_signal1.ID_signal1 -> SKIP\n" +
 				"EndActivity_signal1(ID_signal1) = endActivity_signal1.ID_signal1 -> SKIP\n" +
@@ -141,6 +141,11 @@ public class ADParserTestSignal {
 				"TokenManager_signal1_t(x,init) = TokenManager_signal1(x,init)\n" +
 				"pool_signal1(l) = (signal_signal1?event_signal1_signal1 -> if length(l) < 5 then pool_signal1(l^<event_signal1_signal1>) else pool_signal1(l)) [] (length(l) > 0 & accept_signal1.1!head(l) -> pool_signal1(tail(l)))\n" +
 				"pool_signal1_t(l) = pool_signal1(l) /\\ END_DIAGRAM_signal1\n" +
+				
+				"datatype POOLNAME = signal1\n"+
+				"POOL(signal1) = pool_signal1_t(<>)\n"+
+				"pools =[|{|endDiagram_signal1|}|]x:POOLNAME @ POOL(x)\n"+
+				
 				"\n" +
 				"assert MAIN :[deadlock free]\n" +
 				"assert MAIN :[divergence free]\n" +
@@ -175,7 +180,7 @@ public class ADParserTestSignal {
 				"MAIN = signal2(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_signal2 = endDiagram_signal2 -> SKIP\n" +
-				"signal2(ID_signal2) = ((Internal_signal2(ID_signal2) [|{|update_signal2,clear_signal2,endDiagram_signal2|}|] TokenManager_signal2_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal2|}|] pool_signal1_t(<>))\n" +
+				"signal2(ID_signal2) = ((Internal_signal2(ID_signal2) [|{|update_signal2,clear_signal2,endDiagram_signal2|}|] TokenManager_signal2_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal2|}|] pools)\n" +
 				"Internal_signal2(ID_signal2) = StartActivity_signal2(ID_signal2); Node_signal2; EndActivity_signal2(ID_signal2)\n" +
 				"StartActivity_signal2(ID_signal2) = startActivity_signal2.ID_signal2 -> SKIP\n" +
 				"EndActivity_signal2(ID_signal2) = endActivity_signal2.ID_signal2 -> SKIP\n" +
@@ -202,6 +207,11 @@ public class ADParserTestSignal {
 				"TokenManager_signal2_t(x,init) = TokenManager_signal2(x,init)\n" +
 				"pool_signal1(l) = (signal_signal1?event_signal1_signal2 -> if length(l) < 5 then pool_signal1(l^<event_signal1_signal2>) else pool_signal1(l)) [] (length(l) > 0 & accept_signal1.1!head(l) -> pool_signal1(tail(l)))\n" +
 				"pool_signal1_t(l) = pool_signal1(l) /\\ END_DIAGRAM_signal2\n" +
+				
+				"datatype POOLNAME = signal1\n"+
+				"POOL(signal1) = pool_signal1_t(<>)\n"+
+				"pools =[|{|endDiagram_signal1|}|]x:POOLNAME @ POOL(x)\n"+
+				
 				"\n" +
 				"assert MAIN :[deadlock free]\n" +
 				"assert MAIN :[divergence free]\n" +
@@ -237,7 +247,7 @@ public class ADParserTestSignal {
 				"MAIN = signal3_1(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_signal3_1 = endDiagram_signal3_1 -> SKIP\n" +
-				"signal3_1(ID_signal3_1) = (((Internal_signal3_1(ID_signal3_1) [|{|startActivity_signal3_2.1,endActivity_signal3_2.1|}|] signal3_2(1)) [|{|update_signal3_1,clear_signal3_1,endDiagram_signal3_1|}|] TokenManager_signal3_1_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal3_1|}|] pool_signal1_t(<>))\n" +
+				"signal3_1(ID_signal3_1) = (((Internal_signal3_1(ID_signal3_1) [|{|startActivity_signal3_2.1,endActivity_signal3_2.1|}|] signal3_2(1)) [|{|update_signal3_1,clear_signal3_1,endDiagram_signal3_1|}|] TokenManager_signal3_1_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal3_1|}|] pools)\n" +
 				"Internal_signal3_1(ID_signal3_1) = StartActivity_signal3_1(ID_signal3_1); Node_signal3_1; EndActivity_signal3_1(ID_signal3_1)\n" +
 				"StartActivity_signal3_1(ID_signal3_1) = startActivity_signal3_1.ID_signal3_1 -> SKIP\n" +
 				"EndActivity_signal3_1(ID_signal3_1) = endActivity_signal3_1.ID_signal3_1 -> SKIP\n" +
@@ -263,6 +273,11 @@ public class ADParserTestSignal {
 				"TokenManager_signal3_1_t(x,init) = TokenManager_signal3_1(x,init)\n" +
 				"pool_signal1(l) = (signal_signal1?event_signal1_signal3_1 -> if length(l) < 5 then pool_signal1(l^<event_signal1_signal3_1>) else pool_signal1(l)) [] (length(l) > 0 & accept_signal1.1!head(l) -> pool_signal1(tail(l)))\n" +
 				"pool_signal1_t(l) = pool_signal1(l) /\\ END_DIAGRAM_signal3_1\n" +
+				
+				"datatype POOLNAME = signal1\n"+
+				"POOL(signal1) = pool_signal1_t(<>)\n"+
+				"pools =[|{|endDiagram_signal1|}|]x:POOLNAME @ POOL(x)\n"+
+				
 				"\n" +
 				"datatype alphabet_signal3_2 = fin1_signal3_2_t_alphabet | accept_signal1_1_signal3_2_t_alphabet\n" +
 				"countCe_signal3_2 = {1..1}\n" +
@@ -328,7 +343,7 @@ public class ADParserTestSignal {
 				"MAIN = signal4(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_signal4 = endDiagram_signal4 -> SKIP\n" +
-				"signal4(ID_signal4) = ((Internal_signal4(ID_signal4) [|{|update_signal4,clear_signal4,endDiagram_signal4|}|] TokenManager_signal4_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal4|}|] pool_signal1_t(<>))\n" +
+				"signal4(ID_signal4) = ((Internal_signal4(ID_signal4) [|{|update_signal4,clear_signal4,endDiagram_signal4|}|] TokenManager_signal4_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal4|}|] pools)\n" +
 				"Internal_signal4(ID_signal4) = StartActivity_signal4(ID_signal4); Node_signal4; EndActivity_signal4(ID_signal4)\n" +
 				"StartActivity_signal4(ID_signal4) = startActivity_signal4.ID_signal4 -> SKIP\n" +
 				"EndActivity_signal4(ID_signal4) = endActivity_signal4.ID_signal4 -> SKIP\n" +
@@ -362,6 +377,11 @@ public class ADParserTestSignal {
 				"TokenManager_signal4_t(x,init) = TokenManager_signal4(x,init)\n" +
 				"pool_signal1(l) = (signal_signal1?event_signal1_signal4 -> if length(l) < 5 then pool_signal1(l^<event_signal1_signal4>) else pool_signal1(l)) [] (length(l) > 0 & accept_signal1.1!head(l) -> pool_signal1(tail(l)))\n" +
 				"pool_signal1_t(l) = pool_signal1(l) /\\ END_DIAGRAM_signal4\n" +
+				
+				"datatype POOLNAME = signal1\n"+
+				"POOL(signal1) = pool_signal1_t(<>)\n"+
+				"pools =[|{|endDiagram_signal1|}|]x:POOLNAME @ POOL(x)\n"+
+				
 				"\n" +
 				"assert MAIN :[deadlock free]\n" +
 				"assert MAIN :[divergence free]\n" +
@@ -396,7 +416,7 @@ public class ADParserTestSignal {
 				"MAIN = signal6(1); LOOP\n" +
 				"LOOP = loop -> LOOP\n" +
 				"END_DIAGRAM_signal6 = endDiagram_signal6 -> SKIP\n" +
-				"signal6(ID_signal6) = ((Internal_signal6(ID_signal6) [|{|update_signal6,clear_signal6,endDiagram_signal6|}|] TokenManager_signal6_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal6|}|] pool_signal1_t(<>))\n" +
+				"signal6(ID_signal6) = ((Internal_signal6(ID_signal6) [|{|update_signal6,clear_signal6,endDiagram_signal6|}|] TokenManager_signal6_t(0,0)) [|{|signal_signal1,accept_signal1,endDiagram_signal6|}|] pools)\n" +
 				"Internal_signal6(ID_signal6) = StartActivity_signal6(ID_signal6); Node_signal6; EndActivity_signal6(ID_signal6)\n" +
 				"StartActivity_signal6(ID_signal6) = startActivity_signal6.ID_signal6 -> SKIP\n" +
 				"EndActivity_signal6(ID_signal6) = endActivity_signal6.ID_signal6 -> SKIP\n" +
@@ -434,6 +454,11 @@ public class ADParserTestSignal {
 				"TokenManager_signal6_t(x,init) = TokenManager_signal6(x,init)\n" +
 				"pool_signal1(l) = (signal_signal1?event_signal1_signal6 -> if length(l) < 5 then pool_signal1(l^<event_signal1_signal6>) else pool_signal1(l)) [] (length(l) > 0 & accept_signal1.1!head(l) -> pool_signal1(tail(l))) [] (length(l) > 0 & accept_signal1.2!head(l) -> pool_signal1(tail(l)))\n" +
 				"pool_signal1_t(l) = pool_signal1(l) /\\ END_DIAGRAM_signal6\n" +
+				
+				"datatype POOLNAME = signal1\n"+
+				"POOL(signal1) = pool_signal1_t(<>)\n"+
+				"pools =[|{|endDiagram_signal1|}|]x:POOLNAME @ POOL(x)\n"+
+
 				"\n" +
 				"assert MAIN :[deadlock free]\n" +
 				"assert MAIN :[divergence free]\n" +
