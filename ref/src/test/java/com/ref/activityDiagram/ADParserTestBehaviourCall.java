@@ -20,6 +20,7 @@ public class ADParserTestBehaviourCall {
 	private static ADParser parser3;
 	private static ADParser parser4;
 	private static ADParser parser5;
+	private static ADParser parser6;
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -83,6 +84,14 @@ public class ADParserTestBehaviourCall {
 			}
 
 			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
+			
+			for (int i = 0; i < findElements.length; i++) {
+				if (findElements[i].getName().equals("behavior6")) {
+					ad = (IActivityDiagram) findElements[i];
+				}
+			}
+
+			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -702,6 +711,100 @@ public class ADParserTestBehaviourCall {
 				"\n" +
 				"assert MAIN :[deadlock free]\n" +
 				"assert MAIN :[divergence free]\n" +
+				"assert MAIN :[deterministic]");
+
+		assertEquals(expected.toString(), actual);
+	}
+	
+	/*
+	 * Teste de Tradução do call behavior
+	 * */
+	@Test
+	public void TestNodesBehavior6() {
+		parser5.clearBuffer();
+		String actual = parser5.parserDiagram();
+		StringBuffer expected = new StringBuffer();
+		expected.append("transparent normal\n" + 
+				"ID_behavior6 = {1..1}\n" + 
+				"ID_CB1 = {1..1}\n" + 
+				"datatype T = lock | unlock\n" + 
+				"datatype alphabet_behavior6 = init_behavior6_t_alphabet | CB1_behavior6_t_alphabet| DecisionNode_MergeNode0_behavior6_t_alphabet\n" + 
+				"countCe_behavior6 = {1..3}\n" + 
+				"countUpdate_behavior6 = {1..1}\n" + 
+				"countClear_behavior6 = {1..0}\n" + 
+				"limiteUpdate_behavior6 = {(1)..(1)}\n" + 
+				"channel startActivity_behavior6: ID_behavior6\n" + 
+				"channel endActivity_behavior6: ID_behavior6\n" + 
+				"channel ce_behavior6: countCe_behavior6\n" + 
+				"channel clear_behavior6: countClear_behavior6\n" + 
+				"channel update_behavior6: countUpdate_behavior6.limiteUpdate_behavior6\n" + 
+				"channel endDiagram_behavior6\n" + 
+				"channel loop\n" + 
+				"channel dc\n" + 
+				"MAIN = behavior6(1); LOOP\n" + 
+				"LOOP = loop -> LOOP\n" + 
+				"END_DIAGRAM_behavior6 = endDiagram_behavior6 -> SKIP\n" + 
+				"behavior6(ID_behavior6) = ((Internal_behavior6(ID_behavior6)) [|{|update_behavior6,clear_behavior6,endDiagram_behavior6|}|] TokenManager_behavior6_t(0,0))\n" + 
+				"Internal_behavior6(ID_behavior6) = StartActivity_behavior6(ID_behavior6); Node_behavior6; EndActivity_behavior6(ID_behavior6)\n" + 
+				"StartActivity_behavior6(ID_behavior6) = startActivity_behavior6.ID_behavior6 -> SKIP\n" + 
+				"EndActivity_behavior6(ID_behavior6) = endActivity_behavior6.ID_behavior6 -> SKIP\n" + 
+				"AlphabetDiagram_behavior6(init_behavior6_t_alphabet) = {|update_behavior6.1,ce_behavior6.1,endDiagram_behavior6|}\n" + 
+				"AlphabetDiagram_behavior6(CB1_behavior6_t_alphabet) = union({|ce_behavior6.2,startActivity_CB1.1,endActivity_CB1.1,ce_behavior6.3,endDiagram_behavior6|},AlphabetDiagram_CB1_t)\n" + 
+				"AlphabetDiagram_behavior6(DecisionNode_MergeNode0_behavior6_t_alphabet) = {|ce_behavior6.3,ce_behavior6.1,ce_behavior6.2,endDiagram_behavior6|}\n" + 
+				"ProcessDiagram_behavior6(init_behavior6_t_alphabet) = init_behavior6_t\n" + 
+				"ProcessDiagram_behavior6(CB1_behavior6_t_alphabet) = CB1_behavior6_t\n" + 
+				"ProcessDiagram_behavior6(DecisionNode_MergeNode0_behavior6_t_alphabet) = DecisionNode_MergeNode0_behavior6_t\n" + 
+				"Node_behavior6 = || x:alphabet_behavior6 @ [AlphabetDiagram_behavior6(x)] ProcessDiagram_behavior6(x)\n" + 
+				"InitialNode1_behavior6_t = update_behavior6.1!(1-0) -> ((ce_behavior6.1 -> SKIP))\n" + 
+				"CB1_behavior6 = ((ce_behavior6.2 -> SKIP)); CB1(1); ((ce_behavior6.3 -> SKIP)); CB1_behavior6\n" + 
+				"CB1_behavior6_t = CB1_behavior6 /\\ END_DIAGRAM_behavior6\n" + 
+				"DecisionNode_MergeNode0_behavior6 = ((ce_behavior6.3 -> SKIP) [] (ce_behavior6.1 -> SKIP)); ce_behavior6.2 -> DecisionNode_MergeNode0_behavior6\n" + 
+				"DecisionNode_MergeNode0_behavior6_t = DecisionNode_MergeNode0_behavior6 /\\ END_DIAGRAM_behavior6\n" + 
+				"init_behavior6_t = (InitialNode1_behavior6_t) /\\ END_DIAGRAM_behavior6\n" + 
+				"\n" + 
+				"TokenManager_behavior6(x,init) = update_behavior6?c?y:limiteUpdate_behavior6 -> x+y < 10 & x+y > -10 & TokenManager_behavior6(x+y,1) [] clear_behavior6?c -> endDiagram_behavior6 -> SKIP [] x == 0 & init == 1 & endDiagram_behavior6 -> SKIP\n" + 
+				"TokenManager_behavior6_t(x,init) = TokenManager_behavior6(x,init)\n" + 
+				"\n" + 
+				"datatype alphabet_CB1 = init_CB1_t_alphabet | act1_CB1_t_alphabet| ActivityFinal0_CB1_t_alphabet\n" + 
+				"countCe_CB1 = {1..2}\n" + 
+				"countUpdate_CB1 = {1..1}\n" + 
+				"countClear_CB1 = {1..1}\n" + 
+				"limiteUpdate_CB1 = {(1)..(1)}\n" + 
+				"channel startActivity_CB1: ID_CB1\n" + 
+				"channel endActivity_CB1: ID_CB1\n" + 
+				"channel ce_CB1: countCe_CB1\n" + 
+				"channel clear_CB1: countClear_CB1\n" + 
+				"channel update_CB1: countUpdate_CB1.limiteUpdate_CB1\n" + 
+				"channel endDiagram_CB1\n" + 
+				"channel event_act1_CB1\n" + 
+				"channel lock_act1_CB1: T\n" + 
+				"END_DIAGRAM_CB1 = endDiagram_CB1 -> SKIP\n" + 
+				"CB1(ID_CB1) = ((Internal_CB1(ID_CB1) [|{|update_CB1,clear_CB1,endDiagram_CB1|}|] TokenManager_CB1_t(0,0)) [|{|lock_act1_CB1,endDiagram_CB1|}|] Lock_CB1)\n" + 
+				"Internal_CB1(ID_CB1) = StartActivity_CB1(ID_CB1); Node_CB1; EndActivity_CB1(ID_CB1)\n" + 
+				"StartActivity_CB1(ID_CB1) = startActivity_CB1.ID_CB1 -> SKIP\n" + 
+				"EndActivity_CB1(ID_CB1) = endActivity_CB1.ID_CB1 -> SKIP\n" + 
+				"AlphabetDiagram_CB1(init_CB1_t_alphabet) = {|update_CB1.1,ce_CB1.1,endDiagram_CB1|}\n" + 
+				"AlphabetDiagram_CB1(act1_CB1_t_alphabet) = {|ce_CB1.1,lock_act1_CB1,event_act1_CB1,ce_CB1.2,endDiagram_CB1|}\n" + 
+				"AlphabetDiagram_CB1(ActivityFinal0_CB1_t_alphabet) = {|ce_CB1.2,clear_CB1.1,endDiagram_CB1|}\n" + 
+				"AlphabetDiagram_CB1_t = union(union(AlphabetDiagram_CB1(init_CB1_t_alphabet),AlphabetDiagram_CB1(act1_CB1_t_alphabet)),AlphabetDiagram_CB1(ActivityFinal0_CB1_t_alphabet))\n" + 
+				"ProcessDiagram_CB1(init_CB1_t_alphabet) = init_CB1_t\n" + 
+				"ProcessDiagram_CB1(act1_CB1_t_alphabet) = act1_CB1_t\n" + 
+				"ProcessDiagram_CB1(ActivityFinal0_CB1_t_alphabet) = ActivityFinal0_CB1_t\n" + 
+				"Node_CB1 = || x:alphabet_CB1 @ [AlphabetDiagram_CB1(x)] ProcessDiagram_CB1(x)\n" + 
+				"InitialNode0_CB1_t = update_CB1.1!(1-0) -> ((ce_CB1.1 -> SKIP))\n" + 
+				"act1_CB1 = ((ce_CB1.1 -> SKIP)); lock_act1_CB1.lock -> event_act1_CB1 -> lock_act1_CB1.unlock -> ((ce_CB1.2 -> SKIP)); act1_CB1\n" + 
+				"act1_CB1_t = act1_CB1 /\\ END_DIAGRAM_CB1\n" + 
+				"ActivityFinal0_CB1 = ((ce_CB1.2 -> SKIP)); clear_CB1.1 -> SKIP\n" + 
+				"ActivityFinal0_CB1_t = ActivityFinal0_CB1 /\\ END_DIAGRAM_CB1\n" + 
+				"init_CB1_t = (InitialNode0_CB1_t) /\\ END_DIAGRAM_CB1\n" + 
+				"\n" + 
+				"TokenManager_CB1(x,init) = update_CB1?c?y:limiteUpdate_CB1 -> x+y < 10 & x+y > -10 & TokenManager_CB1(x+y,1) [] clear_CB1?c -> endDiagram_CB1 -> SKIP [] x == 0 & init == 1 & endDiagram_CB1 -> SKIP\n" + 
+				"TokenManager_CB1_t(x,init) = TokenManager_CB1(x,init)\n" + 
+				"Lock_act1_CB1 = lock_act1_CB1.lock -> lock_act1_CB1.unlock -> Lock_act1_CB1 [] endDiagram_CB1 -> SKIP\n" + 
+				"Lock_CB1 = Lock_act1_CB1\n" + 
+				"\n" + 
+				"assert MAIN :[deadlock free]\n" + 
+				"assert MAIN :[divergence free]\n" + 
 				"assert MAIN :[deterministic]");
 
 		assertEquals(expected.toString(), actual);
