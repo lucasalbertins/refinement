@@ -721,8 +721,8 @@ public class ADParserTestBehaviourCall {
 	 * */
 	@Test
 	public void TestNodesBehavior6() {
-		parser5.clearBuffer();
-		String actual = parser5.parserDiagram();
+		parser6.clearBuffer();
+		String actual = parser6.parserDiagram();
 		StringBuffer expected = new StringBuffer();
 		expected.append("transparent normal\n" + 
 				"ID_behavior6 = {1..1}\n" + 

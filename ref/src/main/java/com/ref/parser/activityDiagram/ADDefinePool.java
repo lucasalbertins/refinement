@@ -25,19 +25,20 @@ public class ADDefinePool {
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
 
         if (firstDiagram.equals(ad.getId())) {
-        	String poolDatatype = "datatype POOLNAME = ";
-        	pool.append(poolDatatype);
-        	for(String signal: signalChannels) {
-        		pool.append(signal + "|");
+        	
+        	if(!signalChannels.isEmpty()) {
+	        	String poolDatatype = "datatype POOLNAME = ";
+	        	pool.append(poolDatatype);
+	        	for(String signal: signalChannels) {
+	        		pool.append(signal + "|");
+	        	}
+	        	if(pool.lastIndexOf("|") != -1) pool.replace(pool.lastIndexOf("|"),pool.lastIndexOf("|")+1,"\n");
+        	
+	        	for(String signal: signalChannels) {
+	        		pool.append("POOL("+signal+") = pool_"+signal+"_t(<>)\n");
+	        	}
+	        	pool.append("pools =[|{|endDiagram_"+nameDiagram+"|}|]x:POOLNAME @ POOL(x)\n");
         	}
-        	pool.replace(pool.lastIndexOf("|"),pool.lastIndexOf("|")+1,"\n");
-        	
-        	
-        	for(String signal: signalChannels) {
-        		pool.append("POOL("+signal+") = pool_"+signal+"_t(<>)\n");
-        	}
-        	pool.append("pools =[|{|endDiagram_"+nameDiagram+"|}|]x:POOLNAME @ POOL(x)\n");
-        	
         	
             for (String signal: signalChannels) {
                 String poolName = "pool_" + signal;
