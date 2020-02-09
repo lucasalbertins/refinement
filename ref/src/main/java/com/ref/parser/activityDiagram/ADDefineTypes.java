@@ -59,18 +59,38 @@ public class ADDefineTypes {
             }
 
             types.append("datatype T = lock | unlock\n");
-
+            
+            boolean flag = false;
+            
             for (Pair<String, Integer> signal : countSignal) {
                 types.append("countSignal_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+                for(Pair<String, Integer> signal2 :countAccept) {
+                	if(signal2.getKey().equals(signal.getKey())) {
+                		flag = true;break;
+                	}
+                }
+                if(!flag) {
+                	types.append("countAccept_" + signal.getKey() + " = {1..1}\n");
+                }
+                flag = false;
             }
-
+            
             for (Pair<String, Integer> signal : countAccept) {
                 types.append("countAccept_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+                for(Pair<String, Integer> signal2 :countSignal) {
+                	if(signal2.getKey().equals(signal.getKey())) {
+                		flag = true;break;
+                	}
+                }
+                if(!flag) {
+                	types.append("countSignal_" + signal.getKey() + " = {1..1}\n");
+                }
+                flag = false;
             }
 
-            for (Pair<String, Integer> signal : countSignal) {
+            /*for (Pair<String, Integer> signal : countSignal) {
                 types.append("event_" + signal.getKey() + "_" + nameDiagram + " = Int\n");
-            }
+            }*/
 
         }
 

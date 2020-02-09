@@ -54,10 +54,6 @@ public class ADDefineCallBehavior {
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
 
-        if (!callBehaviourList.contains(((IAction) activityNode).getCallingActivity())) {
-            callBehaviourList.add(((IAction) activityNode).getCallingActivity());
-        }
-
         for (int i = 0; i < outPins.length; i++) {
             namesOutpins.add(outPins[i].getName());
         }

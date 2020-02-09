@@ -161,7 +161,7 @@ public class ADDefineChannels {
             channels.append("\n");
         }
 
-        if (lockChannel.size() > 0) {
+        /*if (lockChannel.size() > 0) {
             channels.append("channel ");
 
             for (int i = 0; i < lockChannel.size(); i++) {
@@ -173,7 +173,7 @@ public class ADDefineChannels {
             }
 
             channels.append(": T\n");
-        }
+        }*/
 
         if (firstDiagram.equals(ad.getId())) {
 

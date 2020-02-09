@@ -22,6 +22,8 @@ public class ADParserTestSignal {
 	private static ADParser parser3;
 	private static ADParser parser4;
 	private static ADParser parser5;
+	private static ADParser parser6;
+
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
@@ -65,6 +67,13 @@ public class ADParserTestSignal {
 			ad = (IActivityDiagram) findElements[0];
 
 			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
+			
+			projectAccessor.open("src/test/resources/activityDiagram/CalibrateSimple.asta");
+			findElements = findElements(projectAccessor);
+
+			ad = (IActivityDiagram) findElements[0];
+
+			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
 
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -97,7 +106,7 @@ public class ADParserTestSignal {
 				"countSignal_signal = {1..1}\n" +
 				"countAccept_signal = {1..1}\n" +
 				//"datatype event_signal_signal1 = Int\n" +
-				"event_signal_signal1 = Int\n" +
+				//"event_signal_signal1 = Int\n" +
 				"datatype alphabet_signal1 = init_signal1_t_alphabet | signal_signal_1_signal1_t_alphabet| accept_signal_1_signal1_t_alphabet| fin1_signal1_t_alphabet\n" +
 				"countCe_signal1 = {1..2}\n" +
 				"countUpdate_signal1 = {1..1}\n" +
@@ -161,7 +170,7 @@ public class ADParserTestSignal {
 				"countSignal_signal1 = {1..1}\n" +
 				"countAccept_signal1 = {1..1}\n" +
 				//"datatype event_signal1_signal2 = Int\n" +
-				"event_signal1_signal2 = Int\n" +
+				//"event_signal1_signal2 = Int\n" +
 				"datatype alphabet_signal2 = init_signal2_t_alphabet | signal_signal1_1_signal2_t_alphabet| fin1_signal2_t_alphabet| accept_signal1_1_signal2_t_alphabet\n" +
 				"countCe_signal2 = {1..3}\n" +
 				"countUpdate_signal2 = {1..2}\n" +
@@ -228,7 +237,7 @@ public class ADParserTestSignal {
 				"countSignal_signal1 = {1..1}\n" +
 				"countAccept_signal1 = {1..1}\n" +
 				//"datatype event_signal1_signal3_1 = Int\n" +
-				"event_signal1_signal3_1 = Int\n" +
+				//"event_signal1_signal3_1 = Int\n" +
 				"datatype alphabet_signal3_1 = init_signal3_1_t_alphabet | call1_signal3_1_t_alphabet| signal_signal1_1_signal3_1_t_alphabet| fin1_signal3_1_t_alphabet\n" +
 				"countCe_signal3_1 = {1..3}\n" +
 				"countUpdate_signal3_1 = {1..1}\n" +
@@ -322,7 +331,7 @@ public class ADParserTestSignal {
 				"countSignal_signal1 = {1..1}\n" +
 				"countAccept_signal1 = {1..1}\n" +
 				//"datatype event_signal1_signal4 = Int\n" +
-				"event_signal1_signal4 = Int\n" +
+				//"event_signal1_signal4 = Int\n" +
 				"datatype alphabet_signal4 = init_signal4_t_alphabet | act1_signal4_t_alphabet| signal_signal1_1_signal4_t_alphabet| fin1_signal4_t_alphabet| accept_signal1_1_signal4_t_alphabet| act2_signal4_t_alphabet\n" +
 				"countCe_signal4 = {1..5}\n" +
 				"countUpdate_signal4 = {1..2}\n" +
@@ -395,7 +404,7 @@ public class ADParserTestSignal {
 				"countSignal_signal1 = {1..2}\n" +
 				"countAccept_signal1 = {1..2}\n" +
 				//"datatype event_signal1_signal6 = Int\n" +
-				"event_signal1_signal6 = Int\n" +
+				//"event_signal1_signal6 = Int\n" +
 				"datatype alphabet_signal6 = init_signal6_t_alphabet | signal_signal1_2_signal6_t_alphabet| signal_signal1_1_signal6_t_alphabet| fin1_signal6_t_alphabet| JoinNode0_signal6_t_alphabet| accept_signal1_1_signal6_t_alphabet| accept_signal1_2_signal6_t_alphabet\n" +
 				"countCe_signal6 = {1..5}\n" +
 				"countUpdate_signal6 = {1..2}\n" +
@@ -458,6 +467,127 @@ public class ADParserTestSignal {
 				"\n" +
 				"assert MAIN :[deadlock free]\n" +
 				"assert MAIN :[divergence free]\n" +
+				"assert MAIN :[deterministic]";
+		assertEquals(expected, atual);
+	}
+	
+	@Test
+	public void testSignal6() {
+		parser6.clearBuffer();
+		String atual = parser6.parserDiagram();
+		//TODO n pega no teste mas ta certo
+		String expected = "ID_Calibratesimple = {1..1}\n" + 
+				"ID_StopPITTracking = {1..1}\n" + 
+				"datatype T = lock | unlock\n" + 
+				"countSignal_StopPITTracking_Cmd = {1..1}\n" + 
+				"countAccept_StopPITTracking_Cmd = {1..1}\n" + 
+				"countAccept_StopPITTracking_Ack = {1..1}\n" + 
+				"countSignal_StopPITTracking_Ack = {1..1}\n" + 
+				"datatype alphabet_Calibratesimple = init_Calibratesimple_t_alphabet | ActivityFinal0_Calibratesimple_t_alphabet| StopPITTracking_Calibratesimple_t_alphabet\n" + 
+				"countCe_Calibratesimple = {1..2}\n" + 
+				"countUpdate_Calibratesimple = {1..1}\n" + 
+				"countClear_Calibratesimple = {1..1}\n" + 
+				"limiteUpdate_Calibratesimple = {(1)..(1)}\n" + 
+				"channel startActivity_Calibratesimple: ID_Calibratesimple\n" + 
+				"channel endActivity_Calibratesimple: ID_Calibratesimple\n" + 
+				"channel ce_Calibratesimple: countCe_Calibratesimple\n" + 
+				"channel clear_Calibratesimple: countClear_Calibratesimple\n" + 
+				"channel update_Calibratesimple: countUpdate_Calibratesimple.limiteUpdate_Calibratesimple\n" + 
+				"channel endDiagram_Calibratesimple\n" + 
+				"channel signal_StopPITTracking_Ack: countSignal_StopPITTracking_Ack\n" + 
+				"channel accept_StopPITTracking_Ack: countAccept_StopPITTracking_Ack.countSignal_StopPITTracking_Ack\n" + 
+				"channel signal_StopPITTracking_Cmd: countSignal_StopPITTracking_Cmd\n" + 
+				"channel accept_StopPITTracking_Cmd: countAccept_StopPITTracking_Cmd.countSignal_StopPITTracking_Cmd\n" + 
+				"channel loop\n" + 
+				"channel dc\n" + 
+				"MAIN = Calibratesimple(1); LOOP\n" + 
+				"LOOP = loop -> LOOP\n" + 
+				"END_DIAGRAM_Calibratesimple = endDiagram_Calibratesimple -> SKIP\n" + 
+				"Calibratesimple(ID_Calibratesimple) = ((Internal_Calibratesimple(ID_Calibratesimple) [|{|startActivity_StopPITTracking.1,endActivity_StopPITTracking.1|}|] StopPITTracking(1)) [|{|update_Calibratesimple,clear_Calibratesimple,endDiagram_Calibratesimple|}|] TokenManager_Calibratesimple_t(0,0))\n" + 
+				"Internal_Calibratesimple(ID_Calibratesimple) = StartActivity_Calibratesimple(ID_Calibratesimple); Node_Calibratesimple; EndActivity_Calibratesimple(ID_Calibratesimple)\n" + 
+				"StartActivity_Calibratesimple(ID_Calibratesimple) = startActivity_Calibratesimple.ID_Calibratesimple -> SKIP\n" + 
+				"EndActivity_Calibratesimple(ID_Calibratesimple) = endActivity_Calibratesimple.ID_Calibratesimple -> SKIP\n" + 
+				"AlphabetDiagram_Calibratesimple(init_Calibratesimple_t_alphabet) = {|update_Calibratesimple.1,ce_Calibratesimple.1,endDiagram_Calibratesimple|}\n" + 
+				"AlphabetDiagram_Calibratesimple(ActivityFinal0_Calibratesimple_t_alphabet) = {|ce_Calibratesimple.2,clear_Calibratesimple.1,endDiagram_Calibratesimple|}\n" + 
+				"AlphabetDiagram_Calibratesimple(StopPITTracking_Calibratesimple_t_alphabet) = {|ce_Calibratesimple.1,startActivity_StopPITTracking.1,endActivity_StopPITTracking.1,ce_Calibratesimple.2,endDiagram_Calibratesimple|}\n" + 
+				"ProcessDiagram_Calibratesimple(init_Calibratesimple_t_alphabet) = init_Calibratesimple_t\n" + 
+				"ProcessDiagram_Calibratesimple(ActivityFinal0_Calibratesimple_t_alphabet) = ActivityFinal0_Calibratesimple_t\n" + 
+				"ProcessDiagram_Calibratesimple(StopPITTracking_Calibratesimple_t_alphabet) = StopPITTracking_Calibratesimple_t\n" + 
+				"Node_Calibratesimple = || x:alphabet_Calibratesimple @ [AlphabetDiagram_Calibratesimple(x)] ProcessDiagram_Calibratesimple(x)\n" + 
+				"InitialNode0_Calibratesimple_t = update_Calibratesimple.1!(1-0) -> ((ce_Calibratesimple.1 -> SKIP))\n" + 
+				"StopPITTracking_Calibratesimple = ((ce_Calibratesimple.1 -> SKIP)); startActivity_StopPITTracking.1 -> endActivity_StopPITTracking.1 -> ((ce_Calibratesimple.2 -> SKIP)); StopPITTracking_Calibratesimple\n" + 
+				"StopPITTracking_Calibratesimple_t = StopPITTracking_Calibratesimple /\\ END_DIAGRAM_Calibratesimple\n" + 
+				"ActivityFinal0_Calibratesimple = ((ce_Calibratesimple.2 -> SKIP)); clear_Calibratesimple.1 -> SKIP\n" + 
+				"ActivityFinal0_Calibratesimple_t = ActivityFinal0_Calibratesimple /\\ END_DIAGRAM_Calibratesimple\n" + 
+				"init_Calibratesimple_t = (InitialNode0_Calibratesimple_t) /\\ END_DIAGRAM_Calibratesimple\n" + 
+				"\n" + 
+				"TokenManager_Calibratesimple(x,init) = update_Calibratesimple?c?y:limiteUpdate_Calibratesimple -> x+y < 10 & x+y > -10 & TokenManager_Calibratesimple(x+y,1) [] clear_Calibratesimple?c -> endDiagram_Calibratesimple -> SKIP [] x == 0 & init == 1 & endDiagram_Calibratesimple -> SKIP\n" + 
+				"TokenManager_Calibratesimple_t(x,init) = TokenManager_Calibratesimple(x,init)\n" + 
+				"datatype POOLNAME = StopPITTracking_Ack|StopPITTracking_Cmd\n" + 
+				"POOL(StopPITTracking_Ack) = pool_StopPITTracking_Ack_t(<>)\n" + 
+				"POOL(StopPITTracking_Cmd) = pool_StopPITTracking_Cmd_t(<>)\n" + 
+				"pools =[|{|endDiagram_Calibratesimple|}|]x:POOLNAME @ POOL(x)\n" + 
+				"pool_StopPITTracking_Ack(l) = (signal_StopPITTracking_Ack?event_StopPITTracking_Ack_Calibratesimple -> if length(l) < 5 then pool_StopPITTracking_Ack(l^<event_StopPITTracking_Ack_Calibratesimple>) else pool_StopPITTracking_Ack(l)) [] (length(l) > 0 & accept_StopPITTracking_Ack.1!head(l) -> pool_StopPITTracking_Ack(tail(l)))\n" + 
+				"pool_StopPITTracking_Ack_t(l) = pool_StopPITTracking_Ack(l) /\\ END_DIAGRAM_Calibratesimple\n" + 
+				"pool_StopPITTracking_Cmd(l) = (signal_StopPITTracking_Cmd?event_StopPITTracking_Cmd_Calibratesimple -> if length(l) < 5 then pool_StopPITTracking_Cmd(l^<event_StopPITTracking_Cmd_Calibratesimple>) else pool_StopPITTracking_Cmd(l))\n" + 
+				"pool_StopPITTracking_Cmd_t(l) = pool_StopPITTracking_Cmd(l) /\\ END_DIAGRAM_Calibratesimple\n" + 
+				"\n" + 
+				"datatype alphabet_StopPITTracking = init_StopPITTracking_t_alphabet | accept_StopPITTracking_Ack_1_StopPITTracking_t_alphabet| ActivityFinal0_StopPITTracking_t_alphabet| ForkNode0_StopPITTracking_t_alphabet| signal_StopPITTracking_Cmd_1_StopPITTracking_t_alphabet| println2_StopPITTracking_t_alphabet| println1_StopPITTracking_t_alphabet| JoinNode0_StopPITTracking_t_alphabet\n" + 
+				"countCe_StopPITTracking = {1..8}\n" + 
+				"countUpdate_StopPITTracking = {1..3}\n" + 
+				"countClear_StopPITTracking = {1..1}\n" + 
+				"limiteUpdate_StopPITTracking = {(-1)..(1)}\n" + 
+				"channel startActivity_StopPITTracking: ID_StopPITTracking\n" + 
+				"channel endActivity_StopPITTracking: ID_StopPITTracking\n" + 
+				"channel ce_StopPITTracking: countCe_StopPITTracking\n" + 
+				"channel clear_StopPITTracking: countClear_StopPITTracking\n" + 
+				"channel update_StopPITTracking: countUpdate_StopPITTracking.limiteUpdate_StopPITTracking\n" + 
+				"channel endDiagram_StopPITTracking\n" + 
+				"channel event_println1_StopPITTracking,event_println2_StopPITTracking\n" + 
+				"END_DIAGRAM_StopPITTracking = endDiagram_StopPITTracking -> SKIP\n" + 
+				"StopPITTracking(ID_StopPITTracking) = ((Internal_StopPITTracking(ID_StopPITTracking) [|{|update_StopPITTracking,clear_StopPITTracking,endDiagram_StopPITTracking|}|] TokenManager_StopPITTracking_t(0,0)) [|{|signal_StopPITTracking_Cmd,accept_StopPITTracking_Cmd,endDiagram_StopPITTracking|}|]pools)\n" + 
+				"Internal_StopPITTracking(ID_StopPITTracking) = StartActivity_StopPITTracking(ID_StopPITTracking); Node_StopPITTracking; EndActivity_StopPITTracking(ID_StopPITTracking)\n" + 
+				"StartActivity_StopPITTracking(ID_StopPITTracking) = startActivity_StopPITTracking.ID_StopPITTracking -> SKIP\n" + 
+				"EndActivity_StopPITTracking(ID_StopPITTracking) = endActivity_StopPITTracking.ID_StopPITTracking -> SKIP\n" + 
+				"AlphabetDiagram_StopPITTracking(init_StopPITTracking_t_alphabet) = {|update_StopPITTracking.1,ce_StopPITTracking.1,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(accept_StopPITTracking_Ack_1_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.2,accept_StopPITTracking_Ack.1,ce_StopPITTracking.4,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(ActivityFinal0_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.6,clear_StopPITTracking.1,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(ForkNode0_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.1,update_StopPITTracking.2,ce_StopPITTracking.2,ce_StopPITTracking.3,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(signal_StopPITTracking_Cmd_1_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.3,signal_StopPITTracking_Cmd.1,ce_StopPITTracking.7,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(println2_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.7,event_println2_StopPITTracking,ce_StopPITTracking.8,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(println1_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.4,event_println1_StopPITTracking,ce_StopPITTracking.5,endDiagram_StopPITTracking|}\n" + 
+				"AlphabetDiagram_StopPITTracking(JoinNode0_StopPITTracking_t_alphabet) = {|ce_StopPITTracking.5,ce_StopPITTracking.8,update_StopPITTracking.3,ce_StopPITTracking.6,endDiagram_StopPITTracking|}\n" + 
+				"ProcessDiagram_StopPITTracking(init_StopPITTracking_t_alphabet) = init_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(accept_StopPITTracking_Ack_1_StopPITTracking_t_alphabet) = accept_StopPITTracking_Ack_1_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(ActivityFinal0_StopPITTracking_t_alphabet) = ActivityFinal0_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(ForkNode0_StopPITTracking_t_alphabet) = ForkNode0_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(signal_StopPITTracking_Cmd_1_StopPITTracking_t_alphabet) = signal_StopPITTracking_Cmd_1_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(println2_StopPITTracking_t_alphabet) = println2_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(println1_StopPITTracking_t_alphabet) = println1_StopPITTracking_t\n" + 
+				"ProcessDiagram_StopPITTracking(JoinNode0_StopPITTracking_t_alphabet) = JoinNode0_StopPITTracking_t\n" + 
+				"Node_StopPITTracking = || x:alphabet_StopPITTracking @ [AlphabetDiagram_StopPITTracking(x)] ProcessDiagram_StopPITTracking(x)\n" + 
+				"InitialNode0_StopPITTracking_t = update_StopPITTracking.1!(1-0) -> ((ce_StopPITTracking.1 -> SKIP))\n" + 
+				"ForkNode0_StopPITTracking = ce_StopPITTracking.1 -> update_StopPITTracking.2!(2-1) -> ((ce_StopPITTracking.2 -> SKIP) ||| (ce_StopPITTracking.3 -> SKIP)); ForkNode0_StopPITTracking\n" + 
+				"ForkNode0_StopPITTracking_t = ForkNode0_StopPITTracking /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"accept_StopPITTracking_Ack_1_StopPITTracking = ((ce_StopPITTracking.2 -> SKIP)); accept_StopPITTracking_Ack.1?x -> ((ce_StopPITTracking.4 -> SKIP)); accept_StopPITTracking_Ack_1_StopPITTracking\n" + 
+				"accept_StopPITTracking_Ack_1_StopPITTracking_t = accept_StopPITTracking_Ack_1_StopPITTracking /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"println1_StopPITTracking = ((ce_StopPITTracking.4 -> SKIP)); event_println1_StopPITTracking -> ((ce_StopPITTracking.5 -> SKIP)); println1_StopPITTracking\n" + 
+				"println1_StopPITTracking_t = println1_StopPITTracking /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"ActivityFinal0_StopPITTracking = ((ce_StopPITTracking.6 -> SKIP)); clear_StopPITTracking.1 -> SKIP\n" + 
+				"ActivityFinal0_StopPITTracking_t = ActivityFinal0_StopPITTracking /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"signal_StopPITTracking_Cmd_1_StopPITTracking = ((ce_StopPITTracking.3 -> SKIP)); signal_StopPITTracking_Cmd!1 -> ((ce_StopPITTracking.7 -> SKIP)); signal_StopPITTracking_Cmd_1_StopPITTracking\n" + 
+				"signal_StopPITTracking_Cmd_1_StopPITTracking_t = signal_StopPITTracking_Cmd_1_StopPITTracking /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"println2_StopPITTracking = ((ce_StopPITTracking.7 -> SKIP)); event_println2_StopPITTracking -> ((ce_StopPITTracking.8 -> SKIP)); println2_StopPITTracking\n" + 
+				"println2_StopPITTracking_t = println2_StopPITTracking /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"JoinNode0_StopPITTracking = ((ce_StopPITTracking.5 -> SKIP) ||| (ce_StopPITTracking.8 -> SKIP)); update_StopPITTracking.3!(1-2) -> ((ce_StopPITTracking.6 -> SKIP)); JoinNode0_StopPITTracking\n" + 
+				"JoinNode0_StopPITTracking_t = (JoinNode0_StopPITTracking /\\ END_DIAGRAM_StopPITTracking)\n" + 
+				"init_StopPITTracking_t = (InitialNode0_StopPITTracking_t) /\\ END_DIAGRAM_StopPITTracking\n" + 
+				"\n" + 
+				"TokenManager_StopPITTracking(x,init) = update_StopPITTracking?c?y:limiteUpdate_StopPITTracking -> x+y < 10 & x+y > -10 & TokenManager_StopPITTracking(x+y,1) [] clear_StopPITTracking?c -> endDiagram_StopPITTracking -> SKIP [] x == 0 & init == 1 & endDiagram_StopPITTracking -> SKIP\n" + 
+				"TokenManager_StopPITTracking_t(x,init) = TokenManager_StopPITTracking(x,init)\n" + 
+				"\n" + 
+				"assert MAIN :[deadlock free]\n" + 
+				"assert MAIN :[divergence free]\n" + 
 				"assert MAIN :[deterministic]";
 		assertEquals(expected, atual);
 	}

@@ -107,7 +107,7 @@ public class ADDefineAction {
 
             action.append("); ");
 
-            adUtils.lock(alphabet, action, 0, nameAction);
+            //adUtils.lock(alphabet, action, 0, nameAction);
             adUtils.event(alphabet, nameAction, action);
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
@@ -138,7 +138,7 @@ public class ADDefineAction {
                 countOutFlowPin += outPins[i].getOutgoings().length;
             }
 
-            adUtils.lock(alphabet, action, 1, nameAction);
+            //adUtils.lock(alphabet, action, 1, nameAction);
             adUtils.update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             for (String nameObj : namesMemoryLocal) {
@@ -209,17 +209,25 @@ public class ADDefineAction {
 
                     Pair<String, String> initialAndFinalParameterValue = adUtils.getInitialAndFinalParameterValue(typeObj);
 
-                    if (ADUtils.isInteger(initialAndFinalParameterValue.getKey())) {
+                    if ((value != null && !value.equals("")) && ADUtils.isInteger(initialAndFinalParameterValue.getKey())) {
                         action.append("((");
                         action.append("(" + value + ") >= " + initialAndFinalParameterValue.getKey() + " and (" + value + ") <= "  + initialAndFinalParameterValue.getValue() + ") & ");
                     } else {
                         action.append("(");
                     }
-
-                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
-                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
-                    } else {
-                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+                    if(value !=null && !value.equals("")) {
+	                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+	                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
+	                    } else {
+	                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+	                    }
+                    }
+                    else {
+                    	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+ 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP) ||| ");
+ 	                    } else {
+ 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP)");
+ 	                    }
                     }
 
                 }
@@ -423,12 +431,21 @@ public class ADDefineAction {
                             value = expression[1];
                         }
                     }
-
+                    //TODO tentar corrigir
                     action.append("(");
-                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
-                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
-                    } else {
-                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+                    if(value !=null && !value.equals("")) {
+	                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+	                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
+	                    } else {
+	                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+	                    }
+                    }
+                    else {
+                    	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+ 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP) ||| ");
+ 	                    } else {
+ 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP)");
+ 	                    }
                     }
 
                 }
@@ -570,7 +587,7 @@ public class ADDefineAction {
 
             action.append("); ");
 
-            adUtils.lock(alphabet, action, 0, nameAction);
+            //adUtils.lock(alphabet, action, 0, nameAction);
             adUtils.event(alphabet, nameAction, action);
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
@@ -601,7 +618,7 @@ public class ADDefineAction {
                 countOutFlowPin += outPins[i].getOutgoings().length;
             }
 
-            adUtils.lock(alphabet, action, 1, nameAction);
+            //adUtils.lock(alphabet, action, 1, nameAction);
             adUtils.update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             for (String nameObj : namesMemoryLocal) {
@@ -660,18 +677,25 @@ public class ADDefineAction {
 
                     Pair<String, String> initialAndFinalParameterValue = adUtils.getInitialAndFinalParameterValue(typeObj);
 
-
-                    if (adUtils.isInteger(initialAndFinalParameterValue.getKey())) {
+                    if ((value != null && !value.equals("")) && ADUtils.isInteger(initialAndFinalParameterValue.getKey())) {
                         action.append("((");
                         action.append("(" + value + ") >= " + initialAndFinalParameterValue.getKey() + " and (" + value + ") <= "  + initialAndFinalParameterValue.getValue() + ") & ");
                     } else {
                         action.append("(");
                     }
-
-                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
-                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
-                    } else {
-                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+                    if(value !=null && !value.equals("")) {
+	                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+	                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
+	                    } else {
+	                        adUtils.oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+	                    }
+                    }
+                    else {
+                    	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+ 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP) ||| ");
+ 	                    } else {
+ 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP)");
+ 	                    }
                     }
 
                 }

@@ -195,11 +195,14 @@ public class ADParser {
                     "\nassert MAIN :[deterministic]";
             reset = true;
         }
-
+        
+        defineCallBehaviourList();
+        
         checkCountCallInitial();
 
         String nodes = defineNodesActionAndControl();
 
+        
         for (IActivity adCalling: callBehaviourList) {
             if (!callBehaviourListCreated.contains(adCalling)) {
                 callBehaviourListCreated.add(adCalling);
@@ -207,7 +210,7 @@ public class ADParser {
             }
         }
 
-        String lock = defineLock();
+        //String lock = defineLock();
         String channel = defineChannels();
         String main = defineMainNodes();
         String type = defineTypes();
@@ -223,7 +226,7 @@ public class ADParser {
                 nodes +
                 memory +
                 tokenManager +
-                lock +
+                /*lock +*/
                 pool +
                 callBehaviour +
                 check;
@@ -236,7 +239,47 @@ public class ADParser {
         return parser;
     }
 
-    /*   */
+    private void defineCallBehaviourList() {
+    	if(countCall.size() == 0) {//pega os CBA do 1 diagrama
+        	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
+        		if (activityNode instanceof IAction) {
+                    if (((IAction) activityNode).isCallBehaviorAction()) {
+                    	callBehaviourList.add(((IAction) activityNode).getCallingActivity());                          
+                    }
+        		}
+        	}
+        	boolean mudou =true;
+        	List<IActivity> aux1 = new ArrayList<>();
+        	List<IActivity> aux3 = new ArrayList<>();
+        	aux3.addAll(callBehaviourList);
+        	while(mudou) {
+	        	if(callBehaviourList.size() != 0) {//pega os CBA dentro de CBA
+	        		for(IActivity CBAs: callBehaviourList) {//para cada CBA
+	        			for(IActivityNode adCBAs: CBAs.getActivityNodes()) {//para cada nó
+	        				if(adCBAs instanceof IAction) {
+	        					if(((IAction) adCBAs).isCallBehaviorAction() && !aux1.contains(((IAction) adCBAs).getCallingActivity())) {//se for CBA e n tiver sido add
+	        						aux1.add(((IAction) adCBAs).getCallingActivity());
+	        					}
+	        				}
+	        			}
+	        		}
+	        	}
+	        	
+	        	for(IActivity CBA:aux1) {//faz a união dos conjuntos
+	        		if(!callBehaviourList.contains(CBA)) {
+	        			callBehaviourList.add(CBA);
+	        		}
+	        	}
+	        	if(aux3.equals(callBehaviourList)) {
+	        		mudou = false;
+	        	}else {
+	        		aux3 = callBehaviourList;
+	        	}
+        	}
+        }
+	}
+
+	/*   */
 
     private ADUtils defineADUtils() {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
