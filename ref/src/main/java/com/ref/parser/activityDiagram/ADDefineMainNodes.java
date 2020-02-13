@@ -67,7 +67,7 @@ public class ADDefineMainNodes {
         }
 
         //for (int i = 0; i < signalChannelsLocal.size(); i++) {
-            if(signalChannelsLocal.size() > 0) mainNode.append("(");
+            if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) mainNode.append("(");
         //}
 
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ")");
@@ -84,14 +84,30 @@ public class ADDefineMainNodes {
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
         mainNode.append("TokenManager_" + nameDiagram + "_t(0,0))");
         
-        if(signalChannelsLocal.size()> 0) {
+        if(firstDiagram.equals(ad.getId())) {//se for o 1 diagrama
+        	mainNode.append("[|AlphabetPool|]pools)");
+        }
+        
+        /*if(signalChannelsLocal.size()> 0) {
 	        StringBuilder alfabetoPools = new StringBuilder();
 	        for(String signal: signalChannelsLocal) {
 	        	alfabetoPools.append("signal_"+signal+",accept_"+signal+",");
 	        }
 	        alfabetoPools.append("endDiagram_"+nameDiagram);
 	        mainNode.append(" [|{|"+alfabetoPools+"|}|]pools)");
-        }
+	        
+        	
+	        for(String signal: signalChannelsLocal) {
+		        if (!ADParser.alphabetPool.contains(signal)) {
+					ADParser.alphabetPool.add("signal_"+signal+",accept_"+signal+",");
+					
+				}
+	        }
+	        if(!ADParser.alphabetPool.contains("endDiagram_"+nameDiagram)) {
+	        	ADParser.alphabetPool.add("endDiagram_"+nameDiagram);
+	        }
+        }*/
+        
         /*for (String signal: signalChannelsLocal) {
             mainNode.append(" [|{|");
             mainNode.append("signal_" + signal + "," + "accept_" + signal + "," + "endDiagram_" + nameDiagram);

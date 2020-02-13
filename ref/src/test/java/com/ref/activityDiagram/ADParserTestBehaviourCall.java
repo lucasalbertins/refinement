@@ -11,6 +11,7 @@ import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADParser;
+import com.refinement.exceptions.ParsingException;
 
 public class ADParserTestBehaviourCall {
 	
@@ -119,7 +120,7 @@ public class ADParserTestBehaviourCall {
 	 * Teste de Tradução do call behavior
 	 * */
 	@Test
-	public void TestNodesBehavior1() {
+	public void TestNodesBehavior1() throws ParsingException {
 		parser1.clearBuffer();
 		String actual = parser1.parserDiagram();
 		StringBuffer expected = new StringBuffer();
@@ -211,7 +212,7 @@ public class ADParserTestBehaviourCall {
 	 * Teste de Tradução do call behavior
 	 * */
 	@Test
-	public void TestNodesBehavior2() {
+	public void TestNodesBehavior2() throws ParsingException {
 		parser2.clearBuffer();
 		String actual = parser2.parserDiagram();
 		StringBuffer expected = new StringBuffer();
@@ -309,7 +310,7 @@ public class ADParserTestBehaviourCall {
 	 * Teste de Tradução do call behavior
 	 * */
 	@Test
-	public void TestNodesBehavior3() {
+	public void TestNodesBehavior3() throws ParsingException {
 		parser3.clearBuffer();
 		String actual = parser3.parserDiagram();
 		StringBuffer expected = new StringBuffer();
@@ -443,7 +444,7 @@ public class ADParserTestBehaviourCall {
 	 * Teste de Tradução do call behavior
 	 * */
 	@Test
-	public void TestNodesBehavior4() {
+	public void TestNodesBehavior4() throws ParsingException {
 		parser4.clearBuffer();
 		String actual = parser4.parserDiagram();
 		StringBuffer expected = new StringBuffer();
@@ -568,7 +569,7 @@ public class ADParserTestBehaviourCall {
 	 * Teste de Tradução do call behavior
 	 * */
 	@Test
-	public void TestNodesBehavior5() {
+	public void TestNodesBehavior5() throws ParsingException {
 		parser5.clearBuffer();
 		String actual = parser5.parserDiagram();
 		StringBuffer expected = new StringBuffer();
@@ -720,7 +721,7 @@ public class ADParserTestBehaviourCall {
 	 * Teste de Tradução do call behavior
 	 * */
 	@Test
-	public void TestNodesBehavior6() {
+	public void TestNodesBehavior6() throws ParsingException {
 		parser6.clearBuffer();
 		String actual = parser6.parserDiagram();
 		StringBuffer expected = new StringBuffer();

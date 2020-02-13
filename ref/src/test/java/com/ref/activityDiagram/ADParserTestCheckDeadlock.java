@@ -10,6 +10,7 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
+import com.refinement.exceptions.ParsingException;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -151,7 +152,7 @@ public class ADParserTestCheckDeadlock {
 	 * Teste de Check Deadlock
 	 * */
 	@Test
-	public void TestCheckDeadlock1() {
+	public void TestCheckDeadlock1() throws ParsingException {
 		parser1.clearBuffer();
 		String diagramCSP = parser1.parserDiagram();
 		
@@ -190,7 +191,7 @@ public class ADParserTestCheckDeadlock {
 	 * Teste de Check Deadlock
 	 * */
 	@Test
-	public void TestCheckDeadlock2() {
+	public void TestCheckDeadlock2() throws ParsingException {
 		parser4.clearBuffer();
 		String diagramCSP = parser4.parserDiagram();
 		
@@ -229,7 +230,7 @@ public class ADParserTestCheckDeadlock {
 	 * Teste de Check Deadlock
 	 * */
 	@Test
-	public void TestCheckDeadlock3() {
+	public void TestCheckDeadlock3() throws ParsingException {
 		parser5.clearBuffer();
 		String diagramCSP = parser5.parserDiagram();
 		
@@ -268,7 +269,7 @@ public class ADParserTestCheckDeadlock {
 	 * Teste de Check Deadlock Free
 	 * */
 	@Test
-	public void TestCheckDeadlockFree1() {
+	public void TestCheckDeadlockFree1() throws ParsingException {
 		parser2.clearBuffer();
 		String diagramCSP = parser2.parserDiagram();
 		
@@ -307,7 +308,7 @@ public class ADParserTestCheckDeadlock {
 	 * Teste de Check Deadlock Free
 	 * */
 	@Test
-	public void TestCheckDeadlockFree2() {
+	public void TestCheckDeadlockFree2() throws ParsingException {
 		parser3.clearBuffer();
 		String diagramCSP = parser3.parserDiagram();
 		
@@ -346,7 +347,7 @@ public class ADParserTestCheckDeadlock {
 	 * Teste de Check Failed Compilation
 	 * */
 	@Test
-	public void TestCheckFailedCompilation1() {
+	public void TestCheckFailedCompilation1() throws ParsingException {
 		parser6.clearBuffer();
 		String diagramCSP = parser6.parserDiagram();
 		

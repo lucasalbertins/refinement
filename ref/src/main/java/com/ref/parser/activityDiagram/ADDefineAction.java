@@ -224,9 +224,9 @@ public class ADDefineAction {
                     }
                     else {
                     	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
- 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP) ||| ");
+ 	                        adUtils.oe(alphabet, action, oe, "?"+nameAction+i, " -> SKIP) ||| ");
  	                    } else {
- 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP)");
+ 	                        adUtils.oe(alphabet, action, oe, "?"+nameAction+i, " -> SKIP)");
  	                    }
                     }
 
@@ -431,7 +431,6 @@ public class ADDefineAction {
                             value = expression[1];
                         }
                     }
-                    //TODO tentar corrigir
                     action.append("(");
                     if(value !=null && !value.equals("")) {
 	                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
@@ -442,9 +441,9 @@ public class ADDefineAction {
                     }
                     else {
                     	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
- 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP) ||| ");
+ 	                        adUtils.oe(alphabet, action, oe, "?"+nameAction+i, " -> SKIP) ||| ");
  	                    } else {
- 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP)");
+ 	                        adUtils.oe(alphabet, action, oe, "?"+nameAction+i, " -> SKIP)");
  	                    }
                     }
 
@@ -692,12 +691,11 @@ public class ADDefineAction {
                     }
                     else {
                     	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
- 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP) ||| ");
+ 	                        adUtils.oe(alphabet, action, oe, "?"+nameAction+i, " -> SKIP) ||| ");
  	                    } else {
- 	                        adUtils.oe(alphabet, action, oe, "?"+action+i, " -> SKIP)");
+ 	                        adUtils.oe(alphabet, action, oe, "?"+nameAction+i, " -> SKIP)");
  	                    }
                     }
-
                 }
             }
 

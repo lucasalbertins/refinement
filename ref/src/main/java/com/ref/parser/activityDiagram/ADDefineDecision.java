@@ -68,11 +68,14 @@ public class ADDefineDecision {
                 adUtils.update(alphabet, decision, 1, 1, false);
 
                 decision.append("(");
-
+                
+                List<String> prevGuard = new ArrayList<>();
+                
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = "";
                     String ce = "";
-
+                    
+                    
                     if (outFlows[i].getTarget() instanceof IPin) {
                         oe = adUtils.createOE(decisionInputType);
                         syncObjectsEdge.put(outFlows[i].getId(), oe);
@@ -82,11 +85,17 @@ public class ADDefineDecision {
                         ce = adUtils.createCE();
                         syncChannelsEdge.put(outFlows[i].getId(), ce);
                     }
-
-                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
+                    	decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    	prevGuard.add(outFlows[i].getGuard()); //salva a guarda para o proximo else
+                    }else {
+                    	decision.append("not "+prevGuard.get(prevGuard.size()-1) + " & (dc -> ");
+                    	prevGuard.remove(prevGuard.size()-1);
+                    }
+                    
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
-                    }
+                    }             
 
                     if (outFlows[i].getTarget() instanceof IPin) {
                         if (i >= 0 && i < outFlows.length - 1) {
@@ -183,12 +192,21 @@ public class ADDefineDecision {
                 adUtils.getLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
 
                 decision.append("(");
-
+                
+                List<String> prevGuard = new ArrayList<>();
+                
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
                     syncChannelsEdge.put(outFlows[i].getId(), ce);
 
-                    decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
+                    	decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    	prevGuard.add(outFlows[i].getGuard()); //salva a guarda para o proximo else
+                    }else {
+                    	decision.append("not "+prevGuard.get(prevGuard.size()-1) + " & (dc -> ");
+                    	prevGuard.remove(prevGuard.size()-1);
+                    }
+                    
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
                     }

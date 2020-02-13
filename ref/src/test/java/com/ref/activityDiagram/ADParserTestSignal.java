@@ -7,9 +7,12 @@ import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADParser;
+import com.refinement.exceptions.ParsingException;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -98,7 +101,7 @@ public class ADParserTestSignal {
 	}
 	
 	@Test
-	public void testSignal1() {
+	public void testSignal1() throws ParsingException {
 		parser1.clearBuffer();
 		String atual = parser1.parserDiagram();
 		String expected = "ID_signal1 = {1..1}\n" +
@@ -160,9 +163,9 @@ public class ADParserTestSignal {
 				"assert MAIN :[deterministic]";
 		assertEquals(expected, atual);
 	}
-
+	
 	@Test
-	public void testSignal2() {
+	public void testSignal2() throws ParsingException {
 		parser2.clearBuffer();
 		String atual = parser2.parserDiagram();
 		String expected = "ID_signal2 = {1..1}\n" +
@@ -226,9 +229,9 @@ public class ADParserTestSignal {
 		
 		assertEquals(expected, atual);
 	}
-
+	
 	@Test
-	public void testSignal3() {
+	public void testSignal3() throws ParsingException {
 		parser3.clearBuffer();
 		String atual = parser3.parserDiagram();
 		String expected = "ID_signal3_1 = {1..1}\n" +
@@ -321,9 +324,9 @@ public class ADParserTestSignal {
 				"assert MAIN :[deterministic]";
 		assertEquals(expected, atual);
 	}
-
+	
 	@Test
-	public void testSignal4() {
+	public void testSignal4() throws ParsingException {
 		parser4.clearBuffer();
 		String atual = parser4.parserDiagram();
 		String expected = "ID_signal4 = {1..1}\n" +
@@ -396,7 +399,7 @@ public class ADParserTestSignal {
 	}
 
 	@Test
-	public void testSignal5() {
+	public void testSignal5() throws ParsingException {
 		parser5.clearBuffer();
 		String atual = parser5.parserDiagram();
 		String expected = "ID_signal6 = {1..1}\n" +
@@ -472,10 +475,9 @@ public class ADParserTestSignal {
 	}
 	
 	@Test
-	public void testSignal6() {
+	public void testSignal6() throws ParsingException {
 		parser6.clearBuffer();
 		String atual = parser6.parserDiagram();
-		//TODO n pega no teste mas ta certo
 		String expected = "ID_Calibratesimple = {1..1}\n" + 
 				"ID_StopPITTracking = {1..1}\n" + 
 				"datatype T = lock | unlock\n" + 

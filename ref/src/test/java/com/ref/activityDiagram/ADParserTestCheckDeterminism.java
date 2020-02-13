@@ -9,6 +9,8 @@ import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.CheckingProgressBar;
+import com.refinement.exceptions.ParsingException;
+
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -111,7 +113,7 @@ public class ADParserTestCheckDeterminism {
 	 * Teste de Check Deadlock
 	 * */
 	@Test
-	public void TestCheckDeterminism1() {
+	public void TestCheckDeterminism1() throws ParsingException {
 		parser1.clearBuffer();
 		String diagramCSP = parser1.parserDiagram();
 		
@@ -150,7 +152,7 @@ public class ADParserTestCheckDeterminism {
 	 * Teste de Check Deadlock
 	 * */
 	@Test
-	public void TestCheckDeterminism2() {
+	public void TestCheckDeterminism2() throws ParsingException {
 		parser2.clearBuffer();
 		String diagramCSP = parser2.parserDiagram();
 		

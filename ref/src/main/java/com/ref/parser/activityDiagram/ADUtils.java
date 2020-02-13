@@ -342,6 +342,17 @@ public class ADUtils {
                 .replace("{", "_").replace("}", "_").replace("|", "_")
                 .replace("\\", "_").replace("\n", "_");
     }
+    
+    public static String nameResolver(String name) {
+        return name.replace(" ", "").replace("!", "_").replace("@", "_")
+                .replace("%", "_").replace("&", "_").replace("*", "_")
+                .replace("(", "_").replace(")", "_").replace("+", "_")
+                .replace("-", "_").replace("=", "_").replace("?", "_")
+                .replace(":", "_").replace("/", "_").replace(";", "_")
+                .replace(">", "_").replace("<", "_").replace(",", "_")
+                .replace("{", "_").replace("}", "_").replace("|", "_")
+                .replace("\\", "_").replace("\n", "_");
+    }
 
     public int addCountCall(String name) {
         int i = 1;

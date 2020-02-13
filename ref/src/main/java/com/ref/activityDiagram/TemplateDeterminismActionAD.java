@@ -10,6 +10,7 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
+import com.refinement.exceptions.ParsingException;
 
 import javax.swing.*;
 import java.io.*;
@@ -92,6 +93,9 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(ParsingException e) {
+			JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"File Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} catch (InvalidUsingException e) {
 			// TODO Auto-generated catch block

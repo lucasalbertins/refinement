@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.*;
+import com.refinement.exceptions.ParsingException;
 
 public class ADParser {
 
@@ -29,6 +30,7 @@ public class ADParser {
     public HashMap<String, ArrayList<String>> parameterAlphabetNode;
     public HashMap<String, String> syncChannelsEdge;            //ID flow, channel
     public HashMap<String, String> syncObjectsEdge;
+    public static List<String> alphabetPool = new ArrayList<>(); 
     private HashMap<String, String> objectEdges;                //channel; name
     private List<IActivityNode> queueNode;
     private List<IActivityNode> queueRecreateNode;
@@ -56,6 +58,7 @@ public class ADParser {
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
+    
 
     public ADDefineChannels dChannels;
     public ADDefineTypes dTypes;
@@ -169,6 +172,7 @@ public class ADParser {
         countSignal = new ArrayList<>();
         countAccept = new ArrayList<>();
         signalChannels = new ArrayList<>();
+        alphabetPool = new ArrayList<>();
     }
 
     private void setName(String nameAD) {
@@ -183,7 +187,7 @@ public class ADParser {
      * Master Function
      * */
 
-    public String parserDiagram() {
+    public String parserDiagram() throws ParsingException {
 
         boolean reset = false;
         String check = "";
@@ -199,6 +203,8 @@ public class ADParser {
         defineCallBehaviourList();
         
         checkCountCallInitial();
+        
+        definePoolAlphabet();
 
         String nodes = defineNodesActionAndControl();
 
@@ -227,7 +233,8 @@ public class ADParser {
                 memory +
                 tokenManager +
                 /*lock +*/
-                pool +
+                pool +            
+                (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+","+alphabetPoolToString()+"|}\n":"")+
                 callBehaviour +
                 check;
 
@@ -239,12 +246,16 @@ public class ADParser {
         return parser;
     }
 
-    private void defineCallBehaviourList() {
+    private void defineCallBehaviourList() throws ParsingException {
     	if(countCall.size() == 0) {//pega os CBA do 1 diagrama
         	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
         		if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
-                    	callBehaviourList.add(((IAction) activityNode).getCallingActivity());                          
+                    	if(((IAction) activityNode).getCallingActivity() == null) {
+                    		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
+                    	}else {
+                    		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+                    	}
                     }
         		}
         	}
@@ -279,8 +290,46 @@ public class ADParser {
         }
 	}
 
-	/*   */
-
+	private void definePoolAlphabet() {
+		if(firstDiagram.equals(ad.getId())) {//pega do 1 diagrama
+        	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
+        		if (activityNode instanceof IAction) {
+                    if (((IAction) activityNode).isAcceptEventAction()||((IAction) activityNode).isSendSignalAction()) {//se for accept ou send
+                    	alphabetPool.add(((IAction) activityNode).getName());
+                    }
+        		}
+        	}
+        	for(IActivity CBAs: callBehaviourList) {
+        		for(IActivityNode sendOrAcceptSignal: CBAs.getActivityNodes()) {
+        			if(sendOrAcceptSignal instanceof IAction) {
+        				if(((IAction)sendOrAcceptSignal).isAcceptEventAction() ||((IAction)sendOrAcceptSignal).isSendSignalAction()) {
+        					alphabetPool.add("signal_"+((IAction) sendOrAcceptSignal).getName());
+        					alphabetPool.add("accept_"+((IAction) sendOrAcceptSignal).getName());
+        				}
+        			}
+        		}
+        	}
+		}
+	}
+	
+	private String alphabetPoolToString() {
+		StringBuilder toString = new StringBuilder();
+		String aux = "";
+		for(String a:alphabetPool) {
+			toString.append(a+",");
+		}
+		toString.replace(toString.lastIndexOf(","), toString.lastIndexOf(",")+1, "");
+		aux = toString.toString();
+		return aux.replace(" ", "").replace("!", "_").replace("@", "_")
+                .replace("%", "_").replace("&", "_").replace("*", "_")
+                .replace("(", "_").replace(")", "_").replace("+", "_")
+                .replace("-", "_").replace("=", "_").replace("?", "_")
+                .replace(":", "_").replace("/", "_").replace(";", "_")
+                .replace(">", "_").replace("<", "_").replace("{", "_")
+                .replace("}", "_").replace("|", "_").replace("\\", "_")
+                .replace("\n", "_");
+	}
+    
     private ADUtils defineADUtils() {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
