@@ -2,7 +2,9 @@ package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.*;
@@ -30,11 +32,11 @@ public class ADParser {
     public HashMap<String, ArrayList<String>> parameterAlphabetNode;
     public HashMap<String, String> syncChannelsEdge;            //ID flow, channel
     public HashMap<String, String> syncObjectsEdge;
-    public static List<String> alphabetPool = new ArrayList<>(); 
+    public static Set<String> alphabetPool = new HashSet<String>();
+    public static List<IActivity> callBehaviourList = new ArrayList<>();
     private HashMap<String, String> objectEdges;                //channel; name
     private List<IActivityNode> queueNode;
     private List<IActivityNode> queueRecreateNode;
-    private static List<IActivity> callBehaviourList = new ArrayList<>();
     private static List<IActivity> callBehaviourListCreated = new ArrayList<>();
     private List<String> eventChannel;
     private List<String> lockChannel;
@@ -172,7 +174,7 @@ public class ADParser {
         countSignal = new ArrayList<>();
         countAccept = new ArrayList<>();
         signalChannels = new ArrayList<>();
-        alphabetPool = new ArrayList<>();
+        alphabetPool = new HashSet<String>();
     }
 
     private void setName(String nameAD) {
@@ -225,7 +227,8 @@ public class ADParser {
         String processSync = defineProcessSync();
         String pool = definePool();
 
-        String parser = type +
+        String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+ 
+        		type +
                 channel +
                 main +
                 processSync +
@@ -295,7 +298,8 @@ public class ADParser {
         	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
         		if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isAcceptEventAction()||((IAction) activityNode).isSendSignalAction()) {//se for accept ou send
-                    	alphabetPool.add(((IAction) activityNode).getName());
+                    	alphabetPool.add("signal_"+((IAction) activityNode).getName());
+    					alphabetPool.add("accept_"+((IAction) activityNode).getName());
                     }
         		}
         	}

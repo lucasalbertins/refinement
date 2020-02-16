@@ -128,8 +128,25 @@ public class ADDefineCallBehavior {
                 adUtils.getLocal(alphabet, callBehaviour, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
             }
             //call
-            int count = adUtils.startActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal);
-            adUtils.endActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesOutpins, count);
+            //TODO
+            /*boolean aux = false;
+            for(IActivity CBAs: ADParser.callBehaviourList) {
+            	if(CBAs.getName().equals(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName())) {
+            		aux = true;
+            	}
+            }
+            
+            if(!aux) {*/
+            	//int count = adUtils.startActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal);
+                //adUtils.endActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesOutpins, count);
+                adUtils.callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins);
+            /*}else {
+            	callBehaviour.append("normal("+ADUtils.nameResolver(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName())+"(1));");
+            	alphabet.add("startActivity_" + ADUtils.nameResolver(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName()) + "." + count);
+            	alphabet.add("endActivity");
+            	
+            }*/
+            
 
             adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 

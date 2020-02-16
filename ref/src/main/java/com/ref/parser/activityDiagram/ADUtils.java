@@ -72,6 +72,59 @@ public class ADUtils {
         return "oe_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countOe_ad++;
     }
 
+    public void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins) {
+    	int count = 0;
+    	count = addCountCall(nameDiagramResolver(nameAD));
+    	String Activity = "";
+    	String getInput ="getInputParam"+nameDiagramResolver(nameAD); 
+    	String setMem = "setMemOutParam"+nameDiagramResolver(nameAD);	
+    	String startAct = "startActivity_" + nameDiagramResolver(nameAD) + "." + count;
+    	String endAct = "endActivity_" + nameDiagramResolver(nameAD) + "." + count;
+    	
+    	alphabetNode.add(startAct);
+    	alphabetNode.add(endAct);
+    	callBehaviourNumber.add(new Pair<>(nameDiagramResolver(nameAD), count));
+    	
+    	List<String> outputPinsUsed = callBehaviourInputs.get(nameDiagramResolver(nameAD));
+        if (outputPinsUsed == null) {
+            outputPinsUsed = inputPins;
+            callBehaviourInputs.put(nameAD, inputPins);
+        }
+        
+        for (String pin : outputPinsUsed) {
+        	getInput += "?" + pin;
+            Activity += "!" + pin;
+        }
+        
+        if(!getInput.equals("getInputParam"+nameDiagramResolver(nameAD))) {
+        	alphabetNode.add(getInput);
+            getInput += " -> ";
+        	action.append(getInput+"(");
+            action.append("normal("+nameDiagramResolver(nameAD)+"(1)) [|{|"+startAct+","+endAct+"|}|] (");
+        }else {
+        	action.append("normal("+nameDiagramResolver(nameAD)+"(1))");
+        }
+        
+        action.append((Activity != ""?startAct+Activity + " -> ":""));
+        
+        Activity = "";	
+        
+        outputPinsUsed = callBehaviourOutputs.get(nameDiagramResolver(nameAD));
+        if (outputPinsUsed == null) {
+            outputPinsUsed = outputPins;
+            callBehaviourOutputs.put(nameAD, outputPins);
+        }
+        
+        for (String pin : outputPinsUsed) {
+            Activity += "?" + pin;
+            setMem += "!" + pin;
+        }
+        
+        action.append((Activity != ""?endAct+Activity + " -> ":""));
+        action.append(!setMem.equals("setMemOutParam"+nameDiagramResolver(nameAD))?setMem+" -> SKIP));":";");
+        
+    }
+    
     public int startActivity(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins) {
         int count = 0;
         count = addCountCall(nameDiagramResolver(nameAD));
