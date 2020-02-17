@@ -237,7 +237,7 @@ public class ADParser {
                 tokenManager +
                 /*lock +*/
                 pool +            
-                (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+","+alphabetPoolToString()+"|}\n":"")+
+                (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
                 callBehaviour +
                 check;
 

@@ -84,7 +84,7 @@ public class ADDefineMainNodes {
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
         mainNode.append("TokenManager_" + nameDiagram + "_t(0,0))");
         
-        if(firstDiagram.equals(ad.getId())) {//se for o 1 diagrama
+        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//se for o 1 diagrama
         	mainNode.append("[|AlphabetPool|]pools)");
         }
         
