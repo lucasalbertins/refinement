@@ -17,11 +17,12 @@ import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.IPackage;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
+import com.ref.exceptions.ParsingException;
 import com.ref.fdr.FdrWrapper;
+import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
-import com.refinement.exceptions.ParsingException;
 
 public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 
@@ -100,15 +101,18 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Logador.getInstance().log(e.getMessage());
 		} catch(ParsingException e) {
 			JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"File Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} catch (InvalidUsingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Logador.getInstance().log(e.getMessage());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			Logador.getInstance().log(e.getMessage());
 		}
 		return null;
 	}

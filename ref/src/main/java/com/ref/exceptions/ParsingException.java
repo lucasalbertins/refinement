@@ -1,4 +1,4 @@
-package com.refinement.exceptions;
+package com.ref.exceptions;
 
 public class ParsingException extends Exception {
 

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.change_vision.jude.api.inf.model.*;
-import com.refinement.exceptions.ParsingException;
+import com.ref.exceptions.ParsingException;
 
 public class ADParser {
 

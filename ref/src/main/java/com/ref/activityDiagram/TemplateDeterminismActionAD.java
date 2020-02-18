@@ -6,11 +6,11 @@ import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
+import com.ref.exceptions.ParsingException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
-import com.refinement.exceptions.ParsingException;
 
 import javax.swing.*;
 import java.io.*;
