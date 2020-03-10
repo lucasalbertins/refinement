@@ -86,7 +86,7 @@ public class ADDefineDecision {
                         syncChannelsEdge.put(outFlows[i].getId(), ce);
                     }
                     if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
-                    	decision.append(outFlows[i].getGuard() + " & (dc -> ");
+                    	decision.append(outFlows[i].getGuard() == "" ? "true & (dc -> ": (outFlows[i].getGuard() + " & (dc -> "));//se a guarda for vazia então assume-se true
                     	prevGuard.add(outFlows[i].getGuard()); //salva a guarda para o proximo else
                     }else {
                     	decision.append("not "+prevGuard.get(prevGuard.size()-1) + " & (dc -> ");
