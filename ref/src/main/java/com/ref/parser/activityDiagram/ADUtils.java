@@ -65,11 +65,11 @@ public class ADUtils {
     }
 
     public String createCE() {
-        return "ce_" + nameDiagramResolver(ad.getName()) + "." + adParser.countCe_ad++;
+        return "ce_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countCe_ad++;
     }
 
     public String createOE(String nameObject) {
-        return "oe_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countOe_ad++;
+        return "oe_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countOe_ad++;
     }
 
     public void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins) {
@@ -96,8 +96,8 @@ public class ADUtils {
             Activity += "!" + pin;
         }
         
-        if(!getInput.equals("getInputParam"+nameDiagramResolver(nameAD))) {
-        	alphabetNode.add(getInput);
+        if(!getInput.equals("getInputParam"+nameDiagramResolver(nameAD))) {//TODO id do callbehavior no processo
+        	alphabetNode.add(getInput);//TODO local onde gera o ?z no alphabeto
             getInput += " -> ";
         	action.append(getInput+"(");
             action.append("normal("+nameDiagramResolver(nameAD)+"(1)) [|{|"+startAct+","+endAct+"|}|] (");
@@ -165,20 +165,20 @@ public class ADUtils {
     }
 
     public void get(ArrayList<String> alphabetNode, StringBuilder action, String nameObject) {
-        String get = "get_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countGet_ad++;
+        String get = "get_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countGet_ad++;
         alphabetNode.add(get);
         action.append(get + "?" + nameObject + " -> ");
     }
 
     public void set(ArrayList<String> alphabetNode, StringBuilder action, String nameMemory, String nameObject) {
-        String set = "set_" + nameMemory + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countSet_ad++;
+        String set = "set_" + nameMemory + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
         alphabetNode.add(set);
         action.append(set +"!" + nameObject + " -> ");
         parameterNodesOutputObject.put(nameMemory, nameObject);
     }
 
     public void setLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data) {
-        String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countSet_ad++;
+        String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
         alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
@@ -188,7 +188,7 @@ public class ADUtils {
     }
 
     public void getLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data) {
-        String get = "get_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countGet_ad++;
+        String get = "get_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countGet_ad++;
         alphabetNode.add(get);
         action.append(get + "?" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
@@ -198,7 +198,7 @@ public class ADUtils {
     }
 
     public void setLocalInput(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String oeIn) {
-        String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + "." + adParser.countSet_ad++;
+        String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
         alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
@@ -215,27 +215,27 @@ public class ADUtils {
                 String lock = "lock_" + nameNode;
                 alphabetNode.add(lock);
                 lockChannel.add(nameNode);
-                action.append(lock + ".lock -> ");
+                action.append(lock + ".id.lock -> ");
             } else {
                 String lock = "lock_" + nameNode;
-                action.append(lock + ".unlock -> ");
+                action.append(lock + ".id.unlock -> ");
             }
         }
     }
 
     public void event(ArrayList<String> alphabet, String nameAction, StringBuilder action) {
-        alphabet.add("event_" + nameAction);
+        alphabet.add("event_" + nameAction+".id");
         eventChannel.add("event_" + nameAction);
-        action.append("event_" + nameAction + " -> ");
+        action.append("event_" + nameAction + ".id -> ");
     }
 
     public void ce(ArrayList<String> alphabetNode, StringBuilder action, String ce, String posCe) {
-        alphabetNode.add(ce);
+        alphabetNode.add(ce);//TODO olhar
         action.append(ce + posCe);
     }
 
     public void oe(ArrayList<String> alphabetNode, StringBuilder action, String oe, String data, String posOe) {
-        alphabetNode.add(oe);
+        alphabetNode.add(oe);//TODO olhar2
         action.append(oe + data + posOe);
     }
 
@@ -244,7 +244,7 @@ public class ADUtils {
 
         if (result != 0) {
             if (countOutFlows == 0 && canBeNegative || countOutFlows > 0) {
-                String update = "update_" + nameDiagramResolver(ad.getName()) + "." + adParser.countUpdate_ad++;
+                String update = "update_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countUpdate_ad++;
                 alphabetNode.add(update);
                 action.append(update + "!(" + countOutFlows + "-" + countInFlows + ") -> ");
 
@@ -271,7 +271,7 @@ public class ADUtils {
     }
 
     public void clear(ArrayList<String> alphabetNode, StringBuilder action) {
-        String clear = "clear_" + nameDiagramResolver(ad.getName()) + "." + adParser.countClear_ad++;
+        String clear = "clear_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countClear_ad++;
         alphabetNode.add(clear);
         action.append(clear + " -> ");
     }
@@ -344,8 +344,8 @@ public class ADUtils {
             }
         }
 
-        alphabet.add("signal_" + nameSignal + "." + idSignal);
-        signal.append("signal_" + nameSignal + "!" + idSignal + " -> ");
+        alphabet.add("signal_" + nameSignal + ".id." + idSignal);
+        signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");//TODO ver se é isso mesmo
 
         if (index >= 0) {
             countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
@@ -375,8 +375,8 @@ public class ADUtils {
             }
         }
 
-        alphabet.add("accept_" + nameAccept + "." + idAccept);
-        accept.append("accept_" + nameAccept + "." + idAccept + "?x -> ");
+        alphabet.add("accept_" + nameAccept + ".id." + idAccept);
+        accept.append("accept_" + nameAccept + ".id." + idAccept + "?x -> ");
 
         if (index >= 0) {
             countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));

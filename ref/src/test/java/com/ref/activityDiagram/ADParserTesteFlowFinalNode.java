@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTesteFlowFinalNode {
@@ -102,7 +103,7 @@ public class ADParserTesteFlowFinalNode {
 	 * Teste de Tradução Flow Final Node
 	 * */
 	@Test
-	public void TestNodesFlowFinal1() {
+	public void TestNodesFlowFinal1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_flowFinal1_t = update_flowFinal1.1!(1-0) -> ((ce_flowFinal1.1 -> SKIP))\n" +
@@ -119,7 +120,7 @@ public class ADParserTesteFlowFinalNode {
 	 * Teste de Tradução Flow Final Node
 	 * */
 	@Test
-	public void TestNodesFlowFinal2() {
+	public void TestNodesFlowFinal2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_flowFinal2_t = update_flowFinal2.1!(2-0) -> ((ce_flowFinal2.1 -> SKIP) ||| (ce_flowFinal2.2 -> SKIP))\n" +
@@ -138,7 +139,7 @@ public class ADParserTesteFlowFinalNode {
 	 * Teste de Tradução Flow Final Node
 	 * */
 	@Test
-	public void TestNodesFlowFinal3() {
+	public void TestNodesFlowFinal3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_flowFinal3_t = update_flowFinal3.1!(1-0) -> get_x_flowFinal3.1?x -> ((oe_x_flowFinal3.1!x -> SKIP))\n" +
@@ -155,7 +156,7 @@ public class ADParserTesteFlowFinalNode {
 	 * Teste de Tradução Flow Final Node
 	 * */
 	@Test
-	public void TestNodesFlowFinal4() {
+	public void TestNodesFlowFinal4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_flowFinal4_t = update_flowFinal4.1!(1-0) -> get_x_flowFinal4.1?x -> ((oe_x_flowFinal4.1!x -> SKIP))\n" +
@@ -176,7 +177,7 @@ public class ADParserTesteFlowFinalNode {
 	 * Teste de Tradução Flow Final Node
 	 * */
 	@Test
-	public void TestNodesFlowFinal5() {
+	public void TestNodesFlowFinal5() throws ParsingException {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_flowFinal5_t = update_flowFinal5.1!(1-0) -> get_x_flowFinal5.1?x -> ((oe_x_flowFinal5.1!x -> SKIP))\n" +

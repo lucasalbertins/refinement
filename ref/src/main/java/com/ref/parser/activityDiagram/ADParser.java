@@ -26,8 +26,8 @@ public class ADParser {
 
     private static String firstDiagram = null;
     public static boolean containsCallBehavior = false;
-
     public static HashMap<String, Integer> countCall = new HashMap<>();
+    public static HashMap<String,List<Pair<String,String>>> countcallBehavior = new HashMap<>();
     public HashMap<String, ArrayList<String>> alphabetNode;
     public HashMap<String, ArrayList<String>> parameterAlphabetNode;
     public HashMap<String, String> syncChannelsEdge;            //ID flow, channel
@@ -167,6 +167,7 @@ public class ADParser {
         firstDiagram = null;
         containsCallBehavior = false;
         countCall = new HashMap<>();
+        countcallBehavior = new HashMap<>();
         callBehaviourList = new ArrayList<>();
         callBehaviourInputs = new HashMap<>();
         callBehaviourOutputs = new HashMap<>();
@@ -249,6 +250,34 @@ public class ADParser {
         return parser;
     }
 
+    public static void addCountCallBehavior(String idKey,String idCalling,String nameCalling) {
+        int i = 1;
+        List<Pair<String,String>> aux1;
+        if (countcallBehavior.containsKey(idKey)) {//se ja tiver o CBA
+            aux1 = countcallBehavior.get(idKey);
+            List<String>aux2 = new ArrayList<String>();
+            for(Pair<String,String> a:aux1) {//pegar os ids
+            	aux2.add(a.getKey());
+            }
+            for(String diagram:aux2) {//varrer atras do diagrama que chamou
+            	if(diagram.equals(idCalling)){
+            		break;
+            	}
+            	i++;
+            }
+            if(i > aux1.size()) {//se ele n estiver la, add
+            	Pair<String,String> pair = new Pair<String, String>(idCalling, nameCalling);
+            	aux1.add(pair);
+            	countcallBehavior.replace(idKey,aux1);	
+            }
+        } else {//se nao existir o CBA
+        	aux1 = new ArrayList<Pair<String,String>>();
+        	Pair<String,String> pair = new Pair<String, String>(idCalling, nameCalling);
+        	aux1.add(pair);
+            countcallBehavior.put(idKey, aux1);
+        }
+    }
+    
     private void defineCallBehaviourList() throws ParsingException {
     	if(countCall.size() == 0) {//pega os CBA do 1 diagrama
         	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
@@ -258,6 +287,7 @@ public class ADParser {
                     		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
                     	}else {
                     		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+                    		addCountCallBehavior(((IAction) activityNode).getCallingActivity().getId(), activityNode.getId(),activityNode.getName());
                     	}
                     }
         		}
@@ -273,6 +303,9 @@ public class ADParser {
 	        				if(adCBAs instanceof IAction) {
 	        					if(((IAction) adCBAs).isCallBehaviorAction() && !aux1.contains(((IAction) adCBAs).getCallingActivity())) {//se for CBA e n tiver sido add
 	        						aux1.add(((IAction) adCBAs).getCallingActivity());
+	        					}
+	        					if(((IAction) adCBAs).isCallBehaviorAction()) {
+	        						addCountCallBehavior(((IAction) adCBAs).getCallingActivity().getId(), adCBAs.getId(),adCBAs.getName());
 	        					}
 	        				}
 	        			}
@@ -369,7 +402,7 @@ public class ADParser {
         return dMemories.defineMemories();
     }
 
-    public String defineNodesActionAndControl() {
+    public String defineNodesActionAndControl() throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dNodesActionAndControl = new ADDefineNodesActionAndControl(ad, adDiagram, countCall, alphabetNode, parameterAlphabetNode,

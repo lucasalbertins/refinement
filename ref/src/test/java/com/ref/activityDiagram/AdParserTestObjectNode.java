@@ -6,6 +6,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -79,7 +80,7 @@ public class AdParserTestObjectNode {
 	/* Teste de Tradução do Object Node
 	 */
 	@Test
-	public void TestDefineObjectNode1() {
+	public void TestDefineObjectNode1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_objectNode1_t = update_objectNode1.1!(1-0) -> get_x_objectNode1.1?x -> ((oe_x_objectNode1.1!x -> SKIP))\n" +
@@ -97,7 +98,7 @@ public class AdParserTestObjectNode {
 	/* Teste de Tradução do Object Node
 	 */
 	@Test
-	public void TestDefineObjectNode2() {
+	public void TestDefineObjectNode2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_objectNode2_t = update_objectNode2.1!(1-0) -> get_x_objectNode2.1?x -> ((oe_x_objectNode2.1!x -> SKIP))\n" +
@@ -116,7 +117,7 @@ public class AdParserTestObjectNode {
 	/* Teste de Tradução do Object Node
 	 */
 	@Test
-	public void TestDefineObjectNode3() {
+	public void TestDefineObjectNode3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_y_objectNode3_t = update_objectNode3.1!(1-0) -> get_y_objectNode3.1?y -> ((oe_y_objectNode3.1!y -> SKIP))\n" +

@@ -58,7 +58,7 @@ public class ADDefineTypes {
                 types.append("ID_" + id + " = {1.." + countCall.get(id) + "}\n");
             }
 
-            types.append("datatype T = lock | unlock\n");
+            //types.append("datatype T = lock | unlock\n");
             
             boolean flag = false;
             

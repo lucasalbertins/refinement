@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class AdParserTestMainNodes {
@@ -84,7 +85,7 @@ public class AdParserTestMainNodes {
 	 * Teste de Tradução MainNode
 	 * */
 	@Test
-	public void TestMainNodeNode1() {
+	public void TestMainNodeNode1() throws ParsingException {
 		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
@@ -105,7 +106,7 @@ public class AdParserTestMainNodes {
 	 * Teste de Tradução MainNode
 	 * */
 	@Test
-	public void TestMainNodeNode2() {
+	public void TestMainNodeNode2() throws ParsingException {
 		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
@@ -126,7 +127,7 @@ public class AdParserTestMainNodes {
 	 * Teste de Tradução MainNode
 	 * */
 	@Test
-	public void TestMainNodeNode3() {
+	public void TestMainNodeNode3() throws ParsingException {
 		parser3.clearBuffer();
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();
@@ -147,7 +148,7 @@ public class AdParserTestMainNodes {
 	 * Teste de Tradução MainNode
 	 * */
 	@Test
-	public void TestMainNodeNode4() {
+	public void TestMainNodeNode4() throws ParsingException {
 		parser4.clearBuffer();
 		parser4.defineNodesActionAndControl();
 		parser4.defineChannels();

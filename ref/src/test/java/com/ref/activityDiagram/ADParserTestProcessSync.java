@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestProcessSync {
@@ -82,7 +83,7 @@ public class ADParserTestProcessSync {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesProcessSync1() {
+	public void TestNodesProcessSync1() throws ParsingException {
 		parser1.defineNodesActionAndControl();
 		String actual = parser1.defineProcessSync();
 		StringBuffer expected = new StringBuffer();
@@ -103,7 +104,7 @@ public class ADParserTestProcessSync {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesProcessSync2() {
+	public void TestNodesProcessSync2() throws ParsingException {
 		parser2.defineNodesActionAndControl();
 		String actual = parser2.defineProcessSync();
 		StringBuffer expected = new StringBuffer();
@@ -126,7 +127,7 @@ public class ADParserTestProcessSync {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesProcessSync3() {
+	public void TestNodesProcessSync3() throws ParsingException {
 		parser3.defineNodesActionAndControl();
 		String actual = parser3.defineProcessSync();
 		StringBuffer expected = new StringBuffer();

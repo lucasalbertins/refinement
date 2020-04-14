@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestActionNode {
@@ -112,7 +113,7 @@ public class ADParserTestActionNode {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesAction1() {
+	public void TestNodesAction1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action1_t = update_action1.1!(1-0) -> ((ce_action1.1 -> SKIP))\n" +
@@ -129,7 +130,7 @@ public class ADParserTestActionNode {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesAction2() {
+	public void TestNodesAction2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action2_t = update_action2.1!(1-0) -> ((ce_action2.1 -> SKIP))\n" +
@@ -150,7 +151,7 @@ public class ADParserTestActionNode {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesAction3() {
+	public void TestNodesAction3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action3_t = update_action3.1!(1-0) -> ((ce_action3.1 -> SKIP))\n" +
@@ -172,7 +173,7 @@ public class ADParserTestActionNode {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesAction4() {
+	public void TestNodesAction4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_y_action4_t = update_action4.1!(1-0) -> get_y_action4.1?y -> ((oe_y_action4.1!y -> SKIP))\n" +
@@ -194,7 +195,7 @@ public class ADParserTestActionNode {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesAction5() {
+	public void TestNodesAction5() throws ParsingException {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_action5_t = update_action5.1!(1-0) -> get_x_action5.1?x -> ((oe_x_action5.1!x -> SKIP))\n" +
@@ -211,7 +212,7 @@ public class ADParserTestActionNode {
 	 * Teste de Tradução dos tipos de elementos
 	 * */
 	@Test
-	public void TestNodesAction6() {
+	public void TestNodesAction6() throws ParsingException {
 		String actual = parser6.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_action6_t = update_action6.1!(1-0) -> get_x_action6.1?x -> ((oe_x_action6.1!x -> SKIP))\n" +

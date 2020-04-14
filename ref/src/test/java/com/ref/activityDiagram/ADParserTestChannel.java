@@ -12,6 +12,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestChannel {
@@ -79,7 +80,7 @@ public class ADParserTestChannel {
 	/* Teste de Tradução dos canais
 	 */
 	@Test
-	public void TestDefineChannels1() {
+	public void TestDefineChannels1() throws ParsingException {
 		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
 		String actual = parser1.defineChannels();
@@ -101,7 +102,7 @@ public class ADParserTestChannel {
 	/* Teste de Tradução dos canais
 	 */
 	@Test
-	public void TestDefineChannels2() {
+	public void TestDefineChannels2() throws ParsingException {
 		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
 		String actual = parser2.defineChannels();
@@ -127,7 +128,7 @@ public class ADParserTestChannel {
 	/* Teste de Tradução dos canais
 	 */
 	@Test
-	public void TestDefineChannels3() {
+	public void TestDefineChannels3() throws ParsingException {
 		parser3.clearBuffer();
 		parser3.defineNodesActionAndControl();
 		String actual = parser3.defineChannels();

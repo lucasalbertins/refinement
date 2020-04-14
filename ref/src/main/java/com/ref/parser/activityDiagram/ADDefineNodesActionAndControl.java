@@ -1,6 +1,7 @@
 package com.ref.parser.activityDiagram;
 
 import com.change_vision.jude.api.inf.model.*;
+import com.ref.exceptions.ParsingException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,14 +107,22 @@ public class ADDefineNodesActionAndControl {
         this.adParser = adParser;
     }
 
-    public String defineNodesActionAndControl() {
+    public String defineNodesActionAndControl() throws ParsingException {
         for (IActivityNode activityNode : ad.getActivityNodes()) {
             if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {
-                parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+                try {
+					parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+				} catch (Exception e) {
+					throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
+				}
             }
 
             if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {
-                parameterNodesOutput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+                try {
+					parameterNodesOutput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+				} catch (Exception e) {
+					throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
+				}
             }
 
             if (!ADParser.containsCallBehavior &&  activityNode instanceof IAction && ((IAction) activityNode).isCallBehaviorAction()) {
@@ -165,7 +174,7 @@ public class ADDefineNodesActionAndControl {
                             activityNode = defineSignal(activityNode, nodes, 0);
                         } else if (((IAction) activityNode).isAcceptEventAction()) {
                             activityNode = defineAccept(activityNode, nodes, 0);
-                        } else {
+                        } else {//TODO else if value specification(classe nova)
                             activityNode = defineAction(activityNode, nodes, 0);    // create action node and set next action node
                         }
                     } else if (activityNode instanceof IControlNode) {
@@ -308,7 +317,7 @@ public class ADDefineNodesActionAndControl {
             }
         }
 
-        while (queueRecreateNode.size() != 0) {
+         while (queueRecreateNode.size() != 0) {
             IActivityNode activityNode = queueRecreateNode.get(0);
             queueRecreateNode.remove(0);
 
@@ -394,14 +403,14 @@ public class ADDefineNodesActionAndControl {
 
         //add initial central
         if (allInitial.size() > 0) {
-            nodes.append("init_" + adUtils.nameDiagramResolver(ad.getName()) + "_t = (" + allInitial.get(0));
+            nodes.append("init_" + adUtils.nameDiagramResolver(ad.getName()) + "_t(id) = (" + allInitial.get(0));
             for (int i = 1; i < allInitial.size(); i++) {
-                nodes.append(" ||| " + allInitial.get(i));
+                nodes.append("(id) ||| " + allInitial.get(i));
             }
 
-            nodes.append(") /\\ END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName()));
+            nodes.append("(id)) /\\ END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName())+"(id)");
 
-            alphabetAllInitialAndParameter.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabetAllInitialAndParameter.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
 
             alphabetNode.put("init", alphabetAllInitialAndParameter);
         }
@@ -417,7 +426,7 @@ public class ADDefineNodesActionAndControl {
                         (((IAction) activityNode).isAcceptEventAction() && createdAccept.contains(activityNode.getId()))));
     }
 
-    private IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dAction = new ADDefineAction(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
@@ -442,7 +451,7 @@ public class ADDefineNodesActionAndControl {
         return dInitialNode.defineInitialNode(activityNode, nodes);
     }
 
-    private IActivityNode defineCallBehaviour(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private IActivityNode defineCallBehaviour(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dCallBehavior = new ADDefineCallBehavior(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
@@ -486,7 +495,7 @@ public class ADDefineNodesActionAndControl {
         return dDecision.defineDecision(activityNode, nodes, code);
     }
 
-    private IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) {
+    private IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dFlowFinal = new ADDefineFlowFinal(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);

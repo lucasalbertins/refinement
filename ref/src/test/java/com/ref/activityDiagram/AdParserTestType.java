@@ -12,6 +12,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class AdParserTestType {
@@ -88,7 +89,7 @@ public class AdParserTestType {
 	/* Teste de Tradução dos tipos de dados
 	 */
 	@Test
-	public void TestDefineTypes1() {
+	public void TestDefineTypes1() throws ParsingException {
 		parser1.clearBuffer();
 		parser1.checkCountCallInitial();
 		parser1.defineNodesActionAndControl();
@@ -110,7 +111,7 @@ public class AdParserTestType {
 	/* Teste de Tradução dos tipos de dados
 	 */
 	@Test
-	public void TestDefineTypes2() {
+	public void TestDefineTypes2() throws ParsingException {
 		parser2.clearBuffer();
 		parser2.checkCountCallInitial();
 		parser2.defineNodesActionAndControl();
@@ -136,7 +137,7 @@ public class AdParserTestType {
 	/* Teste de Tradução dos tipos de dados
 	 */
 	@Test
-	public void TestDefineTypes3() {
+	public void TestDefineTypes3() throws ParsingException {
 		parser3.clearBuffer();
 		parser3.checkCountCallInitial();
 		parser3.defineNodesActionAndControl();
@@ -158,7 +159,7 @@ public class AdParserTestType {
 	/* Teste de Tradução dos tipos de dados
 	 */
 	@Test
-	public void TestDefineTypes4() {
+	public void TestDefineTypes4() throws ParsingException {
 		parser4.clearBuffer();
 		parser4.checkCountCallInitial();
 		parser4.defineNodesActionAndControl();

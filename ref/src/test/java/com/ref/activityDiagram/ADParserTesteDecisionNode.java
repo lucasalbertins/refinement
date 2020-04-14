@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTesteDecisionNode {
@@ -96,7 +97,7 @@ public class ADParserTesteDecisionNode {
 	
 
 	@Test
-	public void TestNodesDecision1() {
+	public void TestNodesDecision1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision1_t = update_decision1.1!(1-0) -> ((ce_decision1.1 -> SKIP))\n" +
@@ -115,7 +116,7 @@ public class ADParserTesteDecisionNode {
 	}
 
 	@Test
-	public void TestNodesDecision2() {
+	public void TestNodesDecision2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))\n" +
@@ -134,7 +135,7 @@ public class ADParserTesteDecisionNode {
 	
 
 	@Test
-	public void TestNodesDecision3() {
+	public void TestNodesDecision3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_z_decision3_t = update_decision3.1!(1-0) -> get_z_decision3.1?z -> ((oe_z_decision3.1!z -> SKIP))\n" +
@@ -152,7 +153,7 @@ public class ADParserTesteDecisionNode {
 	}
 
 	@Test
-	public void TestNodesDecision4() {
+	public void TestNodesDecision4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision4_t = update_decision4.1!(1-0) -> ((ce_decision4.1 -> SKIP))\n" +
@@ -170,7 +171,7 @@ public class ADParserTesteDecisionNode {
 	}
 
 	@Test
-	public void TestNodesDecision5() {
+	public void TestNodesDecision5() throws ParsingException {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision5_t = update_decision5.1!(1-0) -> ((ce_decision5.1 -> SKIP))\n" +

@@ -35,19 +35,19 @@ public class ADDefinePool {
 	        	if(pool.lastIndexOf("|") != -1) pool.replace(pool.lastIndexOf("|"),pool.lastIndexOf("|")+1,"\n");
         	
 	        	for(String signal: signalChannels) {
-	        		pool.append("POOL("+signal+") = pool_"+signal+"_t(<>)\n");
+	        		pool.append("POOL(id,"+signal+") = pool_"+signal+"_t(id,<>)\n");
 	        	}
-	        	pool.append("pools =[|{|endDiagram_"+nameDiagram+"|}|]x:POOLNAME @ POOL(x)\n");
+	        	pool.append("pools(id) =[|{|endDiagram_"+nameDiagram+".id|}|]x:POOLNAME @ POOL(id,x)\n");
         	}
         	
             for (String signal: signalChannels) {
                 String poolName = "pool_" + signal;
                 String eventName = "event_" + signal + "_" + nameDiagram;
 
-                pool.append( poolName + "(l) = ");
-                pool.append("(signal_" + signal + "?" + eventName + " -> ");
-                pool.append("if length(l) < 5 then " + poolName + "(l^<" + eventName + ">) ");
-                pool.append("else " + poolName + "(l))");
+                pool.append( poolName + "(id,l) = ");
+                pool.append("(signal_" + signal + ".id?" + eventName + " -> ");
+                pool.append("if length(l) < 5 then " + poolName + "(id,l^<" + eventName + ">) ");
+                pool.append("else " + poolName + "(id,l))");
 
                 int lengthAccept = 0;
 
@@ -59,12 +59,12 @@ public class ADDefinePool {
                 }
 
                 for (int i = 0; i < lengthAccept - 1; i++) {
-                    pool.append(" [] (length(l) > 0 & accept_" + signal + "." + (i+1) + "!head(l) -> " + poolName + "(tail(l)))");
+                    pool.append(" [] (length(l) > 0 & accept_" + signal + ".id." + (i+1) + "!head(l) -> " + poolName + "(id,tail(l)))");
                 }
 
                 pool.append("\n");
 
-                pool.append(poolName + "_t(l) = " + poolName + "(l) /\\ END_DIAGRAM_" + nameDiagram + "\n");
+                pool.append(poolName + "_t(id,l) = " + poolName + "(id,l) /\\ END_DIAGRAM_" + nameDiagram + "(id)\n");
             }
             
         }

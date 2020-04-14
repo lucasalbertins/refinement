@@ -47,7 +47,7 @@ public class ADDefineMainNodes {
             mainNode.append("LOOP = loop -> LOOP\n");
         }
 
-        mainNode.append("END_DIAGRAM_" + nameDiagram + " = endDiagram_" + nameDiagram + " -> SKIP\n");
+        mainNode.append("END_DIAGRAM_" + nameDiagram + "(id) = endDiagram_" + nameDiagram + ".id -> SKIP\n");
         mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
 
         if (parameterNodesInput.size() + parameterNodesOutput.size() > 0) {
@@ -82,10 +82,10 @@ public class ADDefineMainNodes {
         }*/
 
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
-        mainNode.append("TokenManager_" + nameDiagram + "_t(0,0))");
+        mainNode.append("TokenManager_" + nameDiagram + "_t(ID_"+nameDiagram+",0,0))");
         
         if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//se for o 1 diagrama
-        	mainNode.append("[|AlphabetPool|]pools)");
+        	mainNode.append("[|AlphabetPool|]pools(ID_"+nameDiagram+"))");
         }
         
         /*if(signalChannelsLocal.size()> 0) {
@@ -141,19 +141,19 @@ public class ADDefineMainNodes {
 
             mainNode.append("endActivity_" + nameDiagram + "|}|] ");
 
-            mainNode.append("Mem_" + nameDiagram + ")\n");
+            mainNode.append("Mem_" + nameDiagram + "(ID_"+nameDiagram+"))\n");
         } else if (lockChannel.size() > 0) {
             mainNode.append("Lock_" + nameDiagram + ")\n");
         } else {
             mainNode.append("\n");
         }
 
-        mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
-        mainNode.append("StartActivity_" + nameDiagram + "(ID_" + nameDiagram + "); Node_" + nameDiagram + "; EndActivity_" + nameDiagram + "(ID_" + nameDiagram + ")\n");
+        mainNode.append("Internal_" + nameDiagram + "(id) = ");
+        mainNode.append("StartActivity_" + nameDiagram + "(id); Node_" + nameDiagram + "(id); EndActivity_" + nameDiagram + "(id)\n");
 
 
-        mainNode.append("StartActivity_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
-        mainNode.append("startActivity_" + nameDiagram + ".ID_" + nameDiagram);
+        mainNode.append("StartActivity_" + nameDiagram + "(id) = ");
+        mainNode.append("startActivity_" + nameDiagram + ".id");
 
         if (parameterNodesInput.size() > 0) {
             if (callBehaviourInputs.containsKey(adUtils.nameDiagramResolver(ad.getName()))) {
@@ -185,14 +185,14 @@ public class ADDefineMainNodes {
         }
 
 
-        mainNode.append("EndActivity_" + nameDiagram + "(ID_" + nameDiagram + ") = ");
+        mainNode.append("EndActivity_" + nameDiagram + "(id) = ");
 
         if (parameterNodesOutput.size() > 0) {
             for (String input : parameterNodesOutput.keySet()) {
                 adUtils.get(alphabet, mainNode, input);
             }
 
-            mainNode.append("endActivity_" + nameDiagram + ".ID_" + nameDiagram);
+            mainNode.append("endActivity_" + nameDiagram + ".id");
 
             for (String output : parameterNodesOutput.keySet()) {
                 mainNode.append("!" + output);
@@ -200,7 +200,7 @@ public class ADDefineMainNodes {
 
             mainNode.append(" -> SKIP");
         } else {
-            mainNode.append("endActivity_" + nameDiagram + ".ID_" + nameDiagram + " -> SKIP");
+            mainNode.append("endActivity_" + nameDiagram + ".id -> SKIP");
         }
 
         mainNode.append("\n");

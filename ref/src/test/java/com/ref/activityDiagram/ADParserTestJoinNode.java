@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestJoinNode {
@@ -92,7 +93,7 @@ public class ADParserTestJoinNode {
 	 * Teste de Tradução Join Node
 	 * */
 	@Test
-	public void TestNodesJoin1() {
+	public void TestNodesJoin1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_join1_t = update_join1.1!(2-0) -> ((ce_join1.1 -> SKIP) ||| (ce_join1.2 -> SKIP))\n" +
@@ -113,7 +114,7 @@ public class ADParserTestJoinNode {
 	 * Teste de Tradução Join Node
 	 * */
 	@Test
-	public void TestNodesJoin2() {
+	public void TestNodesJoin2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_join2_t = update_join2.1!(2-0) -> get_x_join2.1?x -> ((oe_x_join2.1!x -> SKIP) ||| (oe_x_join2.2!x -> SKIP))\n" +
@@ -134,7 +135,7 @@ public class ADParserTestJoinNode {
 	 * Teste de Tradução Join Node
 	 * */
 	@Test
-	public void TestNodesJoin3() {
+	public void TestNodesJoin3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_join3_t = update_join3.1!(1-0) -> get_x_join3.1?x -> ((oe_x_join3.1!x -> SKIP))\n" +
@@ -154,7 +155,7 @@ public class ADParserTestJoinNode {
 	 * Teste de Tradução Join Node
 	 * */
 	@Test
-	public void TestNodesJoin4() {
+	public void TestNodesJoin4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_y_join4_t = update_join4.1!(1-0) -> get_y_join4.1?y -> ((oe_y_join4.1!y -> SKIP))\n" +

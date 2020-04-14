@@ -59,7 +59,7 @@ public class ADDefineMerge {
                 }
             }
 
-            merge.append(nameMerge + " = ");
+            merge.append(nameMerge + "(id) = ");
 
             merge.append("(");
 
@@ -123,17 +123,17 @@ public class ADDefineMerge {
                 objectEdges.put(oe, nameObjectUnique);
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 
-                merge.append(nameMerge + "\n");
-                merge.append(nameMergeTermination + " = ");
+                merge.append(nameMerge + "(id)\n");
+                merge.append(nameMergeTermination + "(id) = ");
 
-                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
+                merge.append("((" + nameMerge + "(id) /\\ " + endDiagram + "(id)) ");
 
                 merge.append("[|{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 merge.append("|}|] ");
-                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(typeMemoryLocal) + ")) ");
+                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(id," + adUtils.getDefaultValue(typeMemoryLocal) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -145,12 +145,12 @@ public class ADDefineMerge {
                 syncChannelsEdge.put(outFlows[0].getId(), ce);
                 adUtils.ce(alphabet, merge, ce, " -> ");
 
-                merge.append(nameMerge + "\n");
-                merge.append(nameMergeTermination + " = ");
-                merge.append(nameMerge + " /\\ " + endDiagram + "\n");
+                merge.append(nameMerge + "(id)\n");
+                merge.append(nameMergeTermination + "(id) = ");
+                merge.append(nameMerge + "(id) /\\ " + endDiagram + "(id)\n");
             }
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()+".id"));
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
@@ -202,17 +202,17 @@ public class ADDefineMerge {
                 objectEdges.put(oe, nameObjectUnique);
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 
-                merge.append(nameMerge + "\n");
-                merge.append(nameMergeTermination + " = ");
+                merge.append(nameMerge + "(id)\n");
+                merge.append(nameMergeTermination + "(id) = ");
 
-                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
+                merge.append("((" + nameMerge + "(id) /\\ " + endDiagram + "(id)) ");
 
                 merge.append("[|{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 merge.append("|}|] ");
-                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + ")) ");
+                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + "(id))) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -224,9 +224,9 @@ public class ADDefineMerge {
                 syncChannelsEdge.put(outFlows[0].getId(), ce);
                 adUtils.ce(alphabet, merge, ce, " -> ");
 
-                merge.append(nameMerge + "\n");
-                merge.append(nameMergeTermination + " = ");
-                merge.append(nameMerge + " /\\ " + endDiagram + "\n");
+                merge.append(nameMerge + "(id)\n");
+                merge.append(nameMergeTermination + "(id) = ");
+                merge.append(nameMerge + "(id) /\\ " + endDiagram + "(id)\n");
             }
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
@@ -255,7 +255,7 @@ public class ADDefineMerge {
                 }
             }
 
-            merge.append(nameMerge + " = ");
+            merge.append(nameMerge + "(id) = ");
 
             merge.append("(");
 
@@ -340,12 +340,12 @@ public class ADDefineMerge {
                 String ce = syncChannelsEdge.get(outFlows[0].getId());
                 adUtils.ce(alphabet, merge, ce, " -> ");
 
-                merge.append(nameMerge + "\n");
-                merge.append(nameMergeTermination + " = ");
-                merge.append(nameMerge + " /\\ " + endDiagram + "\n");
+                merge.append(nameMerge + "(id)\n");
+                merge.append(nameMergeTermination + "(id) = ");
+                merge.append(nameMerge + "(id) /\\ " + endDiagram + "(id)\n");
             }
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {

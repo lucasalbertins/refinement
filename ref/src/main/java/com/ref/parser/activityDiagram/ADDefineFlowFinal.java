@@ -3,6 +3,7 @@ package com.ref.parser.activityDiagram;
 import com.change_vision.jude.api.inf.model.IActivity;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IFlow;
+import com.ref.exceptions.ParsingException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ public class ADDefineFlowFinal {
         this.adUtils = adUtils;
     }
 
-    public IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) {
+    public IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) throws ParsingException {
         StringBuilder flowFinal = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String nameFlowFinal = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
@@ -35,8 +36,11 @@ public class ADDefineFlowFinal {
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         HashMap<String, String> nameObjects = new HashMap<>();
         IFlow[] inFlows = activityNode.getIncomings();
-
-        flowFinal.append(nameFlowFinal + " = ");
+        
+        if(nameFlowFinal.equals("_" + adUtils.nameDiagramResolver(ad.getName()))) {
+        	throw new ParsingException("The final flow node is unnamed\n");
+        }
+        flowFinal.append(nameFlowFinal + "(id) = ");
 
         ArrayList<String> ceInitials = new ArrayList<>();
 
@@ -82,12 +86,12 @@ public class ADDefineFlowFinal {
 
         adUtils.update(alphabet, flowFinal, 1, 0, true);
 
-        flowFinal.append(nameFlowFinal + "\n");
+        flowFinal.append(nameFlowFinal + "(id)\n");
 
-        flowFinal.append(nameFlowFinalTermination + " = ");
-        flowFinal.append(nameFlowFinal + " /\\ " + endDiagram + "\n");
+        flowFinal.append(nameFlowFinalTermination + "(id) = ");
+        flowFinal.append(nameFlowFinal + "(id) /\\ " + endDiagram + "(id)\n");
 
-        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
         alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
         activityNode = null;

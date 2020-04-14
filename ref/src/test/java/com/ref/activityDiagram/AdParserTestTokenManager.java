@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class AdParserTestTokenManager {
@@ -72,7 +73,7 @@ public class AdParserTestTokenManager {
 	 * Teste de Tradução TokenManager
 	 * */
 	@Test
-	public void TestNodesTokenManager1() {
+	public void TestNodesTokenManager1() throws ParsingException {
 		parser1.defineNodesActionAndControl();
 		String actual = parser1.defineTokenManager();
 		StringBuffer expected = new StringBuffer();
@@ -86,7 +87,7 @@ public class AdParserTestTokenManager {
 	 * Teste de Tradução TokenManager
 	 * */
 	@Test
-	public void TestNodesTokenManager2() {
+	public void TestNodesTokenManager2() throws ParsingException {
 		parser2.defineNodesActionAndControl();
 		String actual = parser2.defineTokenManager();
 		StringBuffer expected = new StringBuffer();

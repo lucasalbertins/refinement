@@ -35,7 +35,7 @@ public class ADDefineFinalNode {
         HashMap<String, String> nameObjects = new HashMap<>();
         IFlow[] inFlows = activityNode.getIncomings();
 
-        finalNode.append(nameFinalNode + " = ");
+        finalNode.append(nameFinalNode + "(id) = ");
 
         ArrayList<String> ceInitials = new ArrayList<>();
         for (int i = 0; i < inFlows.length; i++) {
@@ -82,10 +82,10 @@ public class ADDefineFinalNode {
 
         finalNode.append("SKIP\n");
 
-        finalNode.append(nameFinalNodeTermination + " = ");
-        finalNode.append(nameFinalNode + " /\\ " + endDiagram + "\n");
+        finalNode.append(nameFinalNodeTermination + "(id) = ");
+        finalNode.append(nameFinalNode + "(id) /\\ " + endDiagram + "(id)\n");
 
-        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
         alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
         activityNode = null;

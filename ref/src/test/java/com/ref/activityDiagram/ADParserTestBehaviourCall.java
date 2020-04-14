@@ -22,7 +22,7 @@ public class ADParserTestBehaviourCall {
 	private static ADParser parser4;
 	private static ADParser parser5;
 	private static ADParser parser6;
-	
+	private static ADParser parser7;
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
 		try {
@@ -86,6 +86,10 @@ public class ADParserTestBehaviourCall {
 
 			parser5 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/behavior6.asta");
+			findElements = findElements(projectAccessor);
+			
 			for (int i = 0; i < findElements.length; i++) {
 				if (findElements[i].getName().equals("behavior6")) {
 					ad = (IActivityDiagram) findElements[i];
@@ -93,6 +97,18 @@ public class ADParserTestBehaviourCall {
 			}
 
 			parser6 = new ADParser(ad.getActivity(), ad.getName(), ad);
+			
+			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			projectAccessor.open("src/test/resources/activityDiagram/behavior7.asta");
+			findElements = findElements(projectAccessor);
+
+			for (int i = 0; i < findElements.length; i++) {
+				if (findElements[i].getName().equals("behavior7")) {
+					ad = (IActivityDiagram) findElements[i];
+				}
+			}
+			
+			parser7 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -810,4 +826,15 @@ public class ADParserTestBehaviourCall {
 
 		assertEquals(expected.toString(), actual);
 	}
+	
+	/*
+	@Test
+	public void TestNodesBehavior7() throws ParsingException {
+		parser7.clearBuffer();
+		String actual = parser7.parserDiagram();
+		StringBuffer expected = new StringBuffer();
+		//expected.append();
+
+		assertEquals(expected.toString(), actual);
+	}*/
 }

@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestForkNode {
@@ -72,7 +73,7 @@ public class ADParserTestForkNode {
 	 * Teste de Tradução Fork Node
 	 * */
 	@Test
-	public void TestNodesFork1() {
+	public void TestNodesFork1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_fork1_t = update_fork1.1!(1-0) -> ((ce_fork1.1 -> SKIP))\n" +
@@ -93,7 +94,7 @@ public class ADParserTestForkNode {
 	 * Teste de Tradução Fork Node
 	 * */
 	@Test
-	public void TestNodesFork2() {
+	public void TestNodesFork2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_fork2_t = update_fork2.1!(1-0) -> get_x_fork2.1?x -> ((oe_x_fork2.1!x -> SKIP))\n" +

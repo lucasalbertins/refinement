@@ -50,7 +50,7 @@ public class ADDefineAccept {
         String nameAcceptTermination = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
 
         if (code == 0) {
-            accept.append(nameAccept + " = ");
+            accept.append(nameAccept + "(id) = ");
 
             if (inFlows.length > 0) {
                 accept.append("(");
@@ -97,12 +97,12 @@ public class ADDefineAccept {
                 accept.append("); ");
             }
 
-            accept.append(nameAccept + "\n");
+            accept.append(nameAccept + "(id)\n");
 
-            accept.append(nameAcceptTermination + " = ");
-            accept.append(nameAccept + " /\\ " + endDiagram + "\n");
+            accept.append(nameAcceptTermination + "(id) = ");
+            accept.append(nameAccept + "(id) /\\ " + endDiagram + "(id)\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver("accept_" + activityNode.getName() + "_" + idAccept), alphabet);
             createdAccept.add(activityNode.getId());
 
@@ -150,7 +150,7 @@ public class ADDefineAccept {
 
         } else if (code == 2) {
 
-            accept.append(nameAccept + " = ");
+            accept.append(nameAccept + "(id) = ");
 
             if (inFlows.length > 0) {
                 accept.append("(");
@@ -197,12 +197,12 @@ public class ADDefineAccept {
                 accept.append("); ");
             }
 
-            accept.append(nameAccept + "\n");
+            accept.append(nameAccept + "(id)\n");
 
-            accept.append(nameAcceptTermination + " = ");
-            accept.append(nameAccept + " /\\ " + endDiagram + "\n");
+            accept.append(nameAcceptTermination + "(id) = ");
+            accept.append(nameAccept + "(id) /\\ " + endDiagram + "(id)\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver("accept_" + activityNode.getName() + "_" + idAccept), alphabet);
             createdAccept.add(activityNode.getId());
 

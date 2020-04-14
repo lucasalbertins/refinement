@@ -54,7 +54,7 @@ public class ADDefineSignal {
         String nameSignalTermination = adUtils.nameDiagramResolver("signal_" + activityNode.getName()) + "_" + idSignal + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
 
         if (code == 0) {
-            signal.append(nameSignal + " = ");
+            signal.append(nameSignal + "(id) = ");
 
             signal.append("(");
             for (int i = 0; i < inFlows.length; i++) {
@@ -95,12 +95,12 @@ public class ADDefineSignal {
                 signal.append("); ");
             }
 
-            signal.append(nameSignal + "\n");
+            signal.append(nameSignal + "(id)\n");
 
-            signal.append(nameSignalTermination + " = ");
-            signal.append(nameSignal + " /\\ " + endDiagram + "\n");
+            signal.append(nameSignalTermination + "(id) = ");
+            signal.append(nameSignal + "(id) /\\ " + endDiagram + "(id)\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver("signal_" + activityNode.getName() + "_" + idSignal), alphabet);
             createdSignal.add(activityNode.getId());
 
@@ -148,7 +148,7 @@ public class ADDefineSignal {
 
         } else if (code == 2) {
 
-            signal.append(nameSignal + " = ");
+            signal.append(nameSignal + "(id) = ");
 
             signal.append("(");
             for (int i = 0; i < inFlows.length; i++) {
@@ -188,12 +188,12 @@ public class ADDefineSignal {
                 signal.append("); ");
             }
 
-            signal.append(nameSignal + "\n");
+            signal.append(nameSignal + "(id)\n");
 
-            signal.append(nameSignalTermination + " = ");
-            signal.append(nameSignal + " /\\ " + endDiagram + "\n");
+            signal.append(nameSignalTermination + "(id) = ");
+            signal.append(nameSignal + "(id) /\\ " + endDiagram + "(id)\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver("signal_" + activityNode.getName() + "_" + idSignal), alphabet);
             createdSignal.add(activityNode.getId());
 

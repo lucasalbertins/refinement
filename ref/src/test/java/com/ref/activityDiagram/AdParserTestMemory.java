@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class AdParserTestMemory {
@@ -75,7 +76,7 @@ public class AdParserTestMemory {
 	 * Teste de Tradução Memory
 	 * */
 	@Test
-	public void TestMemoryNode1() {
+	public void TestMemoryNode1() throws ParsingException {
 		parser1.clearBuffer();
 		parser1.defineNodesActionAndControl();
 		parser1.defineChannels();
@@ -98,7 +99,7 @@ public class AdParserTestMemory {
 	 * Teste de Tradução Memory
 	 * */
 	@Test
-	public void TestMemoryNode2() {
+	public void TestMemoryNode2() throws ParsingException {
 		parser2.clearBuffer();
 		parser2.defineNodesActionAndControl();
 		parser2.defineChannels();
@@ -125,7 +126,7 @@ public class AdParserTestMemory {
 	 * Teste de Tradução Memory
 	 * */
 	@Test
-	public void TestMemoryNode3() {
+	public void TestMemoryNode3() throws ParsingException {
 		parser3.clearBuffer();
 		parser3.defineNodesActionAndControl();
 		parser3.defineChannels();

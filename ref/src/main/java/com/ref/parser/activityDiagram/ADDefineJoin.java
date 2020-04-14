@@ -69,7 +69,7 @@ public class ADDefineJoin {
                 }
             }
 
-            joinNode.append(nameJoin + " = (");
+            joinNode.append(nameJoin + "(id) = (");
 
             for (int i = 0; i < ceInitials.size(); i++) {
                 String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
@@ -159,22 +159,22 @@ public class ADDefineJoin {
 
             joinNode.append("); ");
 
-            joinNode.append(nameJoin + "\n");
+            joinNode.append(nameJoin + "(id)\n");
 
-            joinNode.append(nameJoinTermination + " = ");
+            joinNode.append(nameJoinTermination + "(id) = ");
 
             for (int i = 0; i < objects.size(); i++) {
                 joinNode.append("(");
             }
 
-            joinNode.append("(" + nameJoin + " /\\ " + endDiagram + ")");
+            joinNode.append("(" + nameJoin + "(id) /\\ " + endDiagram + "(id))");
 
             for (int i = 0; i < objects.size(); i++) {    //creates the parallel output channels
                 joinNode.append(" [|{|");
                 joinNode.append("get_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 joinNode.append("set_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                joinNode.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] ");
-                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(" + adUtils.getDefaultValue(objects.get(i)) + "))");
+                joinNode.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id|}|] ");
+                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(id," + adUtils.getDefaultValue(objects.get(i)) + "))");
             }
 
             if (objects.size() > 0) {
@@ -194,7 +194,7 @@ public class ADDefineJoin {
 
             joinNode.append("\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
@@ -326,7 +326,7 @@ public class ADDefineJoin {
                 }
             }
 
-            joinNode.append(nameJoin + " = (");
+            joinNode.append(nameJoin + "(id) = (");
 
             for (int i = 0; i < ceInitials.size(); i++) {
                 String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
@@ -405,22 +405,22 @@ public class ADDefineJoin {
 
             joinNode.append("); ");
 
-            joinNode.append(nameJoin + "\n");
+            joinNode.append(nameJoin + "(id)\n");
 
-            joinNode.append(nameJoinTermination + " = ");
+            joinNode.append(nameJoinTermination + "(id) = ");
 
             for (int i = 0; i < objects.size(); i++) {
                 joinNode.append("(");
             }
 
-            joinNode.append("(" + nameJoin + " /\\ " + endDiagram + ")");
+            joinNode.append("(" + nameJoin + "(id) /\\ " + endDiagram + "(id))");
 
             for (int i = 0; i < objects.size(); i++) {    //creates the parallel output channels
                 joinNode.append(" [|{|");
                 joinNode.append("get_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 joinNode.append("set_" + objects.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                joinNode.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] ");
-                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(" + adUtils.getDefaultValue(objects.get(i)) + "))");
+                joinNode.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id|}|] ");
+                joinNode.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + objects.get(i) + "_t(id," + adUtils.getDefaultValue(objects.get(i)) + "))");
             }
 
             if (objects.size() > 0) {
@@ -440,7 +440,7 @@ public class ADDefineJoin {
 
             joinNode.append("\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {

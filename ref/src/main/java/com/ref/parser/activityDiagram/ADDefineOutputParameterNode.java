@@ -58,7 +58,7 @@ public class ADDefineOutputParameterNode {
             }
         }
 
-        outParameter.append(nameOutParameter + " = ");
+        outParameter.append(nameOutParameter + "(id) = ");
 
         outParameter.append("(");
 
@@ -119,17 +119,17 @@ public class ADDefineOutputParameterNode {
 //            nameObjectReal = typeUnionList.get(typeMemoryLocal);
 //        }
 
-        outParameter.append(nameOutParameter + "\n");
-        outParameter.append(nameOutParameterTermination + " = ");
+        outParameter.append(nameOutParameter + "(id)\n");
+        outParameter.append(nameOutParameterTermination + "(id) = ");
 
-        outParameter.append("((" + nameOutParameter + " /\\ " + endDiagram + ") ");
+        outParameter.append("((" + nameOutParameter + "(id) /\\ " + endDiagram + "(id)) ");
 
         outParameter.append("[|{|");
         outParameter.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
         outParameter.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
         outParameter.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
         outParameter.append("|}|] ");
-        outParameter.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(nameObjectReal) + ")) ");
+        outParameter.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(id," + adUtils.getDefaultValue(nameObjectReal) + ")) ");
 
         outParameter.append("\\{|");
         outParameter.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");

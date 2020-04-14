@@ -34,7 +34,7 @@ public class ADDefineInitialNode {
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
 
-        initialNode.append(nameInitialNode + " = ");
+        initialNode.append(nameInitialNode + "(id) = ");
 
         adUtils.update(alphabet, initialNode, inFlows.length, outFlows.length, false);
 

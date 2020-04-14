@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestInitialNode {
@@ -122,7 +123,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial1() {
+	public void TestNodesInitial1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action1_t = update_action1.1!(1-0) -> ((ce_action1.1 -> SKIP))\n" +
@@ -139,7 +140,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial2() {
+	public void TestNodesInitial2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_initial2_t = update_initial2.1!(1-0) -> ((ce_initial2.1 -> SKIP))\n" +
@@ -159,7 +160,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial3() {
+	public void TestNodesInitial3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_join1_t = update_join1.1!(2-0) -> ((ce_join1.1 -> SKIP) ||| (ce_join1.2 -> SKIP))\n" +
@@ -180,7 +181,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial4() {
+	public void TestNodesInitial4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_decision1_t = update_decision1.1!(1-0) -> ((ce_decision1.1 -> SKIP))\n" +
@@ -202,7 +203,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial5() {
+	public void TestNodesInitial5() throws ParsingException {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_z_decision3_t = update_decision3.1!(1-0) -> get_z_decision3.1?z -> ((oe_z_decision3.1!z -> SKIP))\n" +
@@ -223,7 +224,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial6() {
+	public void TestNodesInitial6() throws ParsingException {
 		String actual = parser6.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_join2_t = update_join2.1!(2-0) -> get_x_join2.1?x -> ((oe_x_join2.1!x -> SKIP) ||| (oe_x_join2.2!x -> SKIP))\n" +
@@ -244,7 +245,7 @@ public class ADParserTestInitialNode {
 	 * Teste de Tradução Initial Node
 	 * */
 	@Test
-	public void TestNodesInitial7() {
+	public void TestNodesInitial7() throws ParsingException {
 		String actual = parser7.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_merge3_t = update_merge3.1!(1-0) -> get_x_merge3.1?x -> ((oe_x_merge3.1!x -> SKIP))\n" +

@@ -42,7 +42,7 @@ public class ADDefineFork {
         String nameObject = null;
 
         if (code == 0) {
-            forkNode.append(nameFork + " = ");
+            forkNode.append(nameFork + "(id) = ");
 
             for (int i = 0; i < inFlows.length; i++) {
                 if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
@@ -95,12 +95,12 @@ public class ADDefineFork {
 
             forkNode.append("); ");
 
-            forkNode.append(nameFork + "\n");
+            forkNode.append(nameFork + "(id)\n");
 
-            forkNode.append(nameForkTermination + " = ");
-            forkNode.append(nameFork + " /\\ " + endDiagram + "\n");
+            forkNode.append(nameForkTermination + "(id) = ");
+            forkNode.append(nameFork + "(id) /\\ " + endDiagram + "(id)\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
@@ -250,7 +250,7 @@ public class ADDefineFork {
             }
 
         } else if (code == 2) {
-            forkNode.append(nameFork + " = ");
+            forkNode.append(nameFork + "(id) = ");
 
             for (int i = 0; i < inFlows.length; i++) {
                 if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
@@ -301,12 +301,12 @@ public class ADDefineFork {
 
             forkNode.append("); ");
 
-            forkNode.append(nameFork + "\n");
+            forkNode.append(nameFork + "(id)\n");
 
-            forkNode.append(nameForkTermination + " = ");
-            forkNode.append(nameFork + " /\\ " + endDiagram + "\n");
+            forkNode.append(nameForkTermination + "(id) = ");
+            forkNode.append(nameFork + "(id) /\\ " + endDiagram + "(id)\n");
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {

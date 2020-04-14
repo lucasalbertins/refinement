@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class ADParserTestFinalNode {
@@ -102,7 +103,7 @@ public class ADParserTestFinalNode {
 	 * Teste de Tradução Final node
 	 * */
 	@Test
-	public void TestNodesFinal1() {
+	public void TestNodesFinal1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action1_t = update_action1.1!(1-0) -> ((ce_action1.1 -> SKIP))\n" +
@@ -119,7 +120,7 @@ public class ADParserTestFinalNode {
 	 * Teste de Tradução Final node
 	 * */
 	@Test
-	public void TestNodesFinal2() {
+	public void TestNodesFinal2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_action2_t = update_action2.1!(1-0) -> ((ce_action2.1 -> SKIP))\n" +
@@ -140,7 +141,7 @@ public class ADParserTestFinalNode {
 	 * Teste de Tradução Final node
 	 * */
 	@Test
-	public void TestNodesFinal3() {
+	public void TestNodesFinal3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_action5_t = update_action5.1!(1-0) -> get_x_action5.1?x -> ((oe_x_action5.1!x -> SKIP))\n" +
@@ -157,7 +158,7 @@ public class ADParserTestFinalNode {
 	 * Teste de Tradução Final node
 	 * */
 	@Test
-	public void TestNodesFinal4() {
+	public void TestNodesFinal4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_action6_t = update_action6.1!(1-0) -> get_x_action6.1?x -> ((oe_x_action6.1!x -> SKIP))\n" +
@@ -178,7 +179,7 @@ public class ADParserTestFinalNode {
 	 * Teste de Tradução Final node
 	 * */
 	@Test
-	public void TestNodesFinal5() {
+	public void TestNodesFinal5() throws ParsingException {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_final1_t = update_final1.1!(1-0) -> get_x_final1.1?x -> ((oe_x_final1.1!x -> SKIP))\n" +

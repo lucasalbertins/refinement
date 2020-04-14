@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
 public class AdParserTestMergeNode {
@@ -82,7 +83,7 @@ public class AdParserTestMergeNode {
 	 * Teste de Tradução Merge Node
 	 * */
 	@Test
-	public void TestMergeNode1() {
+	public void TestMergeNode1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("init1_merge1_t = update_merge1.1!(2-0) -> ((ce_merge1.1 -> SKIP) ||| (ce_merge1.2 -> SKIP))\n" +
@@ -103,7 +104,7 @@ public class AdParserTestMergeNode {
 	 * Teste de Tradução Merge Node
 	 * */
 	@Test
-	public void TestMergeNode2() {
+	public void TestMergeNode2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_merge3_t = update_merge3.1!(1-0) -> get_x_merge3.1?x -> ((oe_x_merge3.1!x -> SKIP))\n" +
@@ -123,7 +124,7 @@ public class AdParserTestMergeNode {
 	 * Teste de Tradução Merge Node
 	 * */
 	@Test
-	public void TestMergeNode3() {
+	public void TestMergeNode3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
 		expected.append("parameter_x_merge4_t = update_merge4.1!(2-0) -> get_x_merge4.1?x -> ((oe_x_merge4.1!x -> SKIP) ||| (oe_x_merge4.2!x -> SKIP))\n" +

@@ -88,7 +88,7 @@ public class ADDefineChannels {
         if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || memoryLocal.size() > 0) {
 
             for (String get : parameterNodesInput.keySet()) {
-                channels.append("channel get_" + get + "_" + nameDiagram + ": countGet_" + nameDiagram + "." + get + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + get + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + get + "_" + nameDiagram + "\n");
             }
 
             for (String get : parameterNodesOutput.keySet()) {
@@ -98,15 +98,15 @@ public class ADDefineChannels {
                     object = get;
                 }
 
-                channels.append("channel get_" + get + "_" + nameDiagram + ": countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + get + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
             }
 
             for (Pair<String, String> pair : memoryLocal) {
-                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": countGet_" + nameDiagram + "." + pair.getValue() + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + pair.getValue() + "_" + nameDiagram + "\n");
             }
 
             for (String set : parameterNodesInput.keySet()) {
-                channels.append("channel set_" + set + "_" + nameDiagram + ": countSet_" + nameDiagram + "." + set + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + set + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + set + "_" + nameDiagram + "\n");
             }
 
             for (String set : parameterNodesOutput.keySet()) {
@@ -115,17 +115,17 @@ public class ADDefineChannels {
                 if (object == null) {
                     object = set;
                 }
-                channels.append("channel set_" + set + "_" + nameDiagram + ": countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + set + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
             }
 
             for (Pair<String, String> pair : memoryLocal) {
-                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": countSet_" + nameDiagram + "." + pair.getValue() + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + pair.getValue() + "_" + nameDiagram + "\n");
             }
 
         }
 
         if (adParser.countCe_ad > 1) {
-            channels.append("channel ce_" + nameDiagram + ": countCe_" + nameDiagram + "\n");
+            channels.append("channel ce_" + nameDiagram + ": ID_"+nameDiagram +".countCe_" + nameDiagram + "\n");
         }
 
         if (syncObjectsEdge.size() > 0) {
@@ -135,17 +135,17 @@ public class ADDefineChannels {
 
                 if (!allObjectEdges.contains(nameParamater)) {
                     allObjectEdges.add(nameParamater);
-                    channels.append("channel oe_" + nameParamater + "_" + nameDiagram + ": countOe_" + nameDiagram + "." + nameParamater + "_" + nameDiagram + "\n");
+                    channels.append("channel oe_" + nameParamater + "_" + nameDiagram + ": ID_"+nameDiagram +".countOe_" + nameDiagram + "." + nameParamater + "_" + nameDiagram + "\n");
                 }
             }
 
         }
 
-        channels.append("channel clear_" + nameDiagram + ": countClear_" + nameDiagram + "\n");
+        channels.append("channel clear_" + nameDiagram + ": ID_"+nameDiagram +".countClear_" + nameDiagram + "\n");
 
-        channels.append("channel update_" + nameDiagram + ": countUpdate_" + nameDiagram + ".limiteUpdate_" + nameDiagram + "\n");
+        channels.append("channel update_" + nameDiagram + ": ID_"+nameDiagram +".countUpdate_" + nameDiagram + ".limiteUpdate_" + nameDiagram + "\n");
 
-        channels.append("channel endDiagram_" + nameDiagram + "\n");
+        channels.append("channel endDiagram_" + nameDiagram +": ID_"+nameDiagram +"\n");
 
         if (eventChannel.size() > 0) {
             channels.append("channel ");
@@ -158,7 +158,7 @@ public class ADDefineChannels {
                 }
             }
 
-            channels.append("\n");
+            channels.append(": ID_"+nameDiagram+"\n");
         }
 
         /*if (lockChannel.size() > 0) {
@@ -178,8 +178,8 @@ public class ADDefineChannels {
         if (firstDiagram.equals(ad.getId())) {
 
             for (String signalChannel : signalChannels) {
-                channels.append("channel signal_" + signalChannel + ": countSignal_" + signalChannel + "\n");
-                channels.append("channel accept_" + signalChannel + ": countAccept_" + signalChannel + ".countSignal_" + signalChannel + "\n");
+                channels.append("channel signal_" + signalChannel + ": ID_"+nameDiagram +". countSignal_" + signalChannel + "\n");
+                channels.append("channel accept_" + signalChannel + ": ID_"+nameDiagram +". countAccept_" + signalChannel + ".countSignal_" + signalChannel + "\n");
             }
 
             channels.append("channel loop\n");

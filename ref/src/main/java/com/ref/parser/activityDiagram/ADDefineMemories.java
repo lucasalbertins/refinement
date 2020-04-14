@@ -33,7 +33,7 @@ public class ADDefineMemories {
             defineMemoryGlobal(memory, nameDiagram, parameterNodesInput);
             defineMemoryGlobal(memory, nameDiagram, parameterNodesOutput);
 
-            memory.append("Mem_" + nameDiagram + " = ");
+            memory.append("Mem_" + nameDiagram + "(id) = ");
 
             for (int i = 0; i < parameterNodesInput.size() + parameterNodesOutput.size() - 1; i++) {
                 memory.append("(");
@@ -43,7 +43,7 @@ public class ADDefineMemories {
 
             for (String input : parameterNodesInput.keySet()) {
                 if (i <= 1) {
-                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(input)) + ")");
+                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(input)) + ")");
                     if (i % 2 == 0 && (i + 1 < parameterNodesInput.size() || parameterNodesOutput.size() > 0)) {
                         memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
                     } else if (parameterNodesInput.size() + parameterNodesOutput.size() > 1) {
@@ -51,7 +51,7 @@ public class ADDefineMemories {
                     }
                 } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(input)) + "))");
+                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(input)) + "))");
                 }
 
                 i++;
@@ -59,7 +59,7 @@ public class ADDefineMemories {
 
             for (String output : parameterNodesOutput.keySet()) {
                 if (i <= 1) {
-                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(" + adUtils.getDefaultValue(parameterNodesOutput.get(output)) + ")");
+                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(id," + adUtils.getDefaultValue(parameterNodesOutput.get(output)) + ")");
                     if (i % 2 == 0 && parameterNodesOutput.size() > 1 &&
                             i < parameterNodesOutput.size()) {
                         memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
@@ -68,7 +68,7 @@ public class ADDefineMemories {
                     }
                 } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(" + adUtils.getDefaultValue(parameterNodesOutput.get(output)) + "))");
+                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(id," + adUtils.getDefaultValue(parameterNodesOutput.get(output)) + "))");
                 }
 
                 i++;
@@ -83,27 +83,27 @@ public class ADDefineMemories {
 
     private void defineMemoryLocal(StringBuilder memory, String nameDiagram) {
         for (Pair<String, String> pair : memoryLocal) {
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(" + pair.getValue() + ") = ");
-            memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + "?c!" + pair.getValue() + " -> ");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(" + pair.getValue() + ") [] ");
-            memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + "?c?" + pair.getValue() + " -> ");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(" + pair.getValue() + ")\n");
+            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
+            memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c!" + pair.getValue() + " -> ");
+            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");
+            memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c?" + pair.getValue() + " -> ");
+            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ")\n");
 
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(" + pair.getValue() + ") = ");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(" + pair.getValue() + ") /\\ END_DIAGRAM_" + nameDiagram + "\n");
+            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(id," + pair.getValue() + ") = ");
+            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") /\\ END_DIAGRAM_" + nameDiagram + "(id)\n");
         }
     }
 
     private void defineMemoryGlobal(StringBuilder memory, String nameDiagram, HashMap<String, String> memoryGlobal) {
         for (String value : memoryGlobal.keySet()) {
-            memory.append("Mem_" + nameDiagram + "_" + value + "(" + value + ") = ");
-            memory.append("get_" + value + "_" + nameDiagram + "?c!" + value + " -> ");
-            memory.append("Mem_" + nameDiagram + "_" + value + "(" + value + ") [] ");
-            memory.append("set_" + value + "_" + nameDiagram + "?c?" + value + " -> ");
-            memory.append("Mem_" + nameDiagram + "_" + value + "(" + value + ")\n");
+            memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") = ");
+            memory.append("get_" + value + "_" + nameDiagram + ".id?c!" + value + " -> ");
+            memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") [] ");
+            memory.append("set_" + value + "_" + nameDiagram + ".id?c?" + value + " -> ");
+            memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ")\n");
 
-            memory.append("Mem_" + nameDiagram + "_" + value + "_t" + "(" + value + ") = ");
-            memory.append("Mem_" + nameDiagram + "_" + value + "(" + value + ") /\\ (endActivity_" + nameDiagram + "?" + value + " -> SKIP)\n");
+            memory.append("Mem_" + nameDiagram + "_" + value + "_t" + "(id," + value + ") = ");
+            memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") /\\ (endActivity_" + nameDiagram + "?" + value + " -> SKIP)\n");
         }
     }
 }
