@@ -1,9 +1,10 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.change_vision.jude.api.inf.model.IActivity;
 
 public class ADDefineMemories {
 
@@ -11,11 +12,11 @@ public class ADDefineMemories {
 
     private HashMap<String, String> parameterNodesInput;
     private HashMap<String, String> parameterNodesOutput;
-    private List<Pair<String, String>> memoryLocal;
+    private Map<Pair<String, String>,String> memoryLocal;
     private ADUtils adUtils;
 
     public ADDefineMemories(IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
-                            List<Pair<String, String>> memoryLocal, ADUtils adUtils) {
+                            Map<Pair<String, String>,String> memoryLocal, ADUtils adUtils) {
         this.ad = ad;
         this.parameterNodesInput = parameterNodesInput;
         this.parameterNodesOutput = parameterNodesOutput;
@@ -82,7 +83,7 @@ public class ADDefineMemories {
     }
 
     private void defineMemoryLocal(StringBuilder memory, String nameDiagram) {
-        for (Pair<String, String> pair : memoryLocal) {
+        for (Pair<String, String> pair : memoryLocal.keySet()) {
             memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
             memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c!" + pair.getValue() + " -> ");
             memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");

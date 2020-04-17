@@ -62,7 +62,7 @@ public class ADDefineMerge {
             merge.append(nameMerge + "(id) = ");
 
             merge.append("(");
-
+            String datatype = null;
 
             for (int i = 0; i < ceInitials.size(); i++) {        //get unique channel
                 if (nameObjects.get(ceInitials.get(i)) != null) {
@@ -99,14 +99,14 @@ public class ADDefineMerge {
 
                     nameObject = nameObjects.get(ceInitials.get(i));
                     merge.append("(");
-
+                    datatype = objectEdges.get(oeIn);
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         adUtils.ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,datatype);
                         merge.append("SKIP) [] ");
                     } else {
                         adUtils.ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,datatype);
                         merge.append("SKIP)");
                     }
                 }
@@ -117,7 +117,7 @@ public class ADDefineMerge {
             adUtils.update(alphabet, merge, 1, 1, false);
 
             if (!nameObjectUnique.equals("")) {
-                adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique);
+                adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique, datatype);
                 String oe = adUtils.createOE(nameObjectUnique); //creates output channels
                 syncObjectsEdge.put(outFlows[0].getId(), oe);
                 objectEdges.put(oe, nameObjectUnique);
@@ -258,7 +258,7 @@ public class ADDefineMerge {
             merge.append(nameMerge + "(id) = ");
 
             merge.append("(");
-
+            String dataType = null;
 
             for (int i = 0; i < ceInitials.size(); i++) {        //get unique channel
                 if (nameObjects.get(ceInitials.get(i)) != null) {
@@ -296,14 +296,14 @@ public class ADDefineMerge {
 
                     nameObject = nameObjects.get(ceInitials.get(i));
                     merge.append("(");
-
+                    dataType = objectEdges.get(oeIn);
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         adUtils.ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, dataType);
                         merge.append("SKIP) [] ");
                     } else {
                         adUtils.ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, dataType);
                         merge.append("SKIP)");
                     }
                 }
@@ -314,7 +314,7 @@ public class ADDefineMerge {
             adUtils.update(alphabet, merge, 1, 1, false);
 
             if (!nameObjectUnique.equals("")) {
-                adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique);
+                adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique, dataType);
                 String oe = syncObjectsEdge.get(outFlows[0].getId());
 
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");

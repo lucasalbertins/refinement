@@ -1,10 +1,12 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.change_vision.jude.api.inf.model.IActivity;
+import com.ref.exceptions.ParsingException;
 
 public class ADDefineChannels {
 
@@ -12,7 +14,7 @@ public class ADDefineChannels {
     private IActivity ad;
     private HashMap<String, String> parameterNodesInput;        //name; type
     private HashMap<String, String> parameterNodesOutput;
-    private List<Pair<String, String>> memoryLocal;             //nameNode, nameObject
+    private Map<Pair<String, String>,String> memoryLocal;             //nameNode, nameObject
     private HashMap<String, String> parameterNodesOutputObject; //name; object
     private HashMap<String, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;                //channel; name
@@ -24,7 +26,7 @@ public class ADDefineChannels {
     private ADParser adParser;
 
     public ADDefineChannels(HashMap allGuards, IActivity ad, HashMap parameterNodesInput, HashMap parameterNodesOutput,
-                            List memoryLocal, HashMap parameterNodesOutputObject, HashMap syncObjectsEdge,
+                            Map memoryLocal, HashMap parameterNodesOutputObject, HashMap syncObjectsEdge,
                             HashMap objectEdges, List eventChannel, List lockChannel, String firstDiagram, List signalChannels,
                             ADUtils adUtils, ADParser adParser) {
         this.allGuards = allGuards;
@@ -43,7 +45,7 @@ public class ADDefineChannels {
         this.adParser = adParser;
     }
 
-    public String defineChannels() {
+    public String defineChannels() throws ParsingException {
         StringBuilder channels = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
 
@@ -62,7 +64,7 @@ public class ADDefineChannels {
         if (parameterNodesInput.size() > 0) {
             channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
 
-            for (String input : parameterNodesInput.keySet()) {
+            for (String input : parameterNodesInput.values()) {
                 channels.append("." + input + "_" + nameDiagram);
             }
 
@@ -75,7 +77,7 @@ public class ADDefineChannels {
         if (parameterNodesOutput.size() > 0) {
             channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram);
 
-            for (String output : parameterNodesOutput.keySet()) {
+            for (String output : parameterNodesOutput.values()) {
                 channels.append("." + output + "_" + nameDiagram);
             }
 
@@ -87,39 +89,25 @@ public class ADDefineChannels {
 
         if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || memoryLocal.size() > 0) {
 
-            for (String get : parameterNodesInput.keySet()) {
-                channels.append("channel get_" + get + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + get + "_" + nameDiagram + "\n");
+            for (String in : parameterNodesInput.keySet()) {
+                channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
             }
 
-            for (String get : parameterNodesOutput.keySet()) {
-                String object = parameterNodesOutputObject.get(get);
+            for (String out : parameterNodesOutput.keySet()) {
+                String object = parameterNodesOutputObject.get(out);
 
                 if (object == null) {
-                    object = get;
+                    throw new ParsingException("Parameter node " + out + " is untyped.");
                 }
 
-                channels.append("channel get_" + get + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesOutput.get(object) + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesOutput.get(object) + "_" + nameDiagram + "\n");
             }
 
-            for (Pair<String, String> pair : memoryLocal) {
-                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + pair.getValue() + "_" + nameDiagram + "\n");
-            }
-
-            for (String set : parameterNodesInput.keySet()) {
-                channels.append("channel set_" + set + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + set + "_" + nameDiagram + "\n");
-            }
-
-            for (String set : parameterNodesOutput.keySet()) {
-                String object = parameterNodesOutputObject.get(set);
-
-                if (object == null) {
-                    object = set;
-                }
-                channels.append("channel set_" + set + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
-            }
-
-            for (Pair<String, String> pair : memoryLocal) {
-                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + pair.getValue() + "_" + nameDiagram + "\n");
+            for (Pair<String, String> pair : memoryLocal.keySet()) {
+                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
             }
 
         }

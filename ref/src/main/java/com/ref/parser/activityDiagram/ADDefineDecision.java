@@ -185,11 +185,11 @@ public class ADDefineDecision {
                 decision.append(") ||| (");
                 adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputType, " -> ");
 
-                adUtils.setLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
+                adUtils.setLocal(alphabet, decision, nameDecision, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType,decisionInputType);
                 decision.append("SKIP)); ");
 
                 adUtils.update(alphabet, decision, 2, 1, false);
-                adUtils.getLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
+                adUtils.getLocal(alphabet, decision, nameDecision, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType,decisionInputType);
 
                 decision.append("(");
                 
@@ -226,15 +226,15 @@ public class ADDefineDecision {
                 decision.append("((" + nameDecision + "(id) /\\ " + endDiagram + "(id)) ");
 
                 decision.append("[|{|");
-                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
                 decision.append("|}|] ");
                 decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputType + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputType)) + ")) ");
 
                 decision.append("\\{|");
-                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("dc");
                 decision.append("|}\n");
 
@@ -604,11 +604,11 @@ public class ADDefineDecision {
                 decision.append(") ||| (");
                 adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputType, " -> ");
 
-                adUtils.setLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
+                adUtils.setLocal(alphabet, decision, nameDecision, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType,decisionInputType);
                 decision.append("SKIP)); ");
 
                 adUtils.update(alphabet, decision, 2, 1, false);
-                adUtils.getLocal(alphabet, decision, decisionInputType, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType);
+                adUtils.getLocal(alphabet, decision, nameDecision, adUtils.nameDiagramResolver(activityNode.getName()), decisionInputType,decisionInputType);
 
                 decision.append("(");
 
@@ -635,15 +635,15 @@ public class ADDefineDecision {
                 decision.append("((" + nameDecision + "(id) /\\ " + endDiagram + "(id)) ");
 
                 decision.append("[|{|");
-                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
                 decision.append("|}|] ");
                 decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputType + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputType)) + ")) ");
 
                 decision.append("\\{|");
-                decision.append("get_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                decision.append("set_" + decisionInputType + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("get_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                decision.append("set_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("dc");
                 decision.append("|}\n");
 

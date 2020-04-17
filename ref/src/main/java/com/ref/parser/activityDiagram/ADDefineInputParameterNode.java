@@ -46,9 +46,11 @@ public class ADDefineInputParameterNode {
         parameterNode.append("(");
 
         for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-            String oe = adUtils.createOE(adUtils.nameDiagramResolver(activityNode.getName()));
+            //String oe = adUtils.createOE(adUtils.nameDiagramResolver(activityNode.getName()));
+        	String typeObject = ((IActivityParameterNode)activityNode).getBase().getName();
+        	String oe = adUtils.createOE(typeObject);
             syncObjectsEdge.put(outFlows[i].getId(), oe);
-            objectEdges.put(oe, adUtils.nameDiagramResolver(activityNode.getName()));
+            objectEdges.put(oe, typeObject);
 
             parameterNode.append("(");
 

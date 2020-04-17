@@ -1,11 +1,19 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.*;
-import com.ref.exceptions.ParsingException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.change_vision.jude.api.inf.model.IAction;
+import com.change_vision.jude.api.inf.model.IActivity;
+import com.change_vision.jude.api.inf.model.IActivityDiagram;
+import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.change_vision.jude.api.inf.model.IActivityParameterNode;
+import com.change_vision.jude.api.inf.model.IControlNode;
+import com.change_vision.jude.api.inf.model.IFlow;
+import com.change_vision.jude.api.inf.model.IObjectNode;
+import com.ref.exceptions.ParsingException;
 
 public class ADDefineNodesActionAndControl {
 
@@ -29,7 +37,7 @@ public class ADDefineNodesActionAndControl {
     private HashMap<String, String> parameterNodesOutput;
     private HashMap<String, String> parameterNodesOutputObject;
     private List<Pair<String, Integer>> callBehaviourNumber;
-    private List<Pair<String, String>> memoryLocal;
+    private Map<Pair<String, String>,String> memoryLocal;
     private List<Pair<String, String>> memoryLocalChannel;
     private List<ArrayList<String>> unionList;
     private HashMap<String, String> typeUnionList;
@@ -66,7 +74,7 @@ public class ADDefineNodesActionAndControl {
                                          List<IActivityNode> queueRecreateNode, List<IActivity> callBehaviourList, List<String> eventChannel, List<String> lockChannel,
                                          List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter, HashMap<String, String> parameterNodesInput,
                                          HashMap<String, String> parameterNodesOutput, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
-                                         List<Pair<String, String>> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
+                                         Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
                                          List<Pair<String, Integer>> countAccept, List<String> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
                                          HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser) {

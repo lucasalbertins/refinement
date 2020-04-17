@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
-import com.change_vision.jude.api.inf.model.*;
+import com.change_vision.jude.api.inf.model.IAction;
+import com.change_vision.jude.api.inf.model.IActivity;
+import com.change_vision.jude.api.inf.model.IActivityDiagram;
+import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.ref.exceptions.ParsingException;
 
 public class ADParser {
@@ -46,7 +50,7 @@ public class ADParser {
     private HashMap<String, String> parameterNodesOutput;
     private HashMap<String, String> parameterNodesOutputObject; //name; object
     private List<Pair<String, Integer>> callBehaviourNumber;     //name; int
-    private List<Pair<String, String>> memoryLocal;             //nameNode, nameObject
+    private Map<Pair<String, String>,String> memoryLocal;             //nameNode, nameObject
     private List<Pair<String, String>> memoryLocalChannel;
     private List<ArrayList<String>> unionList;
     private HashMap<String, String> typeUnionList;
@@ -99,7 +103,7 @@ public class ADParser {
         parameterNodesInput = new HashMap<>();
         parameterNodesOutput = new HashMap<>();
         parameterNodesOutputObject = new HashMap<>();
-        memoryLocal = new ArrayList<>();
+        memoryLocal = new HashMap<Pair<String,String>,String>();
         memoryLocalChannel = new ArrayList<>();
         unionList = new ArrayList<>();
         typeUnionList = new HashMap<>();
@@ -148,7 +152,7 @@ public class ADParser {
         parameterNodesInput = new HashMap<>();
         parameterNodesOutput = new HashMap<>();
         parameterNodesOutputObject = new HashMap<>();
-        memoryLocal = new ArrayList<>();
+        memoryLocal = new HashMap<Pair<String,String>,String>();
         memoryLocalChannel = new ArrayList<>();
         unionList = new ArrayList<>();
         typeUnionList = new HashMap<>();
@@ -375,7 +379,7 @@ public class ADParser {
         return adUtils;
     }
 
-    public String defineChannels() {
+    public String defineChannels() throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dChannels = new ADDefineChannels(allGuards, ad, parameterNodesInput, parameterNodesOutput,

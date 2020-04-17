@@ -43,7 +43,7 @@ public class ADDefineFinalNode {
 
             if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
                 String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
-                nameObjects.put(inFlows[i].getId(), objectEdges.get(ceIn2));
+                nameObjects.put(inFlows[i].getId(), inFlows[i].getSource().getName());
             }
 
         }

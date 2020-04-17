@@ -92,17 +92,17 @@ public class ADDefineAction {
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             adUtils.oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
                             try {
-								adUtils.setLocalInput(alphabet, action, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+								adUtils.setLocalInput(alphabet, action, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
 							} catch (Exception e) {
-								throw new ParsingException("Pin node "+inPins[i].getName()+" without base type\n");
+								throw new ParsingException("Pin node "+inPins[i].getName()+" without base type\n");//TODO fix the type of exception
 							}
                             action.append("SKIP) ||| ");
                         } else {
                             adUtils.oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
                             try {
-								adUtils.setLocalInput(alphabet, action, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+								adUtils.setLocalInput(alphabet, action, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
 							} catch (Exception e) {
-								throw new ParsingException("Pin node "+inPins[i].getName()+" without base type\n");
+								throw new ParsingException("Pin node "+inPins[i].getName()+" without base type\n");//TODO fix the type of exception
 							}
                             action.append("SKIP)");
                         }
@@ -128,12 +128,12 @@ public class ADDefineAction {
                         for (String value : expReplaced) {                //get all parts
                             for (int x = 0; x < namesMemoryLocal.size(); x++) {
                                 if (value.equals(namesMemoryLocal.get(x))) {
-                                    adUtils.getLocal(alphabet, action, typeMemoryLocal.get(namesMemoryLocal.get(x)), adUtils.nameDiagramResolver(activityNode.getName()), namesMemoryLocal.get(x));
+                                    adUtils.getLocal(alphabet, action, namesMemoryLocal.get(x), adUtils.nameDiagramResolver(activityNode.getName()), namesMemoryLocal.get(x),typeMemoryLocal.get(namesMemoryLocal.get(x)));
                                 }
                             }
                         }
 
-                        adUtils.setLocal(alphabet, action, expression[0], adUtils.nameDiagramResolver(activityNode.getName()), "(" + expression[1] + ")");
+                        adUtils.setLocal(alphabet, action, expression[0], adUtils.nameDiagramResolver(activityNode.getName()), "(" + expression[1] + ")",expression[0]);
 
                     }
                 }
@@ -152,7 +152,7 @@ public class ADDefineAction {
             adUtils.update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             for (String nameObj : namesMemoryLocal) {
-                adUtils.getLocal(alphabet, action, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
+                adUtils.getLocal(alphabet, action, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
             }
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -264,8 +264,8 @@ public class ADDefineAction {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     action.append("[|{|");
-                    action.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
-                    action.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                    action.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                    action.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
                     action.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
                     action.append("|}|] ");
 
@@ -276,18 +276,18 @@ public class ADDefineAction {
 //                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
 //                    }
 
-                    action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
+                    action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
                 action.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        action.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
-                        action.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName())+".id");
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) +".id");
                     } else {
-                        action.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
-                        action.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
                     }
                 }
 
@@ -583,11 +583,11 @@ public class ADDefineAction {
                         action.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             adUtils.oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, action, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, action, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
                             action.append("SKIP) ||| ");
                         } else {
                             adUtils.oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, action, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, action, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
                             action.append("SKIP)");
                         }
 
@@ -612,12 +612,12 @@ public class ADDefineAction {
                         for (String value : expReplaced) {                //get all parts
                             for (int x = 0; x < namesMemoryLocal.size(); x++) {
                                 if (value.equals(namesMemoryLocal.get(x))) {
-                                    adUtils.getLocal(alphabet, action, typeMemoryLocal.get(namesMemoryLocal.get(x)), adUtils.nameDiagramResolver(activityNode.getName()), namesMemoryLocal.get(x));
+                                    adUtils.getLocal(alphabet, action, namesMemoryLocal.get(x), adUtils.nameDiagramResolver(activityNode.getName()), namesMemoryLocal.get(x),typeMemoryLocal.get(namesMemoryLocal.get(x)));
                                 }
                             }
                         }
 
-                        adUtils.setLocal(alphabet, action, expression[0], adUtils.nameDiagramResolver(activityNode.getName()), "(" + expression[1] + ")");
+                        adUtils.setLocal(alphabet, action, expression[0], adUtils.nameDiagramResolver(activityNode.getName()), "(" + expression[1] + ")",expression[0]);
 
                     }
                 }
@@ -636,7 +636,7 @@ public class ADDefineAction {
             adUtils.update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             for (String nameObj : namesMemoryLocal) {
-                adUtils.getLocal(alphabet, action, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
+                adUtils.getLocal(alphabet, action, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
             }
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -730,9 +730,9 @@ public class ADDefineAction {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     action.append("[|{|");
-                    action.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                    action.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                    action.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+                    action.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                    action.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                    action.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id");
                     action.append("|}|] ");
 
                     //String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
@@ -741,18 +741,18 @@ public class ADDefineAction {
 //                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
 //                    }
 
-                    action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
+                    action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
                 action.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        action.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        action.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id");
                     } else {
-                        action.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        action.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        action.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+                        action.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
                     }
                 }
 
@@ -762,7 +762,7 @@ public class ADDefineAction {
                 action.append(nameAction + " /\\ " + endDiagram + "\n");
             }
 
-            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+            alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+ ".id");
             alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
 
             if (outFlows.length > 0) {

@@ -90,16 +90,16 @@ public class ADDefineJoin {
                     if (!objects.contains(typeObject)) {
                         objects.add(typeObject);
                     }
-
+                   
                     joinNode.append("(");
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
+                        adUtils.setLocalInput(alphabet, joinNode, oeIn, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn,typeObject);
                         joinNode.append("SKIP) ||| ");
                     } else {
                         adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
+                        adUtils.setLocalInput(alphabet, joinNode, oeIn, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn,typeObject);
                         joinNode.append("SKIP)");
                     }
                 }
@@ -112,7 +112,7 @@ public class ADDefineJoin {
 
             if (sync2Bool) {
                 for (String nameObjectOut : objects) {
-                    adUtils.getLocal(alphabet, joinNode, nameObjectOut, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectOut);
+                    adUtils.getLocal(alphabet, joinNode, nameObjectOut, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectOut,typeObject);
                 }
             }
 
@@ -352,11 +352,11 @@ public class ADDefineJoin {
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
+                        adUtils.setLocalInput(alphabet, joinNode, oeIn, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn,typeObject);
                         joinNode.append("SKIP) ||| ");
                     } else {
                         adUtils.ce(alphabet, joinNode, oeIn, "?" + typeObject + " -> ");
-                        adUtils.setLocalInput(alphabet, joinNode, typeObject, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn);
+                        adUtils.setLocalInput(alphabet, joinNode, oeIn, adUtils.nameDiagramResolver(activityNode.getName()), typeObject, oeIn,typeObject);
                         joinNode.append("SKIP)");
                     }
                 }
@@ -369,7 +369,7 @@ public class ADDefineJoin {
 
             if (sync2Bool) {
                 for (String nameObjectOut : objects) {
-                    adUtils.getLocal(alphabet, joinNode, nameObjectOut, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectOut);
+                    adUtils.getLocal(alphabet, joinNode, nameObjectOut, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectOut,typeObject);
                 }
             }
 

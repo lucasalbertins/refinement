@@ -1,10 +1,18 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import com.change_vision.jude.api.inf.model.IAction;
+import com.change_vision.jude.api.inf.model.IActivity;
+import com.change_vision.jude.api.inf.model.IActivityDiagram;
+import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.change_vision.jude.api.inf.model.IActivityParameterNode;
+import com.change_vision.jude.api.inf.model.IFlow;
+import com.change_vision.jude.api.inf.model.IInputPin;
+import com.change_vision.jude.api.inf.model.IOutputPin;
 
 public class ADUtils {
 
@@ -16,7 +24,7 @@ public class ADUtils {
     private List<String> lockChannel;
     private HashMap<String, String> parameterNodesOutputObject;
     private List<Pair<String, Integer>> callBehaviourNumber;
-    private List<Pair<String, String>> memoryLocal;
+    private Map<Pair<String, String>,String> memoryLocal;
     private List<Pair<String, String>> memoryLocalChannel;
     private HashMap<String, List<String>> callBehaviourInputs;
     private HashMap<String, List<String>> callBehaviourOutputs;
@@ -34,7 +42,7 @@ public class ADUtils {
 
     public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
                    List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
-                   List<Pair<String, String>> memoryLocal, List<Pair<String, String>> memoryLocalChannel, HashMap<String, List<String>> callBehaviourInputs,
+                   Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, HashMap<String, List<String>> callBehaviourInputs,
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
                    List<String> signalChannels, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<String, String> syncChannelsEdge,
@@ -177,35 +185,35 @@ public class ADUtils {
         parameterNodesOutputObject.put(nameMemory, nameObject);
     }
 
-    public void setLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data) {
+    public void setLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String datatype) {
         String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
         alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
-        if (!memoryLocal.contains(memoryLocalPair)) {
-            memoryLocal.add(memoryLocalPair);
+        if (!memoryLocal.keySet().contains(memoryLocalPair)) {
+            memoryLocal.put(memoryLocalPair,datatype);
         }
     }
 
-    public void getLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data) {
+    public void getLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String datatype) {
         String get = "get_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countGet_ad++;
         alphabetNode.add(get);
         action.append(get + "?" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
-        if (!memoryLocal.contains(memoryLocalPair)) {
-            memoryLocal.add(memoryLocalPair);
+        if (!memoryLocal.keySet().contains(memoryLocalPair)) {
+        	memoryLocal.put(memoryLocalPair,datatype);
         }
     }
 
-    public void setLocalInput(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String oeIn) {
+    public void setLocalInput(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String oeIn, String datatype) {
         String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
         alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         memoryLocalChannel.add(new Pair<String, String>(oeIn, nameObject));
 
-        if (!memoryLocal.contains(memoryLocalPair)) {
-            memoryLocal.add(memoryLocalPair);
+        if (!memoryLocal.keySet().contains(memoryLocalPair)) {
+        	memoryLocal.put(memoryLocalPair,datatype);
         }
     }
 

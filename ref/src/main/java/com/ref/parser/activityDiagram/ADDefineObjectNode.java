@@ -89,11 +89,11 @@ public class ADDefineObjectNode {
 
                 if (i >= 0 && i < ceInitials.size() - 1) {
                     adUtils.ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
-                    adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                    adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, nameObjectUnique);
                     objectNode.append("SKIP) [] ");
                 } else {
                     adUtils.ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
-                    adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                    adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, nameObjectUnique);
                     objectNode.append("SKIP)");
                 }
             }
@@ -102,7 +102,7 @@ public class ADDefineObjectNode {
 
             adUtils.update(alphabet, objectNode, 1, activityNode.getOutgoings().length, false);
 
-            adUtils.getLocal(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique);
+            adUtils.getLocal(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique,nameObjectUnique);
 
             objectNode.append("(");
 
@@ -303,11 +303,11 @@ public class ADDefineObjectNode {
 
                     if (i >= 0 && i < ceInitials.size() - 1) {
                         adUtils.ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,nameObjectUnique);
                         objectNode.append("SKIP) [] ");
                     } else {
                         adUtils.ce(alphabet, objectNode, oeIn, "?" + nameObject + " -> ");
-                        adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                        adUtils.setLocalInput(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,nameObjectUnique);
                         objectNode.append("SKIP)");
                     }
                 }
@@ -317,7 +317,7 @@ public class ADDefineObjectNode {
 
             adUtils.update(alphabet, objectNode, 1, outFlows.length, false);
 
-            adUtils.getLocal(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique);
+            adUtils.getLocal(alphabet, objectNode, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique,nameObjectUnique);
 
             objectNode.append("(");
 

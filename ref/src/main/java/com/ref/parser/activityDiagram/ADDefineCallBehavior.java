@@ -98,11 +98,11 @@ public class ADDefineCallBehavior {
                         callBehaviour.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, inPins[i].getBase().getName());
                             callBehaviour.append("SKIP) ||| ");
                         } else {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, inPins[i].getBase().getName());
                             callBehaviour.append("SKIP)");
                         }
 
@@ -126,7 +126,7 @@ public class ADDefineCallBehavior {
             }
 
             for (String nameObj : namesMemoryLocal) {
-                adUtils.getLocal(alphabet, callBehaviour, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
+                adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj, typeMemoryLocal.get(nameObj));
             }
             //call
             //TODO
@@ -546,11 +546,11 @@ public class ADDefineCallBehavior {
                         callBehaviour.append("(");
                         if (i >= 0 && (i < inPins.length - 1 || x < inFlowPin.length - 1)) {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
                             callBehaviour.append("SKIP) ||| ");
                         } else {
                             adUtils.oe(alphabet, callBehaviour, oeIn, "?" + nameObject, " -> ");
-                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getBase().getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                            adUtils.setLocalInput(alphabet, callBehaviour, inPins[i].getName(), adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
                             callBehaviour.append("SKIP)");
                         }
 
@@ -574,7 +574,7 @@ public class ADDefineCallBehavior {
             }
 
             for (String nameObj : namesMemoryLocal) {
-                adUtils.getLocal(alphabet, callBehaviour, typeMemoryLocal.get(nameObj), adUtils.nameDiagramResolver(activityNode.getName()), nameObj);
+                adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
             }
 
             int count = adUtils.startActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal);

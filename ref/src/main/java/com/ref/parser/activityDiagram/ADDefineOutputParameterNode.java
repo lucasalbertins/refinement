@@ -47,6 +47,7 @@ public class ADDefineOutputParameterNode {
         HashMap<String, String> nameObjects = new HashMap<>();
         List<String> namesMemoryLocal = new ArrayList<>();
         String typeMemoryLocal = null;
+        String parameterType = ((IActivityParameterNode)activityNode).getBase().getName();
 
         ArrayList<String> ceInitials = new ArrayList<>();
         for (int i = 0; i <  inFlows.length; i++) {
@@ -96,11 +97,11 @@ public class ADDefineOutputParameterNode {
 
                 if (i >= 0 && i < ceInitials.size() - 1) {
                     adUtils.ce(alphabet, outParameter, oeIn, "?" + nameObject + " -> ");
-                    adUtils.setLocalInput(alphabet, outParameter, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                    adUtils.setLocalInput(alphabet, outParameter, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, parameterType);
                     outParameter.append("SKIP) [] ");
                 } else {
                     adUtils.ce(alphabet, outParameter, oeIn, "?" + nameObject + " -> ");
-                    adUtils.setLocalInput(alphabet, outParameter, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn);
+                    adUtils.setLocalInput(alphabet, outParameter, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, parameterType);
                     outParameter.append("SKIP)");
                 }
             }
@@ -108,7 +109,7 @@ public class ADDefineOutputParameterNode {
 
         outParameter.append("); ");
 
-        adUtils.getLocal(alphabet, outParameter, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique);
+        adUtils.getLocal(alphabet, outParameter, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique,parameterType);
         adUtils.set(alphabet, outParameter, activityNode.getName(), nameObjectUnique);
 
         adUtils.update(alphabet, outParameter, 1, 0, true);
