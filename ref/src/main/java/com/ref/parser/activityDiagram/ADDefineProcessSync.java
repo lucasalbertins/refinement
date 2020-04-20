@@ -1,9 +1,12 @@
 package com.ref.parser.activityDiagram;
 
+import com.change_vision.jude.api.inf.model.IAction;
 import com.change_vision.jude.api.inf.model.IActivity;
+import com.change_vision.jude.api.inf.model.IActivityNode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 public class ADDefineProcessSync {
@@ -28,13 +31,13 @@ public class ADDefineProcessSync {
         
         for(String node : alphabetNode.keySet()) {
             ArrayList<String> alphabet = alphabetNode.get(node);
-            for(IActivity CBAs:ADParser.callBehaviourList) {//TODO resolver hashmap
-            	//ADUtils.nameResolver(((IAction) CBAs).getCallingActivity().getId()).equals(node);
+            /*for(IActivity CBAs:ADParser.callBehaviourList) {//TODO resolver hashmap
             	if(ADUtils.nameResolver(CBAs.getName()).equals(node)) {//se for um cba
             		ehCBA = true;
             	}
-            }
-            if(ehCBA) {//se for um cba
+            }*/
+            IActivityNode Activitynode = findCBANode(node);
+            if(Activitynode != null) {
         		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ") = union({|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ")"+"SUB");
                 for (int i = 0; i < alphabet.size(); i++) {
@@ -43,7 +46,14 @@ public class ADDefineProcessSync {
                         processSync.append(",");
                     }
                 }
-                processSync.append("|},AlphabetDiagram_"+node+"_t(id))\n");
+                List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
+            	int index = 1;
+            	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
+            		if(Activitynode.getId().equals(CBAList.get(i).getKey())) {
+            			index = i+1;
+            		}
+            	}
+                processSync.append("|},AlphabetDiagram_"+((IAction)Activitynode).getCallingActivity().getName()+"_t("+index+"))\n");
         	}else {
         		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ") = {|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ")"+"SUB");
@@ -78,4 +88,18 @@ public class ADDefineProcessSync {
 
         return processSync.toString();
     }
+    
+    public IActivityNode findCBANode(String nodeName) {
+    	IActivityNode[] nodes = ad.getActivityNodes();//pega todos os nós do diagrama
+    	IAction nodeFound;
+		for(int i=0; i<nodes.length;i++) {//varre os nós
+			if(nodes[i].getName().equals(nodeName) && nodes[i] instanceof IAction) {
+				nodeFound = (IAction) nodes[i];
+				if(nodeFound.isCallBehaviorAction()) {
+					return nodeFound;
+				}
+			}
+		}
+		return null;
+	}
 }

@@ -145,7 +145,7 @@ public class ADDefineCallBehavior {
 				} catch (Exception e) {
 					throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
 				}
-            adUtils.callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins);
+                adUtils.callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
             /*}else {
             	callBehaviour.append("normal("+ADUtils.nameResolver(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName())+"(1));");
             	alphabet.add("startActivity_" + ADUtils.nameResolver(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName()) + "." + count);

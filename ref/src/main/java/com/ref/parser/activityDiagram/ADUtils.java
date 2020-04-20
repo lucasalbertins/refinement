@@ -80,7 +80,7 @@ public class ADUtils {
         return "oe_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countOe_ad++;
     }
 
-    public void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins) {
+    public void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins,IActivityNode activityNode) {
     	int count = 0;
     	count = addCountCall(nameDiagramResolver(nameAD));
     	String Activity = "";
@@ -88,6 +88,14 @@ public class ADUtils {
     	String setMem = "setMemOutParam"+nameDiagramResolver(nameAD);	
     	String startAct = "startActivity_" + nameDiagramResolver(nameAD) + "." + count;
     	String endAct = "endActivity_" + nameDiagramResolver(nameAD) + "." + count;
+    	
+    	List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) activityNode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
+    	int index = 1;
+    	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
+    		if(activityNode.getId().equals(CBAList.get(i).getKey())) {
+    			index = i+1;
+    		}
+    	}
     	
     	alphabetNode.add(startAct);
     	alphabetNode.add(endAct);
@@ -99,19 +107,19 @@ public class ADUtils {
             callBehaviourInputs.put(nameAD, inputPins);
         }
         
-        for (String pin : outputPinsUsed) {
-        	getInput += "?" + pin;
-            Activity += "!" + pin;
-        }
-        
-        if(!getInput.equals("getInputParam"+nameDiagramResolver(nameAD))) {//TODO id do callbehavior no processo
-        	alphabetNode.add(getInput);//TODO local onde gera o ?z no alphabeto
+        if(!outputPinsUsed.isEmpty()) {
+        	alphabetNode.add(getInput);
+        	for (String pin : outputPinsUsed) {
+            	getInput += "?" + pin;
+                Activity += "!" + pin;
+            }
             getInput += " -> ";
         	action.append(getInput+"(");
-            action.append("normal("+nameDiagramResolver(nameAD)+"(1)) [|{|"+startAct+","+endAct+"|}|] (");
+            action.append("normal("+nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
         }else {
-        	action.append("normal("+nameDiagramResolver(nameAD)+"(1))");
+        	action.append("normal("+nameDiagramResolver(nameAD)+"("+index+"))");
         }
+
         
         action.append((Activity != ""?startAct+Activity + " -> ":""));
         
