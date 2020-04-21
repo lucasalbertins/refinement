@@ -101,8 +101,8 @@ public class ADDefineChannels {
                     throw new ParsingException("Parameter node " + out + " is untyped.");
                 }
 
-                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesOutput.get(object) + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesOutput.get(object) + "_" + nameDiagram + "\n");
+                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
             }
 
             for (Pair<String, String> pair : memoryLocal.keySet()) {
