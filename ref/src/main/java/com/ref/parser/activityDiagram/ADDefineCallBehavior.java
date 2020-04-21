@@ -236,8 +236,8 @@ public class ADDefineCallBehavior {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     callBehaviour.append("[|{|");
-                    callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                    callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     callBehaviour.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                     callBehaviour.append("|}|] ");
 
@@ -246,18 +246,18 @@ public class ADDefineCallBehavior {
 //                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
 //                    }
 
-                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
+                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
                 callBehaviour.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
+                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
                     } else {
-                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     }
                 }
 
@@ -618,7 +618,7 @@ public class ADDefineCallBehavior {
                 callBehaviour.append("); ");
             }
 
-            callBehaviour.append(nameCallBehaviour + "\n");
+            callBehaviour.append(nameCallBehaviour + "(id)\n");
 
             callBehaviour.append(namCallBehaviourTermination + "(id) = ");
 
@@ -630,8 +630,8 @@ public class ADDefineCallBehavior {
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     callBehaviour.append("[|{|");
-                    callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                    callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                    callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     callBehaviour.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                     callBehaviour.append("|}|] ");
 
@@ -640,18 +640,18 @@ public class ADDefineCallBehavior {
 //                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
 //                    }
 
-                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_t(" + adUtils.getDefaultValue(typeObj) + ")) ");
+                    callBehaviour.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
                 callBehaviour.append("\\{|");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     if (i == namesMemoryLocal.size() - 1) {
-                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
+                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
                     } else {
-                        callBehaviour.append("get_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-                        callBehaviour.append("set_" + typeMemoryLocal.get(namesMemoryLocal.get(i)) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("get_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
+                        callBehaviour.append("set_" + namesMemoryLocal.get(i) + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                     }
                 }
 
