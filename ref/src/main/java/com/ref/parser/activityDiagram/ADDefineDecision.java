@@ -640,7 +640,6 @@ public class ADDefineDecision {
                 decision.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
                 decision.append("|}|] ");
                 decision.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + decisionInputType + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(decisionInputType)) + ")) ");
-                //TODO ver porque isso ta dando erro
                 decision.append("\\{|");
                 decision.append("get_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 decision.append("set_" + nameDecision + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
