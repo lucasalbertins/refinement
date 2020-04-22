@@ -1,4 +1,4 @@
-package com.ref.activityDiagram;
+package com.ref.ui.activityDiagram;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;

@@ -1,4 +1,4 @@
-package com.ref.activityDiagram;
+package com.ref.ui.activityDiagram;
 
 import java.io.*;
 import java.util.List;

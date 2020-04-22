@@ -44,7 +44,7 @@
          <action
 			   label="%AD_menu_label"
                icon="icons/sample.gif"
-               class="com.ref.activityDiagram.TemplateDeadlockActionAD"
+               class="com.ref.ui.activityDiagram.TemplateDeadlockActionAD"
                tooltip="%menu_tooltip"
                menubarPath="tool/AD/verification/"
                id="verificationDeadlock">
@@ -52,7 +52,7 @@
          <action
                  label="%AD_menu_label2"
                  icon="icons/sample.gif"
-                 class="com.ref.activityDiagram.TemplateDeterminismActionAD"
+                 class="com.ref.ui.activityDiagram.TemplateDeterminismActionAD"
                  tooltip="%menu_tooltip"
                  menubarPath="tool/AD/verification/"
                  id="verificationDeterminism">
