@@ -100,17 +100,17 @@ public class ADParserTesteDecisionNode {
 	public void TestNodesDecision1() throws ParsingException {
 		String actual = parser1.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_decision1_t = update_decision1.1!(1-0) -> ((ce_decision1.1 -> SKIP))\n" +
-				"act1_decision1 = ((ce_decision1.2 -> SKIP)); event_act1_decision1 -> ((ce_decision1.4 -> SKIP)); act1_decision1\n" +
-				"act1_decision1_t = act1_decision1 /\\ END_DIAGRAM_decision1\n" +
-				"parameter_x_decision1_t = update_decision1.2!(1-0) -> get_x_decision1.1?x -> ((oe_x_decision1.1!x -> SKIP))\n" +
-				"act2_decision1 = ((ce_decision1.3 -> SKIP)); event_act2_decision1 -> ((ce_decision1.5 -> SKIP)); act2_decision1\n" +
-				"act2_decision1_t = act2_decision1 /\\ END_DIAGRAM_decision1\n" +
-				"dec1_decision1 = ((ce_decision1.1 -> SKIP) ||| (oe_x_decision1.1?x -> set_x_dec1_decision1.1!x -> SKIP)); update_decision1.3!(1-2) -> get_x_dec1_decision1.2?x -> (x == 1 & (dc -> ce_decision1.2 -> SKIP) [] x == 0 & (dc -> ce_decision1.3 -> SKIP)); dec1_decision1\n" +
-				"dec1_decision1_t = ((dec1_decision1 /\\ END_DIAGRAM_decision1) [|{|get_x_dec1_decision1,set_x_dec1_decision1,endDiagram_decision1|}|] Mem_dec1_decision1_x_t(0)) \\{|get_x_dec1_decision1,set_x_dec1_decision1,dc|}\n" +
-				"fin1_decision1 = ((ce_decision1.5 -> SKIP) [] (ce_decision1.4 -> SKIP)); clear_decision1.1 -> SKIP\n" +
-				"fin1_decision1_t = fin1_decision1 /\\ END_DIAGRAM_decision1\n" +
-				"init_decision1_t = (init1_decision1_t ||| parameter_x_decision1_t) /\\ END_DIAGRAM_decision1\n");
+		expected.append("init1_decision1_t(id) = update_decision1.id.1!(1-0) -> ((ce_decision1.id.1 -> SKIP))\n" + 
+				"act1_decision1(id) = ((ce_decision1.id.2 -> SKIP)); event_act1_decision1.id -> ((ce_decision1.id.4 -> SKIP)); act1_decision1(id)\n" + 
+				"act1_decision1_t(id) = act1_decision1(id) /\\ END_DIAGRAM_decision1(id)\n" + 
+				"parameter_x_decision1_t(id) = update_decision1.id.2!(1-0) -> get_x_decision1.id.1?x -> ((oe_int_decision1.id.1!x -> SKIP))\n" + 
+				"act2_decision1(id) = ((ce_decision1.id.3 -> SKIP)); event_act2_decision1.id -> ((ce_decision1.id.5 -> SKIP)); act2_decision1(id)\n" + 
+				"act2_decision1_t(id) = act2_decision1(id) /\\ END_DIAGRAM_decision1(id)\n" + 
+				"dec1_decision1(id) = ((ce_decision1.id.1 -> SKIP) ||| (oe_int_decision1.id.1?x -> set_dec1_decision1_dec1_decision1.id.1!x -> SKIP)); update_decision1.id.3!(1-2) -> get_dec1_decision1_dec1_decision1.id.2?x -> (x == 1 & (dc -> ce_decision1.id.2 -> SKIP) [] x == 0 & (dc -> ce_decision1.id.3 -> SKIP)); dec1_decision1(id)\n" + 
+				"dec1_decision1_t(id) = ((dec1_decision1(id) /\\ END_DIAGRAM_decision1(id)) [|{|get_dec1_decision1_dec1_decision1,set_dec1_decision1_dec1_decision1,endDiagram_decision1.id|}|] Mem_dec1_decision1_dec1_decision1_t(id,0)) \\{|get_dec1_decision1_dec1_decision1,set_dec1_decision1_dec1_decision1,dc|}\n" + 
+				"fin1_decision1(id) = ((ce_decision1.id.5 -> SKIP) [] (ce_decision1.id.4 -> SKIP)); clear_decision1.id.1 -> SKIP\n" + 
+				"fin1_decision1_t(id) = fin1_decision1(id) /\\ END_DIAGRAM_decision1(id)\n" + 
+				"init_decision1_t(id) = (init1_decision1_t(id) ||| parameter_x_decision1_t(id)) /\\ END_DIAGRAM_decision1(id)");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -119,16 +119,16 @@ public class ADParserTesteDecisionNode {
 	public void TestNodesDecision2() throws ParsingException {
 		String actual = parser2.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_decision2_t = update_decision2.1!(1-0) -> ((ce_decision2.1 -> SKIP))\n" +
-				"dec1_decision2 = ce_decision2.1 -> ((dc -> ce_decision2.2 -> SKIP) [] (dc -> ce_decision2.3 -> SKIP)); dec1_decision2\n" +
-				"dec1_decision2_t = dec1_decision2 /\\ END_DIAGRAM_decision2 \\{|dc|}\n" +
-				"act1_decision2 = ((ce_decision2.2 -> SKIP)); event_act1_decision2 -> ((ce_decision2.4 -> SKIP)); act1_decision2\n" +
-				"act1_decision2_t = act1_decision2 /\\ END_DIAGRAM_decision2\n" +
-				"act2_decision2 = ((ce_decision2.3 -> SKIP)); event_act2_decision2 -> ((ce_decision2.5 -> SKIP)); act2_decision2\n" +
-				"act2_decision2_t = act2_decision2 /\\ END_DIAGRAM_decision2\n" +
-				"fin1_decision2 = ((ce_decision2.4 -> SKIP) [] (ce_decision2.5 -> SKIP)); clear_decision2.1 -> SKIP\n" +
-				"fin1_decision2_t = fin1_decision2 /\\ END_DIAGRAM_decision2\n" +
-				"init_decision2_t = (init1_decision2_t) /\\ END_DIAGRAM_decision2\n");
+		expected.append("init1_decision2_t(id) = update_decision2.id.1!(1-0) -> ((ce_decision2.id.1 -> SKIP))\n" + 
+				"dec1_decision2(id) = ce_decision2.id.1 -> ((dc -> ce_decision2.id.2 -> SKIP) [] (dc -> ce_decision2.id.3 -> SKIP)); dec1_decision2(id)\r\n" + 
+				"dec1_decision2_t(id) = dec1_decision2(id) /\\ END_DIAGRAM_decision2(id) \\{|dc|}\n" + 
+				"act1_decision2(id) = ((ce_decision2.id.2 -> SKIP)); event_act1_decision2.id -> ((ce_decision2.id.4 -> SKIP)); act1_decision2(id)\r\n" + 
+				"act1_decision2_t(id) = act1_decision2(id) /\\ END_DIAGRAM_decision2(id)\n" + 
+				"act2_decision2(id) = ((ce_decision2.id.3 -> SKIP)); event_act2_decision2.id -> ((ce_decision2.id.5 -> SKIP)); act2_decision2(id)\r\n" + 
+				"act2_decision2_t(id) = act2_decision2(id) /\\ END_DIAGRAM_decision2(id)\n" + 
+				"fin1_decision2(id) = ((ce_decision2.id.4 -> SKIP) [] (ce_decision2.id.5 -> SKIP)); clear_decision2.id.1 -> SKIP\n" + 
+				"fin1_decision2_t(id) = fin1_decision2(id) /\\ END_DIAGRAM_decision2(id)\n" + 
+				"init_decision2_t(id) = (init1_decision2_t(id)) /\\ END_DIAGRAM_decision2(id)");
 		
 		assertEquals(expected.toString(), actual);
 	}
@@ -138,16 +138,16 @@ public class ADParserTesteDecisionNode {
 	public void TestNodesDecision3() throws ParsingException {
 		String actual = parser3.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("parameter_z_decision3_t = update_decision3.1!(1-0) -> get_z_decision3.1?z -> ((oe_z_decision3.1!z -> SKIP))\n" +
-				"dec1_decision3 = oe_z_decision3.1?z -> (z > 0 & (dc -> oe_z_decision3.2!z -> SKIP) [] z <= 0 & (dc -> oe_z_decision3.3!z -> SKIP)); dec1_decision3\n" +
-				"dec1_decision3_t = (dec1_decision3 /\\ END_DIAGRAM_decision3) \\{|dc|}\n" +
-				"act1_decision3 = ((oe_z_decision3.2?z -> set_z_act1_decision3.1!z -> SKIP)); event_act1_decision3 -> get_z_act1_decision3.2?z -> ((((z) >= 0 and (z) <= 1) & oe_z_decision3.4!(z) -> SKIP)); act1_decision3\n" +
-				"act1_decision3_t = ((act1_decision3 /\\ END_DIAGRAM_decision3) [|{|get_z_act1_decision3,set_z_act1_decision3,endDiagram_decision3|}|] Mem_act1_decision3_z_t(0)) \\{|get_z_act1_decision3,set_z_act1_decision3|}\n" +
-				"act2_decision3 = ((oe_z_decision3.3?z -> set_z_act2_decision3.2!z -> SKIP)); event_act2_decision3 -> get_z_act2_decision3.3?z -> ((((z) >= 0 and (z) <= 1) & oe_z_decision3.5!(z) -> SKIP)); act2_decision3\n" +
-				"act2_decision3_t = ((act2_decision3 /\\ END_DIAGRAM_decision3) [|{|get_z_act2_decision3,set_z_act2_decision3,endDiagram_decision3|}|] Mem_act2_decision3_z_t(0)) \\{|get_z_act2_decision3,set_z_act2_decision3|}\n" +
-				"fin1_decision3 = ((oe_z_decision3.5?z -> SKIP) [] (oe_z_decision3.4?z -> SKIP)); clear_decision3.1 -> SKIP\n" +
-				"fin1_decision3_t = fin1_decision3 /\\ END_DIAGRAM_decision3\n" +
-				"init_decision3_t = (parameter_z_decision3_t) /\\ END_DIAGRAM_decision3\n");
+		expected.append("parameter_z_decision3_t(id) = update_decision3.id.1!(1-0) -> get_z_decision3.id.1?z -> ((oe_int_decision3.id.1!z -> SKIP))\n" + 
+				"dec1_decision3(id) = oe_int_decision3.id.1?z -> (z > 0 & (dc -> oe_int_decision3.id.2!z -> SKIP) [] z <= 0 & (dc -> oe_int_decision3.id.3!z -> SKIP)); dec1_decision3(id)\n" + 
+				"dec1_decision3_t(id) = (dec1_decision3(id) /\\ END_DIAGRAM_decision3(id)) \\{|dc|}\n" + 
+				"act1_decision3(id) = ((oe_int_decision3.id.2?z -> set_z_act1_decision3.id.1!z -> SKIP)); event_act1_decision3.id -> get_z_act1_decision3.id.2?z -> ((((z) >= 0 and (z) <= 1) & oe_int_decision3.id.4!(z) -> SKIP)); act1_decision3(id)\n" + 
+				"act1_decision3_t(id) = ((act1_decision3(id) /\\ END_DIAGRAM_decision3(id)) [|{|get_z_act1_decision3.id,set_z_act1_decision3.id,endDiagram_decision3.id|}|] Mem_act1_decision3_z_t(id,0)) \\{|get_z_act1_decision3.id,set_z_act1_decision3.id|}\n" + 
+				"act2_decision3(id) = ((oe_int_decision3.id.3?z -> set_z_act2_decision3.id.2!z -> SKIP)); event_act2_decision3.id -> get_z_act2_decision3.id.3?z -> ((((z) >= 0 and (z) <= 1) & oe_int_decision3.id.5!(z) -> SKIP)); act2_decision3(id)\n" + 
+				"act2_decision3_t(id) = ((act2_decision3(id) /\\ END_DIAGRAM_decision3(id)) [|{|get_z_act2_decision3.id,set_z_act2_decision3.id,endDiagram_decision3.id|}|] Mem_act2_decision3_z_t(id,0)) \\{|get_z_act2_decision3.id,set_z_act2_decision3.id|}\n" + 
+				"fin1_decision3(id) = ((oe_int_decision3.id.5?w -> SKIP) [] (oe_int_decision3.id.4?w -> SKIP)); clear_decision3.id.1 -> SKIP\n" + 
+				"fin1_decision3_t(id) = fin1_decision3(id) /\\ END_DIAGRAM_decision3(id)\n" + 
+				"init_decision3_t(id) = (parameter_z_decision3_t(id)) /\\ END_DIAGRAM_decision3(id)");
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -156,16 +156,16 @@ public class ADParserTesteDecisionNode {
 	public void TestNodesDecision4() throws ParsingException {
 		String actual = parser4.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_decision4_t = update_decision4.1!(1-0) -> ((ce_decision4.1 -> SKIP))\n" +
-				"dec1_decision4 = ce_decision4.1 -> dec1_decision4_guard?teste2?teste1 -> (teste2 & (ce_decision4.2 -> SKIP) [] teste1 & (ce_decision4.3 -> SKIP)); dec1_decision4\n" +
-				"dec1_decision4_t = dec1_decision4 /\\ END_DIAGRAM_decision4 \\{|dc|}\n" +
-				"act2_decision4 = ((ce_decision4.2 -> SKIP)); event_act2_decision4 -> ((ce_decision4.4 -> SKIP)); act2_decision4\n" +
-				"act2_decision4_t = act2_decision4 /\\ END_DIAGRAM_decision4\n" +
-				"act1_decision4 = ((ce_decision4.3 -> SKIP)); event_act1_decision4 -> ((ce_decision4.5 -> SKIP)); act1_decision4\n" +
-				"act1_decision4_t = act1_decision4 /\\ END_DIAGRAM_decision4\n" +
-				"fin1_decision4 = ((ce_decision4.4 -> SKIP) [] (ce_decision4.5 -> SKIP)); clear_decision4.1 -> SKIP\n" +
-				"fin1_decision4_t = fin1_decision4 /\\ END_DIAGRAM_decision4\n" +
-				"init_decision4_t = (init1_decision4_t) /\\ END_DIAGRAM_decision4\n");
+		expected.append("init1_decision4_t(id) = update_decision4.id.1!(1-0) -> ((ce_decision4.id.1 -> SKIP))\n" + 
+				"dec1_decision4(id) = ce_decision4.id.1 -> dec1_decision4_guard?teste2?teste1 -> (teste2 & (ce_decision4.id.2 -> SKIP) [] teste1 & (ce_decision4.id.3 -> SKIP)); dec1_decision4(id)\n" + 
+				"dec1_decision4_t(id) = dec1_decision4(id) /\\ END_DIAGRAM_decision4(id) \\{|dc|}\n" + 
+				"act2_decision4(id) = ((ce_decision4.id.2 -> SKIP)); event_act2_decision4.id -> ((ce_decision4.id.4 -> SKIP)); act2_decision4(id)\n" + 
+				"act2_decision4_t(id) = act2_decision4(id) /\\ END_DIAGRAM_decision4(id)\n" + 
+				"act1_decision4(id) = ((ce_decision4.id.3 -> SKIP)); event_act1_decision4.id -> ((ce_decision4.id.5 -> SKIP)); act1_decision4(id)\n" + 
+				"act1_decision4_t(id) = act1_decision4(id) /\\ END_DIAGRAM_decision4(id)\n" + 
+				"fin1_decision4(id) = ((ce_decision4.id.4 -> SKIP) [] (ce_decision4.id.5 -> SKIP)); clear_decision4.id.1 -> SKIP\n" + 
+				"fin1_decision4_t(id) = fin1_decision4(id) /\\ END_DIAGRAM_decision4(id)\n" + 
+				"init_decision4_t(id) = (init1_decision4_t(id)) /\\ END_DIAGRAM_decision4(id)");
 
 		assertEquals(expected.toString(), actual);
 	}
@@ -174,18 +174,18 @@ public class ADParserTesteDecisionNode {
 	public void TestNodesDecision5() throws ParsingException {
 		String actual = parser5.defineNodesActionAndControl();
 		StringBuffer expected = new StringBuffer();
-		expected.append("init1_decision5_t = update_decision5.1!(1-0) -> ((ce_decision5.1 -> SKIP))\n" +
-				"dec1_decision5 = ce_decision5.1 -> dec1_decision5_guard?teste2?teste1 -> (teste2 & (ce_decision5.2 -> SKIP) [] teste1 & (ce_decision5.3 -> SKIP) [] not(teste2) and not(teste1) & (ce_decision5.4 -> SKIP)); dec1_decision5\n" +
-				"dec1_decision5_t = dec1_decision5 /\\ END_DIAGRAM_decision5 \\{|dc|}\n" +
-				"act2_decision5 = ((ce_decision5.2 -> SKIP)); event_act2_decision5 -> ((ce_decision5.5 -> SKIP)); act2_decision5\n" +
-				"act2_decision5_t = act2_decision5 /\\ END_DIAGRAM_decision5\n" +
-				"act1_decision5 = ((ce_decision5.3 -> SKIP)); event_act1_decision5 -> ((ce_decision5.6 -> SKIP)); act1_decision5\n" +
-				"act1_decision5_t = act1_decision5 /\\ END_DIAGRAM_decision5\n" +
-				"act3_decision5 = ((ce_decision5.4 -> SKIP)); event_act3_decision5 -> ((ce_decision5.7 -> SKIP)); act3_decision5\n" +
-				"act3_decision5_t = act3_decision5 /\\ END_DIAGRAM_decision5\n" +
-				"fin1_decision5 = ((ce_decision5.5 -> SKIP) [] (ce_decision5.6 -> SKIP) [] (ce_decision5.7 -> SKIP)); clear_decision5.1 -> SKIP\n" +
-				"fin1_decision5_t = fin1_decision5 /\\ END_DIAGRAM_decision5\n" +
-				"init_decision5_t = (init1_decision5_t) /\\ END_DIAGRAM_decision5\n");
+		expected.append("init1_decision5_t(id) = update_decision5.id.1!(1-0) -> ((ce_decision5.id.1 -> SKIP))\n" + 
+				"dec1_decision5(id) = ce_decision5.id.1 -> dec1_decision5_guard?teste2?teste1 -> (teste2 & (ce_decision5.id.2 -> SKIP) [] teste1 & (ce_decision5.id.3 -> SKIP) [] not(teste2) and not(teste1) & (ce_decision5.id.4 -> SKIP)); dec1_decision5(id)\n" + 
+				"dec1_decision5_t(id) = dec1_decision5(id) /\\ END_DIAGRAM_decision5(id) \\{|dc|}\n" + 
+				"act2_decision5(id) = ((ce_decision5.id.2 -> SKIP)); event_act2_decision5.id -> ((ce_decision5.id.5 -> SKIP)); act2_decision5(id)\n" + 
+				"act2_decision5_t(id) = act2_decision5(id) /\\ END_DIAGRAM_decision5(id)\n" + 
+				"act1_decision5(id) = ((ce_decision5.id.3 -> SKIP)); event_act1_decision5.id -> ((ce_decision5.id.6 -> SKIP)); act1_decision5(id)\n" + 
+				"act1_decision5_t(id) = act1_decision5(id) /\\ END_DIAGRAM_decision5(id)\n" + 
+				"act3_decision5(id) = ((ce_decision5.id.4 -> SKIP)); event_act3_decision5.id -> ((ce_decision5.id.7 -> SKIP)); act3_decision5(id)\n" + 
+				"act3_decision5_t(id) = act3_decision5(id) /\\ END_DIAGRAM_decision5(id)\n" + 
+				"fin1_decision5(id) = ((ce_decision5.id.5 -> SKIP) [] (ce_decision5.id.6 -> SKIP) [] (ce_decision5.id.7 -> SKIP)); clear_decision5.id.1 -> SKIP\n" + 
+				"fin1_decision5_t(id) = fin1_decision5(id) /\\ END_DIAGRAM_decision5(id)\n" + 
+				"init_decision5_t(id) = (init1_decision5_t(id)) /\\ END_DIAGRAM_decision5(id)");
 
 		assertEquals(expected.toString(), actual);
 	}
