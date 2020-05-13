@@ -126,18 +126,18 @@ public class ADDefineOutputParameterNode {
         outParameter.append("((" + nameOutParameter + "(id) /\\ " + endDiagram + "(id)) ");
 
         outParameter.append("[|{|");
-        outParameter.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-        outParameter.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-        outParameter.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+        outParameter.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+        outParameter.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+        outParameter.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
         outParameter.append("|}|] ");
         outParameter.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(id," + adUtils.getDefaultValue(nameObjectReal) + ")) ");
 
         outParameter.append("\\{|");
-        outParameter.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
-        outParameter.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()));
+        outParameter.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ".id,");
+        outParameter.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName())+".id");
         outParameter.append("|}\n");
 
-        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
+        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
         alphabetNode.put(adUtils.nameDiagramResolver("parameter_" + activityNode.getName()), alphabet);
 
         activityNode = null;

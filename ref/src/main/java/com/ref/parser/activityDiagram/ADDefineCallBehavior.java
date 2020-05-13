@@ -54,6 +54,8 @@ public class ADDefineCallBehavior {
         HashMap<String, String> typeMemoryLocal = new HashMap<>();
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
+    	
+        ADDefineMemories.CBAMemAlphabet.put(activityNode,((IAction)activityNode).getCallingActivity());
 
         for (int i = 0; i < outPins.length; i++) {
             namesOutpins.add(outPins[i].getName());
@@ -128,32 +130,14 @@ public class ADDefineCallBehavior {
             for (String nameObj : namesMemoryLocal) {
                 adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj, typeMemoryLocal.get(nameObj));
             }
-            //call
-            //TODO
-            /*boolean aux = false;
-            for(IActivity CBAs: ADParser.callBehaviourList) {
-            	if(CBAs.getName().equals(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName())) {
-            		aux = true;
-            	}
-            }
-            
-            if(!aux) {*/
-            	//int count = adUtils.startActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal);
-                //adUtils.endActivity(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesOutpins, count);
-                try {
+           
+            try {
                 	((IAction) activityNode).getCallingActivity().getActivityDiagram().getName();
 				} catch (Exception e) {
 					throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
 				}
-                adUtils.callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
-            /*}else {
-            	callBehaviour.append("normal("+ADUtils.nameResolver(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName())+"(1));");
-            	alphabet.add("startActivity_" + ADUtils.nameResolver(((IAction) activityNode).getCallingActivity().getActivityDiagram().getName()) + "." + count);
-            	alphabet.add("endActivity");
-            	
-            }*/
-            
-
+                callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
+           
             adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -172,8 +156,10 @@ public class ADDefineCallBehavior {
                     adUtils.ce(alphabet, callBehaviour, ce, " -> SKIP)");
                 }
             }
-
-            String nameObject = "";
+            
+            
+            
+            String typeObject = "";
             String lastName = "";
             //ArrayList<String> union = new ArrayList<>();
 
@@ -196,12 +182,11 @@ public class ADDefineCallBehavior {
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
                 for (int x = 0; x < outFlowPin.length; x++) {
-                    nameObject = outPins[i].getBase().getName();
-
-                    String oe = adUtils.createOE(nameObject);
+                    typeObject = outPins[i].getBase().getName();              
+                    String oe = adUtils.createOE(typeObject);
                     syncObjectsEdge.put(outFlowPin[x].getId(), oe);
 
-                    objectEdges.put(oe, nameObject);
+                    objectEdges.put(oe, typeObject);
 //                    String value = "";
 //                    for (int j = 0; j < definitionFinal.length; j++) {
 //                        String[] expression = definitionFinal[j].split("=");
@@ -212,8 +197,14 @@ public class ADDefineCallBehavior {
 
                     callBehaviour.append("(");
                     if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+                    	//TODO ver se esta certo mesmo
+                    	adUtils.getLocal(alphabet, callBehaviour, outPins[i].getName(), activityNode.getName(), outPins[i].getName(),typeObject);
+                    	//adUtils.get(alphabet, callBehaviour, outPins[i].getName());
                         adUtils.oe(alphabet, callBehaviour, oe, "!(" + outPins[i].getName() + ")", " -> SKIP) ||| ");
                     } else {
+                    	//TODO ver se esta certo mesmo
+                    	adUtils.getLocal(alphabet, callBehaviour, outPins[i].getName(), activityNode.getName(), outPins[i].getName(),typeObject);
+                    	//adUtils.get(alphabet, callBehaviour, outPins[i].getName());
                         adUtils.oe(alphabet, callBehaviour, oe, "!(" + outPins[i].getName() + ")", " -> SKIP)");
                     }
 
@@ -232,7 +223,13 @@ public class ADDefineCallBehavior {
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     callBehaviour.append("(");
                 }
-                callBehaviour.append("(" + nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)) ");
+                callBehaviour.append("("+nameCallBehaviour+"(id)) ");
+                for(int i = 0; i < namesMemoryLocal.size(); i++) {
+                	callBehaviour.append("[|AlphabetMem"+adUtils.nameDiagramResolver(activityNode.getName())+"(id)|] "
+                						+"Mem_"+nameCallBehaviour+"(id)) \\diff(AlphabetMem"+adUtils.nameDiagramResolver(activityNode.getName())
+                						+"(id),{|endDiagram_"+adUtils.nameDiagramResolver(ad.getName())+".id|}) /\\ "+ endDiagram+ "(id)\n");
+                }
+                /*callBehaviour.append("(" + nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)) ");
 
                 for (int i = 0; i < namesMemoryLocal.size(); i++) {
                     callBehaviour.append("[|{|");
@@ -261,7 +258,7 @@ public class ADDefineCallBehavior {
                     }
                 }
 
-                callBehaviour.append("|}\n");
+                callBehaviour.append("|}\n");*/
 
             } else {
                 callBehaviour.append(nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)\n");
@@ -746,5 +743,73 @@ public class ADDefineCallBehavior {
         }
 
         return activityNode;
+    }
+    
+    private void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins,IActivityNode activityNode) {
+    	int count = 0;
+    	count = adUtils.addCountCall(adUtils.nameDiagramResolver(nameAD));
+    	String Activity = "";
+    	//String getInput ="getInputParam"+nameDiagramResolver(nameAD); 
+    	String setMem = "setMemOutParam"+adUtils.nameDiagramResolver(nameAD);	
+    	String startAct = "startActivity_" + adUtils.nameDiagramResolver(nameAD) + "." + count;
+    	String endAct = "endActivity_" + adUtils.nameDiagramResolver(nameAD) + "." + count;
+    	
+    	List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) activityNode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
+    	int index = 1;
+    	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
+    		if(activityNode.getId().equals(CBAList.get(i).getKey())) {
+    			index = i+1;
+    		}
+    	}
+    	
+    	alphabetNode.add(startAct);
+    	alphabetNode.add(endAct);
+    	adUtils.getCallBehaviourNumber().add(new Pair<>(adUtils.nameDiagramResolver(nameAD), count));
+    	
+    	List<String> outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
+        if (outputPinsUsed == null) {
+            outputPinsUsed = inputPins;
+            HashMap<String,List<String>> aux = adUtils.getCallBehaviourInputs();
+            aux.put(nameAD, inputPins);
+            adUtils.setCallBehaviourInputs(aux);
+        }
+        
+        if(!outputPinsUsed.isEmpty()) {
+        	//alphabetNode.add(getInput);
+        	for (String pin : outputPinsUsed) {
+            	//getInput += "?" + pin;
+                Activity += "!" + pin;
+            }
+            //getInput += " -> ";
+        	action.append(/*getInput+*/"(");
+            action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
+        }else {
+        	action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+"))");
+        }
+
+        
+        action.append((Activity != ""?startAct+Activity + " -> ":""));
+        
+        Activity = "";	
+        
+        outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));
+        if (outputPinsUsed == null) {
+            outputPinsUsed = outputPins;
+        	HashMap<String,List<String>> aux =	adUtils.getCallBehaviourOutputs();
+            aux.put(nameAD, outputPins);
+            adUtils.setCallBehaviourOutputs(aux);
+        }
+        
+        for (String pin : outputPinsUsed) {
+            Activity += "?" + pin;
+            setMem += "!" + pin;
+        }
+        
+        action.append((Activity != ""?endAct+Activity + " -> ":""));
+        for(IOutputPin pin : ((IAction)activityNode).getOutputs()) {
+        	adUtils.setLocal(alphabetNode,action,pin.getName(),adUtils.nameDiagramResolver(activityNode.getName()),pin.getName(),pin.getBase().getName()); //TODO adicionar um setLocal que pegue aqui	
+        }
+        action.append(!setMem.equals("setMemOutParam"+adUtils.nameDiagramResolver(nameAD))?"SKIP));":";");
+        
     }
 }

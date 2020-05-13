@@ -125,19 +125,19 @@ public class ADDefineTypes {
 
             }
 
-            for (String input : parameterNodesInput.keySet()) {
+            /*for (String input : parameterNodesInput.keySet()) {
                 types.append(input + "_" + nameDiagram + " = ");
 
                 types.append(typesParameter.get(parameterNodesInput.get(input)) + "\n");
 
-            }
+            }*/
 
-            for (String output : parameterNodesOutput.keySet()) {
+            /*for (String output : parameterNodesOutput.keySet()) {
                 types.append(output + "_" + nameDiagram + " = ");
 
                 types.append(typesParameter.get(parameterNodesOutput.get(output)) + "\n");
 
-            }
+            }*/
 
             List<String> buffer = new ArrayList<>();
 

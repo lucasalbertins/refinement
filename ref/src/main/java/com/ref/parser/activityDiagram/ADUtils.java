@@ -80,66 +80,7 @@ public class ADUtils {
         return "oe_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countOe_ad++;
     }
 
-    public void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins,IActivityNode activityNode) {
-    	int count = 0;
-    	count = addCountCall(nameDiagramResolver(nameAD));
-    	String Activity = "";
-    	String getInput ="getInputParam"+nameDiagramResolver(nameAD); 
-    	String setMem = "setMemOutParam"+nameDiagramResolver(nameAD);	
-    	String startAct = "startActivity_" + nameDiagramResolver(nameAD) + "." + count;
-    	String endAct = "endActivity_" + nameDiagramResolver(nameAD) + "." + count;
-    	
-    	List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) activityNode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
-    	int index = 1;
-    	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
-    		if(activityNode.getId().equals(CBAList.get(i).getKey())) {
-    			index = i+1;
-    		}
-    	}
-    	
-    	alphabetNode.add(startAct);
-    	alphabetNode.add(endAct);
-    	callBehaviourNumber.add(new Pair<>(nameDiagramResolver(nameAD), count));
-    	
-    	List<String> outputPinsUsed = callBehaviourInputs.get(nameDiagramResolver(nameAD));
-        if (outputPinsUsed == null) {
-            outputPinsUsed = inputPins;
-            callBehaviourInputs.put(nameAD, inputPins);
-        }
-        
-        if(!outputPinsUsed.isEmpty()) {
-        	alphabetNode.add(getInput);
-        	for (String pin : outputPinsUsed) {
-            	getInput += "?" + pin;
-                Activity += "!" + pin;
-            }
-            getInput += " -> ";
-        	action.append(getInput+"(");
-            action.append("normal("+nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
-        }else {
-        	action.append("normal("+nameDiagramResolver(nameAD)+"("+index+"))");
-        }
-
-        
-        action.append((Activity != ""?startAct+Activity + " -> ":""));
-        
-        Activity = "";	
-        
-        outputPinsUsed = callBehaviourOutputs.get(nameDiagramResolver(nameAD));
-        if (outputPinsUsed == null) {
-            outputPinsUsed = outputPins;
-            callBehaviourOutputs.put(nameAD, outputPins);
-        }
-        
-        for (String pin : outputPinsUsed) {
-            Activity += "?" + pin;
-            setMem += "!" + pin;
-        }
-        
-        action.append((Activity != ""?endAct+Activity + " -> ":""));
-        action.append(!setMem.equals("setMemOutParam"+nameDiagramResolver(nameAD))?setMem+" -> SKIP));":";");
-        
-    }
+    
     
     public int startActivity(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins) {
         int count = 0;
@@ -558,5 +499,30 @@ public class ADUtils {
         }
         return true;
     }
+
+	public List<Pair<String, Integer>> getCallBehaviourNumber() {
+		return callBehaviourNumber;
+	}
+
+	public void setCallBehaviourNumber(List<Pair<String, Integer>> callBehaviourNumber) {
+		this.callBehaviourNumber = callBehaviourNumber;
+	}
+
+	public HashMap<String, List<String>> getCallBehaviourInputs() {
+		return callBehaviourInputs;
+	}
+
+	public void setCallBehaviourInputs(HashMap<String, List<String>> callBehaviourInputs) {
+		this.callBehaviourInputs = callBehaviourInputs;
+	}
+
+	public HashMap<String, List<String>> getCallBehaviourOutputs() {
+		return callBehaviourOutputs;
+	}
+
+	public void setCallBehaviourOutputs(HashMap<String, List<String>> callBehaviourOutputs) {
+		this.callBehaviourOutputs = callBehaviourOutputs;
+	}
+    
 
 }
