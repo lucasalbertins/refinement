@@ -86,7 +86,7 @@ public class ADDefineMemories {
         
         for(IActivityNode node: nodes) {//TODO ver se ta certo mesmo
         	if(CBAMemAlphabet.containsKey(node) && !CBAMemAlphabetDone.contains(((IAction)node).getCallingActivity())) {
-        		memory.append("\nAlphabetMem"+node.getName()+"(id) = {|");
+        		memory.append("\nAlphabetMem"+adUtils.nameDiagramResolver(node.getName())+"(id) = {|");
         		memory.append(alphabetMemory);
         		memory.append("endDiagram_"+nameDiagram+".id|}\n");
         		CBAMemAlphabetDone.add(((IAction)node).getCallingActivity());
