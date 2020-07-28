@@ -21,13 +21,13 @@ public class ADDefineChannels {
     private List<String> eventChannel;
     private List<String> lockChannel;
     private String firstDiagram;
-    private List<String> signalChannels;
+    private HashMap<String, List<IActivity>> signalChannels;
     private ADUtils adUtils;
     private ADParser adParser;
 
     public ADDefineChannels(HashMap allGuards, IActivity ad, HashMap parameterNodesInput, HashMap parameterNodesOutput,
                             Map memoryLocal, HashMap parameterNodesOutputObject, HashMap syncObjectsEdge,
-                            HashMap objectEdges, List eventChannel, List lockChannel, String firstDiagram, List signalChannels,
+                            HashMap objectEdges, List eventChannel, List lockChannel, String firstDiagram, HashMap<String, List<IActivity>> signalChannels2,
                             ADUtils adUtils, ADParser adParser) {
         this.allGuards = allGuards;
         this.ad = ad;
@@ -40,7 +40,7 @@ public class ADDefineChannels {
         this.eventChannel = eventChannel;
         this.lockChannel = lockChannel;
         this.firstDiagram = firstDiagram;
-        this.signalChannels = signalChannels;
+        this.signalChannels = signalChannels2;
         this.adUtils = adUtils;
         this.adParser = adParser;
     }
@@ -164,10 +164,31 @@ public class ADDefineChannels {
         }*/
 
         if (firstDiagram.equals(ad.getId())) {
-
-            for (String signalChannel : signalChannels) {
-                channels.append("channel signal_" + signalChannel + ": ID_"+nameDiagram +". countSignal_" + signalChannel + "\n");
-                channels.append("channel accept_" + signalChannel + ": ID_"+nameDiagram +". countAccept_" + signalChannel + ".countSignal_" + signalChannel + "\n");
+        	List<String> keySignalChannels = new ArrayList<String>();
+        	keySignalChannels.addAll(signalChannels.keySet());
+        	
+        	List<List<IActivity>> entry = new ArrayList<>();
+        	entry.addAll(signalChannels.values());
+        	String nameMax = nameDiagram;
+        	int numMax = 0;
+        	for(List<IActivity> valueList : entry) {
+        		for(IActivity diagram : valueList) {
+        			if(ADParser.countCall.get(ADUtils.nameResolver(diagram.getName()))>numMax) {
+            			nameMax = ADUtils.nameResolver(diagram.getName());
+            			numMax = ADParser.countCall.get(ADUtils.nameResolver(diagram.getName()));
+            		}
+        		}
+        		
+        		/*for(Pair<IActivity,Integer> pair : valueList) {
+        			if(pair.getValue()>numMax) {
+        				nameMax = ADUtils.nameResolver(pair.getKey().getName());
+        			}
+        		}*/
+        	}
+        	
+            for (String signalChannel : keySignalChannels) {
+                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
+                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
             }
 
             channels.append("channel loop\n");

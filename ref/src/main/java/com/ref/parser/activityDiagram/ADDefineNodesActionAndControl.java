@@ -45,7 +45,7 @@ public class ADDefineNodesActionAndControl {
     private HashMap<String, List<String>> callBehaviourOutputs;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
-    private List<String> signalChannels;
+    private HashMap<String, List<IActivity>> signalChannels;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
@@ -76,7 +76,7 @@ public class ADDefineNodesActionAndControl {
                                          HashMap<String, String> parameterNodesOutput, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
                                          Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
-                                         List<Pair<String, Integer>> countAccept, List<String> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
+                                         List<Pair<String, Integer>> countAccept, HashMap<String,List<IActivity>> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
                                          HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -388,6 +388,16 @@ public class ADDefineNodesActionAndControl {
                             }
                         }
                     }
+                } else if (activityNode instanceof IActivityParameterNode) {
+                    if (activityNode.getOutgoings().length > 0) {
+                        activityNode = defineInputParameterNode(activityNode, nodes);
+                    } else if (activityNode.getIncomings().length > 0) {
+                        activityNode = defineOutputParameterNode(activityNode, nodes);
+                    } else {
+                        activityNode = null;
+                    }
+
+                    
                 } else if (activityNode instanceof IObjectNode) {
                     activityNode = defineObjectNode(activityNode, nodes, 2);
                 }
@@ -410,7 +420,7 @@ public class ADDefineNodesActionAndControl {
         }
 
         //add initial central
-        if (allInitial.size() > 0) {
+        if (allInitial.size() > 0) {//provavel local de alteração
             nodes.append("init_" + adUtils.nameDiagramResolver(ad.getName()) + "_t(id) = (" + allInitial.get(0));
             for (int i = 1; i < allInitial.size(); i++) {
                 nodes.append("(id) ||| " + allInitial.get(i));

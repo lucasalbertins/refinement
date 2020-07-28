@@ -13,6 +13,8 @@ import com.change_vision.jude.api.inf.model.IActivity;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.ref.exceptions.ParsingException;
+import com.ref.refinement.activityDiagram.DeadlockCounterExample;
+import com.ref.refinement.activityDiagram.DeterminismCounterExample;
 
 public class ADParser {
 
@@ -32,8 +34,8 @@ public class ADParser {
     public static boolean containsCallBehavior = false;
     public static HashMap<String, Integer> countCall = new HashMap<>();
     public static HashMap<String,List<Pair<String,String>>> countcallBehavior = new HashMap<>();
-    public HashMap<String, ArrayList<String>> alphabetNode;
-    public HashMap<String, ArrayList<String>> parameterAlphabetNode;
+    private HashMap<String, ArrayList<String>> alphabetNode;
+    private HashMap<String, ArrayList<String>> parameterAlphabetNode;
     public HashMap<String, String> syncChannelsEdge;            //ID flow, channel
     public HashMap<String, String> syncObjectsEdge;
     public static Set<String> alphabetPool = new HashSet<String>();
@@ -58,14 +60,14 @@ public class ADParser {
     private static HashMap<String, List<String>> callBehaviourOutputs = new HashMap<>(); //name; List outputs
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
-    private static List<String> signalChannels = new ArrayList<>();
+    private static HashMap<String,List<IActivity>> signalChannels = new HashMap<>();
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
     
-
+    private ADAlphabet alphabetAD;
     public ADDefineChannels dChannels;
     public ADDefineTypes dTypes;
     public ADDefineMemories dMemories;
@@ -167,7 +169,7 @@ public class ADParser {
         firstDiagram = ad.getId(); //set first diagram
     }
 
-    private void resetStatic() {
+    public void resetStatic() {
         firstDiagram = null;
         containsCallBehavior = false;
         countCall = new HashMap<>();
@@ -178,7 +180,7 @@ public class ADParser {
         callBehaviourListCreated = new ArrayList<>();
         countSignal = new ArrayList<>();
         countAccept = new ArrayList<>();
-        signalChannels = new ArrayList<>();
+        signalChannels = new HashMap<>();
         alphabetPool = new HashSet<String>();
     }
 
@@ -195,7 +197,7 @@ public class ADParser {
      * */
 
     public String parserDiagram() throws ParsingException {
-
+    	
         boolean reset = false;
         String check = "";
         String callBehaviour = "";
@@ -219,7 +221,10 @@ public class ADParser {
         for (IActivity adCalling: callBehaviourList) {
             if (!callBehaviourListCreated.contains(adCalling)) {
                 callBehaviourListCreated.add(adCalling);
-                callBehaviour += "\n" + (new ADParser(adCalling, adCalling.getActivityDiagram().getName(), adCalling.getActivityDiagram())).parserDiagram();
+                ADParser adParser = new ADParser(adCalling, adCalling.getActivityDiagram().getName(), adCalling.getActivityDiagram());
+                callBehaviour += "\n" + (adParser.parserDiagram());
+                alphabetAD = new ADCompositeAlphabet(ad);
+                this.alphabetAD.add(adParser.getAlphabetAD());
             }
         }
 
@@ -248,13 +253,29 @@ public class ADParser {
 
         //reseta os valores estaticos
         if (reset) {
+        	DeadlockCounterExample.callBehaviourList = callBehaviourList;
+        	DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();
         }
 
+        // alphabet usado na geração dos contraexemplos
+        if(alphabetAD == null) {
+        	this.alphabetAD = new ADLeafAlphabet(ad);
+        }
+        alphabetAD.setAlphabetAD(alphabetNode);
+        alphabetAD.setSyncChannelsEdge(syncChannelsEdge);
+        alphabetAD.setSyncObjectsEdge(syncObjectsEdge);
+        alphabetAD.setParameterAlphabetNode(parameterAlphabetNode);
+        
         return parser;
     }
 
-    public static void addCountCallBehavior(String idKey,String idCalling,String nameCalling) {
+
+	public ADAlphabet getAlphabetAD() {
+		return this.alphabetAD;
+	}
+
+	public static void addCountCallBehavior(String idKey,String idCalling,String nameCalling) {
         int i = 1;
         List<Pair<String,String>> aux1;
         if (countcallBehavior.containsKey(idKey)) {//se ja tiver o CBA

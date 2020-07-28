@@ -53,7 +53,7 @@ public class ADDefineProcessSync {
             			index = i+1;
             		}
             	}
-                processSync.append("|},AlphabetDiagram_"+((IAction)Activitynode).getCallingActivity().getName()+"_t("+index+"))\n");
+                processSync.append("|},AlphabetDiagram_"+ADUtils.nameResolver(((IAction)Activitynode).getCallingActivity().getName())+"_t("+index+"))\n");
         	}else {
         		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ") = {|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ")"+"SUB");
@@ -93,7 +93,7 @@ public class ADDefineProcessSync {
     	IActivityNode[] nodes = ad.getActivityNodes();//pega todos os nós do diagrama
     	IAction nodeFound;
 		for(int i=0; i<nodes.length;i++) {//varre os nós
-			if(nodes[i].getName().equals(nodeName) && nodes[i] instanceof IAction) {
+			if(ADUtils.nameResolver(nodes[i].getName()).equals(nodeName) && nodes[i] instanceof IAction) {
 				nodeFound = (IAction) nodes[i];
 				if(nodeFound.isCallBehaviorAction()) {
 					return nodeFound;

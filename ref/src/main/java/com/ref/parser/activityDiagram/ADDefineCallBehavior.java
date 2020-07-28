@@ -753,8 +753,8 @@ public class ADDefineCallBehavior {
     	String setMem = "setMemOutParam"+adUtils.nameDiagramResolver(nameAD);	
     	String startAct = "startActivity_" + adUtils.nameDiagramResolver(nameAD) + "." + count;
     	String endAct = "endActivity_" + adUtils.nameDiagramResolver(nameAD) + "." + count;
-    	
-    	List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) activityNode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
+    	String id = ((IAction) activityNode).getCallingActivity().getId();
+    	List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(id);//pega a list com todos os nos que chamam esse cba
     	int index = 1;
     	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
     		if(activityNode.getId().equals(CBAList.get(i).getKey())) {

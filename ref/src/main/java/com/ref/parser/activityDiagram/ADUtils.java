@@ -30,7 +30,7 @@ public class ADUtils {
     private HashMap<String, List<String>> callBehaviourOutputs;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
-    private List<String> signalChannels;
+    private HashMap<String, List<IActivity>> signalChannels;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
@@ -44,7 +44,7 @@ public class ADUtils {
                    List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
                    Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, HashMap<String, List<String>> callBehaviourInputs,
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
-                   List<String> signalChannels, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
+                   HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<String, String> syncChannelsEdge,
                    HashMap<String, String> syncObjectsEdge, List<String> signalChannelsLocal, ADParser adParser) {
 
@@ -61,7 +61,7 @@ public class ADUtils {
         this.callBehaviourOutputs = callBehaviourOutputs;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
-        this.signalChannels = signalChannels;
+        this.signalChannels = signalChannels2;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.allGuards = allGuards;
         this.createdSignal = createdSignal;
@@ -282,9 +282,29 @@ public class ADUtils {
             localSignalChannelsSync.add("signal_" + nameSignal);
         }
 
-        if (!signalChannels.contains(nameSignal)) {
-            signalChannels.add(nameSignal);
+        if (!signalChannels.containsKey(nameSignal)) {//TODO local onde modifica o signalchannels
+        	//Pair<IActivity,Integer> pair = new Pair<>(ad,1);
+        	List<IActivity> list = new ArrayList<>();
+        	list.add(ad);
+            signalChannels.put(nameSignal,list );
         }
+        /*else {
+        	List<Pair<IActivity,Integer>> list = new ArrayList<>();
+        	list = signalChannels.get(nameSignal);
+        	Pair<IActivity,Integer> pair = null;
+        	int i=0;
+        	for(Pair<IActivity,Integer> aux : list) {
+        		if(aux.getKey().getId() == ad.getId()) {
+        			pair = new Pair<>(aux.getKey(),aux.getValue()+1);
+        			break;
+        		}
+        		i++;
+        	}
+        	if(pair != null) {
+            	list.remove(i);
+            	list.add(pair);	
+        	}
+        }*/
 
         if (!signalChannelsLocal.contains(nameSignal)) {
             signalChannelsLocal.add(nameSignal);
@@ -302,7 +322,7 @@ public class ADUtils {
         }
 
         alphabet.add("signal_" + nameSignal + ".id." + idSignal);
-        signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");//TODO ver se é isso mesmo
+        signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
 
         if (index >= 0) {
             countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
@@ -317,8 +337,11 @@ public class ADUtils {
             localSignalChannelsSync.add("signal_" + nameAccept);
         }
 
-        if (!signalChannels.contains(nameAccept)) {
-            signalChannels.add(nameAccept);
+        if (!signalChannels.containsKey(nameAccept)) {
+        	//Pair<IActivity,Integer> pair = new Pair<>(ad,1);
+        	List<IActivity> list = new ArrayList<>();
+        	list.add(ad);
+            signalChannels.put(nameAccept,list );
         }
 
         int idAccept = 1;

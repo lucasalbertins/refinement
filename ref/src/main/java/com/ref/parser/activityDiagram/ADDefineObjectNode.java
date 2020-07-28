@@ -217,20 +217,24 @@ public class ADDefineObjectNode {
                     adUtils.oe(alphabet, objectNode, oe, "!" + nameObjectUnique, " -> SKIP)");
                 }
             }
-
-            if (outFlows[0].getTarget() instanceof IInputPin) {
-                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
-                    if (activityNodeSearch instanceof IAction) {
-                        IInputPin[] inPins = ((IAction) activityNodeSearch).getInputs();
-                        for (int y = 0; y < inPins.length; y++) {
-                            if (inPins[y].getId().equals(outFlows[0].getTarget().getId())) {
-                                activityNode = activityNodeSearch;
-                            }
-                        }
-                    }
-                }
-            } else {
-                activityNode = outFlows[0].getTarget();
+            if(outFlows.length==0) {
+            	activityNode = null;
+            }
+            else {
+	            if (outFlows[0].getTarget() instanceof IInputPin) {
+	                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
+	                    if (activityNodeSearch instanceof IAction) {
+	                        IInputPin[] inPins = ((IAction) activityNodeSearch).getInputs();
+	                        for (int y = 0; y < inPins.length; y++) {
+	                            if (inPins[y].getId().equals(outFlows[0].getTarget().getId())) {
+	                                activityNode = activityNodeSearch;
+	                            }
+	                        }
+	                    }
+	                }
+	            } else {
+	                activityNode = outFlows[0].getTarget();
+	            }
             }
 
             for (int i = 1; i < outFlows.length; i++) {    //creates the parallel output channels
@@ -265,7 +269,7 @@ public class ADDefineObjectNode {
                 }
             }
 
-            objectNode.append(nameObjectNode + " = ");
+            objectNode.append(nameObjectNode + "(id) = ");
 
             objectNode.append("(");
 
@@ -335,9 +339,9 @@ public class ADDefineObjectNode {
             objectNode.append("); ");
 
             objectNode.append(nameObjectNode + "\n");
-            objectNode.append(nameObjectNodeTermination + " = ");
+            objectNode.append(nameObjectNodeTermination + "(id) = ");
 
-            objectNode.append("((" + nameObjectNode + " /\\ " + endDiagram + ") ");
+            objectNode.append("((" + nameObjectNode + " /\\ " + endDiagram + "(id)) ");
 
             objectNode.append("[|{|");
             objectNode.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");

@@ -11,6 +11,8 @@ import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
+import com.ref.parser.activityDiagram.ADAlphabet;
+import com.ref.parser.activityDiagram.ADCompositeAlphabet;
 import com.ref.parser.activityDiagram.ADParser;
 
 import java.text.SimpleDateFormat;
@@ -23,12 +25,15 @@ public class DeterminismCounterExample {
     private static HashMap<String, INodePresentation> nodeAdded;
     private static HashMap<String, INodePresentation> objPresent;
     private static List<String> trace;
-    private static ADParser parser;
     private static IPackage packageCounterExample;
     private static IActivityDiagram ad;
-
-    public static void createDeterminismCounterExample(List<String> traceList, ADParser parserParam) {
+    private static ADAlphabet alphabet;
+    public static List<IActivity> callBehaviourList = new ArrayList<>();
+    
+    public static void createDeterminismCounterExample(List<String> traceList, ADAlphabet alphabetAD) {
         try {
+        	alphabet = alphabetAD;
+        	
             Date hoje = new Date();
             SimpleDateFormat df;
             df = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
@@ -41,15 +46,17 @@ public class DeterminismCounterExample {
             for (String objTrace : traceList) {
                 String[] objTracePartition = objTrace.split("\\.");
                 if (objTracePartition.length > 2) {
-                    trace.add(objTracePartition[0] + "." + objTracePartition[1]);
+                	String aux = objTracePartition[0] + ".id";
+                	for(int i=2;i<objTracePartition.length;i++) {
+                		aux+="."+objTracePartition[i];
+                	}
+                    trace.add(aux);
                 } else {
                     trace.add(objTrace);
                 }
-            }
+            } 
 
-            parser = parserParam;
-
-            IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
+            IDiagram[] diagrams = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getOpenDiagrams();
 
             ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
             IModel project = prjAccessor.getProject();
@@ -58,12 +65,13 @@ public class DeterminismCounterExample {
             TransactionManager.beginTransaction();
             createPackage(basicModelEditor, project);
             ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
-            ad = adEditor.createActivityDiagram(packageCounterExample, diagram.getName() + "#" + data);
-
-            for (IActivityNode node : ((IActivityDiagram) diagram).getActivity().getActivityNodes()) {
-                createNode(node, adEditor);
+            for(IDiagram ADdiagrams: diagrams) {
+	            ad = adEditor.createActivityDiagram(packageCounterExample, ADdiagrams.getName() + "#" + data);
+	            for (IActivityNode node : ((IActivityDiagram) ADdiagrams).getActivity().getActivityNodes()) {
+	                createNode(node, adEditor);
+	            }
             }
-
+            
             TransactionManager.endTransaction();
         } catch (Exception e) {
             TransactionManager.abortTransaction();
@@ -199,16 +207,17 @@ public class DeterminismCounterExample {
 
             IActivityNode actNode = getIActivityNode(actionNode);
             actNode.setDefinition(node.getDefinition());
-
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(actNode, actionNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         actionNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), actionNode);
 
@@ -232,16 +241,17 @@ public class DeterminismCounterExample {
 
                 setFlowPoints(flow, outFlows[i]);
 
-                if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                    String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                    String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                flowSP(outFlows, i, flow);
+                /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                    String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                    String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                     if (channel != null && trace.contains(channel)) {
                         flow.setProperty("line.color", "#FF0000");
                     } else if (channelObj != null && trace.contains(channelObj)) {
                         flow.setProperty("line.color", "#FF0000");
                     }
-                }
+                }*/
 
             }
 
@@ -262,9 +272,10 @@ public class DeterminismCounterExample {
 
                         setFlowPoints(flow, targetOutFlows[x]);
 
-                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x].getId()) || parser.syncObjectsEdge.containsKey(targetOutFlows[x].getId())) {
-                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x].getId());
-                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x].getId());
+                        flowPinTargetSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+                            String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
+                            String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
 
                             if (channel != null && trace.contains(channel)) {
                                 flow.setProperty("line.color", "#FF0000");
@@ -275,7 +286,7 @@ public class DeterminismCounterExample {
                                 pinPresent.setProperty("fill.color", "#FF0000");
                                 targetPresent.setProperty("fill.color", "#FF0000");
                             }
-                        }
+                        }*/
 
                     } else {
                         INodePresentation targetPresent = createNode(targetOutFlows[x].getTarget(), adEditor);
@@ -290,9 +301,10 @@ public class DeterminismCounterExample {
 
                         setFlowPoints(flow, targetOutFlows[x]);
 
-                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x].getId()) || parser.syncObjectsEdge.containsKey(targetOutFlows[x].getId())) {
-                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x].getId());
-                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x].getId());
+                        flowPinSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+                            String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
+                            String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
 
                             if (channel != null && trace.contains(channel)) {
                                 flow.setProperty("line.color", "#FF0000");
@@ -301,7 +313,7 @@ public class DeterminismCounterExample {
                                 flow.setProperty("line.color", "#FF0000");
                                 pinPresent.setProperty("fill.color", "#FF0000");
                             }
-                        }
+                        }*/
 
                     }
                 }
@@ -322,15 +334,17 @@ public class DeterminismCounterExample {
         try {
             initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, initialNode);
+            
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         initialNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), initialNode);
 
@@ -346,16 +360,17 @@ public class DeterminismCounterExample {
 
                 setFlowPoints(flow, outFlows[i]);
 
-                if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                    String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                    String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                flowSP(outFlows, i, flow);
+                /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                    String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                    String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                     if (channel != null && trace.contains(channel)) {
                         flow.setProperty("line.color", "#FF0000");
                     } else if (channelObj != null && trace.contains(channelObj)) {
                         flow.setProperty("line.color", "#FF0000");
                     }
-                }
+                }*/
 
             }
 
@@ -372,16 +387,17 @@ public class DeterminismCounterExample {
 
         try {
             parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
-
-            if (parser.parameterAlphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(node, parameterNode);
+            /*if (alphabet.getParameterAlphabetNode().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getParameterAlphabetNode().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         parameterNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), parameterNode);
 
@@ -399,9 +415,10 @@ public class DeterminismCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -410,7 +427,7 @@ public class DeterminismCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -423,10 +440,10 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowSP(outFlows, i, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -434,7 +451,7 @@ public class DeterminismCounterExample {
                             System.out.println("aqui");
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
                 }
             }
 
@@ -453,15 +470,17 @@ public class DeterminismCounterExample {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             decisionNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, decisionNode);
+            
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         decisionNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), decisionNode);
 
@@ -478,10 +497,11 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -490,7 +510,7 @@ public class DeterminismCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -503,17 +523,18 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowSP(outFlows, i, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -534,15 +555,16 @@ public class DeterminismCounterExample {
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
             forkNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, forkNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         forkNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), forkNode);
 
@@ -559,10 +581,12 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -571,7 +595,7 @@ public class DeterminismCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -585,16 +609,17 @@ public class DeterminismCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowSP(outFlows, i, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -615,15 +640,16 @@ public class DeterminismCounterExample {
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
             joinNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, joinNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         joinNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), joinNode);
 
@@ -641,9 +667,10 @@ public class DeterminismCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -652,7 +679,7 @@ public class DeterminismCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -665,17 +692,18 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowSP(outFlows, i, flow);
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -709,16 +737,17 @@ public class DeterminismCounterExample {
 
         try {
             flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
-
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(node, flowFinalNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         flowFinalNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), flowFinalNode);
         } catch (Exception e) {
@@ -761,5 +790,163 @@ public class DeterminismCounterExample {
 
         return targetPresent;
     }
+    
+    private static void paintNodes(IActivityNode node, INodePresentation actionNode) throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet) {
+			if(((ADCompositeAlphabet) alphabet).getAllAlphabetNodes().containsKey(nameNodeResolver(node.getName()))) {
+				List<String> allflowsNode =  ((ADCompositeAlphabet) alphabet).getAllAlphabetNodes().get(nameNodeResolver(node.getName()));
+
+		        for (String objTrace : trace) {
+		            if (allflowsNode.contains(objTrace)) {
+		                actionNode.setProperty("fill.color", "#FF0000");
+		            }
+		        }	
+			}
+		}else {
+			List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
+
+		    for (String objTrace : trace) {
+		        if (allflowsNode.contains(objTrace)) {
+		            actionNode.setProperty("fill.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+
+    private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow) throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet){
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlows[i].getId()) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlows[i].getId())) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlows[i].getId());
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlows[i].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        }
+			}
+		}
+		else {
+			if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+		        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+		        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+
+    private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow)
+			throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet){
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlows[i].getId()) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlows[i].getId())) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlows[i].getId());
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlows[i].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		           
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+			}
+		}
+		else {
+			if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+		        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+		        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		            
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+   
+    private static void flowPinSP(IFlow[] outFlows, IFlow[] targetOutFlows, int x, INodePresentation targetPresent,
+			INodePresentation pinPresent, ILinkPresentation flow) throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet){
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlows[x].getId()) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlows[x].getId())) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlows[x].getId());
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlows[x].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");              		           
+		        }
+			}
+		}
+		else {
+			if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+		        String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
+		        String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");                		          
+		        }
+		    }
+		}
+	}
+
+    private static void flowPinTargetSP(IFlow[] outFlows, IFlow[] targetOutFlows, int x,
+			INodePresentation targetPresent, INodePresentation pinPresent, ILinkPresentation flow)
+			throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet){
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlows[x].getId()) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlows[x].getId())) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlows[x].getId());
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlows[x].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+			}
+		}
+		else {
+			if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+		        String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
+		        String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+		    }
+		}
+	}
 
 }

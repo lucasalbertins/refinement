@@ -474,7 +474,7 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-						DeadlockCounterExample.createDeadlockCounterExample(trace, parser);
+						DeadlockCounterExample.createDeadlockCounterExample(trace, parser.getAlphabetAD());
 
 						hasError = 2;
 					}
@@ -618,7 +618,7 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
-						DeterminismCounterExample.createDeterminismCounterExample(trace, parser);
+						DeterminismCounterExample.createDeterminismCounterExample(trace, parser.getAlphabetAD());
 
 						hasError = 2;
 					}

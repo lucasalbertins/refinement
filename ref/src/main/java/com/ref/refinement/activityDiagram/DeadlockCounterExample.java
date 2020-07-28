@@ -11,7 +11,8 @@ import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.parser.activityDiagram.ADParser;
+import com.ref.parser.activityDiagram.ADAlphabet;
+import com.ref.parser.activityDiagram.ADCompositeAlphabet;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,12 +24,15 @@ public class DeadlockCounterExample {
     private static HashMap<String, INodePresentation> nodeAdded;
     private static HashMap<String, INodePresentation> objPresent;
     private static List<String> trace;
-    private static ADParser parser;
     private static IPackage packageCounterExample;
     private static IActivityDiagram ad;
-
-    public static void createDeadlockCounterExample(List<String> traceList, ADParser parserParam) {
+    private static ADAlphabet alphabet;
+    public static List<IActivity> callBehaviourList = new ArrayList<>();
+    
+	public static void createDeadlockCounterExample(List<String> traceList, ADAlphabet alphabetAD) {
         try {
+        	alphabet = alphabetAD;
+        	
             Date hoje = new Date();
             SimpleDateFormat df;
             df = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
@@ -41,16 +45,20 @@ public class DeadlockCounterExample {
             for (String objTrace : traceList) {
                 String[] objTracePartition = objTrace.split("\\.");
                 if (objTracePartition.length > 2) {
-                    trace.add(objTracePartition[0] + "." + objTracePartition[1]);
+                	String aux = objTracePartition[0] + ".id";
+                	for(int i=2;i<objTracePartition.length;i++) {
+                		aux+="."+objTracePartition[i];
+                	}
+                    trace.add(aux);
                 } else {
                     trace.add(objTrace);
                 }
             }
 
-            parser = parserParam;
-
+            
+            IDiagram[] diagrams = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getOpenDiagrams();
             IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
-
+            
             ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
             IModel project = prjAccessor.getProject();
             BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
@@ -58,12 +66,18 @@ public class DeadlockCounterExample {
             TransactionManager.beginTransaction();
             createPackage(basicModelEditor, project);
             ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
-            ad = adEditor.createActivityDiagram(packageCounterExample, diagram.getName() + "#" + data);
-
-            for (IActivityNode node : ((IActivityDiagram) diagram).getActivity().getActivityNodes()) {
-                createNode(node, adEditor);
+            for(IDiagram ADdiagrams: diagrams) {
+            	IActivity activity = ((IActivityDiagram) ADdiagrams).getActivity();
+            	if(ADdiagrams == diagram || 
+        			(ADdiagrams instanceof IActivityDiagram &&  
+        					callBehaviourList.contains(activity))) {
+	            	ad = adEditor.createActivityDiagram(packageCounterExample, ADdiagrams.getName()+ "#" + data);
+	            	for (IActivityNode node : ((IActivityDiagram) ADdiagrams).getActivity().getActivityNodes()) {
+	                    createNode(node, adEditor);
+	                }
+            	}
             }
-
+            callBehaviourList = new ArrayList<>();
             TransactionManager.endTransaction();
         } catch (Exception e) {
             TransactionManager.abortTransaction();
@@ -204,21 +218,27 @@ public class DeadlockCounterExample {
             if (callBehaviour) {
                 actionNode = adEditor.createCallBehaviorAction(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             } else {
-                actionNode = adEditor.createAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            	if(((IAction) node).isAcceptEventAction()) {
+            		actionNode = adEditor.createAcceptEventAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            	}else if(((IAction) node).isSendSignalAction()) {
+            		actionNode = adEditor.createSendSignalAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            	}else {
+            		actionNode = adEditor.createAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            	}
             }
 
             IActivityNode actNode = getIActivityNode(actionNode);
             actNode.setDefinition(node.getDefinition());
-
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, actionNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         actionNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), actionNode);
 
@@ -241,18 +261,8 @@ public class DeadlockCounterExample {
                 }
 
                 setFlowPoints(flow, outFlows[i]);
-
-                if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                    String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                    String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
-
-                    if (channel != null && trace.contains(channel)) {
-                        flow.setProperty("line.color", "#FF0000");
-                    } else if (channelObj != null && trace.contains(channelObj)) {
-                        flow.setProperty("line.color", "#FF0000");
-                    }
-                }
-
+     
+                flowSP(outFlows, i, flow);
             }
 
             for (int i = 0; i < outPins.length; i++) {
@@ -271,10 +281,12 @@ public class DeadlockCounterExample {
                         }
 
                         setFlowPoints(flow, targetOutFlows[x]);
-
-                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x].getId()) || parser.syncObjectsEdge.containsKey(targetOutFlows[x].getId())) {
-                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x].getId());
-                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x].getId());
+                        
+                        flowPinTargetSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                        
+                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) ||alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+                            String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
+                            String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
 
                             if (channel != null && trace.contains(channel)) {
                                 flow.setProperty("line.color", "#FF0000");
@@ -285,7 +297,7 @@ public class DeadlockCounterExample {
                                 pinPresent.setProperty("fill.color", "#FF0000");
                                 targetPresent.setProperty("fill.color", "#FF0000");
                             }
-                        }
+                        }*/
 
                     } else {
                         INodePresentation targetPresent = createNode(targetOutFlows[x].getTarget(), adEditor);
@@ -299,10 +311,13 @@ public class DeadlockCounterExample {
                         }
 
                         setFlowPoints(flow, targetOutFlows[x]);
-
-                        if (parser.syncChannelsEdge.containsKey(targetOutFlows[x].getId()) || parser.syncObjectsEdge.containsKey(targetOutFlows[x].getId())) {
-                            String channel = parser.syncChannelsEdge.get(targetOutFlows[x].getId());
-                            String channelObj = parser.syncObjectsEdge.get(targetOutFlows[x].getId());
+                        
+                        //flowPinTargetSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                     
+                        flowPinSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+                            String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
+                            String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
 
                             if (channel != null && trace.contains(channel)) {
                                 flow.setProperty("line.color", "#FF0000");
@@ -311,7 +326,7 @@ public class DeadlockCounterExample {
                                 flow.setProperty("line.color", "#FF0000");
                                 pinPresent.setProperty("fill.color", "#FF0000");
                             }
-                        }
+                        }*/
 
                     }
                 }
@@ -320,11 +335,11 @@ public class DeadlockCounterExample {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         return actionNode;
 
     }
-
+    
     private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation initialNode = null;
@@ -332,16 +347,8 @@ public class DeadlockCounterExample {
         try {
             initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        initialNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }
-
+            paintNodes(node, initialNode);
+            
             nodeAdded.put(node.getId(), initialNode);
 
             for (int i = 0; i < outFlows.length; i++) {
@@ -355,17 +362,19 @@ public class DeadlockCounterExample {
                 }
 
                 setFlowPoints(flow, outFlows[i]);
-
-                if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                    String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                    String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                
+                flowSP(outFlows, i, flow);
+                
+                /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                    String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                    String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                     if (channel != null && trace.contains(channel)) {
                         flow.setProperty("line.color", "#FF0000");
                     } else if (channelObj != null && trace.contains(channelObj)) {
                         flow.setProperty("line.color", "#FF0000");
                     }
-                }
+                }*/
 
             }
 
@@ -382,16 +391,17 @@ public class DeadlockCounterExample {
 
         try {
             parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
-
-            if (parser.parameterAlphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.parameterAlphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(node, parameterNode);
+            /*if (alphabet.getParameterAlphabetNode().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getParameterAlphabetNode().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         parameterNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), parameterNode);
 
@@ -409,18 +419,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        }
-                    }
+                    flowTargetSP(outFlows, i, targetPresent, flow);
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -434,9 +433,11 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowSP(outFlows, i, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -444,7 +445,7 @@ public class DeadlockCounterExample {
                             System.out.println("aqui");
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
                 }
             }
 
@@ -462,16 +463,17 @@ public class DeadlockCounterExample {
         try {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             decisionNode.setLabel(node.getName());
-
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(node, decisionNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         decisionNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), decisionNode);
 
@@ -489,9 +491,11 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -500,7 +504,7 @@ public class DeadlockCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -513,17 +517,19 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -544,15 +550,16 @@ public class DeadlockCounterExample {
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
             forkNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, forkNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         forkNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), forkNode);
 
@@ -569,10 +576,11 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -581,7 +589,7 @@ public class DeadlockCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -594,17 +602,18 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -625,15 +634,16 @@ public class DeadlockCounterExample {
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
             joinNode.setLabel(node.getName());
 
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            paintNodes(node, joinNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         joinNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), joinNode);
 
@@ -651,18 +661,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        }
-                    }
+                    flowTargetSP(outFlows, i, targetPresent, flow);
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -676,16 +675,18 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    flowSP(outFlows, i, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -719,16 +720,17 @@ public class DeadlockCounterExample {
 
         try {
             flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
-
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(node, flowFinalNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         flowFinalNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), flowFinalNode);
         } catch (Exception e) {
@@ -778,16 +780,17 @@ public class DeadlockCounterExample {
 
         try {
             objectNode = adEditor.createObjectNode(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
-
-            if (parser.alphabetNode.containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  parser.alphabetNode.get(nameNodeResolver(node.getName()));
+            
+            paintNodes(node, objectNode);
+            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
+                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
                 for (String objTrace : trace) {
                     if (allflowsNode.contains(objTrace)) {
                         objectNode.setProperty("fill.color", "#FF0000");
                     }
                 }
-            }
+            }*/
 
             nodeAdded.put(node.getId(), objectNode);
 
@@ -804,10 +807,12 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
@@ -816,7 +821,7 @@ public class DeadlockCounterExample {
                             flow.setProperty("line.color", "#FF0000");
                             targetPresent.setProperty("fill.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
@@ -829,17 +834,19 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    if (parser.syncChannelsEdge.containsKey(outFlows[i].getId()) || parser.syncObjectsEdge.containsKey(outFlows[i].getId())) {
-                        String channel = parser.syncChannelsEdge.get(outFlows[i].getId());
-                        String channelObj = parser.syncObjectsEdge.get(outFlows[i].getId());
+                    
+                    flowSP(outFlows,i,flow);
+                    
+                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
+                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
+                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
 
                         if (channel != null && trace.contains(channel)) {
                             flow.setProperty("line.color", "#FF0000");
                         } else if (channelObj != null && trace.contains(channelObj)) {
                             flow.setProperty("line.color", "#FF0000");
                         }
-                    }
+                    }*/
 
                 }
             }
@@ -850,4 +857,177 @@ public class DeadlockCounterExample {
 
         return objectNode;
     }
+  
+    private static void paintNodes(IActivityNode node, INodePresentation actionNode) throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet) {
+			HashMap<String, ArrayList<String>> aux = new HashMap<>();
+			aux =((ADCompositeAlphabet) alphabet).getAllAlphabetNodes();
+			if(aux.containsKey(nameNodeResolver(node.getName()))) {
+				List<String> allflowsNode =  aux.get(nameNodeResolver(node.getName()));
+
+		        for (String objTrace : trace) {
+		            if (allflowsNode.contains(objTrace)) {
+		                actionNode.setProperty("fill.color", "#FF0000");
+		            }
+		        }	
+			}
+		}else {
+			HashMap<String, ArrayList<String>> aux = new HashMap<>();
+			aux = alphabet.getAlphabetAD();
+			List<String> allflowsNode =  aux.get(nameNodeResolver(node.getName()));
+
+		    for (String objTrace : trace) {
+		        if (allflowsNode!= null && allflowsNode.contains(objTrace)) {
+		            actionNode.setProperty("fill.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+
+    private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow) throws InvalidEditingException {
+    	String outFlowID = outFlows[i].getId();
+    	if(alphabet instanceof ADCompositeAlphabet){
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        }
+			}
+		}
+		else {
+			if (alphabet.getSyncChannelsEdge().containsKey(outFlowID) ||
+				alphabet.getSyncObjectsEdge().containsKey(outFlowID)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(outFlowID);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(outFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+
+    private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow)
+			throws InvalidEditingException {
+    	String outFlowID = outFlows[i].getId();
+		if(alphabet instanceof ADCompositeAlphabet){
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		           
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+			}
+		}
+		else {
+			if (alphabet.getSyncChannelsEdge().containsKey(outFlowID) || 
+				alphabet.getSyncObjectsEdge().containsKey(outFlowID)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(outFlowID);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(outFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		            
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+    
+    private static void flowPinSP(IFlow[] outFlows, IFlow[] targetOutFlows, int x, INodePresentation targetPresent,
+			INodePresentation pinPresent, ILinkPresentation flow) throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet){
+			String outFlowID = outFlows[x].getId();
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");              		           
+		        }
+			}
+		}
+		else {
+			String targetOutFlowID = targetOutFlows[x].getId();
+			if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlowID) ||
+				alphabet.getSyncObjectsEdge().containsKey(targetOutFlowID)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(targetOutFlowID);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");                		          
+		        }
+		    }
+		}
+	}
+
+    private static void flowPinTargetSP(IFlow[] outFlows, IFlow[] targetOutFlows, int x,
+			INodePresentation targetPresent, INodePresentation pinPresent, ILinkPresentation flow)
+			throws InvalidEditingException {
+		if(alphabet instanceof ADCompositeAlphabet){
+			String outFlowID = outFlows[x].getId();
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+			}
+		}
+		else {
+			String targetOutFlowID = targetOutFlows[x].getId();
+			if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlowID) || 
+				alphabet.getSyncObjectsEdge().containsKey(targetOutFlowID)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(targetOutFlowID);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlowID);
+
+		        if (channel != null && trace.contains(channel)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        } else if (channelObj != null && trace.contains(channelObj)) {
+		            flow.setProperty("line.color", "#FF0000");
+		            pinPresent.setProperty("fill.color", "#FF0000");
+		            targetPresent.setProperty("fill.color", "#FF0000");
+		        }
+		    }
+		}
+	}
+
 }
