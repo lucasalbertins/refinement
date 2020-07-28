@@ -178,18 +178,19 @@ public class ADDefineMerge {
             for (int i = 0; i < inFlows.length; i++) {
                 nameObjs.addAll(adUtils.getObjects(inFlows[i], nodesAdded));
             }
+            
 
             for (String nameObj : nameObjs) {
                 if (!union.contains(nameObj)) {
                     nameObjectUnique += nameObj;
                     union.add(nameObj);
-                    typeMemoryLocal = nameObj;
+                    typeMemoryLocal = parameterNodesInput.get(nameObj);
                 }
             }
 
             if (union.size() > 1) {
                 unionList.add(union);
-                typeUnionList.put(nameObjectUnique, parameterNodesInput.get(typeMemoryLocal));
+                typeUnionList.put(nameObjectUnique, typeMemoryLocal);
             }
 
             if (!nameObjectUnique.equals("")) {
@@ -197,9 +198,9 @@ public class ADDefineMerge {
             }
 
             if (!nameObjectUnique.equals("")) {
-                String oe = adUtils.createOE(nameObjectUnique); //creates output channels
+                String oe = adUtils.createOE(typeMemoryLocal); //creates output channels
                 syncObjectsEdge.put(outFlows[0].getId(), oe);
-                objectEdges.put(oe, nameObjectUnique);
+                objectEdges.put(oe, typeMemoryLocal);
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 
                 merge.append(nameMerge + "(id)\n");
@@ -212,7 +213,7 @@ public class ADDefineMerge {
                 merge.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 merge.append("|}|] ");
-                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(parameterNodesInput.get(typeMemoryLocal)) + "(id))) ");
+                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(typeMemoryLocal) + "(id))) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
