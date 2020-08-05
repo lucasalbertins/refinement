@@ -7,17 +7,18 @@ import com.change_vision.jude.api.inf.model.IActivityNode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 
 public class ADDefineProcessSync {
 
     private IActivity ad;
-    private HashMap<String, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
     private ADUtils adUtils;
 
-    public ADDefineProcessSync(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, ADUtils adUtils) {
+    public ADDefineProcessSync(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
+        this.alphabetNode = alphabetNode2;
         this.adUtils = adUtils;
     }
 
@@ -27,19 +28,13 @@ public class ADDefineProcessSync {
         String termination = "_" + nameDiagram + "_t";
         String terminationAlphabet = "_" + nameDiagram + "_t_alphabet";
         StringBuilder alphabetDiagram = new StringBuilder();
-        Boolean ehCBA = false;
-        
-        for(String node : alphabetNode.keySet()) {
+        Set<Pair<IActivity, String>> keys = alphabetNode.keySet();
+        for(Pair<IActivity, String> node :keys) {
             ArrayList<String> alphabet = alphabetNode.get(node);
-            /*for(IActivity CBAs:ADParser.callBehaviourList) {//TODO resolver hashmap
-            	if(ADUtils.nameResolver(CBAs.getName()).equals(node)) {//se for um cba
-            		ehCBA = true;
-            	}
-            }*/
-            IActivityNode Activitynode = findCBANode(node);
+            IActivityNode Activitynode = findCBANode(node.getValue());
             if(Activitynode != null) {
-        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ") = union({|");
-                alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ")"+"SUB");
+        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = union({|");
+                alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
                 for (int i = 0; i < alphabet.size(); i++) {
                     processSync.append(alphabet.get(i));
                     if (i < alphabet.size() - 1) {
@@ -55,8 +50,8 @@ public class ADDefineProcessSync {
             	}
                 processSync.append("|},AlphabetDiagram_"+ADUtils.nameResolver(((IAction)Activitynode).getCallingActivity().getName())+"_t("+index+"))\n");
         	}else {
-        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ") = {|");
-                alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ")"+"SUB");
+        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
+                alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
                 for (int i = 0; i < alphabet.size(); i++) {
                     processSync.append(alphabet.get(i));
                     if (i < alphabet.size() - 1) {
@@ -65,8 +60,7 @@ public class ADDefineProcessSync {
                 }
         		processSync.append("|}\n");
         	}           
-         
-            ehCBA = false;        
+             
         }
    
         processSync.append("AlphabetDiagram_" + nameDiagram +"_t(id) = ");
@@ -79,9 +73,9 @@ public class ADDefineProcessSync {
         processSync.append(aux);
         
         
-        for(String node : alphabetNode.keySet()) {
-            processSync.append("ProcessDiagram_" + nameDiagram + "(id," + node + terminationAlphabet + ") = normal(");
-            processSync.append(node + termination + "(id))\n");
+        for(Pair<IActivity, String> node : keys) {
+            processSync.append("ProcessDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = normal(");
+            processSync.append(node.getValue() + termination + "(id))\n");
         }
 
         processSync.append("Node_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n");

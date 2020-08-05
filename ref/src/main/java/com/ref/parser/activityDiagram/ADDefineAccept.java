@@ -13,18 +13,18 @@ public class ADDefineAccept {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
     private List<IActivityNode> queueNode;
 	private List<Pair<String, Integer>> countAccept;
     private List<String> createdAccept;
     private ADUtils adUtils;
 
-    public ADDefineAccept(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
+    public ADDefineAccept(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                           List<IActivityNode> queueNode, List<Pair<String, Integer>> countAccept, List<String> createdAccept, ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
         this.queueNode = queueNode;
         this.countAccept = countAccept;
         this.createdAccept = createdAccept;
@@ -55,8 +55,9 @@ public class ADDefineAccept {
             if (inFlows.length > 0) {
                 accept.append("(");
                 for (int i = 0; i < inFlows.length; i++) {
-                    if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                        String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                    if (syncChannelsEdge.containsKey(key)) {
+                        String ceIn = syncChannelsEdge.get(key);
 
                         accept.append("(");
                         if (i >= 0 && (i < inFlows.length - 1)) {
@@ -83,7 +84,8 @@ public class ADDefineAccept {
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     accept.append("(");
 
@@ -103,7 +105,8 @@ public class ADDefineAccept {
             accept.append(nameAccept + "(id) /\\ " + endDiagram + "(id)\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver("accept_" + activityNode.getName() + "_" + idAccept), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver("accept_" + activityNode.getName() + "_" + idAccept));
+            alphabetNode.put(key, alphabet);
             createdAccept.add(activityNode.getId());
 
             if (outFlows.length > 0) {
@@ -124,7 +127,8 @@ public class ADDefineAccept {
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                 String ce = adUtils.createCE();
-                syncChannelsEdge.put(outFlows[i].getId(), ce);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                syncChannelsEdge.put(key, ce);
 
                 accept.append("(");
 
@@ -156,8 +160,9 @@ public class ADDefineAccept {
                 accept.append("(");
 
                 for (int i = 0; i < inFlows.length; i++) {
-                    if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                        String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                    if (syncChannelsEdge.containsKey(key)) {
+                        String ceIn = syncChannelsEdge.get(key);
 
                         accept.append("(");
                         if (i >= 0 && (i < inFlows.length - 1)) {
@@ -183,7 +188,8 @@ public class ADDefineAccept {
                 accept.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String ce = syncChannelsEdge.get(outFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    String ce = syncChannelsEdge.get(key);
 
                     accept.append("(");
 
@@ -203,7 +209,8 @@ public class ADDefineAccept {
             accept.append(nameAccept + "(id) /\\ " + endDiagram + "(id)\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver("accept_" + activityNode.getName() + "_" + idAccept), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver("accept_" + activityNode.getName() + "_" + idAccept));
+            alphabetNode.put(key, alphabet);
             createdAccept.add(activityNode.getId());
 
             if (outFlows.length > 0) {

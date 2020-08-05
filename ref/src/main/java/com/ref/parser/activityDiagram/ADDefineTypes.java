@@ -6,6 +6,7 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class ADDefineTypes {
 
@@ -15,19 +16,19 @@ public class ADDefineTypes {
     private String firstDiagram;
 
     private HashMap<String, Integer> countCall;
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> objectEdges;
+    private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
+    //private HashMap<String, String> objectEdges;
     private HashMap<String, String> parameterNodesInput;
     private HashMap<String, String> parameterNodesOutput;
-    private List<Pair<String, String>> memoryLocalChannel;
+    //private List<Pair<String, String>> memoryLocalChannel;
     private List<ArrayList<String>> unionList;
-    private HashMap<String, String> typeUnionList;
+    //private HashMap<String, String> typeUnionList;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private ADUtils adUtils;
     private ADParser adParser;
 
-    public ADDefineTypes(IActivity ad, IActivityDiagram adDiagram, String firstDiagram, HashMap<String, Integer> countCall, HashMap<String, ArrayList<String>> alphabetNode,
+    public ADDefineTypes(IActivity ad, IActivityDiagram adDiagram, String firstDiagram, HashMap<String, Integer> countCall, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
                          HashMap<String, String> objectEdges, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                          List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                          List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept, ADUtils adUtils, ADParser adParser) {
@@ -35,13 +36,13 @@ public class ADDefineTypes {
         this.adDiagram = adDiagram;
         this.firstDiagram = firstDiagram;
         this.countCall = countCall;
-        this.alphabetNode = alphabetNode;
-        this.objectEdges = objectEdges;
+        this.alphabetNode = alphabetNode2;
+        //this.objectEdges = objectEdges;
         this.parameterNodesInput = parameterNodesInput;
         this.parameterNodesOutput = parameterNodesOutput;
-        this.memoryLocalChannel = memoryLocalChannel;
+        //this.memoryLocalChannel = memoryLocalChannel;
         this.unionList = unionList;
-        this.typeUnionList = typeUnionList;
+        //this.typeUnionList = typeUnionList;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
         this.adUtils = adUtils;
@@ -98,13 +99,14 @@ public class ADDefineTypes {
             String termination = "_" + nameDiagram + "_t_alphabet";
             types.append("datatype alphabet_" + nameDiagram + " = ");
             boolean first = true;
-
-            for (String node : alphabetNode.keySet()) {
+            Set<Pair<IActivity, String>> keys = alphabetNode.keySet();
+            
+            for (Pair<IActivity, String> node : keys) {
                 if (first) {
-                    types.append(node + termination + " ");
+                    types.append(node.getValue() + termination + " ");
                     first = false;
                 } else {
-                    types.append("| " + node + termination);
+                    types.append("| " + node.getValue() + termination);
                 }
             }
             types.append("\n");

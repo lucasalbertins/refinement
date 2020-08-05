@@ -6,10 +6,10 @@ import java.util.HashMap;
 import com.change_vision.jude.api.inf.model.IActivity;
 
 public abstract class ADAlphabet {
-	protected HashMap<String, ArrayList<String>> alphabetAD;//alterar tudas as chaves pra Pair<IActivity,String>
-	protected HashMap<String, String> syncChannelsEdge;
-	protected HashMap<String, String> syncObjectsEdge;
-	protected HashMap<String, ArrayList<String>> parameterAlphabetNode;
+	protected HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetAD;//TODO alterar todas as chaves pra Pair<IActivity,String>
+	protected HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
+	protected HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
+	protected HashMap<Pair<IActivity,String>, ArrayList<String>> parameterAlphabetNode;
 	protected IActivity ad;
 	
 	public ADAlphabet(IActivity ad) {
@@ -20,30 +20,35 @@ public abstract class ADAlphabet {
 		parameterAlphabetNode = new HashMap<>();
 	}
 	
-	public HashMap<String, ArrayList<String>> getAlphabetAD() {
+	public HashMap<Pair<IActivity, String>, ArrayList<String>> getAlphabetAD() {
 		return alphabetAD;
 	}
-	public void setAlphabetAD(HashMap<String, ArrayList<String>> alphabetAD) {
+
+	public void setAlphabetAD(HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetAD) {
 		this.alphabetAD = alphabetAD;
 	}
-	public HashMap<String, String> getSyncChannelsEdge() {
+
+	public HashMap<Pair<IActivity, String>, String> getSyncChannelsEdge() {
 		return syncChannelsEdge;
 	}
-	public void setSyncChannelsEdge(HashMap<String, String> syncChannelsEdge) {
+
+	public void setSyncChannelsEdge(HashMap<Pair<IActivity, String>, String> syncChannelsEdge) {
 		this.syncChannelsEdge = syncChannelsEdge;
 	}
-	public HashMap<String, String> getSyncObjectsEdge() {
+
+	public HashMap<Pair<IActivity, String>, String> getSyncObjectsEdge() {
 		return syncObjectsEdge;
 	}
-	public void setSyncObjectsEdge(HashMap<String, String> syncObjectsEdge) {
+
+	public void setSyncObjectsEdge(HashMap<Pair<IActivity, String>, String> syncObjectsEdge) {
 		this.syncObjectsEdge = syncObjectsEdge;
 	}
 
-	public HashMap<String, ArrayList<String>> getParameterAlphabetNode() {
+	public HashMap<Pair<IActivity, String>, ArrayList<String>> getParameterAlphabetNode() {
 		return parameterAlphabetNode;
 	}
 
-	public void setParameterAlphabetNode(HashMap<String, ArrayList<String>> parameterAlphabetNode) {
+	public void setParameterAlphabetNode(HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode) {
 		this.parameterAlphabetNode = parameterAlphabetNode;
 	}
 

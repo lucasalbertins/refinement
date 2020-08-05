@@ -10,22 +10,22 @@ public class ADDefineMerge {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private HashMap<String, String> parameterNodesInput;
     private List<ArrayList<String>> unionList;
     private HashMap<String, String> typeUnionList;
     private ADUtils adUtils;
 
-    public ADDefineMerge(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
-                         HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, HashMap<String, String> parameterNodesInput,
+    public ADDefineMerge(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                         HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, HashMap<String, String> parameterNodesInput,
                          List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList, ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.parameterNodesInput = parameterNodesInput;
         this.unionList = unionList;
@@ -52,9 +52,9 @@ public class ADDefineMerge {
             ArrayList<String> ceInitials = new ArrayList<>();
             for (int i = 0; i < inFlows.length; i++) {
                 ceInitials.add(inFlows[i].getId());
-
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncObjectsEdge.containsKey(key)) {
+                    String ceIn2 = syncObjectsEdge.get(key);
                     nameObjects.put(inFlows[i].getId(), objectEdges.get(ceIn2));
                 }
             }
@@ -84,8 +84,9 @@ public class ADDefineMerge {
             }
 
             for (int i = 0; i < ceInitials.size(); i++) {
-                String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
-                String oeIn = syncObjectsEdge.get(ceInitials.get(i));
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,ceInitials.get(i));
+                String ceIn = syncChannelsEdge.get(key);    //get the parallel input channels
+                String oeIn = syncObjectsEdge.get(key);
 
                 if (ceIn != null) {
                     merge.append("(");
@@ -119,7 +120,8 @@ public class ADDefineMerge {
             if (!nameObjectUnique.equals("")) {
                 adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique, datatype);
                 String oe = adUtils.createOE(nameObjectUnique); //creates output channels
-                syncObjectsEdge.put(outFlows[0].getId(), oe);
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                syncObjectsEdge.put(key, oe);
                 objectEdges.put(oe, nameObjectUnique);
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 
@@ -142,7 +144,8 @@ public class ADDefineMerge {
 
             } else {
                 String ce = adUtils.createCE(); //creates output channels
-                syncChannelsEdge.put(outFlows[0].getId(), ce);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                syncChannelsEdge.put(key, ce);
                 adUtils.ce(alphabet, merge, ce, " -> ");
 
                 merge.append(nameMerge + "(id)\n");
@@ -151,7 +154,8 @@ public class ADDefineMerge {
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()+".id"));
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+        	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -199,7 +203,8 @@ public class ADDefineMerge {
 
             if (!nameObjectUnique.equals("")) {
                 String oe = adUtils.createOE(typeMemoryLocal); //creates output channels
-                syncObjectsEdge.put(outFlows[0].getId(), oe);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                syncObjectsEdge.put(key, oe);
                 objectEdges.put(oe, typeMemoryLocal);
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 
@@ -222,7 +227,8 @@ public class ADDefineMerge {
 
             } else {
                 String ce = adUtils.createCE(); //creates output channels
-                syncChannelsEdge.put(outFlows[0].getId(), ce);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                syncChannelsEdge.put(key, ce);
                 adUtils.ce(alphabet, merge, ce, " -> ");
 
                 merge.append(nameMerge + "(id)\n");
@@ -249,9 +255,9 @@ public class ADDefineMerge {
             ArrayList<String> ceInitials = new ArrayList<>();
             for (int i = 0; i < inFlows.length; i++) {
                 ceInitials.add(inFlows[i].getId());
-
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncObjectsEdge.containsKey(key)) {
+                    String ceIn2 = syncObjectsEdge.get(key);
                     nameObjects.put(inFlows[i].getId(), objectEdges.get(ceIn2));
                 }
             }
@@ -282,8 +288,9 @@ public class ADDefineMerge {
             }
 
             for (int i = 0; i < ceInitials.size(); i++) {
-                String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
-                String oeIn = syncObjectsEdge.get(ceInitials.get(i));
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,ceInitials.get(i));
+                String ceIn = syncChannelsEdge.get(key);    //get the parallel input channels
+                String oeIn = syncObjectsEdge.get(key);
 
                 if (ceIn != null) {
                     merge.append("(");
@@ -316,21 +323,22 @@ public class ADDefineMerge {
 
             if (!nameObjectUnique.equals("")) {
                 adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique, dataType);
-                String oe = syncObjectsEdge.get(outFlows[0].getId());
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                String oe = syncObjectsEdge.get(key);
 
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 
-                merge.append(nameMerge + "\n");
-                merge.append(nameMergeTermination + " = ");
+                merge.append(nameMerge + "(id)\n");
+                merge.append(nameMergeTermination + "(id) = ");
 
-                merge.append("((" + nameMerge + " /\\ " + endDiagram + ") ");
+                merge.append("((" + nameMerge + "(id) /\\ " + endDiagram + "(id)) ");
 
                 merge.append("[|{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("set_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
                 merge.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
                 merge.append("|}|] ");
-                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(" + adUtils.getDefaultValue(typeMemoryLocal) + ")) ");
+                merge.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + nameObjectUnique + "_t(id," + adUtils.getDefaultValue(typeMemoryLocal) + ")) ");
 
                 merge.append("\\{|");
                 merge.append("get_" + nameObjectUnique + "_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + ",");
@@ -338,7 +346,8 @@ public class ADDefineMerge {
                 merge.append("|}\n");
 
             } else {
-                String ce = syncChannelsEdge.get(outFlows[0].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                String ce = syncChannelsEdge.get(key);
                 adUtils.ce(alphabet, merge, ce, " -> ");
 
                 merge.append(nameMerge + "(id)\n");
@@ -347,7 +356,8 @@ public class ADDefineMerge {
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {

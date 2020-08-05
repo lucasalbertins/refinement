@@ -16,18 +16,18 @@ public class ADDefineChannels {
     private HashMap<String, String> parameterNodesOutput;
     private Map<Pair<String, String>,String> memoryLocal;             //nameNode, nameObject
     private HashMap<String, String> parameterNodesOutputObject; //name; object
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;                //channel; name
     private List<String> eventChannel;
-    private List<String> lockChannel;
+    //private List<String> lockChannel;
     private String firstDiagram;
     private HashMap<String, List<IActivity>> signalChannels;
     private ADUtils adUtils;
     private ADParser adParser;
 
-    public ADDefineChannels(HashMap allGuards, IActivity ad, HashMap parameterNodesInput, HashMap parameterNodesOutput,
-                            Map memoryLocal, HashMap parameterNodesOutputObject, HashMap syncObjectsEdge,
-                            HashMap objectEdges, List eventChannel, List lockChannel, String firstDiagram, HashMap<String, List<IActivity>> signalChannels2,
+    public ADDefineChannels(HashMap<String, Integer> allGuards, IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
+                            Map<Pair<String, String>, String> memoryLocal, HashMap<String, String> parameterNodesOutputObject, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
+                            HashMap<String, String> objectEdges, List<String> eventChannel, List<?> lockChannel, String firstDiagram, HashMap<String, List<IActivity>> signalChannels2,
                             ADUtils adUtils, ADParser adParser) {
         this.allGuards = allGuards;
         this.ad = ad;
@@ -35,10 +35,10 @@ public class ADDefineChannels {
         this.parameterNodesOutput = parameterNodesOutput;
         this.memoryLocal = memoryLocal;
         this.parameterNodesOutputObject = parameterNodesOutputObject;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.eventChannel = eventChannel;
-        this.lockChannel = lockChannel;
+        //this.lockChannel = lockChannel;
         this.firstDiagram = firstDiagram;
         this.signalChannels = signalChannels2;
         this.adUtils = adUtils;

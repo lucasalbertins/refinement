@@ -12,26 +12,26 @@ public class ADDefineSignal {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
     private List<IActivityNode> queueNode;
     private List<Pair<String, Integer>> countSignal;
-    private List<Pair<String, Integer>> countAccept;
+    //private List<Pair<String, Integer>> countAccept;
     private List<String> createdSignal;
-    private List<String> createdAccept;
+    //private List<String> createdAccept;
     private ADUtils adUtils;
 
-    public ADDefineSignal(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
+    public ADDefineSignal(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                           List<IActivityNode> queueNode, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
                           List<String> createdSignal, List<String> createdAccept, ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
         this.queueNode = queueNode;
         this.countSignal = countSignal;
-        this.countAccept = countAccept;
+        //this.countAccept = countAccept;
         this.createdSignal = createdSignal;
-        this.createdAccept = createdAccept;
+        //this.createdAccept = createdAccept;
         this.adUtils = adUtils;
     }
 
@@ -58,8 +58,9 @@ public class ADDefineSignal {
 
             signal.append("(");
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	 Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
 
                     signal.append("(");
                     if (i >= 0 && (i < inFlows.length - 1)) {
@@ -81,7 +82,8 @@ public class ADDefineSignal {
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     signal.append("(");
 
@@ -101,7 +103,8 @@ public class ADDefineSignal {
             signal.append(nameSignal + "(id) /\\ " + endDiagram + "(id)\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver("signal_" + activityNode.getName() + "_" + idSignal), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver("signal_" + activityNode.getName() + "_" + idSignal));
+            alphabetNode.put(key, alphabet);
             createdSignal.add(activityNode.getId());
 
             if (outFlows.length > 0) {
@@ -122,7 +125,8 @@ public class ADDefineSignal {
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                 String ce = adUtils.createCE();
-                syncChannelsEdge.put(outFlows[i].getId(), ce);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                syncChannelsEdge.put(key, ce);
 
                 signal.append("(");
 
@@ -152,8 +156,9 @@ public class ADDefineSignal {
 
             signal.append("(");
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
 
                     signal.append("(");
                     if (i >= 0 && (i < inFlows.length - 1)) {
@@ -174,7 +179,8 @@ public class ADDefineSignal {
                 signal.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String ce = syncChannelsEdge.get(outFlows[i].getId());
+                	 Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    String ce = syncChannelsEdge.get(key);
 
                     signal.append("(");
 
@@ -194,7 +200,8 @@ public class ADDefineSignal {
             signal.append(nameSignal + "(id) /\\ " + endDiagram + "(id)\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver("signal_" + activityNode.getName() + "_" + idSignal), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver("signal_" + activityNode.getName() + "_" + idSignal));
+            alphabetNode.put(key, alphabet);
             createdSignal.add(activityNode.getId());
 
             if (outFlows.length > 0) {

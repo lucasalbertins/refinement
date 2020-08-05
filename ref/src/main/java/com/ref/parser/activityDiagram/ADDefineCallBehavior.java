@@ -11,31 +11,29 @@ public class ADDefineCallBehavior {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
-    private List<IActivity> callBehaviourList;
-    private HashMap<String, String> parameterNodesInput;
+    /*private HashMap<String, String> parameterNodesInput;
     private List<ArrayList<String>> unionList;
-    private HashMap<String, String> typeUnionList;
+    private HashMap<String, String> typeUnionList;*/
     private ADUtils adUtils;
 
-    public ADDefineCallBehavior(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
-                                HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
+    public ADDefineCallBehavior(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                                HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
                                 List<IActivity> callBehaviourList, HashMap<String, String> parameterNodesInput, List<ArrayList<String>> unionList,
                                 HashMap<String, String> typeUnionList, ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
-        this.callBehaviourList = callBehaviourList;
-        this.parameterNodesInput = parameterNodesInput;
+        /*this.parameterNodesInput = parameterNodesInput;
         this.unionList = unionList;
-        this.typeUnionList = typeUnionList;
+        this.typeUnionList = typeUnionList;*/
         this.adUtils = adUtils;
     }
 
@@ -63,12 +61,12 @@ public class ADDefineCallBehavior {
 
 
         if (code == 0) {
-            String definition = activityNode.getDefinition();
+            /*String definition = activityNode.getDefinition();
             String[] definitionFinal = new String[0];
 
             if (definition != null && !(definition.equals(""))) {
                 definitionFinal = definition.replace(" ", "").split(";");
-            }
+            }*/
 
 
             callBehaviour.append(nameCallBehaviour + "(id) = ");
@@ -76,8 +74,9 @@ public class ADDefineCallBehavior {
 
             callBehaviour.append("(");
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
 
                     callBehaviour.append("(");
                     if (i >= 0 && (i < inFlows.length - 1 || inPins.length > 0)) {
@@ -91,8 +90,9 @@ public class ADDefineCallBehavior {
             for (int i = 0; i < inPins.length; i++) {
                 IFlow[] inFlowPin = inPins[i].getIncomings();
                 for (int x = 0; x < inFlowPin.length; x++) {
-                    if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
-                        String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
+                        String oeIn = syncObjectsEdge.get(key);
                         //String typeNameObject = objectEdges.get(oeIn);
                         String typeNameObject = inPins[i].getBase().getName();
                         String nameObject = inPins[i].getName();
@@ -146,7 +146,8 @@ public class ADDefineCallBehavior {
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                 String ce = adUtils.createCE();
-                syncChannelsEdge.put(outFlows[i].getId(), ce);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                syncChannelsEdge.put(key, ce);
 
                 callBehaviour.append("(");
 
@@ -160,7 +161,7 @@ public class ADDefineCallBehavior {
             
             
             String typeObject = "";
-            String lastName = "";
+            //String lastName = "";
             //ArrayList<String> union = new ArrayList<>();
 
 //            for (int i = 0; i < inPins.length; i++) {
@@ -184,7 +185,8 @@ public class ADDefineCallBehavior {
                 for (int x = 0; x < outFlowPin.length; x++) {
                     typeObject = outPins[i].getBase().getName();              
                     String oe = adUtils.createOE(typeObject);
-                    syncObjectsEdge.put(outFlowPin[x].getId(), oe);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlowPin[x].getId());
+                    syncObjectsEdge.put(key, oe);
 
                     objectEdges.put(oe, typeObject);
 //                    String value = "";
@@ -225,8 +227,8 @@ public class ADDefineCallBehavior {
                 }
                 callBehaviour.append("("+nameCallBehaviour+"(id)) ");
                 for(int i = 0; i < namesMemoryLocal.size(); i++) {
-                	callBehaviour.append("[|AlphabetMem"+adUtils.nameDiagramResolver(activityNode.getName())+"(id)|] "
-                						+"Mem_"+nameCallBehaviour+"(id)) \\diff(AlphabetMem"+adUtils.nameDiagramResolver(activityNode.getName())
+                	callBehaviour.append("[|AlphabetMem"+nameCallBehaviour+"(id)|] "
+                						+"Mem_"+nameCallBehaviour+"(id)) \\diff(AlphabetMem"+nameCallBehaviour
                 						+"(id),{|endDiagram_"+adUtils.nameDiagramResolver(ad.getName())+".id|}) /\\ "+ endDiagram+ "(id)\n");
                 }
                 /*callBehaviour.append("(" + nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)) ");
@@ -265,7 +267,8 @@ public class ADDefineCallBehavior {
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows.length > 0) {
                 activityNode = outFlows[0].getTarget();    //set next action or control node
@@ -347,8 +350,8 @@ public class ADDefineCallBehavior {
 
             nodes.append(callBehaviour.toString());
         } else if (code == 1) {
-            String definition = activityNode.getDefinition();
-            String[] definitionFinal = new String[0];
+            //String definition = activityNode.getDefinition();
+            //String[] definitionFinal = new String[0];
 
             if (outFlows.length > 0 || outPins.length > 0) {
                 callBehaviour.append("(");
@@ -356,7 +359,8 @@ public class ADDefineCallBehavior {
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                 String ce = adUtils.createCE();
-                syncChannelsEdge.put(outFlows[i].getId(), ce);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                syncChannelsEdge.put(key, ce);
 
                 callBehaviour.append("(");
 
@@ -368,7 +372,7 @@ public class ADDefineCallBehavior {
             }
 
             String nameObject = "";
-            String lastName = "";
+            //String lastName = "";
 
             //ArrayList<String> union = new ArrayList<>();
 //            List<String> nameObjects = new ArrayList<>();
@@ -403,7 +407,8 @@ public class ADDefineCallBehavior {
                     nameObject = outPins[i].getBase().getName();
 
                     String oe = adUtils.createOE(nameObject);
-                    syncObjectsEdge.put(outFlowPin[x].getId(), oe);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlowPin[x].getId());
+                    syncObjectsEdge.put(key, oe);
 
                     objectEdges.put(oe, nameObject);
 //                    String value = "";
@@ -506,7 +511,7 @@ public class ADDefineCallBehavior {
                 activityNode = null;
             }
         } else if (code == 2) {
-            String definition = activityNode.getDefinition();
+            //String definition = activityNode.getDefinition();
             //String[] definitionFinal = new String[0];
 
 //            if (definition != null && !(definition.equals(""))) {
@@ -519,8 +524,9 @@ public class ADDefineCallBehavior {
 
             callBehaviour.append("(");
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
 
                     callBehaviour.append("(");
                     if (i >= 0 && (i < inFlows.length - 1 || inPins.length > 0)) {
@@ -534,8 +540,9 @@ public class ADDefineCallBehavior {
             for (int i = 0; i < inPins.length; i++) {
                 IFlow[] inFlowPin = inPins[i].getIncomings();
                 for (int x = 0; x < inFlowPin.length; x++) {
-                    if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
-                        String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
+                        String oeIn = syncObjectsEdge.get(key);
                         //String typeNameObject = objectEdges.get(oeIn);
                         String typeNameObject = inPins[i].getBase().getName();
                         String nameObject = inPins[i].getName();
@@ -584,7 +591,8 @@ public class ADDefineCallBehavior {
             }
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                String ce = syncChannelsEdge.get(outFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+            	String ce = syncChannelsEdge.get(key);
 
                 callBehaviour.append("(");
 
@@ -599,7 +607,8 @@ public class ADDefineCallBehavior {
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
                 for (int x = 0; x < outFlowPin.length; x++) {
-                    String oe = syncObjectsEdge.get(outFlowPin[x].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlowPin[x].getId());
+                    String oe = syncObjectsEdge.get(key);
 
                     callBehaviour.append("(");
                     if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
@@ -659,7 +668,8 @@ public class ADDefineCallBehavior {
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad, adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows.length > 0) {
                 activityNode = outFlows[0].getTarget();    //set next action or control node

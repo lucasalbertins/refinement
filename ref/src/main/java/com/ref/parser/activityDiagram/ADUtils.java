@@ -33,11 +33,11 @@ public class ADUtils {
     private HashMap<String, List<IActivity>> signalChannels;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
-    private List<String> createdSignal;
-    private List<String> createdAccept;
+    //private List<String> createdSignal;
+    //private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
-    public HashMap<String, String> syncChannelsEdge;
-    public HashMap<String, String> syncObjectsEdge;
+    public HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
+    public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private ADParser adParser;
 
     public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
@@ -45,8 +45,8 @@ public class ADUtils {
                    Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, HashMap<String, List<String>> callBehaviourInputs,
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
                    HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
-                   List<String> createdSignal, List<String> createdAccept, HashMap<String, String> syncChannelsEdge,
-                   HashMap<String, String> syncObjectsEdge, List<String> signalChannelsLocal, ADParser adParser) {
+                   List<String> createdSignal, List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                   HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, List<String> signalChannelsLocal, ADParser adParser) {
 
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -64,10 +64,10 @@ public class ADUtils {
         this.signalChannels = signalChannels2;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.allGuards = allGuards;
-        this.createdSignal = createdSignal;
-        this.createdAccept = createdAccept;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        //this.createdSignal = createdSignal;
+        //this.createdAccept = createdAccept;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.signalChannelsLocal = signalChannelsLocal;
         this.adParser = adParser;
     }
@@ -464,11 +464,11 @@ public class ADUtils {
         return typesParameter;
     }
 
-    private boolean isSignal(IActivityNode activityNode) {
+    /*private boolean isSignal(IActivityNode activityNode) {
         return (activityNode instanceof IAction &&
                 ((((IAction) activityNode).isSendSignalAction() && createdSignal.contains(activityNode.getId())) ||
                         (((IAction) activityNode).isAcceptEventAction() && createdAccept.contains(activityNode.getId()))));
-    }
+    }*/
 
     public int countAmount(IActivityNode activityNode) {
         int input = 0;
@@ -477,7 +477,8 @@ public class ADUtils {
             IFlow[] inFlow = activityNode.getIncomings();
 
             for (int i = 0; i < inFlow.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlow[i].getId())) {
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlow[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
                     input++;
                 }
             }
@@ -489,7 +490,8 @@ public class ADUtils {
                 for (int i = 0; i < inPin.length; i++) {
                     IFlow[] inFlowPin = inPin[i].getIncomings();
                     for (int x = 0; x < inFlowPin.length; x++) {
-                        if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
+                    	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlowPin[x].getId());
+                        if (syncObjectsEdge.containsKey(key)) {
                             input++;
                         }
                     }
@@ -497,7 +499,8 @@ public class ADUtils {
 
             } else {
                 for (int i = 0; i < inFlow.length; i++) {
-                    if (syncObjectsEdge.containsKey(inFlow[i].getId())) {
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlow[i].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
                         input++;
                     }
                 }

@@ -10,9 +10,9 @@ public class ADDefineJoin {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private HashMap<String, String> parameterNodesInput;
     private List<ArrayList<String>> unionList;
@@ -20,13 +20,13 @@ public class ADDefineJoin {
     private ADUtils adUtils;
     private ADParser adParser;
 
-    public ADDefineJoin(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
-                        HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, HashMap<String, String> parameterNodesInput,
+    public ADDefineJoin(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                        HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, HashMap<String, String> parameterNodesInput,
                         List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList, ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.parameterNodesInput = parameterNodesInput;
         this.unionList = unionList;
@@ -54,12 +54,13 @@ public class ADDefineJoin {
             ArrayList<String> ceInitials = new ArrayList<>();
             for (int i = 0; i < inFlows.length; i++) {
                 ceInitials.add(inFlows[i].getId());
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
                     syncBool = true;
                 }
 
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
+                if (syncObjectsEdge.containsKey(key)) {
+                    //String ceIn2 = syncObjectsEdge.get(key);
                     //nameObject = objectEdges.get(ceIn2);
 
                     typeObject = ((IObjectNode) inFlows[i].getSource()).getBase().getName();
@@ -72,8 +73,9 @@ public class ADDefineJoin {
             joinNode.append(nameJoin + "(id) = (");
 
             for (int i = 0; i < ceInitials.size(); i++) {
-                String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
-                String oeIn = syncObjectsEdge.get(ceInitials.get(i));
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,ceInitials.get(i));
+                String ceIn = syncChannelsEdge.get(key);    //get the parallel input channels
+                String oeIn = syncObjectsEdge.get(key);
 
                 if (ceIn != null) {
                     joinNode.append("(");
@@ -121,7 +123,8 @@ public class ADDefineJoin {
             typeObject = "";
 
             for (int i = 0; i < inFlows.length; i++) {
-                String channel = syncObjectsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                String channel = syncObjectsEdge.get(key);
                 if (objectEdges.get(channel) != null && !nameObjectAdded.contains(objectEdges.get(channel))) {
                     nameObjectAdded.add(objectEdges.get(channel));
                     typeObject += objectEdges.get(channel);
@@ -131,7 +134,8 @@ public class ADDefineJoin {
             if (sync2Bool) {
                 for (int i = 0; i < objects.size(); i++) {    //creates the parallel output channels
                     String oe = adUtils.createOE(typeObject);
-                    syncObjectsEdge.put(outFlows[0].getId(), oe);    //just one output
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                    syncObjectsEdge.put(key, oe);    //just one output
                     objectEdges.put(oe, typeObject);
                     joinNode.append("(");
 
@@ -145,7 +149,8 @@ public class ADDefineJoin {
             } else if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     joinNode.append("(");
 
@@ -195,7 +200,8 @@ public class ADDefineJoin {
             joinNode.append("\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -217,12 +223,13 @@ public class ADDefineJoin {
             ArrayList<String> ceInitials = new ArrayList<>();
             ArrayList<String> obj = new ArrayList<>();
             for (int i = 0; i < inFlows.length; i++) {
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
                 ceInitials.add(inFlows[i].getId());
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
+                if (syncChannelsEdge.containsKey(key)) {
                     syncBool = true;
                 }
 
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
+                if (syncObjectsEdge.containsKey(key)) {
                     //String ceIn2 = syncObjectsEdge.get(inFlows[i].getId());
                     //nameObject = objectEdges.get(ceIn2);
 
@@ -266,7 +273,8 @@ public class ADDefineJoin {
             if (sync2Bool) {
                 for (int i = 0; i < obj.size(); i++) {    //creates the parallel output channels
                     String oe = adUtils.createOE(typeObject);
-                    syncObjectsEdge.put(outFlows[0].getId(), oe);    //just one output
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                    syncObjectsEdge.put(key, oe);    //just one output
                     objectEdges.put(oe, typeObject);
                     joinNode.append("(");
 
@@ -280,7 +288,8 @@ public class ADDefineJoin {
             } else if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     joinNode.append("(");
 
@@ -311,11 +320,12 @@ public class ADDefineJoin {
             ArrayList<String> ceInitials = new ArrayList<>();
             for (int i = 0; i < inFlows.length; i++) {
                 ceInitials.add(inFlows[i].getId());
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
                     syncBool = true;
                 }
 
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
+                if (syncObjectsEdge.containsKey(key)) {
                     //String oeIn = syncObjectsEdge.get(inFlows[i].getId());
                     //nameObject = objectEdges.get(oeIn);
 
@@ -329,8 +339,9 @@ public class ADDefineJoin {
             joinNode.append(nameJoin + "(id) = (");
 
             for (int i = 0; i < ceInitials.size(); i++) {
-                String ceIn = syncChannelsEdge.get(ceInitials.get(i));    //get the parallel input channels
-                String oeIn = syncObjectsEdge.get(ceInitials.get(i));
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,ceInitials.get(i));
+                String ceIn = syncChannelsEdge.get(key);    //get the parallel input channels
+                String oeIn = syncObjectsEdge.get(key);
 
                 if (ceIn != null) {
                     joinNode.append("(");
@@ -377,7 +388,8 @@ public class ADDefineJoin {
 
             if (sync2Bool) {
                 for (int i = 0; i < objects.size(); i++) {    //creates the parallel output channels
-                    String oe = syncObjectsEdge.get(outFlows[0].getId());    //just one output
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
+                    String oe = syncObjectsEdge.get(key);    //just one output
 
 
                     joinNode.append("(");
@@ -391,7 +403,8 @@ public class ADDefineJoin {
                 }
             } else if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String ce = syncChannelsEdge.get(outFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    String ce = syncChannelsEdge.get(key);
 
                     joinNode.append("(");
 
@@ -441,7 +454,8 @@ public class ADDefineJoin {
             joinNode.append("\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {

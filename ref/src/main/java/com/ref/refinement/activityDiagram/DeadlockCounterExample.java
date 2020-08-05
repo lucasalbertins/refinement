@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADAlphabet;
 import com.ref.parser.activityDiagram.ADCompositeAlphabet;
+import com.ref.parser.activityDiagram.Pair;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -699,7 +700,7 @@ public class DeadlockCounterExample {
     }
 
     private static INodePresentation createFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow[] outFlows = node.getOutgoings();
+        //IFlow[] outFlows = node.getOutgoings();
         INodePresentation FinalNode = null;
 
         try {
@@ -715,7 +716,7 @@ public class DeadlockCounterExample {
     }
 
     private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
-        IFlow[] outFlows = node.getOutgoings();
+        //IFlow[] outFlows = node.getOutgoings();
         INodePresentation flowFinalNode = null;
 
         try {
@@ -741,9 +742,9 @@ public class DeadlockCounterExample {
     }
 
     private static INodePresentation createInputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IInputPin pin) {
-        IFlow[] outFlows = node.getOutgoings();
-        IInputPin[] inPins = ((IAction) node).getInputs();
-        IOutputPin[] outPins = ((IAction) node).getOutputs();
+        //IFlow[] outFlows = node.getOutgoings();
+        //IInputPin[] inPins = ((IAction) node).getInputs();
+        //IOutputPin[] outPins = ((IAction) node).getOutputs();
         INodePresentation targetPresent = null;
 
         try{
@@ -758,9 +759,9 @@ public class DeadlockCounterExample {
     }
 
     private static INodePresentation createOutputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IOutputPin pin) {
-        IFlow[] outFlows = node.getOutgoings();
-        IInputPin[] inPins = ((IAction) node).getInputs();
-        IOutputPin[] outPins = ((IAction) node).getOutputs();
+        //IFlow[] outFlows = node.getOutgoings();
+        //IInputPin[] inPins = ((IAction) node).getInputs();
+        //IOutputPin[] outPins = ((IAction) node).getOutputs();
         INodePresentation targetPresent = null;
 
         try {
@@ -859,11 +860,12 @@ public class DeadlockCounterExample {
     }
   
     private static void paintNodes(IActivityNode node, INodePresentation actionNode) throws InvalidEditingException {
-		if(alphabet instanceof ADCompositeAlphabet) {
-			HashMap<String, ArrayList<String>> aux = new HashMap<>();
-			aux =((ADCompositeAlphabet) alphabet).getAllAlphabetNodes();
-			if(aux.containsKey(nameNodeResolver(node.getName()))) {
-				List<String> allflowsNode =  aux.get(nameNodeResolver(node.getName()));
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(), nameNodeResolver(node.getName()));
+    	if(alphabet instanceof ADCompositeAlphabet) {
+			HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
+			aux =((ADCompositeAlphabet) alphabet).getAllAlphabetNodes();		
+			if(aux.containsKey(key)) {
+				List<String> allflowsNode =  aux.get(key);
 
 		        for (String objTrace : trace) {
 		            if (allflowsNode.contains(objTrace)) {
@@ -872,10 +874,9 @@ public class DeadlockCounterExample {
 		        }	
 			}
 		}else {
-			HashMap<String, ArrayList<String>> aux = new HashMap<>();
-			aux = alphabet.getAlphabetAD();
-			List<String> allflowsNode =  aux.get(nameNodeResolver(node.getName()));
-
+			HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
+			aux = alphabet.getAlphabetAD();			
+			List<String> allflowsNode =  aux.get(key);
 		    for (String objTrace : trace) {
 		        if (allflowsNode!= null && allflowsNode.contains(objTrace)) {
 		            actionNode.setProperty("fill.color", "#FF0000");
@@ -886,11 +887,12 @@ public class DeadlockCounterExample {
 
     private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow) throws InvalidEditingException {
     	String outFlowID = outFlows[i].getId();
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
     	if(alphabet instanceof ADCompositeAlphabet){
-			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
-					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
-				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
-		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -900,10 +902,10 @@ public class DeadlockCounterExample {
 			}
 		}
 		else {
-			if (alphabet.getSyncChannelsEdge().containsKey(outFlowID) ||
-				alphabet.getSyncObjectsEdge().containsKey(outFlowID)) {
-		        String channel = alphabet.getSyncChannelsEdge().get(outFlowID);
-		        String channelObj = alphabet.getSyncObjectsEdge().get(outFlowID);
+			if (alphabet.getSyncChannelsEdge().containsKey(key) ||
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(key);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -917,11 +919,12 @@ public class DeadlockCounterExample {
     private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow)
 			throws InvalidEditingException {
     	String outFlowID = outFlows[i].getId();
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
 		if(alphabet instanceof ADCompositeAlphabet){
-			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
-					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
-				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
-		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -934,10 +937,10 @@ public class DeadlockCounterExample {
 			}
 		}
 		else {
-			if (alphabet.getSyncChannelsEdge().containsKey(outFlowID) || 
-				alphabet.getSyncObjectsEdge().containsKey(outFlowID)) {
-		        String channel = alphabet.getSyncChannelsEdge().get(outFlowID);
-		        String channelObj = alphabet.getSyncObjectsEdge().get(outFlowID);
+			if (alphabet.getSyncChannelsEdge().containsKey(key) || 
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(key);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -955,10 +958,11 @@ public class DeadlockCounterExample {
 			INodePresentation pinPresent, ILinkPresentation flow) throws InvalidEditingException {
 		if(alphabet instanceof ADCompositeAlphabet){
 			String outFlowID = outFlows[x].getId();
-			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
-					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
-				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
-		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -972,10 +976,11 @@ public class DeadlockCounterExample {
 		}
 		else {
 			String targetOutFlowID = targetOutFlows[x].getId();
-			if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlowID) ||
-				alphabet.getSyncObjectsEdge().containsKey(targetOutFlowID)) {
-		        String channel = alphabet.getSyncChannelsEdge().get(targetOutFlowID);
-		        String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlowID);
+			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),targetOutFlowID);
+			if (alphabet.getSyncChannelsEdge().containsKey(key) ||
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(key);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -994,10 +999,11 @@ public class DeadlockCounterExample {
 			throws InvalidEditingException {
 		if(alphabet instanceof ADCompositeAlphabet){
 			String outFlowID = outFlows[x].getId();
-			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(outFlowID) ||
-					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(outFlowID)) {
-				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(outFlowID);
-		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(outFlowID);
+			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
+			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
+					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
+				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
+		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");
@@ -1012,10 +1018,11 @@ public class DeadlockCounterExample {
 		}
 		else {
 			String targetOutFlowID = targetOutFlows[x].getId();
-			if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlowID) || 
-				alphabet.getSyncObjectsEdge().containsKey(targetOutFlowID)) {
-		        String channel = alphabet.getSyncChannelsEdge().get(targetOutFlowID);
-		        String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlowID);
+			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),targetOutFlowID);
+			if (alphabet.getSyncChannelsEdge().containsKey(key) || 
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
+		        String channel = alphabet.getSyncChannelsEdge().get(key);
+		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
 		        if (channel != null && trace.contains(channel)) {
 		            flow.setProperty("line.color", "#FF0000");

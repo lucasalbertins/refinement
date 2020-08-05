@@ -21,10 +21,10 @@ public class ADDefineNodesActionAndControl {
     private IActivityDiagram adDiagram;
 
     private HashMap<String, Integer> countCall;
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, ArrayList<String>> parameterAlphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
     private List<IActivityNode> queueRecreateNode;
@@ -68,9 +68,9 @@ public class ADDefineNodesActionAndControl {
     private ADDefineSignal dSignal;
     private ADDefineAccept dAccept;
 
-    public ADDefineNodesActionAndControl(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, HashMap<String, ArrayList<String>> alphabetNode,
-                                         HashMap<String, ArrayList<String>> parameterAlphabetNode, HashMap<String, String> syncChannelsEdge,
-                                         HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
+    public ADDefineNodesActionAndControl(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
+                                         HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                                         HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
                                          List<IActivityNode> queueRecreateNode, List<IActivity> callBehaviourList, List<String> eventChannel, List<String> lockChannel,
                                          List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter, HashMap<String, String> parameterNodesInput,
                                          HashMap<String, String> parameterNodesOutput, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
@@ -81,10 +81,10 @@ public class ADDefineNodesActionAndControl {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.countCall = countCall;
-        this.alphabetNode = alphabetNode;
-        this.parameterAlphabetNode = parameterAlphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.parameterAlphabetNode = parameterAlphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
         this.queueRecreateNode = queueRecreateNode;
@@ -170,8 +170,8 @@ public class ADDefineNodesActionAndControl {
             if (activityNode instanceof IActivityParameterNode) {
                 name = "parameter_" + activityNode.getName();
             }
-
-            while (activityNode != null && !(alphabetNode.containsKey(adUtils.nameDiagramResolver(name)) || isSignal(activityNode))
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
+            while (activityNode != null && !(alphabetNode.containsKey(key) || isSignal(activityNode))
                     && !queueRecreateNode.contains(activityNode)) {
 
                 if (input == expectedInput) {
@@ -245,6 +245,7 @@ public class ADDefineNodesActionAndControl {
                         }
 
                         name = activityNode.getName();
+                        key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
                         if (activityNode instanceof IActivityParameterNode) {
                             name = "parameter_" + activityNode.getName();
                         }
@@ -317,6 +318,7 @@ public class ADDefineNodesActionAndControl {
                         }
 
                         name = activityNode.getName();
+                        key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
                         if (activityNode instanceof IActivityParameterNode) {
                             name = "parameter_" + activityNode.getName();
                         }
@@ -339,11 +341,12 @@ public class ADDefineNodesActionAndControl {
             }
 
             String name = activityNode.getName();
+            
             if (activityNode instanceof IActivityParameterNode) {
                 name = "parameter_" + activityNode.getName();
             }
-
-            while (activityNode != null && !(alphabetNode.containsKey(adUtils.nameDiagramResolver(name)) || isSignal(activityNode))) {    // Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
+            while (activityNode != null && !(alphabetNode.containsKey(key) || isSignal(activityNode))) {    // Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
                 if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
                         activityNode = defineCallBehaviour(activityNode, nodes, 2);
@@ -409,9 +412,9 @@ public class ADDefineNodesActionAndControl {
                         expectedInput = activityNode.getIncomings().length + ((IAction) activityNode).getInputs().length;
                     } else {
                         expectedInput = activityNode.getIncomings().length;
-                    }
-
+                    }                    
                     name = activityNode.getName();
+                    key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
                     if (activityNode instanceof IActivityParameterNode) {
                         name = "parameter_" + activityNode.getName();
                     }
@@ -429,8 +432,9 @@ public class ADDefineNodesActionAndControl {
             nodes.append("(id)) /\\ END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName())+"(id)");
 
             alphabetAllInitialAndParameter.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-
-            alphabetNode.put("init", alphabetAllInitialAndParameter);
+            
+            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,"init");
+            alphabetNode.put(pair, alphabetAllInitialAndParameter);
         }
 
         nodes.append("\n");

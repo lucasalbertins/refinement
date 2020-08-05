@@ -14,10 +14,10 @@ public class ADDefineMainNodes {
     private List<String> lockChannel;
     private HashMap<String, String> parameterNodesInput;
     private HashMap<String, String> parameterNodesOutput;
-    private List<Pair<String, Integer>> callBehaviourNumber;
+    //private List<Pair<String, Integer>> callBehaviourNumber;
     private HashMap<String, List<String>> callBehaviourInputs;
-    private List<String> localSignalChannelsSync;
-    private List<String> signalChannelsLocal;
+    //private List<String> localSignalChannelsSync;
+    //private List<String> signalChannelsLocal;
     private ADUtils adUtils;
     private ADParser adParser;
 
@@ -29,10 +29,10 @@ public class ADDefineMainNodes {
         this.lockChannel = lockChannel;
         this.parameterNodesInput = parameterNodesInput;
         this.parameterNodesOutput = parameterNodesOutput;
-        this.callBehaviourNumber = callBehaviourNumber;
+        //this.callBehaviourNumber = callBehaviourNumber;
         this.callBehaviourInputs = callBehaviourInputs;
-        this.localSignalChannelsSync = localSignalChannelsSync;
-        this.signalChannelsLocal = signalChannelsLocal;
+        //this.localSignalChannelsSync = localSignalChannelsSync;
+        //this.signalChannelsLocal = signalChannelsLocal;
         this.adUtils = adUtils;
         this.adParser = adParser;
     }

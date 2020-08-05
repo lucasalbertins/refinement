@@ -34,10 +34,10 @@ public class ADParser {
     public static boolean containsCallBehavior = false;
     public static HashMap<String, Integer> countCall = new HashMap<>();
     public static HashMap<String,List<Pair<String,String>>> countcallBehavior = new HashMap<>();
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, ArrayList<String>> parameterAlphabetNode;
-    public HashMap<String, String> syncChannelsEdge;            //ID flow, channel
-    public HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity,String>, ArrayList<String>> parameterAlphabetNode;
+    public HashMap<Pair<IActivity,String>, String> syncChannelsEdge;            //ID flow, channel
+    public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     public static Set<String> alphabetPool = new HashSet<String>();
     public static List<IActivity> callBehaviourList = new ArrayList<>();
     private HashMap<String, String> objectEdges;                //channel; name
@@ -258,7 +258,7 @@ public class ADParser {
             resetStatic();
         }
 
-        // alphabet usado na geração dos contraexemplos
+        //alphabet usado na geração dos contraexemplos
         if(alphabetAD == null) {
         	this.alphabetAD = new ADLeafAlphabet(ad);
         }

@@ -10,20 +10,20 @@ public class ADDefineFork {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
     private ADUtils adUtils;
 
-    public ADDefineFork(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
-                        HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
+    public ADDefineFork(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                        HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
                         ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
         this.adUtils = adUtils;
@@ -45,16 +45,18 @@ public class ADDefineFork {
             forkNode.append(nameFork + "(id) = ");
 
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
                     adUtils.ce(alphabet, forkNode, ceIn, " -> ");
                     syncBool = true;
                 }
             }
 
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String oeIn = syncObjectsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncObjectsEdge.containsKey(key)) {
+                    String oeIn = syncObjectsEdge.get(key);
                     nameObject = objectEdges.get(oeIn);
                     adUtils.oe(alphabet, forkNode, oeIn, "?" + nameObject, " -> ");
                     sync2Bool = true;
@@ -68,7 +70,8 @@ public class ADDefineFork {
             if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     forkNode.append("(");
 
@@ -81,7 +84,8 @@ public class ADDefineFork {
             } else if (sync2Bool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = adUtils.createOE(nameObject);
-                    syncObjectsEdge.put(outFlows[i].getId(), oe);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                    syncObjectsEdge.put(key, oe);
                     objectEdges.put(oe, nameObject);
                     forkNode.append("(");
 
@@ -101,7 +105,8 @@ public class ADDefineFork {
             forkNode.append(nameFork + "(id) /\\ " + endDiagram + "(id)\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -144,7 +149,8 @@ public class ADDefineFork {
             if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     forkNode.append("(");
 
@@ -157,7 +163,8 @@ public class ADDefineFork {
             } else if (sync2Bool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = adUtils.createOE(nameObject);
-                    syncObjectsEdge.put(outFlows[i].getId(), oe);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncObjectsEdge.put(key, oe);
                     objectEdges.put(oe, nameObject);
                     forkNode.append("(");
 
@@ -208,14 +215,16 @@ public class ADDefineFork {
             nodes.append(forkNode.toString());
         } else if (code == 1) {
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
                     syncBool = true;
                 }
             }
 
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String oeIn = syncObjectsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncObjectsEdge.containsKey(key)) {
+                    String oeIn = syncObjectsEdge.get(key);
                     nameObject = objectEdges.get(oeIn);
                     sync2Bool = true;
                 }
@@ -224,7 +233,8 @@ public class ADDefineFork {
             if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     forkNode.append("(");
 
@@ -237,7 +247,8 @@ public class ADDefineFork {
             } else if (sync2Bool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = adUtils.createOE(nameObject);
-                    syncObjectsEdge.put(outFlows[i].getId(), oe);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncObjectsEdge.put(key, oe);
                     objectEdges.put(oe, nameObject);
                     forkNode.append("(");
 
@@ -253,16 +264,18 @@ public class ADDefineFork {
             forkNode.append(nameFork + "(id) = ");
 
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
                     adUtils.ce(alphabet, forkNode, ceIn, " -> ");
                     syncBool = true;
                 }
             }
 
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                    String oeIn = syncObjectsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                if (syncObjectsEdge.containsKey(key)) {
+                    String oeIn = syncObjectsEdge.get(key);
                     nameObject = objectEdges.get(oeIn);
                     adUtils.oe(alphabet, forkNode, oeIn, "?" + nameObject, " -> ");
                     sync2Bool = true;
@@ -275,7 +288,8 @@ public class ADDefineFork {
 
             if (syncBool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String ce = syncChannelsEdge.get(outFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    String ce = syncChannelsEdge.get(key);
 
                     forkNode.append("(");
 
@@ -287,7 +301,8 @@ public class ADDefineFork {
                 }
             } else if (sync2Bool) {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String oe = syncObjectsEdge.get(outFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    String oe = syncObjectsEdge.get(key);
 
                     forkNode.append("(");
 
@@ -307,7 +322,8 @@ public class ADDefineFork {
             forkNode.append(nameFork + "(id) /\\ " + endDiagram + "(id)\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(key, alphabet);
 
             if (outFlows[0].getTarget() instanceof IInputPin) {
                 for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {

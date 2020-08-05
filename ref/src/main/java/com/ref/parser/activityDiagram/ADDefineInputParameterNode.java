@@ -10,20 +10,20 @@ public class ADDefineInputParameterNode {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> parameterAlphabetNode;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
     private List<String> allInitial;
     private ArrayList<String> alphabetAllInitialAndParameter;
     private ADUtils adUtils;
 
-    public ADDefineInputParameterNode(IActivity ad, HashMap<String, ArrayList<String>> parameterAlphabetNode, HashMap<String, String> syncObjectsEdge,
+    public ADDefineInputParameterNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
                                       HashMap<String, String> objectEdges, List<IActivityNode> queueNode, List<String> allInitial,
                                       ArrayList<String> alphabetAllInitialAndParameter, ADUtils adUtils) {
         this.ad = ad;
-        this.parameterAlphabetNode = parameterAlphabetNode;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.parameterAlphabetNode = parameterAlphabetNode2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
         this.allInitial = allInitial;
@@ -49,7 +49,8 @@ public class ADDefineInputParameterNode {
             //String oe = adUtils.createOE(adUtils.nameDiagramResolver(activityNode.getName()));
         	String typeObject = ((IActivityParameterNode)activityNode).getBase().getName();
         	String oe = adUtils.createOE(typeObject);
-            syncObjectsEdge.put(outFlows[i].getId(), oe);
+        	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+            syncObjectsEdge.put(key, oe);
             objectEdges.put(oe, typeObject);
 
             parameterNode.append("(");
@@ -62,8 +63,8 @@ public class ADDefineInputParameterNode {
         }
 
         parameterNode.append(")\n");
-
-        parameterAlphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+        Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        parameterAlphabetNode.put(key, alphabet);
         allInitial.add(nameParameterNode);
         for (String channel : alphabet) {
             if (!alphabetAllInitialAndParameter.contains(channel)) {

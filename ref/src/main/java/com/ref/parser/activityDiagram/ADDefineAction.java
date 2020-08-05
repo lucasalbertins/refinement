@@ -11,32 +11,32 @@ public class ADDefineAction {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
-    private HashMap<String, String> parameterNodesInput;
-    private List<ArrayList<String>> unionList;
-    private HashMap<String, String> typeUnionList;
+    //private HashMap<String, String> parameterNodesInput;
+    //private List<ArrayList<String>> unionList;
+    //private HashMap<String, String> typeUnionList;
     private ADUtils adUtils;
-    private ADParser adParser;
+    //private ADParser adParser;
 
-    public ADDefineAction(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
-                          HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
+    public ADDefineAction(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                          HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
                           HashMap<String, String> parameterNodesInput, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                           ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
-        this.parameterNodesInput = parameterNodesInput;
-        this.unionList = unionList;
-        this.typeUnionList = typeUnionList;
+        //this.parameterNodesInput = parameterNodesInput;
+        //this.unionList = unionList;
+        //this.typeUnionList = typeUnionList;
         this.adUtils = adUtils;
-        this.adParser = adParser;
+        //this.adParser = adParser;
     }
 
     public IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
@@ -68,8 +68,9 @@ public class ADDefineAction {
 
             action.append("(");
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());//TODO
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);//TODO
 
                     action.append("(");
                     if (i >= 0 && (i < inFlows.length - 1 || inPins.length > 0)) {
@@ -83,8 +84,9 @@ public class ADDefineAction {
             for (int i = 0; i < inPins.length; i++) {
                 IFlow[] inFlowPin = inPins[i].getIncomings();
                 for (int x = 0; x < inFlowPin.length; x++) {
-                    if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
-                        String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
+                        String oeIn = syncObjectsEdge.get(key);
                         //String typeNameObject = objectEdges.get(oeIn);
                         String nameObject = inPins[i].getName();
 
@@ -161,7 +163,8 @@ public class ADDefineAction {
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                 String ce = adUtils.createCE();
-                syncChannelsEdge.put(outFlows[i].getId(), ce);
+                Pair<IActivity,String> pair = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                syncChannelsEdge.put(pair, ce);
 
                 action.append("(");
 
@@ -203,7 +206,8 @@ public class ADDefineAction {
 					}
 
                     String oe = adUtils.createOE(nameObject);
-                    syncObjectsEdge.put(outFlowPin[x].getId(), oe);
+                    Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,outFlowPin[x].getId());
+                    syncObjectsEdge.put(pair, oe);
 
                     objectEdges.put(oe, nameObject);
                     String value = "";
@@ -298,7 +302,8 @@ public class ADDefineAction {
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()+".id"));
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(pair, alphabet);
 
             if (outFlows.length > 0) {
                 activityNode = outFlows[0].getTarget();    //set next action or control node
@@ -380,7 +385,7 @@ public class ADDefineAction {
 
             nodes.append(action.toString());
         } else if (code == 1) {
-            String definition = activityNode.getDefinition();
+            //String definition = activityNode.getDefinition();
             String[] definitionFinal = new String[0];
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -389,7 +394,8 @@ public class ADDefineAction {
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                 String ce = adUtils.createCE();
-                syncChannelsEdge.put(outFlows[i].getId(), ce);
+                Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                syncChannelsEdge.put(pair, ce);
 
                 action.append("(");
 
@@ -436,7 +442,8 @@ public class ADDefineAction {
                     nameObject = outPins[i].getBase().getName();
 
                     String oe = adUtils.createOE(nameObject);
-                    syncObjectsEdge.put(outFlowPin[x].getId(), oe);
+                    Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,outFlowPin[x].getId());
+                    syncObjectsEdge.put(pair, oe);
 
                     objectEdges.put(oe, nameObject);
                     String value = "";
@@ -560,8 +567,9 @@ public class ADDefineAction {
 
             action.append("(");
             for (int i = 0; i < inFlows.length; i++) {
-                if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                    String ceIn = syncChannelsEdge.get(inFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                if (syncChannelsEdge.containsKey(key)) {
+                    String ceIn = syncChannelsEdge.get(key);
 
                     action.append("(");
                     if (i >= 0 && (i < inFlows.length - 1 || inPins.length > 0)) {
@@ -575,8 +583,9 @@ public class ADDefineAction {
             for (int i = 0; i < inPins.length; i++) {
                 IFlow[] inFlowPin = inPins[i].getIncomings();
                 for (int x = 0; x < inFlowPin.length; x++) {
-                    if (syncObjectsEdge.containsKey(inFlowPin[x].getId())) {
-                        String oeIn = syncObjectsEdge.get(inFlowPin[x].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
+                        String oeIn = syncObjectsEdge.get(key);
                         //String typeNameObject = objectEdges.get(oeIn);
                         String nameObject = inPins[i].getName();
 
@@ -644,7 +653,8 @@ public class ADDefineAction {
             }
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                String ce = syncChannelsEdge.get(outFlows[i].getId());
+            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                String ce = syncChannelsEdge.get(key);
 
                 action.append("(");
 
@@ -670,8 +680,8 @@ public class ADDefineAction {
 
                 for (int x = 0; x < outFlowPin.length; x++) {
                     nameObject = outPins[i].getBase().getName();
-
-                    String oe = syncObjectsEdge.get(outFlowPin[x].getId());
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlowPin[x].getId());
+                    String oe = syncObjectsEdge.get(key);
 
                     String value = "";
                     for (int j = 0; j < definitionFinal.length; j++) {
@@ -763,7 +773,8 @@ public class ADDefineAction {
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+ ".id");
-            alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+            alphabetNode.put(pair, alphabet);
 
             if (outFlows.length > 0) {
                 activityNode = outFlows[0].getTarget();    //set next action or control node

@@ -10,21 +10,21 @@ public class ADDefineDecision {
 
     private IActivity ad;
 
-    private HashMap<String, ArrayList<String>> alphabetNode;
-    private HashMap<String, String> syncChannelsEdge;
-    private HashMap<String, String> syncObjectsEdge;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+    private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
     private HashMap<String, String> parameterNodesInput;
     private ADUtils adUtils;
 
-    public ADDefineDecision(IActivity ad, HashMap<String, ArrayList<String>> alphabetNode, HashMap<String, String> syncChannelsEdge,
-                            HashMap<String, String> syncObjectsEdge, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
+    public ADDefineDecision(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+                            HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
                             HashMap<String, String> parameterNodesInput, ADUtils adUtils) {
         this.ad = ad;
-        this.alphabetNode = alphabetNode;
-        this.syncChannelsEdge = syncChannelsEdge;
-        this.syncObjectsEdge = syncObjectsEdge;
+        this.alphabetNode = alphabetNode2;
+        this.syncChannelsEdge = syncChannelsEdge2;
+        this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
         this.parameterNodesInput = parameterNodesInput;
@@ -48,8 +48,9 @@ public class ADDefineDecision {
                 String[] stereotype = inFlows[i].getStereotypes();
 
                 for (int j = 0; j < stereotype.length; j++) {
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
                     if (stereotype[j].equals("decisionInputFlow")) {
-                        decisionInputType = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                        decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
                         decisionInputFlow = inFlows[i].getSource().getName();
                     }
                 }
@@ -59,8 +60,9 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "(id) = ");
 
                 for (int i = 0; i < inFlows.length; i++) {
-                    if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                        String ceIn = syncObjectsEdge.get(inFlows[i].getId());
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
+                        String ceIn = syncObjectsEdge.get(key);
                         adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputFlow, " -> ");
                     }
                 }
@@ -75,15 +77,15 @@ public class ADDefineDecision {
                     String oe = "";
                     String ce = "";
                     
-                    
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
                     if (outFlows[i].getTarget() instanceof IPin) {
                         oe = adUtils.createOE(decisionInputType);
-                        syncObjectsEdge.put(outFlows[i].getId(), oe);
+                        syncObjectsEdge.put(key, oe);
 
                         objectEdges.put(oe, decisionInputType);
                     } else {
                         ce = adUtils.createCE();
-                        syncChannelsEdge.put(outFlows[i].getId(), ce);
+                        syncChannelsEdge.put(key, ce);
                     }
                     if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
                     	decision.append(outFlows[i].getGuard() == "" ? "true & (dc -> ": (outFlows[i].getGuard() + " & (dc -> "));//se a guarda for vazia então assume-se true
@@ -120,7 +122,8 @@ public class ADDefineDecision {
                 decision.append("(" + nameDecision + "(id) /\\ " + endDiagram + "(id)) \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-                alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+                alphabetNode.put(key, alphabet);
 
                 if (outFlows[0].getTarget() instanceof IInputPin) {
                     for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -162,16 +165,17 @@ public class ADDefineDecision {
             } else if (decisionInputType != null && inFlows.length > 1) {                    //object and control
                 decision.append(nameDecision + "(id) = ");
 
-                String sync2 = "";
-                String sync = "";
+                Pair<IActivity,String> sync2 = new Pair<IActivity, String>(ad, "");
+                Pair<IActivity,String> sync = new Pair<IActivity, String>(ad,"");
 
                 for (int i = 0; i < inFlows.length; i++) {
-                    if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                        sync2 = inFlows[i].getId();
+                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                    if (syncChannelsEdge.containsKey(key)) {
+                        sync2 = new Pair<IActivity, String>(ad, inFlows[i].getId());
                     }
 
-                    if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                        sync = inFlows[i].getId();
+                    if (syncObjectsEdge.containsKey(key)) {
+                    	sync = new Pair<IActivity, String>(ad, inFlows[i].getId());
                     }
                 }
 
@@ -197,7 +201,8 @@ public class ADDefineDecision {
                 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
                     	decision.append(outFlows[i].getGuard() == "" ? "true & (dc -> ": (outFlows[i].getGuard() + " & (dc -> "));//se a guarda for vazia então assume-se true
@@ -239,7 +244,8 @@ public class ADDefineDecision {
                 decision.append("|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-                alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+                alphabetNode.put(key, alphabet);
 
                 activityNode = outFlows[0].getTarget();    //set next action or control node
 
@@ -253,9 +259,7 @@ public class ADDefineDecision {
             } else {        //just control
                 decision.append(nameDecision + "(id) = ");
 
-                String sync = "";
-
-                sync = inFlows[0].getId();
+                Pair<IActivity, String> sync = new Pair<IActivity, String>(ad, inFlows[0].getId());
 
                 String ceIn = syncChannelsEdge.get(sync);
 
@@ -282,7 +286,8 @@ public class ADDefineDecision {
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     // tratamento de guarda
                     if (outFlows[i].getGuard().length() == 0) {
@@ -323,7 +328,8 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "(id) /\\ " + endDiagram + "(id) \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-                alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+                alphabetNode.put(key, alphabet);
 
                 activityNode = outFlows[0].getTarget();    //set next action or control node
 
@@ -342,7 +348,8 @@ public class ADDefineDecision {
 
                 for (int j = 0; j < stereotype.length; j++) {
                     if (stereotype[j].equals("decisionInputFlow")) {
-                        decisionInputType = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                        decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
                         decisionInputFlow = inFlows[i].getSource().getName();
                     }
                 }
@@ -354,15 +361,15 @@ public class ADDefineDecision {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = "";
                     String ce = "";
-
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
                     if (outFlows[i].getTarget() instanceof IPin) {
                         oe = adUtils.createOE(decisionInputType);
-                        syncObjectsEdge.put(outFlows[i].getId(), oe);
+                        syncObjectsEdge.put(key, oe);
 
                         objectEdges.put(oe, decisionInputType);
                     } else {
                         ce = adUtils.createCE();
-                        syncChannelsEdge.put(outFlows[i].getId(), ce);
+                        syncChannelsEdge.put(key, ce);
                     }
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
@@ -424,7 +431,8 @@ public class ADDefineDecision {
             } else if (decisionInputType != null && inFlows.length > 1) {                    //object and control
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
@@ -449,7 +457,8 @@ public class ADDefineDecision {
             } else {        //just control
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String ce = adUtils.createCE();
-                    syncChannelsEdge.put(outFlows[i].getId(), ce);
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
+                    syncChannelsEdge.put(key, ce);
 
 //                    if (!alphabet.contains("dc")) {
 //                        alphabet.add("dc");
@@ -477,7 +486,8 @@ public class ADDefineDecision {
 
                 for (int j = 0; j < stereotype.length; j++) {
                     if (stereotype[j].equals("decisionInputFlow")) {
-                        decisionInputType = objectEdges.get(syncObjectsEdge.get(inFlows[i].getId()));
+                    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                        decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
                         decisionInputFlow = inFlows[i].getSource().getName();
                     }
                 }
@@ -487,8 +497,9 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "(id) = ");
 
                 for (int i = 0; i < inFlows.length; i++) {
-                    if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                        String ceIn = syncObjectsEdge.get(inFlows[i].getId());
+                	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                    if (syncObjectsEdge.containsKey(key)) {
+                        String ceIn = syncObjectsEdge.get(key);
                         adUtils.oe(alphabet, decision, ceIn, "?" + decisionInputFlow, " -> ");
                     }
                 }
@@ -500,15 +511,15 @@ public class ADDefineDecision {
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = "";
                     String ce = "";
-
+                    Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
                     if (outFlows[i].getTarget() instanceof IPin) {
-                        oe = syncObjectsEdge.get(outFlows[i].getId());
-                        syncObjectsEdge.put(outFlows[i].getId(), oe);
+                        oe = syncObjectsEdge.get(key);
+                        syncObjectsEdge.put(key, oe);
 
                         objectEdges.put(oe, decisionInputType);
                     } else {
-                        ce = syncChannelsEdge.get(outFlows[i].getId());
-                        syncChannelsEdge.put(outFlows[i].getId(), ce);
+                        ce = syncChannelsEdge.get(key);
+                        syncChannelsEdge.put(key, ce);
                     }
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
@@ -539,7 +550,8 @@ public class ADDefineDecision {
                 decision.append("(" + nameDecision + "(id) /\\ " + endDiagram + "(id)) \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-                alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+                alphabetNode.put(key, alphabet);
 
                 if (outFlows[0].getTarget() instanceof IInputPin) {
                     for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
@@ -581,16 +593,17 @@ public class ADDefineDecision {
             } else if (decisionInputType != null && inFlows.length > 1) {                    //object and control
                 decision.append(nameDecision + "(id) = ");
 
-                String sync2 = "";
-                String sync = "";
+                Pair<IActivity, String> sync2 = new Pair<IActivity, String>(ad,"");
+                Pair<IActivity, String> sync = new Pair<IActivity, String>(ad,"");
 
                 for (int i = 0; i < inFlows.length; i++) {
-                    if (syncChannelsEdge.containsKey(inFlows[i].getId())) {
-                        sync2 = inFlows[i].getId();
+                	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+                    if (syncChannelsEdge.containsKey(key)) {
+                        sync2 = key;
                     }
 
-                    if (syncObjectsEdge.containsKey(inFlows[i].getId())) {
-                        sync = inFlows[i].getId();
+                    if (syncObjectsEdge.containsKey(key)) {
+                        sync = key;
                     }
                 }
 
@@ -613,7 +626,8 @@ public class ADDefineDecision {
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String ce = syncChannelsEdge.get(outFlows[i].getId());
+                	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                	String ce = syncChannelsEdge.get(key);
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
@@ -647,7 +661,8 @@ public class ADDefineDecision {
                 decision.append("|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-                alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+                alphabetNode.put(key, alphabet);
 
                 activityNode = outFlows[0].getTarget();    //set next action or control node
 
@@ -661,9 +676,7 @@ public class ADDefineDecision {
             } else {        //just control
                 decision.append(nameDecision + "(id) = ");
 
-                String sync = "";
-
-                sync = inFlows[0].getId();
+                Pair<IActivity, String> sync = new Pair<IActivity, String>(ad,inFlows[0].getId());
 
                 String ceIn = syncChannelsEdge.get(sync);
 
@@ -689,7 +702,8 @@ public class ADDefineDecision {
                 decision.append("(");
 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                    String ce = syncChannelsEdge.get(outFlows[i].getId());
+                	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                    String ce = syncChannelsEdge.get(key);
 
                     // tratamento de guarda
                     if (outFlows[i].getGuard().length() == 0) {
@@ -730,7 +744,8 @@ public class ADDefineDecision {
                 decision.append(nameDecision + "(id) /\\ " + endDiagram + "(id) \\{|dc|}\n");
 
                 alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-                alphabetNode.put(adUtils.nameDiagramResolver(activityNode.getName()), alphabet);
+                Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+                alphabetNode.put(key, alphabet);
 
                 activityNode = outFlows[0].getTarget();    //set next action or control node
 

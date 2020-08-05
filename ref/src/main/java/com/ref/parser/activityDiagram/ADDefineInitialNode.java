@@ -14,16 +14,16 @@ public class ADDefineInitialNode {
     private List<String> allInitial;
     private ArrayList<String> alphabetAllInitialAndParameter;
     private List<IActivityNode> queueNode;
-    private HashMap<String, String> syncChannelsEdge;
+    private HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
     private ADUtils adUtils;
 
     public ADDefineInitialNode(IActivity ad, List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter,
-                               List<IActivityNode> queueNode, HashMap<String, String> syncChannelsEdge, ADUtils adUtils) {
+                               List<IActivityNode> queueNode, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2, ADUtils adUtils) {
         this.ad = ad;
         this.allInitial = allInitial;
         this.alphabetAllInitialAndParameter = alphabetAllInitialAndParameter;
         this.queueNode = queueNode;
-        this.syncChannelsEdge = syncChannelsEdge;
+        this.syncChannelsEdge = syncChannelsEdge2;
         this.adUtils = adUtils;
     }
 
@@ -42,7 +42,8 @@ public class ADDefineInitialNode {
 
         for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
             String ce = adUtils.createCE();
-            syncChannelsEdge.put(outFlows[i].getId(), ce);
+            Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+            syncChannelsEdge.put(key, ce);
             initialNode.append("(");
 
             if (i >= 0 && i < outFlows.length - 1) {
