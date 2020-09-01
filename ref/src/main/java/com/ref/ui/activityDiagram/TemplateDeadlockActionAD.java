@@ -1,20 +1,18 @@
 package com.ref.ui.activityDiagram;
 
-import java.io.*;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Properties;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;
-import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IClass;
 import com.change_vision.jude.api.inf.model.IDiagram;
-import com.change_vision.jude.api.inf.model.INamedElement;
-import com.change_vision.jude.api.inf.model.IPackage;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
 import com.ref.exceptions.ParsingException;

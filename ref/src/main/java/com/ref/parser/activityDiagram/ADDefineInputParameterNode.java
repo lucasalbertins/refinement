@@ -17,10 +17,12 @@ public class ADDefineInputParameterNode {
     private List<String> allInitial;
     private ArrayList<String> alphabetAllInitialAndParameter;
     private ADUtils adUtils;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+
 
     public ADDefineInputParameterNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
                                       HashMap<String, String> objectEdges, List<IActivityNode> queueNode, List<String> allInitial,
-                                      ArrayList<String> alphabetAllInitialAndParameter, ADUtils adUtils) {
+                                      ArrayList<String> alphabetAllInitialAndParameter, ADUtils adUtils,HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2) {
         this.ad = ad;
         this.parameterAlphabetNode = parameterAlphabetNode2;
         this.syncObjectsEdge = syncObjectsEdge2;
@@ -29,6 +31,7 @@ public class ADDefineInputParameterNode {
         this.allInitial = allInitial;
         this.alphabetAllInitialAndParameter = alphabetAllInitialAndParameter;
         this.adUtils = adUtils;
+        this.alphabetNode = alphabetNode2;
     }
 
     public IActivityNode defineInputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
@@ -63,15 +66,16 @@ public class ADDefineInputParameterNode {
         }
 
         parameterNode.append(")\n");
-        Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        Pair<IActivity,String> key = new Pair<IActivity, String>(ad,"parameter_"+adUtils.nameDiagramResolver(activityNode.getName()));
         parameterAlphabetNode.put(key, alphabet);
+        alphabetNode.put(key, alphabet);
         allInitial.add(nameParameterNode);
         for (String channel : alphabet) {
             if (!alphabetAllInitialAndParameter.contains(channel)) {
                 alphabetAllInitialAndParameter.add(channel);
             }
         }
-
+        
         if (outFlows[0].getTarget() instanceof IInputPin) {
             for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
                 if (activityNodeSearch instanceof IAction) {
@@ -112,6 +116,8 @@ public class ADDefineInputParameterNode {
 
         nodes.append(parameterNode.toString());
 
+        //Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+       //alphabetNode.put(pair, alphabet);
         return activityNode;
     }
 }

@@ -12,25 +12,30 @@ public class ADDefineInitialNode {
 
     private IActivity ad;
     private List<String> allInitial;
-    private ArrayList<String> alphabetAllInitialAndParameter;
+    private ArrayList<String> alphabetInitial;
     private List<IActivityNode> queueNode;
     private HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
     private ADUtils adUtils;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
 
     public ADDefineInitialNode(IActivity ad, List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter,
-                               List<IActivityNode> queueNode, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2, ADUtils adUtils) {
+                               List<IActivityNode> queueNode, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2, ADUtils adUtils,
+                               HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2) {
         this.ad = ad;
         this.allInitial = allInitial;
-        this.alphabetAllInitialAndParameter = alphabetAllInitialAndParameter;
+        this.alphabetInitial = alphabetAllInitialAndParameter;
         this.queueNode = queueNode;
         this.syncChannelsEdge = syncChannelsEdge2;
         this.adUtils = adUtils;
+        this.alphabetNode = alphabetNode2;
     }
 
     public IActivityNode defineInitialNode(IActivityNode activityNode, StringBuilder nodes) {
         StringBuilder initialNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameInitialNode = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        String diagram = adUtils.nameDiagramResolver(ad.getName());
+        String nameInitialNode = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
+        String nameInitialNodeTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
 
@@ -54,11 +59,17 @@ public class ADDefineInitialNode {
         }
 
         initialNode.append(")\n");
+        
+        initialNode.append(nameInitialNodeTermination + "(id) = ");
+        initialNode.append(nameInitialNode + "(id) /\\ END_DIAGRAM_"+ diagram +"(id)\n");
+        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
+        Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        alphabetNode.put(pair, alphabet);
 
-        allInitial.add(nameInitialNode);
+        allInitial.add(nameInitialNodeTermination);
         for (String channel : alphabet) {
-            if (!alphabetAllInitialAndParameter.contains(channel)) {
-                alphabetAllInitialAndParameter.add(channel);
+            if (!alphabetInitial.contains(channel)) {
+                alphabetInitial.add(channel);
             }
         }
 
@@ -71,7 +82,7 @@ public class ADDefineInitialNode {
         }
 
         nodes.append(initialNode.toString());
-
+           
         return activityNode;
     }
 }

@@ -59,6 +59,7 @@ public class ADParser {
     private static HashMap<String, List<String>> callBehaviourInputs = new HashMap<>(); //name; List inputs
     private static HashMap<String, List<String>> callBehaviourOutputs = new HashMap<>(); //name; List outputs
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
+    public  List<Pair<String,Integer>> IdSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
     private static HashMap<String,List<IActivity>> signalChannels = new HashMap<>();
     private List<String> signalChannelsLocal;
@@ -66,6 +67,7 @@ public class ADParser {
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
+    public static HashMap<String,Integer> IdSignals = new HashMap<>();
     
     private ADAlphabet alphabetAD;
     public ADDefineChannels dChannels;

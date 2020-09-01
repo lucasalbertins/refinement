@@ -423,7 +423,7 @@ public class ADDefineNodesActionAndControl {
         }
 
         //add initial central
-        if (allInitial.size() > 0) {//provavel local de alteração
+        /*if (allInitial.size() > 0) {//provavel local de alteração
             nodes.append("init_" + adUtils.nameDiagramResolver(ad.getName()) + "_t(id) = (" + allInitial.get(0));
             for (int i = 1; i < allInitial.size(); i++) {
                 nodes.append("(id) ||| " + allInitial.get(i));
@@ -433,9 +433,10 @@ public class ADDefineNodesActionAndControl {
 
             alphabetAllInitialAndParameter.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
             
-            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,"init");
+            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,allInitial.get(0));
             alphabetNode.put(pair, alphabetAllInitialAndParameter);
-        }
+            
+        }*/
 
         nodes.append("\n");
 
@@ -468,7 +469,7 @@ public class ADDefineNodesActionAndControl {
     private IActivityNode defineInitialNode(IActivityNode activityNode, StringBuilder nodes) {
         ADUtils adUtils = defineADUtils();
 
-        dInitialNode = new ADDefineInitialNode(ad, allInitial, alphabetAllInitialAndParameter, queueNode, syncChannelsEdge, adUtils);
+        dInitialNode = new ADDefineInitialNode(ad, allInitial, alphabetAllInitialAndParameter, queueNode, syncChannelsEdge, adUtils,alphabetNode);
 
         return dInitialNode.defineInitialNode(activityNode, nodes);
     }
@@ -529,7 +530,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = defineADUtils();
 
         dInputParameterNode = new ADDefineInputParameterNode(ad, parameterAlphabetNode, syncObjectsEdge, objectEdges,
-                queueNode, allInitial, alphabetAllInitialAndParameter, adUtils);
+                queueNode, allInitial, alphabetAllInitialAndParameter, adUtils,alphabetNode);
 
         return dInputParameterNode.defineInputParameterNode(activityNode, nodes);
     }

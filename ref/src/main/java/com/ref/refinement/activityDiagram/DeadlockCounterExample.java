@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADAlphabet;
 import com.ref.parser.activityDiagram.ADCompositeAlphabet;
+import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.Pair;
 
 import java.text.SimpleDateFormat;
@@ -28,11 +29,17 @@ public class DeadlockCounterExample {
     private static IPackage packageCounterExample;
     private static IActivityDiagram ad;
     private static ADAlphabet alphabet;
+    public static HashMap<String,Integer> IdSignals = new HashMap<>();
+    public static HashMap<String,String> newIdSignals = new HashMap<>();
     public static List<IActivity> callBehaviourList = new ArrayList<>();
     
 	public static void createDeadlockCounterExample(List<String> traceList, ADAlphabet alphabetAD) {
         try {
         	alphabet = alphabetAD;
+       
+        	IdSignals = ADParser.IdSignals;
+        	ADParser.IdSignals = new HashMap<>();
+        	
         	
             Date hoje = new Date();
             SimpleDateFormat df;
@@ -47,8 +54,15 @@ public class DeadlockCounterExample {
                 String[] objTracePartition = objTrace.split("\\.");
                 if (objTracePartition.length > 2) {
                 	String aux = objTracePartition[0] + ".id";
-                	for(int i=2;i<objTracePartition.length;i++) {
-                		aux+="."+objTracePartition[i];
+                	if(!objTracePartition[0].startsWith("oe_")) {
+		            	for(int i=2;i<objTracePartition.length;i++) {
+		            		aux+="."+objTracePartition[i];
+		            	}
+                	}
+                	else {
+                		for(int i=2;i<objTracePartition.length-1;i++) {
+		            		aux+="."+objTracePartition[i];
+		            	}
                 	}
                     trace.add(aux);
                 } else {
@@ -72,9 +86,10 @@ public class DeadlockCounterExample {
             	if(ADdiagrams == diagram || 
         			(ADdiagrams instanceof IActivityDiagram &&  
         					callBehaviourList.contains(activity))) {
+            		IActivity diagrama = getDiagram(ADdiagrams,ADdiagrams.getName(),diagram);
 	            	ad = adEditor.createActivityDiagram(packageCounterExample, ADdiagrams.getName()+ "#" + data);
 	            	for (IActivityNode node : ((IActivityDiagram) ADdiagrams).getActivity().getActivityNodes()) {
-	                    createNode(node, adEditor);
+	                    createNode(node, adEditor,diagrama);
 	                }
             	}
             }
@@ -85,7 +100,19 @@ public class DeadlockCounterExample {
         }
     }
 
-    private static String nameNodeResolver(String name) {
+    private static IActivity getDiagram(IDiagram aDdiagrams, String ADdiagrams,IDiagram diagram) {
+		for(IActivity diagrama: callBehaviourList) {
+			if(ADdiagrams.equals(diagrama.getName())) {
+				return diagrama;
+			}
+		}
+		if(ADdiagrams.equals(diagram.getName())) {
+			return ((IActivityDiagram) diagram).getActivity();
+		}
+		return null;
+	}
+
+	private static String nameNodeResolver(String name) {
         return name.replace(" ", "").replace("!", "_").replace("@", "_")
                 .replace("%", "_").replace("&", "_").replace("*", "_")
                 .replace("(", "_").replace(")", "_").replace("+", "_")
@@ -173,34 +200,34 @@ public class DeadlockCounterExample {
         } catch (Exception e) { }
     }
 
-    private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createNode(IActivityNode node, ActivityDiagramEditor adEditor,IActivity diagram) {
         INodePresentation nodePresent = null;
 
         if (!nodeAdded.containsKey(node.getId())) {
             if (node instanceof IAction) {
                 if (((IAction) node).isCallBehaviorAction()) {
-                    nodePresent = createAction(node, adEditor, true);
+                    nodePresent = createAction(node, adEditor, true,diagram);
                 } else {
-                    nodePresent = createAction(node, adEditor, false);
+                    nodePresent = createAction(node, adEditor, false,diagram);
                 }
             } else if (node instanceof IControlNode) {
                 if (((IControlNode) node).isFinalNode()) {
-                    nodePresent = createFinal(node, adEditor);
+                    nodePresent = createFinal(node, adEditor,diagram);
                 } else if (((IControlNode) node).isFlowFinalNode()) {
-                    nodePresent = createFlowFinal(node, adEditor);
+                    nodePresent = createFlowFinal(node, adEditor,diagram);
                 } else if (((IControlNode) node).isInitialNode()) {
-                    nodePresent = createInitial(node, adEditor);
+                    nodePresent = createInitial(node, adEditor,diagram);
                 } else if (((IControlNode) node).isForkNode()) {
-                    nodePresent = createFork(node, adEditor);
+                    nodePresent = createFork(node, adEditor,diagram);
                 } else if (((IControlNode) node).isJoinNode()) {
-                    nodePresent = createJoin(node, adEditor);
+                    nodePresent = createJoin(node, adEditor,diagram);
                 } else if (((IControlNode) node).isDecisionMergeNode()) {
-                    nodePresent = createDecisionAndMerge(node, adEditor);
+                    nodePresent = createDecisionAndMerge(node, adEditor,diagram);
                 }
             } else if (node instanceof IActivityParameterNode) {
-                nodePresent = createParameter(node, adEditor);
+                nodePresent = createParameter(node, adEditor,diagram);
             } else if (node instanceof IObjectNode && !(node instanceof IPin)) {
-                nodePresent = createObjectNode(node, adEditor);
+                nodePresent = createObjectNode(node, adEditor,diagram);
             }
         } else {
             nodePresent = nodeAdded.get(node.getId());
@@ -209,7 +236,7 @@ public class DeadlockCounterExample {
         return nodePresent;
     }
 
-    private static INodePresentation createAction(IActivityNode node, ActivityDiagramEditor adEditor, boolean callBehaviour) {
+    private static INodePresentation createAction(IActivityNode node, ActivityDiagramEditor adEditor, boolean callBehaviour, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         IInputPin[] inPins = ((IAction) node).getInputs();
         IOutputPin[] outPins = ((IAction) node).getOutputs();
@@ -220,7 +247,7 @@ public class DeadlockCounterExample {
                 actionNode = adEditor.createCallBehaviorAction(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             } else {
             	if(((IAction) node).isAcceptEventAction()) {
-            		actionNode = adEditor.createAcceptEventAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
+            		actionNode = adEditor.createAcceptEventAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());            		
             	}else if(((IAction) node).isSendSignalAction()) {
             		actionNode = adEditor.createSendSignalAction(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
             	}else {
@@ -229,8 +256,9 @@ public class DeadlockCounterExample {
             }
 
             IActivityNode actNode = getIActivityNode(actionNode);
+            newIdSignals.put(actionNode.getID(),node.getId());
             actNode.setDefinition(node.getDefinition());
-            paintNodes(node, actionNode);
+            paintNodes(node, actionNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -252,7 +280,7 @@ public class DeadlockCounterExample {
             }
 
             for (int i = 0; i < outFlows.length; i++) {
-                INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                 ILinkPresentation flow = adEditor.createFlow(actionNode, targetPresent);
                 flow.setLabel(outFlows[i].getGuard());
 
@@ -263,14 +291,14 @@ public class DeadlockCounterExample {
 
                 setFlowPoints(flow, outFlows[i]);
      
-                flowSP(outFlows, i, flow);
+                flowSP(outFlows, i, flow,diagram);
             }
 
             for (int i = 0; i < outPins.length; i++) {
                 IFlow[] targetOutFlows = outPins[i].getOutgoings();
                 for (int x = 0; x < targetOutFlows.length; x++) {
                     if (targetOutFlows[x].getTarget() instanceof IInputPin) {
-                        createNode((IActivityNode) targetOutFlows[x].getTarget().getOwner(), adEditor);
+                        createNode((IActivityNode) targetOutFlows[x].getTarget().getOwner(), adEditor,diagram);
                         INodePresentation targetPresent = objPresent.get(targetOutFlows[x].getTarget().getId());
                         INodePresentation pinPresent = objPresent.get(outPins[i].getId());
                         ILinkPresentation flow = adEditor.createFlow(pinPresent, targetPresent);
@@ -283,7 +311,7 @@ public class DeadlockCounterExample {
 
                         setFlowPoints(flow, targetOutFlows[x]);
                         
-                        flowPinTargetSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                        flowPinTargetSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
                         
                         /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) ||alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
                             String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
@@ -301,7 +329,7 @@ public class DeadlockCounterExample {
                         }*/
 
                     } else {
-                        INodePresentation targetPresent = createNode(targetOutFlows[x].getTarget(), adEditor);
+                        INodePresentation targetPresent = createNode(targetOutFlows[x].getTarget(), adEditor,diagram);
                         INodePresentation pinPresent = objPresent.get(outPins[i].getId());
                         ILinkPresentation flow = adEditor.createFlow(pinPresent, targetPresent);
                         flow.setLabel(targetOutFlows[x].getGuard());
@@ -315,7 +343,7 @@ public class DeadlockCounterExample {
                         
                         //flowPinTargetSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
                      
-                        flowPinSP(outFlows, targetOutFlows, x, targetPresent, pinPresent, flow);
+                        flowPinSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
                         /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
                             String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
                             String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
@@ -341,19 +369,19 @@ public class DeadlockCounterExample {
 
     }
     
-    private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation initialNode = null;
 
         try {
             initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-            paintNodes(node, initialNode);
+            paintNodes(node, initialNode,diagram);
             
             nodeAdded.put(node.getId(), initialNode);
 
             for (int i = 0; i < outFlows.length; i++) {
-                INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                 ILinkPresentation flow = adEditor.createFlow(initialNode, targetPresent);
                 flow.setLabel(outFlows[i].getGuard());
 
@@ -364,7 +392,7 @@ public class DeadlockCounterExample {
 
                 setFlowPoints(flow, outFlows[i]);
                 
-                flowSP(outFlows, i, flow);
+                flowSP(outFlows, i, flow,diagram);
                 
                 /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                     String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -386,14 +414,14 @@ public class DeadlockCounterExample {
         return initialNode;
     }
 
-    private static INodePresentation createParameter(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createParameter(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation parameterNode = null;
 
         try {
             parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
             
-            paintNodes(node, parameterNode);
+            paintNodes(node, parameterNode,diagram);
             /*if (alphabet.getParameterAlphabetNode().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getParameterAlphabetNode().get(nameNodeResolver(node.getName()));
 
@@ -408,7 +436,7 @@ public class DeadlockCounterExample {
 
             for (int i = 0; i < outFlows.length; i++) {
                 if (outFlows[i].getTarget() instanceof IInputPin) {
-                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor,diagram);
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(parameterNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
@@ -420,10 +448,10 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 
                 } else {
-                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(parameterNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
 
@@ -434,7 +462,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    flowSP(outFlows, i, flow);
+                    flowSP(outFlows, i, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -457,7 +485,7 @@ public class DeadlockCounterExample {
         return parameterNode;
     }
 
-    private static INodePresentation createDecisionAndMerge(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createDecisionAndMerge(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation decisionNode = null;
 
@@ -465,7 +493,7 @@ public class DeadlockCounterExample {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             decisionNode.setLabel(node.getName());
             
-            paintNodes(node, decisionNode);
+            paintNodes(node, decisionNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -480,7 +508,7 @@ public class DeadlockCounterExample {
 
             for (int i = 0; i < outFlows.length; i++) {
                 if (outFlows[i].getTarget() instanceof IInputPin) {
-                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor,diagram);
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
@@ -492,7 +520,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -508,7 +536,7 @@ public class DeadlockCounterExample {
                     }*/
 
                 } else {
-                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
 
@@ -519,7 +547,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
                     
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -542,7 +570,7 @@ public class DeadlockCounterExample {
         return decisionNode;
     }
 
-    private static INodePresentation createFork(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createFork(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation forkNode = null;
 
@@ -551,7 +579,7 @@ public class DeadlockCounterExample {
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
             forkNode.setLabel(node.getName());
 
-            paintNodes(node, forkNode);
+            paintNodes(node, forkNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -566,7 +594,7 @@ public class DeadlockCounterExample {
 
             for (int i = 0; i < outFlows.length; i++) {
                 if (outFlows[i].getTarget() instanceof IInputPin) {
-                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor,diagram);
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(forkNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
@@ -577,7 +605,7 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -593,7 +621,7 @@ public class DeadlockCounterExample {
                     }*/
 
                 } else {
-                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(forkNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
 
@@ -603,7 +631,7 @@ public class DeadlockCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -626,7 +654,7 @@ public class DeadlockCounterExample {
         return forkNode;
     }
 
-    private static INodePresentation createJoin(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createJoin(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation joinNode = null;
 
@@ -635,7 +663,7 @@ public class DeadlockCounterExample {
                     ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
             joinNode.setLabel(node.getName());
 
-            paintNodes(node, joinNode);
+            paintNodes(node, joinNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -650,7 +678,7 @@ public class DeadlockCounterExample {
 
             for (int i = 0; i < outFlows.length; i++) {
                 if (outFlows[i].getTarget() instanceof IInputPin) {
-                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor,diagram);
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
@@ -662,10 +690,10 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 
                 } else {
-                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
 
@@ -676,7 +704,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
 
-                    flowSP(outFlows, i, flow);
+                    flowSP(outFlows, i, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -699,7 +727,7 @@ public class DeadlockCounterExample {
         return joinNode;
     }
 
-    private static INodePresentation createFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createFinal(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         //IFlow[] outFlows = node.getOutgoings();
         INodePresentation FinalNode = null;
 
@@ -715,14 +743,14 @@ public class DeadlockCounterExample {
         return FinalNode;
     }
 
-    private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         //IFlow[] outFlows = node.getOutgoings();
         INodePresentation flowFinalNode = null;
 
         try {
             flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
             
-            paintNodes(node, flowFinalNode);
+            paintNodes(node, flowFinalNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -775,14 +803,14 @@ public class DeadlockCounterExample {
         return targetPresent;
     }
 
-    private static INodePresentation createObjectNode(IActivityNode node, ActivityDiagramEditor adEditor) {
+    private static INodePresentation createObjectNode(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation objectNode = null;
 
         try {
             objectNode = adEditor.createObjectNode(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             
-            paintNodes(node, objectNode);
+            paintNodes(node, objectNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -797,7 +825,7 @@ public class DeadlockCounterExample {
 
             for (int i = 0; i < outFlows.length; i++) {
                 if (outFlows[i].getTarget() instanceof IInputPin) {
-                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor);
+                    createNode((IActivityNode) outFlows[i].getTarget().getOwner(), adEditor,diagram);
                     INodePresentation targetPresent = objPresent.get(outFlows[i].getTarget().getId());
                     ILinkPresentation flow = adEditor.createFlow(objectNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
@@ -809,7 +837,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
                     
-                    flowTargetSP(outFlows, i, targetPresent, flow);
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -825,7 +853,7 @@ public class DeadlockCounterExample {
                     }*/
 
                 } else {
-                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor);
+                    INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(objectNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
 
@@ -836,7 +864,7 @@ public class DeadlockCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
                     
-                    flowSP(outFlows,i,flow);
+                    flowSP(outFlows,i,flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
@@ -859,8 +887,27 @@ public class DeadlockCounterExample {
         return objectNode;
     }
   
-    private static void paintNodes(IActivityNode node, INodePresentation actionNode) throws InvalidEditingException {
-    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(), nameNodeResolver(node.getName()));
+    private static void paintNodes(IActivityNode node, INodePresentation actionNode,IActivity diagram) throws InvalidEditingException {
+    	Pair<IActivity, String> key = null; 	
+    	if(node instanceof IAction) {
+    		if(((IAction)node).isAcceptEventAction()) {
+    			String idAntigo = newIdSignals.get(actionNode.getID());
+    			int signalNumber = IdSignals.get(idAntigo);
+    			key = new Pair<IActivity, String>(diagram,"accept_"+nameNodeResolver(node.getName())+"_"+signalNumber);
+    		}
+    		else if(((IAction)node).isSendSignalAction()) {
+    			String idAntigo = newIdSignals.get(actionNode.getID());
+    			int signalNumber = IdSignals.get(idAntigo);
+    			key = new Pair<IActivity, String>(diagram,"signal_"+nameNodeResolver(node.getName())+"_"+signalNumber);
+    		}
+    		else {
+    			key = new Pair<IActivity, String>(diagram,nameNodeResolver(node.getName()));
+    		}
+    	}
+    	else {
+    		key = new Pair<IActivity, String>(diagram,nameNodeResolver(node.getName()));
+    	}
+    	
     	if(alphabet instanceof ADCompositeAlphabet) {
 			HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
 			aux =((ADCompositeAlphabet) alphabet).getAllAlphabetNodes();		
@@ -885,9 +932,9 @@ public class DeadlockCounterExample {
 		}
 	}
 
-    private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow) throws InvalidEditingException {
+    private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
     	String outFlowID = outFlows[i].getId();
-    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
     	if(alphabet instanceof ADCompositeAlphabet){
 			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
 					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
@@ -916,10 +963,10 @@ public class DeadlockCounterExample {
 		}
 	}
 
-    private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow)
+    private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow,IActivity diagram)
 			throws InvalidEditingException {
     	String outFlowID = outFlows[i].getId();
-    	Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
 		if(alphabet instanceof ADCompositeAlphabet){
 			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
 					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
@@ -954,11 +1001,11 @@ public class DeadlockCounterExample {
 		}
 	}
     
-    private static void flowPinSP(IFlow[] outFlows, IFlow[] targetOutFlows, int x, INodePresentation targetPresent,
-			INodePresentation pinPresent, ILinkPresentation flow) throws InvalidEditingException {
+    private static void flowPinSP(IFlow[] targetOutFlows, int x, INodePresentation targetPresent,
+			INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
 		if(alphabet instanceof ADCompositeAlphabet){
-			String outFlowID = outFlows[x].getId();
-			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
+			String outFlowID = targetOutFlows[x].getId();
+			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
 			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
 					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
 				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
@@ -976,7 +1023,7 @@ public class DeadlockCounterExample {
 		}
 		else {
 			String targetOutFlowID = targetOutFlows[x].getId();
-			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),targetOutFlowID);
+			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,targetOutFlowID);
 			if (alphabet.getSyncChannelsEdge().containsKey(key) ||
 				alphabet.getSyncObjectsEdge().containsKey(key)) {
 		        String channel = alphabet.getSyncChannelsEdge().get(key);
@@ -994,14 +1041,16 @@ public class DeadlockCounterExample {
 		}
 	}
 
-    private static void flowPinTargetSP(IFlow[] outFlows, IFlow[] targetOutFlows, int x,
-			INodePresentation targetPresent, INodePresentation pinPresent, ILinkPresentation flow)
+    
+    private static void flowPinTargetSP( IFlow[] targetOutFlows, int x,
+			INodePresentation targetPresent, INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram)
 			throws InvalidEditingException {
 		if(alphabet instanceof ADCompositeAlphabet){
-			String outFlowID = outFlows[x].getId();
-			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),outFlowID);
-			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
-					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
+			String outFlowID = targetOutFlows[x].getId();
+			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
+			HashMap<Pair<IActivity, String>, String> allSyncChannelsEdge = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge();
+			HashMap<Pair<IActivity, String>, String> allsyncObjectsEdge = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge();
+			if(allSyncChannelsEdge.containsKey(key) ||allsyncObjectsEdge.containsKey(key)) {
 				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
 		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
 
@@ -1018,7 +1067,7 @@ public class DeadlockCounterExample {
 		}
 		else {
 			String targetOutFlowID = targetOutFlows[x].getId();
-			Pair<IActivity, String> key = new Pair<IActivity, String>(ad.getActivity(),targetOutFlowID);
+			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,targetOutFlowID);
 			if (alphabet.getSyncChannelsEdge().containsKey(key) || 
 				alphabet.getSyncObjectsEdge().containsKey(key)) {
 		        String channel = alphabet.getSyncChannelsEdge().get(key);

@@ -71,7 +71,7 @@ public class ADDefineAccept {
                 accept.append("); ");
             }
 
-            adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
+            adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept,activityNode);
 
             if (inFlows.length == 0) {
                 adUtils.update(alphabet, accept, 1, outFlows.length, false); // outFlows - 1
@@ -176,7 +176,7 @@ public class ADDefineAccept {
                 accept.append("); ");
             }
 
-            adUtils.accept(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), accept);
+            adUtils.accept(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), accept,activityNode);
 
             if (inFlows.length == 0) {
                 adUtils.update(alphabet, accept, 1, outFlows.length, false); // outFlows - 1

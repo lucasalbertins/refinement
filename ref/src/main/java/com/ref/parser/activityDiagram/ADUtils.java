@@ -187,12 +187,12 @@ public class ADUtils {
     }
 
     public void ce(ArrayList<String> alphabetNode, StringBuilder action, String ce, String posCe) {
-        alphabetNode.add(ce);//TODO olhar
+        alphabetNode.add(ce);
         action.append(ce + posCe);
     }
 
     public void oe(ArrayList<String> alphabetNode, StringBuilder action, String oe, String data, String posOe) {
-        alphabetNode.add(oe);//TODO olhar2
+        alphabetNode.add(oe);
         action.append(oe + data + posOe);
     }
 
@@ -277,7 +277,7 @@ public class ADUtils {
         return objects;
     }
 
-    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal) {
+    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IActivityNode activityNode) {
         if (!localSignalChannelsSync.contains("signal_" + nameSignal)) {
             localSignalChannelsSync.add("signal_" + nameSignal);
         }
@@ -324,15 +324,18 @@ public class ADUtils {
         alphabet.add("signal_" + nameSignal + ".id." + idSignal);
         signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
 
-        if (index >= 0) {
+        if (index >= 0) {//TODO verificar se ta certo 
             countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
+            ADParser.IdSignals.put(activityNode.getId(),idSignal);
+            
         } else {
             countSignal.add(new Pair<String, Integer>(nameSignal, idSignal + 1));
+            ADParser.IdSignals.put(activityNode.getId(),idSignal);
         }
 
     }
 
-    public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept) {
+    public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept, IActivityNode activityNode) {
         if (!localSignalChannelsSync.contains("signal_" + nameAccept)) {
             localSignalChannelsSync.add("signal_" + nameAccept);
         }
@@ -360,8 +363,10 @@ public class ADUtils {
 
         if (index >= 0) {
             countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));
+            ADParser.IdSignals.put(activityNode.getId(),idAccept);
         } else {
             countAccept.add(new Pair<String, Integer>(nameAccept, idAccept + 1));
+            ADParser.IdSignals.put(activityNode.getId(),idAccept);
         }
     }
 

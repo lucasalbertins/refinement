@@ -73,7 +73,7 @@ public class ADDefineSignal {
 
             signal.append("); ");
 
-            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
+            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal,activityNode);
 
             adUtils.update(alphabet, signal, inFlows.length, outFlows.length, false);
 
@@ -171,7 +171,7 @@ public class ADDefineSignal {
 
             signal.append("); ");
 
-            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
+            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal,activityNode);
 
             adUtils.update(alphabet, signal, inFlows.length, outFlows.length, false);
 
