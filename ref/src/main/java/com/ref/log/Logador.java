@@ -1,11 +1,9 @@
 package com.ref.log;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.NoSuchFileException;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 

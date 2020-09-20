@@ -13,8 +13,7 @@ import com.change_vision.jude.api.inf.model.IActivity;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.ref.exceptions.ParsingException;
-import com.ref.refinement.activityDiagram.DeadlockCounterExample;
-import com.ref.refinement.activityDiagram.DeterminismCounterExample;
+import com.ref.refinement.activityDiagram.CounterExamples;
 
 public class ADParser {
 
@@ -255,8 +254,8 @@ public class ADParser {
 
         //reseta os valores estaticos
         if (reset) {
-        	DeadlockCounterExample.callBehaviourList = callBehaviourList;
-        	DeterminismCounterExample.callBehaviourList = callBehaviourList;
+        	CounterExamples.callBehaviourList = callBehaviourList;
+        	//DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();
         }
 

@@ -1,9 +1,18 @@
 package com.ref.ui.activityDiagram;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Properties;
+
+import javax.swing.JOptionPane;
+
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.InvalidUsingException;
-import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
-import com.change_vision.jude.api.inf.model.*;
+import com.change_vision.jude.api.inf.model.IActivityDiagram;
+import com.change_vision.jude.api.inf.model.IDiagram;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
 import com.ref.exceptions.ParsingException;
@@ -11,11 +20,6 @@ import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
-
-import javax.swing.*;
-import java.io.*;
-import java.util.List;
-import java.util.Properties;
 
 public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 

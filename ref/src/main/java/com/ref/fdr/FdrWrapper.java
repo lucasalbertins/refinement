@@ -19,7 +19,7 @@ import com.change_vision.jude.api.inf.editor.*;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
-import com.ref.refinement.activityDiagram.DeadlockCounterExample;
+import com.ref.refinement.activityDiagram.CounterExamples;
 import com.ref.refinement.activityDiagram.DeterminismCounterExample;
 import com.ref.ui.CheckingProgressBar;
 
@@ -474,7 +474,7 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-						DeadlockCounterExample.createDeadlockCounterExample(trace, parser.getAlphabetAD());
+						CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),1);
 
 						hasError = 2;
 					}
@@ -618,7 +618,7 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
-						DeterminismCounterExample.createDeterminismCounterExample(trace, parser.getAlphabetAD());
+						CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),2);
 
 						hasError = 2;
 					}

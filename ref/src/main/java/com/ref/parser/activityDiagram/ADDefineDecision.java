@@ -45,15 +45,15 @@ public class ADDefineDecision {
         if (code == 0) {
             for (int i = 0; i < inFlows.length; i++) {
 
-                String[] stereotype = inFlows[i].getStereotypes();
+                /*String[] stereotype = inFlows[i].getStereotypes();
 
-                for (int j = 0; j < stereotype.length; j++) {
+                for (int j = 0; j < stereotype.length; j++) {*/
                 	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
-                    if (stereotype[j].equals("decisionInputFlow")) {
+                    //if (stereotype[j].equals("decisionInputFlow")) {
                         decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
                         decisionInputFlow = inFlows[i].getSource().getName();
-                    }
-                }
+                   /* }
+                }*/
             }
 
             if (decisionInputType != null && inFlows.length == 1) {    //just object
@@ -344,15 +344,15 @@ public class ADDefineDecision {
         } else if (code == 1) {
             for (int i = 0; i < inFlows.length; i++) {
 
-                String[] stereotype = inFlows[i].getStereotypes();
+                /*String[] stereotype = inFlows[i].getStereotypes();
 
                 for (int j = 0; j < stereotype.length; j++) {
-                    if (stereotype[j].equals("decisionInputFlow")) {
+                    if (stereotype[j].equals("decisionInputFlow")) {*/
                     	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
                         decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
                         decisionInputFlow = inFlows[i].getSource().getName();
-                    }
-                }
+                   /* }
+                }*/
             }
 
             if (decisionInputType != null && inFlows.length == 1) {    //just object
@@ -482,15 +482,15 @@ public class ADDefineDecision {
         } else if (code == 2) {
             for (int i = 0; i < inFlows.length; i++) {
 
-                String[] stereotype = inFlows[i].getStereotypes();
+                //String[] stereotype = inFlows[i].getStereotypes();
 
-                for (int j = 0; j < stereotype.length; j++) {
-                    if (stereotype[j].equals("decisionInputFlow")) {
+                //for (int j = 0; j < stereotype.length; j++) {
+                    //if (stereotype[j].equals("decisionInputFlow")) {
                     	Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
                         decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
                         decisionInputFlow = inFlows[i].getSource().getName();
-                    }
-                }
+                    //}
+                //}
             }
 
             if (decisionInputType != null && inFlows.length == 1) {    //just object

@@ -22,23 +22,24 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class DeterminismCounterExample {
+public class CounterExamples {
     private static HashMap<String, INodePresentation> nodeAdded;
     private static HashMap<String, INodePresentation> objPresent;
     private static List<String> trace;
     private static IPackage packageCounterExample;
     private static IActivityDiagram ad;
     private static ADAlphabet alphabet;
-    public static List<IActivity> callBehaviourList = new ArrayList<>();
     public static HashMap<String,Integer> IdSignals = new HashMap<>();
     public static HashMap<String,String> newIdSignals = new HashMap<>();
+    public static List<IActivity> callBehaviourList = new ArrayList<>();
     
-    public static void createDeterminismCounterExample(List<String> traceList, ADAlphabet alphabetAD) {
+	public static void createCounterExample(List<String> traceList, ADAlphabet alphabetAD,int CounterExType) {
         try {
         	alphabet = alphabetAD;
-        	
+       
         	IdSignals = ADParser.IdSignals;
         	ADParser.IdSignals = new HashMap<>();
+        	
         	
             Date hoje = new Date();
             SimpleDateFormat df;
@@ -68,8 +69,10 @@ public class DeterminismCounterExample {
                     trace.add(objTrace);
                 }
             }
+
+            
             IDiagram[] diagrams = AstahAPI.getAstahAPI().getProjectAccessor().getProject().getDiagrams();
-            //IDiagram[] diagrams = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getOpenDiagrams();
+            		//getCurrentProject().getDiagrams()getViewManager().getDiagramViewManager().getOpenDiagrams();
             IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
             
             ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
@@ -77,7 +80,7 @@ public class DeterminismCounterExample {
             BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
 
             TransactionManager.beginTransaction();
-            createPackage(basicModelEditor, project);
+            createPackage(basicModelEditor, project,CounterExType);
             ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
             for(IDiagram ADdiagrams: diagrams) {
             	if(ADdiagrams instanceof IActivityDiagram) {
@@ -109,8 +112,8 @@ public class DeterminismCounterExample {
 		}
 		return null;
 	}
-    
-    private static String nameNodeResolver(String name) {
+
+	private static String nameNodeResolver(String name) {
         return name.replace(" ", "").replace("!", "_").replace("@", "_")
                 .replace("%", "_").replace("&", "_").replace("*", "_")
                 .replace("(", "_").replace(")", "_").replace("+", "_")
@@ -121,14 +124,19 @@ public class DeterminismCounterExample {
                 .replace("\\", "_");
     }
 
-    private static void createPackage(BasicModelEditor basicModelEditor, IModel project) {
+    private static void createPackage(BasicModelEditor basicModelEditor, IModel project,int CounterExType) {
         try {
-            packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
+        	if(CounterExType == 1) {
+        		packageCounterExample = basicModelEditor.createPackage(project, "DeadlockCounterExample");	
+        	}else if(CounterExType == 2) {
+        		packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
+        	}
+            
         } catch (InvalidEditingException e) {
             INamedElement[] objects = project.getOwnedElements();
 
             for (INamedElement object : objects) {
-                if (object.getName().equals("DeterminismCounterExample")) {
+                if (object.getName().equals("DeadlockCounterExample")) {
                     packageCounterExample = (IPackage) object;
                 }
             }
@@ -241,7 +249,7 @@ public class DeterminismCounterExample {
         INodePresentation actionNode = null;
 
         try {
-        	if (callBehaviour) {
+            if (callBehaviour) {
                 actionNode = adEditor.createCallBehaviorAction(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             } else {
             	if(((IAction) node).isAcceptEventAction()) {
@@ -288,7 +296,7 @@ public class DeterminismCounterExample {
                 }
 
                 setFlowPoints(flow, outFlows[i]);
-
+     
                 flowSP(outFlows, i, flow,diagram);
             }
 
@@ -308,9 +316,10 @@ public class DeterminismCounterExample {
                         }
 
                         setFlowPoints(flow, targetOutFlows[x]);
-
+                        
                         flowPinTargetSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
-                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
+                        
+                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) ||alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
                             String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
                             String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
 
@@ -337,7 +346,7 @@ public class DeterminismCounterExample {
                         }
 
                         setFlowPoints(flow, targetOutFlows[x]);
-
+                        
                         flowPinSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
                         /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
                             String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
@@ -359,12 +368,12 @@ public class DeterminismCounterExample {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
         return actionNode;
 
     }
-
-    private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor,IActivity diagram) {
+    
+    private static INodePresentation createInitial(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation initialNode = null;
 
@@ -372,7 +381,7 @@ public class DeterminismCounterExample {
             initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
             paintNodes(node, initialNode,diagram);
-
+            
             nodeAdded.put(node.getId(), initialNode);
 
             for (int i = 0; i < outFlows.length; i++) {
@@ -386,8 +395,9 @@ public class DeterminismCounterExample {
                 }
 
                 setFlowPoints(flow, outFlows[i]);
-
+                
                 flowSP(outFlows, i, flow,diagram);
+                
                 /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                     String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
                     String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
@@ -408,7 +418,7 @@ public class DeterminismCounterExample {
         return initialNode;
     }
 
-    private static INodePresentation createParameter(IActivityNode node, ActivityDiagramEditor adEditor,IActivity diagram) {
+    private static INodePresentation createParameter(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation parameterNode = null;
 
@@ -455,7 +465,9 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
+
                     flowSP(outFlows, i, flow,diagram);
+                    
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
                         String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
@@ -477,16 +489,15 @@ public class DeterminismCounterExample {
         return parameterNode;
     }
 
-    private static INodePresentation createDecisionAndMerge(IActivityNode node, ActivityDiagramEditor adEditor,IActivity diagram) {
+    private static INodePresentation createDecisionAndMerge(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation decisionNode = null;
 
         try {
             decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             decisionNode.setLabel(node.getName());
-
-            paintNodes(node, decisionNode,diagram);
             
+            paintNodes(node, decisionNode,diagram);
             /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
                 List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
 
@@ -512,7 +523,7 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-                    
+
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
@@ -540,7 +551,8 @@ public class DeterminismCounterExample {
 
                     setFlowPoints(flow, outFlows[i]);
                     
-                    flowSP(outFlows, i, flow,diagram);//TODO esta diferente do deadlock
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
+                    
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
                         String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
@@ -556,7 +568,7 @@ public class DeterminismCounterExample {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+           e.printStackTrace();
         }
 
         return decisionNode;
@@ -597,7 +609,6 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-                    
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
@@ -624,8 +635,8 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-
-                    flowSP(outFlows, i, flow,diagram);//TODO esta diferente do deadlock
+                    flowTargetSP(outFlows, i, targetPresent, flow,diagram);
+                    
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
                         String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
                         String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
@@ -641,7 +652,7 @@ public class DeterminismCounterExample {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+           e.printStackTrace();
         }
 
         return forkNode;
@@ -684,8 +695,8 @@ public class DeterminismCounterExample {
                     setFlowPoints(flow, outFlows[i]);
 
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
-                    
-                	} else {
+
+                } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(joinNode, targetPresent);
                     flow.setLabel(outFlows[i].getGuard());
@@ -696,7 +707,7 @@ public class DeterminismCounterExample {
                     }
 
                     setFlowPoints(flow, outFlows[i]);
-                    
+
                     flowSP(outFlows, i, flow,diagram);
                     
                     /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
@@ -795,8 +806,7 @@ public class DeterminismCounterExample {
 
         return targetPresent;
     }
-    
-    //TODO função nova que não existia no determinism, somente no deadlock
+
     private static INodePresentation createObjectNode(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
         IFlow[] outFlows = node.getOutgoings();
         INodePresentation objectNode = null;
@@ -880,7 +890,7 @@ public class DeterminismCounterExample {
 
         return objectNode;
     }
-    
+  
     private static void paintNodes(IActivityNode node, INodePresentation actionNode,IActivity diagram) throws InvalidEditingException {
     	Pair<IActivity, String> key = null; 	
     	if(node instanceof IAction) {
@@ -928,8 +938,8 @@ public class DeterminismCounterExample {
 
     private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
     	String outFlowID = outFlows[i].getId();
-        Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
-		if(alphabet instanceof ADCompositeAlphabet){
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
+    	if(alphabet instanceof ADCompositeAlphabet){
 			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
 					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
 				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
@@ -943,8 +953,8 @@ public class DeterminismCounterExample {
 			}
 		}
 		else {
-			if (alphabet.getSyncChannelsEdge().containsKey(key) 
-					|| alphabet.getSyncObjectsEdge().containsKey(key)) {
+			if (alphabet.getSyncChannelsEdge().containsKey(key) ||
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
 		        String channel = alphabet.getSyncChannelsEdge().get(key);
 		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
@@ -960,7 +970,7 @@ public class DeterminismCounterExample {
     private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow,IActivity diagram)
 			throws InvalidEditingException {
     	String outFlowID = outFlows[i].getId();
-        Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
+    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
 		if(alphabet instanceof ADCompositeAlphabet){
 			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
 					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
@@ -979,7 +989,7 @@ public class DeterminismCounterExample {
 		}
 		else {
 			if (alphabet.getSyncChannelsEdge().containsKey(key) || 
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
 		        String channel = alphabet.getSyncChannelsEdge().get(key);
 		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
@@ -994,12 +1004,12 @@ public class DeterminismCounterExample {
 		    }
 		}
 	}
-   
+    
     private static void flowPinSP(IFlow[] targetOutFlows, int x, INodePresentation targetPresent,
-		INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
+			INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
 		if(alphabet instanceof ADCompositeAlphabet){
 			String outFlowID = targetOutFlows[x].getId();
-	    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);	    	
+			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
 			if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
 					((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
 				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
@@ -1019,7 +1029,7 @@ public class DeterminismCounterExample {
 			String targetOutFlowID = targetOutFlows[x].getId();
 			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,targetOutFlowID);
 			if (alphabet.getSyncChannelsEdge().containsKey(key) ||
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
 		        String channel = alphabet.getSyncChannelsEdge().get(key);
 		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
@@ -1035,7 +1045,8 @@ public class DeterminismCounterExample {
 		}
 	}
 
-    private static void flowPinTargetSP(IFlow[] targetOutFlows, int x,
+    
+    private static void flowPinTargetSP( IFlow[] targetOutFlows, int x,
 			INodePresentation targetPresent, INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram)
 			throws InvalidEditingException {
 		if(alphabet instanceof ADCompositeAlphabet){
@@ -1043,7 +1054,7 @@ public class DeterminismCounterExample {
 			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
 			HashMap<Pair<IActivity, String>, String> allSyncChannelsEdge = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge();
 			HashMap<Pair<IActivity, String>, String> allsyncObjectsEdge = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge();
-			if(allSyncChannelsEdge.containsKey(key) || (allsyncObjectsEdge.containsKey(key))) {
+			if(allSyncChannelsEdge.containsKey(key) ||allsyncObjectsEdge.containsKey(key)) {
 				String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
 		        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
 
@@ -1061,8 +1072,8 @@ public class DeterminismCounterExample {
 		else {
 			String targetOutFlowID = targetOutFlows[x].getId();
 			Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,targetOutFlowID);
-			if (alphabet.getSyncChannelsEdge().containsKey(key) ||
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
+			if (alphabet.getSyncChannelsEdge().containsKey(key) || 
+				alphabet.getSyncObjectsEdge().containsKey(key)) {
 		        String channel = alphabet.getSyncChannelsEdge().get(key);
 		        String channelObj = alphabet.getSyncObjectsEdge().get(key);
 
