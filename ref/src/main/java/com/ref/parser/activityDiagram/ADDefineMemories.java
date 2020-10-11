@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+
 
 public class ADDefineMemories {
 
@@ -19,7 +20,6 @@ public class ADDefineMemories {
     private Map<Pair<String, String>,String> memoryLocal;
     private ADUtils adUtils;
     public static HashMap<IActivityNode,IActivity> CBAMemAlphabet = new HashMap<>();
-    //private static List<IActivity> CBAMemAlphabetDone = new ArrayList<>();
     
     public ADDefineMemories(IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                             Map<Pair<String, String>,String> memoryLocal, ADUtils adUtils) {

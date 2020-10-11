@@ -1,7 +1,12 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.*;
 import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IInputPin;
+import com.ref.interfaces.activityDiagram.IOutputPin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +21,7 @@ public class ADDefineAction {
     private HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
-    //private HashMap<String, String> parameterNodesInput;
-    //private List<ArrayList<String>> unionList;
-    //private HashMap<String, String> typeUnionList;
     private ADUtils adUtils;
-    //private ADParser adParser;
 
     public ADDefineAction(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                           HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
@@ -32,11 +33,7 @@ public class ADDefineAction {
         this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
-        //this.parameterNodesInput = parameterNodesInput;
-        //this.unionList = unionList;
-        //this.typeUnionList = typeUnionList;
         this.adUtils = adUtils;
-        //this.adParser = adParser;
     }
 
     public IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
@@ -53,7 +50,7 @@ public class ADDefineAction {
         HashMap<String, String> typeMemoryLocal = new HashMap<>();
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
-        if(Character.isDigit(nameAction.charAt(0))) {//TODO ver se isso é certo mesmo
+        if(Character.isDigit(nameAction.charAt(0))) {
         	throw new ParsingException("The node name "+adUtils.nameDiagramResolver(activityNode.getName())+" starts with a number\n");
         }
         if (code == 0) {
@@ -87,7 +84,6 @@ public class ADDefineAction {
                 	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
                     if (syncObjectsEdge.containsKey(key)) {
                         String oeIn = syncObjectsEdge.get(key);
-                        //String typeNameObject = objectEdges.get(oeIn);
                         String nameObject = inPins[i].getName();
 
                         action.append("(");
@@ -119,7 +115,6 @@ public class ADDefineAction {
 
             action.append("); ");
 
-            //adUtils.lock(alphabet, action, 0, nameAction);
             adUtils.event(alphabet, nameAction, action);//TODO
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
@@ -150,7 +145,6 @@ public class ADDefineAction {
                 countOutFlowPin += outPins[i].getOutgoings().length;
             }
 
-            //adUtils.lock(alphabet, action, 1, nameAction);
             adUtils.update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             for (String nameObj : namesMemoryLocal) {
@@ -176,23 +170,6 @@ public class ADDefineAction {
             }
 
             String nameObject = "";
-            //String lastName = "";
-            //ArrayList<String> union = new ArrayList<>();
-//
-//            for (int i = 0; i < inPins.length; i++) {
-//                IFlow[] inFlowPin = inPins[i].getIncomings();
-//                for (int x = 0; x < inFlowPin.length; x++) {
-//                    String channel = syncObjectsEdge.get(inFlowPin[x].getId());
-//                    nameObject += objectEdges.get(channel);
-//                    union.add(objectEdges.get(channel));
-//                    //lastName = objectEdges.get(channel);
-//                }
-//            }
-
-//            if (union.size() > 1) {
-//                unionList.add(union);
-//                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
-//            }
 
             for (int i = 0; i < outPins.length; i++) {    //creates the parallel output channels
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
@@ -217,11 +194,6 @@ public class ADDefineAction {
                             value = expression[1];
                         }
                     }
-
-                    //String typeObj = parameterNodesInput.get(nameObject);
-//                    if (typeObj == null) {
-//                        typeObj = typeUnionList.get(nameObject);
-//                    }
 
                     String typeObj = nameObject;
 
@@ -273,12 +245,7 @@ public class ADDefineAction {
                     action.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
                     action.append("|}|] ");
 
-                    //String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-                    String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));
-                    //String typeObj = null;
-//                    if (typeObj == null) {
-//                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-//                    }
+                    String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));                   
 
                     action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
@@ -385,7 +352,6 @@ public class ADDefineAction {
 
             nodes.append(action.toString());
         } else if (code == 1) {
-            //String definition = activityNode.getDefinition();
             String[] definitionFinal = new String[0];
 
             if (outFlows.length > 0 || outPins.length > 0) {
@@ -407,34 +373,7 @@ public class ADDefineAction {
             }
 
             String nameObject = "";
-            //String lastName = "";
-//
-//            ArrayList<String> union = new ArrayList<>();
-//            List<String> nameObjects = new ArrayList<>();
-//            List<String> nodesAdded = new ArrayList<>();
-
-//            for (int i = 0; i < inPins.length; i++) {
-//                IFlow[] inFlowPin = inPins[i].getIncomings();
-//                for (int x = 0; x < inFlowPin.length; x++) {
-//
-//                    nameObjects.addAll(adUtils.getObjects(inFlowPin[x], nodesAdded));
-//
-//                }
-//            }
-
-//            for (String nameObj : nameObjects) {
-//                if (!union.contains(nameObj)) {
-//                    nameObject += nameObj;
-//                    union.add(nameObj);
-//                    //lastName = nameObj;
-//                }
-//            }
-
-//            if (union.size() > 1) {
-//                unionList.add(union);
-//                typeUnionList.put(nameObject, parameterNodesInput.get(lastName));
-//            }
-
+            
             for (int i = 0; i < outPins.length; i++) {    //creates the parallel output channels
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
@@ -610,7 +549,6 @@ public class ADDefineAction {
 
             action.append("); ");
 
-            //adUtils.lock(alphabet, action, 0, nameAction);
             adUtils.event(alphabet, nameAction, action);
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
@@ -641,7 +579,6 @@ public class ADDefineAction {
                 countOutFlowPin += outPins[i].getOutgoings().length;
             }
 
-            //adUtils.lock(alphabet, action, 1, nameAction);
             adUtils.update(alphabet, action, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
             for (String nameObj : namesMemoryLocal) {
@@ -667,14 +604,6 @@ public class ADDefineAction {
 
             String nameObject = "";
 
-//            for (int i = 0; i < inPins.length; i++) {
-//                IFlow[] inFlowPin = inPins[i].getIncomings();
-//                for (int x = 0; x < inFlowPin.length; x++) {
-//                    String channel = syncObjectsEdge.get(inFlowPin[x].getId());
-//                    nameObject += objectEdges.get(channel);
-//                }
-//            }
-
             for (int i = 0; i < outPins.length; i++) {    //creates the parallel output channels
                 IFlow[] outFlowPin = outPins[i].getOutgoings();
 
@@ -690,12 +619,7 @@ public class ADDefineAction {
                             value = expression[1];
                         }
                     }
-
-                    //String typeObj = parameterNodesInput.get(nameObject);
-//                    if (typeObj == null) {
-//                        typeObj = typeUnionList.get(nameObject);
-//                    }
-
+                
                     String typeObj = nameObject;
 
 
@@ -745,12 +669,8 @@ public class ADDefineAction {
                     action.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id");
                     action.append("|}|] ");
 
-                    //String typeObj = parameterNodesInput.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
                     String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));
-//                    if (typeObj == null) {
-//                        typeObj = typeUnionList.get(typeMemoryLocal.get(namesMemoryLocal.get(i)));
-//                    }
-
+                    
                     action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
 
@@ -769,7 +689,7 @@ public class ADDefineAction {
                 action.append("|}\n");
 
             } else {
-                action.append(nameAction + " /\\ " + endDiagram + "\n");
+                action.append(nameAction + "(id) /\\ " + endDiagram + "(id)\n");
             }
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+ ".id");

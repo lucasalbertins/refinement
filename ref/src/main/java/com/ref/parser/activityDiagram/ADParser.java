@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.change_vision.jude.api.inf.exception.InvalidEditingException;
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.ref.exceptions.InvalidEditingException;
 import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
+import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.refinement.activityDiagram.CounterExamples;
 
 public class ADParser {
@@ -254,6 +254,7 @@ public class ADParser {
 
         //reseta os valores estaticos
         if (reset) {
+        	//TODO local de geração do contraexemplo
         	CounterExamples.callBehaviourList = callBehaviourList;
         	//DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();

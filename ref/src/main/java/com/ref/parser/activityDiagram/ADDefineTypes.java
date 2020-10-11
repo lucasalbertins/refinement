@@ -1,12 +1,13 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
 
 public class ADDefineTypes {
 
@@ -17,12 +18,9 @@ public class ADDefineTypes {
 
     private HashMap<String, Integer> countCall;
     private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
-    //private HashMap<String, String> objectEdges;
     private HashMap<String, String> parameterNodesInput;
     private HashMap<String, String> parameterNodesOutput;
-    //private List<Pair<String, String>> memoryLocalChannel;
     private List<ArrayList<String>> unionList;
-    //private HashMap<String, String> typeUnionList;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private ADUtils adUtils;
@@ -37,12 +35,9 @@ public class ADDefineTypes {
         this.firstDiagram = firstDiagram;
         this.countCall = countCall;
         this.alphabetNode = alphabetNode2;
-        //this.objectEdges = objectEdges;
         this.parameterNodesInput = parameterNodesInput;
         this.parameterNodesOutput = parameterNodesOutput;
-        //this.memoryLocalChannel = memoryLocalChannel;
         this.unionList = unionList;
-        //this.typeUnionList = typeUnionList;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
         this.adUtils = adUtils;
@@ -58,8 +53,6 @@ public class ADDefineTypes {
             for (String id : countCall.keySet()) {
                 types.append("ID_" + id + " = {1.." + countCall.get(id) + "}\n");
             }
-
-            //types.append("datatype T = lock | unlock\n");
             
             boolean flag = false;
             
@@ -88,10 +81,6 @@ public class ADDefineTypes {
                 }
                 flag = false;
             }
-
-            /*for (Pair<String, Integer> signal : countSignal) {
-                types.append("event_" + signal.getKey() + "_" + nameDiagram + " = Int\n");
-            }*/
 
         }
 
@@ -126,21 +115,7 @@ public class ADDefineTypes {
                 }
 
             }
-
-            /*for (String input : parameterNodesInput.keySet()) {
-                types.append(input + "_" + nameDiagram + " = ");
-
-                types.append(typesParameter.get(parameterNodesInput.get(input)) + "\n");
-
-            }*/
-
-            /*for (String output : parameterNodesOutput.keySet()) {
-                types.append(output + "_" + nameDiagram + " = ");
-
-                types.append(typesParameter.get(parameterNodesOutput.get(output)) + "\n");
-
-            }*/
-
+            
             List<String> buffer = new ArrayList<>();
 
             for (ArrayList<String> union : unionList) {
@@ -158,24 +133,6 @@ public class ADDefineTypes {
                 }
 
             }
-
-//            for (Pair<String, String> pair : memoryLocalChannel) {
-//                if (!parameterNodesInput.containsKey(pair.getValue()) && !parameterNodesOutput.containsKey(pair.getValue()) && !buffer.contains(pair.getValue())) {
-//                    types.append(pair.getValue() + "_" + nameDiagram + " = ");
-//                    if (objectEdges.containsKey(pair.getKey())) {
-//                        if (parameterNodesInput.containsKey(objectEdges.get(pair.getKey()))) {
-//                            types.append(typesParameter.get(parameterNodesInput.get(objectEdges.get(pair.getKey()))) + "\n");
-//                        } else {
-//                            types.append(typesParameter.get(objectEdges.get(pair.getKey())) + "\n");
-//                        }
-//                    } else {
-//                        types.append(typesParameter.get(parameterNodesInput.get(pair.getValue())) + "\n");
-//                    }
-//
-//                    buffer.add(pair.getValue());
-//                }
-//
-//            }
 
             for (String definitionName : typesParameter.keySet()) {
                 types.append(definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");

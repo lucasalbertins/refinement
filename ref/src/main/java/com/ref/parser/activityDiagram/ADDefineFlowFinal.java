@@ -1,12 +1,13 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import com.ref.exceptions.ParsingException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
 
 public class ADDefineFlowFinal {
 

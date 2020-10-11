@@ -1,10 +1,16 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IInputPin;
+import com.ref.interfaces.activityDiagram.IPin;
 
 public class ADDefineDecision {
 

@@ -3,7 +3,7 @@ package com.ref.parser.activityDiagram;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.change_vision.jude.api.inf.model.IActivity;
+import com.ref.interfaces.activityDiagram.IActivity;
 
 public abstract class ADAlphabet {
 	protected HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetAD;

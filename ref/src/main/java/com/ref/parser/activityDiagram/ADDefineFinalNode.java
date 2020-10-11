@@ -1,11 +1,13 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IFlow;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
 
 public class ADDefineFinalNode {
 
@@ -13,7 +15,6 @@ public class ADDefineFinalNode {
     private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
     private HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
     private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
-    //private HashMap<String, String> objectEdges;
     private ADUtils adUtils;
 
     public ADDefineFinalNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
@@ -22,7 +23,6 @@ public class ADDefineFinalNode {
         this.alphabetNode = alphabetNode2;
         this.syncChannelsEdge = syncChannelsEdge2;
         this.syncObjectsEdge = syncObjectsEdge2;
-        //this.objectEdges = objectEdges;
         this.adUtils = adUtils;
     }
 

@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.model.IActivity;
 import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IActivity;
 
 public class ADDefineChannels {
 

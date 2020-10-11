@@ -5,15 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IActivityParameterNode;
-import com.change_vision.jude.api.inf.model.IControlNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import com.change_vision.jude.api.inf.model.IObjectNode;
+
 import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IActivityParameterNode;
+import com.ref.interfaces.activityDiagram.IControlNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IObjectNode;
 
 public class ADDefineNodesActionAndControl {
 
@@ -404,22 +405,6 @@ public class ADDefineNodesActionAndControl {
             }
         }
 
-        //add initial central
-        /*if (allInitial.size() > 0) {//provavel local de alteração
-            nodes.append("init_" + adUtils.nameDiagramResolver(ad.getName()) + "_t(id) = (" + allInitial.get(0));
-            for (int i = 1; i < allInitial.size(); i++) {
-                nodes.append("(id) ||| " + allInitial.get(i));
-            }
-
-            nodes.append("(id)) /\\ END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName())+"(id)");
-
-            alphabetAllInitialAndParameter.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            
-            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,allInitial.get(0));
-            alphabetNode.put(pair, alphabetAllInitialAndParameter);
-            
-        }*/
-
         nodes.append("\n");
 
         return nodes.toString();
@@ -535,7 +520,7 @@ public class ADDefineNodesActionAndControl {
         return dObjectNode.defineObjectNode(activityNode, nodes, code);
     }
 
-    private IActivityNode defineSignal(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private IActivityNode defineSignal(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dSignal = new ADDefineSignal(ad, alphabetNode, syncChannelsEdge, queueNode, countSignal, countAccept, createdSignal,
@@ -544,7 +529,7 @@ public class ADDefineNodesActionAndControl {
         return dSignal.defineSignal(activityNode, nodes, code);
     }
 
-    private IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dAccept = new ADDefineAccept(ad, alphabetNode, syncChannelsEdge, queueNode, countAccept, createdAccept, adUtils);

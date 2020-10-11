@@ -20,7 +20,7 @@ import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.refinement.activityDiagram.CounterExamples;
-import com.ref.refinement.activityDiagram.DeterminismCounterExample;
+import com.ref.refinement.activityDiagram.CounterExamples.CounterExType;
 import com.ref.ui.CheckingProgressBar;
 
 public class FdrWrapper {
@@ -47,10 +47,6 @@ public class FdrWrapper {
 
 	private Class<?> behaviourClass;
 
-	private Class<?> irrelevantBehaviourClass;
-
-	private Class<?> compiledEventListClass;
-
 	private Class<?> TraceBehaviour;
 
 	private Class<?> Node;
@@ -75,8 +71,6 @@ public class FdrWrapper {
 
     private Class<?> determinismCounterexampleClass;
 
-	private Class<?> progressReporterClass;
-	
 	public boolean loadFDR(String path) {
 
 		File file = new File(path);
@@ -127,9 +121,9 @@ public class FdrWrapper {
 
 		behaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Behaviour");
 
-		irrelevantBehaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.IrrelevantBehaviour");
+		urlCl.loadClass("uk.ac.ox.cs.fdr.IrrelevantBehaviour");
 
-		compiledEventListClass = urlCl.loadClass("uk.ac.ox.cs.fdr.CompiledEventList");
+		urlCl.loadClass("uk.ac.ox.cs.fdr.CompiledEventList");
 
 		TraceBehaviour = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceBehaviour");
 
@@ -179,7 +173,7 @@ public class FdrWrapper {
 
         determinismCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeterminismCounterexample");
 
-		progressReporterClass = urlCl.loadClass("uk.ac.ox.cs.fdr.ProgressReporter");
+		urlCl.loadClass("uk.ac.ox.cs.fdr.ProgressReporter");
 	}
 
 	public List<String> getClasses() {
@@ -314,11 +308,8 @@ public class FdrWrapper {
 
 		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
 
-			if (event == 1 || event == 0) {
-				// sb.append("-, ");
-			} else {
+			if (event != 1 && event != 0) {
 				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-				// System.out.println(result.toString());
 				sb.append(result.toString() + ", ");
 			}
 		}
@@ -474,7 +465,7 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-						CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),1);
+						CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DEADLOCK_COUNTEREXAMPLE);
 
 						hasError = 2;
 					}
@@ -554,6 +545,7 @@ public class FdrWrapper {
 					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 							"counterexamples", null, null)) {
 						hasError = 1;
+						break;
 					}
 
 				} catch (Exception e) {
@@ -618,7 +610,7 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
-						CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),2);
+						CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DETERMINISM_COUNTEREXAMPLE);
 
 						hasError = 2;
 					}

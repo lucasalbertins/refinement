@@ -1,6 +1,6 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
+import com.ref.interfaces.activityDiagram.IActivity;
 
 public class ADLeafAlphabet extends ADAlphabet {
 	

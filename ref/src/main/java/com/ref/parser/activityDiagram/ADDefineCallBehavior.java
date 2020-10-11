@@ -1,11 +1,16 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.*;
-import com.ref.exceptions.ParsingException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IInputPin;
+import com.ref.interfaces.activityDiagram.IOutputPin;
 
 public class ADDefineCallBehavior {
 
@@ -53,7 +58,7 @@ public class ADDefineCallBehavior {
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
     	
-        ADDefineMemories.CBAMemAlphabet.put(activityNode,((IAction)activityNode).getCallingActivity());
+        ADDefineMemories.CBAMemAlphabet.put(activityNode,(IActivity) ((IAction)activityNode).getCallingActivity());
 
         for (int i = 0; i < outPins.length; i++) {
             namesOutpins.add(outPins[i].getName());

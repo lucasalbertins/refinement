@@ -5,14 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import com.change_vision.jude.api.inf.model.IInputPin;
-import com.change_vision.jude.api.inf.model.IOutputPin;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IInputPin;
+import com.ref.interfaces.activityDiagram.IOutputPin;
+
+
 
 public class ADUtils {
 
@@ -283,29 +285,11 @@ public class ADUtils {
         }
 
         if (!signalChannels.containsKey(nameSignal)) {//TODO local onde modifica o signalchannels
-        	//Pair<IActivity,Integer> pair = new Pair<>(ad,1);
         	List<IActivity> list = new ArrayList<>();
         	list.add(ad);
             signalChannels.put(nameSignal,list );
         }
-        /*else {
-        	List<Pair<IActivity,Integer>> list = new ArrayList<>();
-        	list = signalChannels.get(nameSignal);
-        	Pair<IActivity,Integer> pair = null;
-        	int i=0;
-        	for(Pair<IActivity,Integer> aux : list) {
-        		if(aux.getKey().getId() == ad.getId()) {
-        			pair = new Pair<>(aux.getKey(),aux.getValue()+1);
-        			break;
-        		}
-        		i++;
-        	}
-        	if(pair != null) {
-            	list.remove(i);
-            	list.add(pair);	
-        	}
-        }*/
-
+        
         if (!signalChannelsLocal.contains(nameSignal)) {
             signalChannelsLocal.add(nameSignal);
         }
@@ -324,7 +308,7 @@ public class ADUtils {
         alphabet.add("signal_" + nameSignal + ".id." + idSignal);
         signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
 
-        if (index >= 0) {//TODO verificar se ta certo 
+        if (index >= 0) {
             countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
             ADParser.IdSignals.put(activityNode.getId(),idSignal);
             
@@ -341,7 +325,6 @@ public class ADUtils {
         }
 
         if (!signalChannels.containsKey(nameAccept)) {
-        	//Pair<IActivity,Integer> pair = new Pair<>(ad,1);
         	List<IActivity> list = new ArrayList<>();
         	list.add(ad);
             signalChannels.put(nameAccept,list );
@@ -468,12 +451,6 @@ public class ADUtils {
 
         return typesParameter;
     }
-
-    /*private boolean isSignal(IActivityNode activityNode) {
-        return (activityNode instanceof IAction &&
-                ((((IAction) activityNode).isSendSignalAction() && createdSignal.contains(activityNode.getId())) ||
-                        (((IAction) activityNode).isAcceptEventAction() && createdAccept.contains(activityNode.getId()))));
-    }*/
 
     public int countAmount(IActivityNode activityNode) {
         int input = 0;

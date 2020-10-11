@@ -32,8 +32,9 @@ public class CounterExamples {
     public static HashMap<String,Integer> IdSignals = new HashMap<>();
     public static HashMap<String,String> newIdSignals = new HashMap<>();
     public static List<IActivity> callBehaviourList = new ArrayList<>();
+    public static enum CounterExType { DEADLOCK_COUNTEREXAMPLE, DETERMINISM_COUNTEREXAMPLE}
     
-	public static void createCounterExample(List<String> traceList, ADAlphabet alphabetAD,int CounterExType) {
+	public static void createCounterExample(List<String> traceList, ADAlphabet alphabetAD,CounterExType cet) {
         try {
         	alphabet = alphabetAD;
        
@@ -80,7 +81,7 @@ public class CounterExamples {
             BasicModelEditor basicModelEditor = ModelEditorFactory.getBasicModelEditor();
 
             TransactionManager.beginTransaction();
-            createPackage(basicModelEditor, project,CounterExType);
+            createPackage(basicModelEditor, project,cet);
             ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
             for(IDiagram ADdiagrams: diagrams) {
             	if(ADdiagrams instanceof IActivityDiagram) {
@@ -124,11 +125,11 @@ public class CounterExamples {
                 .replace("\\", "_");
     }
 
-    private static void createPackage(BasicModelEditor basicModelEditor, IModel project,int CounterExType) {
+    private static void createPackage(BasicModelEditor basicModelEditor, IModel project,CounterExType cet) {
         try {
-        	if(CounterExType == 1) {
+        	if(cet == CounterExType.DEADLOCK_COUNTEREXAMPLE) {
         		packageCounterExample = basicModelEditor.createPackage(project, "DeadlockCounterExample");	
-        	}else if(CounterExType == 2) {
+        	}else if(cet == CounterExType.DETERMINISM_COUNTEREXAMPLE) {
         		packageCounterExample = basicModelEditor.createPackage(project, "DeterminismCounterExample");
         	}
             
