@@ -53,6 +53,7 @@ public class ADDefineAction {
         if(Character.isDigit(nameAction.charAt(0))) {
         	throw new ParsingException("The node name "+adUtils.nameDiagramResolver(activityNode.getName())+" starts with a number\n");
         }
+        
         if (code == 0) {
             String definition = activityNode.getDefinition();
             String[] definitionFinal = new String[0];
@@ -67,7 +68,7 @@ public class ADDefineAction {
             for (int i = 0; i < inFlows.length; i++) {
                 Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
                 if (syncChannelsEdge.containsKey(key)) {
-                    String ceIn = syncChannelsEdge.get(key);//TODO
+                    String ceIn = syncChannelsEdge.get(key);
 
                     action.append("(");
                     if (i >= 0 && (i < inFlows.length - 1 || inPins.length > 0)) {
@@ -245,7 +246,7 @@ public class ADDefineAction {
                     action.append("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
                     action.append("|}|] ");
 
-                    String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));                   
+                    String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));
 
                     action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
                 }
@@ -525,7 +526,6 @@ public class ADDefineAction {
                 	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
                     if (syncObjectsEdge.containsKey(key)) {
                         String oeIn = syncObjectsEdge.get(key);
-                        //String typeNameObject = objectEdges.get(oeIn);
                         String nameObject = inPins[i].getName();
 
                         action.append("(");

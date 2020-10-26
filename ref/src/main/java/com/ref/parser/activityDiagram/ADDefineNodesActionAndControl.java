@@ -524,7 +524,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = defineADUtils();
 
         dSignal = new ADDefineSignal(ad, alphabetNode, syncChannelsEdge, queueNode, countSignal, countAccept, createdSignal,
-                createdAccept, adUtils);
+                createdAccept, adUtils, syncObjectsEdge, objectEdges);
 
         return dSignal.defineSignal(activityNode, nodes, code);
     }
@@ -532,7 +532,8 @@ public class ADDefineNodesActionAndControl {
     private IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dAccept = new ADDefineAccept(ad, alphabetNode, syncChannelsEdge, queueNode, countAccept, createdAccept, adUtils);
+        dAccept = new ADDefineAccept(ad, alphabetNode, syncChannelsEdge, queueNode, countAccept, createdAccept, adUtils, 
+        		syncObjectsEdge, objectEdges);
 
         return dAccept.defineAccept(activityNode, nodes, code);
     }

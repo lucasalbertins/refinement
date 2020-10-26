@@ -310,7 +310,7 @@ public class ADDefineMerge {
                     nameObject = nameObjects.get(ceInitials.get(i));
                     merge.append("(");
                     dataType = objectEdges.get(oeIn);
-                    if (i >= 0 && i < ceInitials.size() - 1) {
+                    if (i >= 0 && i < ceInitials.size() - 1) {//TODO verificar aqui
                         adUtils.ce(alphabet, merge, oeIn, "?" + nameObject + " -> ");
                         adUtils.setLocalInput(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObject, oeIn, dataType);
                         merge.append("SKIP) [] ");
@@ -329,7 +329,7 @@ public class ADDefineMerge {
             if (!nameObjectUnique.equals("")) {
                 adUtils.getLocal(alphabet, merge, nameObjectUnique, adUtils.nameDiagramResolver(activityNode.getName()), nameObjectUnique, dataType);
                 Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[0].getId());
-                String oe = syncObjectsEdge.get(key);
+                String oe = syncObjectsEdge.get(key);//TODO da erro aqui (pq ele ta olhando a saida?)
 
                 adUtils.oe(alphabet, merge, oe, "!" + nameObjectUnique, " -> ");
 

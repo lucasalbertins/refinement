@@ -57,7 +57,7 @@ public class ADDefineDecision {
                 	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
                     //if (stereotype[j].equals("decisionInputFlow")) {
                         decisionInputType = objectEdges.get(syncObjectsEdge.get(key));
-                        decisionInputFlow = inFlows[i].getSource().getName();
+                        decisionInputFlow = ADUtils.nameResolver(inFlows[i].getSource().getName());
                    /* }
                 }*/
             }
@@ -81,18 +81,18 @@ public class ADDefineDecision {
                 
                 for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
                     String oe = "";
-                    String ce = "";
+                    //String ce = "";
                     
                     Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
-                    if (outFlows[i].getTarget() instanceof IPin) {
+                    //if (outFlows[i].getTarget() instanceof IPin) {
                         oe = adUtils.createOE(decisionInputType);
                         syncObjectsEdge.put(key, oe);
 
                         objectEdges.put(oe, decisionInputType);
-                    } else {
+                    /*} else {
                         ce = adUtils.createCE();
                         syncChannelsEdge.put(key, ce);
-                    }
+                    }*/
                     if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
                     	decision.append(outFlows[i].getGuard() == "" ? "true & (dc -> ": (outFlows[i].getGuard() + " & (dc -> "));//se a guarda for vazia então assume-se true
                     	prevGuard.add(outFlows[i].getGuard()); //salva a guarda para o proximo else
@@ -105,19 +105,19 @@ public class ADDefineDecision {
                         alphabet.add("dc");
                     }             
 
-                    if (outFlows[i].getTarget() instanceof IPin) {
+                    //if (outFlows[i].getTarget() instanceof IPin) {
                         if (i >= 0 && i < outFlows.length - 1) {
                             adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
                         } else {
                             adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
                         }
-                    } else {
+                    /*} else {
                         if (i >= 0 && i < outFlows.length - 1) {
                             adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
                         } else {
                             adUtils.ce(alphabet, decision, ce, " -> SKIP)");
                         }
-                    }
+                    }*/
                 }
 
                 decision.append("); ");
@@ -368,34 +368,34 @@ public class ADDefineDecision {
                     String oe = "";
                     String ce = "";
                     Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
-                    if (outFlows[i].getTarget() instanceof IPin) {
+                    //if (outFlows[i].getTarget() instanceof IPin) {
                         oe = adUtils.createOE(decisionInputType);
                         syncObjectsEdge.put(key, oe);
 
                         objectEdges.put(oe, decisionInputType);
-                    } else {
+                    /*} else {
                         ce = adUtils.createCE();
                         syncChannelsEdge.put(key, ce);
-                    }
+                    }*/
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
                     }
 
-                    if (outFlows[i].getTarget() instanceof IPin) {
+                    //if (outFlows[i].getTarget() instanceof IPin) {
                         if (i >= 0 && i < outFlows.length - 1) {
                             adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
                         } else {
                             adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
                         }
-                    } else {
+                    /*} else {
                         if (i >= 0 && i < outFlows.length - 1) {
                             adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
                         } else {
                             adUtils.ce(alphabet, decision, ce, " -> SKIP)");
                         }
-                    }
+                    }*/
                 }
 
                 if (outFlows[0].getTarget() instanceof IInputPin) {
@@ -518,34 +518,34 @@ public class ADDefineDecision {
                     String oe = "";
                     String ce = "";
                     Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
-                    if (outFlows[i].getTarget() instanceof IPin) {
+                    //if (outFlows[i].getTarget() instanceof IPin) {
                         oe = syncObjectsEdge.get(key);
                         syncObjectsEdge.put(key, oe);
 
                         objectEdges.put(oe, decisionInputType);
-                    } else {
+                   /* } else {
                         ce = syncChannelsEdge.get(key);
                         syncChannelsEdge.put(key, ce);
-                    }
+                    }*/
 
                     decision.append(outFlows[i].getGuard() + " & (dc -> ");
                     if (!alphabet.contains("dc")) {
                         alphabet.add("dc");
                     }
 
-                    if (outFlows[i].getTarget() instanceof IPin) {
+                    //if (outFlows[i].getTarget() instanceof IPin) {
                         if (i >= 0 && i < outFlows.length - 1) {
                             adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP) [] ");
                         } else {
                             adUtils.oe(alphabet, decision, oe, "!" + decisionInputFlow, " -> SKIP)");
                         }
-                    } else {
+                    /*} else {
                         if (i >= 0 && i < outFlows.length - 1) {
                             adUtils.ce(alphabet, decision, ce, " -> SKIP) [] ");
                         } else {
                             adUtils.ce(alphabet, decision, ce, " -> SKIP)");
                         }
-                    }
+                    }*/
                 }
 
                 decision.append("); ");
