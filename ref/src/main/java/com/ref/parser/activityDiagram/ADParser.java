@@ -74,7 +74,6 @@ public class ADParser {
     public ADDefineMemories dMemories;
     public ADDefineMainNodes dMainNodes;
     public ADDefineNodesActionAndControl dNodesActionAndControl;
-    public ADDefineLocks dLocks;
     public ADDefineTokenManager dTokenManager;
     public ADDefineProcessSync dProcessSync;
     public ADDefinePool dPool;
@@ -254,8 +253,8 @@ public class ADParser {
 
         //reseta os valores estaticos
         if (reset) {
-        	//TODO local de geração do contraexemplo
-        	CounterExamples.callBehaviourList = callBehaviourList;
+        	//TODO corrigir contraexemplo no astah
+        	//CounterExamples.callBehaviourList = callBehaviourList;
         	//DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();
         }
@@ -439,14 +438,6 @@ public class ADParser {
                 countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this);
 
         return dNodesActionAndControl.defineNodesActionAndControl();
-    }
-
-    public String defineLock() {
-        ADUtils adUtils = defineADUtils();
-
-        dLocks = new ADDefineLocks(ad, lockChannel, adUtils);
-
-        return dLocks.defineLock();
     }
 
     public String defineTokenManager() {

@@ -8,6 +8,13 @@ import com.ref.interfaces.activityDiagram.IOutputPin;
 
 public class Action implements IAction{
 
+	private com.change_vision.jude.api.inf.model.IAction action;
+	
+	
+	public Action(com.change_vision.jude.api.inf.model.IAction action) {
+		this.action = action;
+	}
+
 	@Override
 	public IFlow[] getIncomings() {
 		// TODO Auto-generated method stub
@@ -70,6 +77,12 @@ public class Action implements IAction{
 
 	@Override
 	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getStereotypes() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,7 +1,6 @@
 package com.ref.interfaces.activityDiagram;
 
-public interface IActivityParameterNode {
+public interface IActivityParameterNode extends IObjectNode {
 
-	IClass getBase();
 
 }

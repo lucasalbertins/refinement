@@ -15,17 +15,21 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
+import com.ref.exceptions.FDRException;
 import com.ref.exceptions.ParsingException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.refinement.activityDiagram.ActivityController;
+import com.ref.refinement.activityDiagram.ActivityController.VerificationType;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 
 public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 
 	public static boolean firstInteration = true;
-	public Object run(IWindow window) throws UnExpectedException {
+	public ActivityController controler = new ActivityController();
+	public Object run(IWindow window) {
 
 		try {
 			File fdrProperty = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
@@ -49,7 +53,9 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 
 						if (diagram instanceof IActivityDiagram) {
-							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), diagram.getName(), (IActivityDiagram) diagram);
+							
+							controler.AstahInvocation(diagram, VerificationType.DEADLOCK);
+							/*ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), diagram.getName(), (IActivityDiagram) diagram);
 							String diagramCSP = parser.parserDiagram();
 
 							String fs = System.getProperty("file.separator");
@@ -77,7 +83,7 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 										e.printStackTrace();
 									}
 								}
-							}).start();
+							}).start();*/
 						}
 
 					} else {
@@ -107,6 +113,9 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Logador.getInstance().log(e.getMessage());
+		} catch(FDRException e) {
+		 	JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Checking Non-determinism Error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

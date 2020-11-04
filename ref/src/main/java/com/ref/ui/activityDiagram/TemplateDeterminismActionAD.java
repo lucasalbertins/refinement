@@ -15,16 +15,20 @@ import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
 import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
+import com.ref.exceptions.FDRException;
 import com.ref.exceptions.ParsingException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.refinement.activityDiagram.ActivityController;
+import com.ref.refinement.activityDiagram.ActivityController.VerificationType;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 
 public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 
 	public static boolean firstInteration = true;
-	public Object run(IWindow window) throws UnExpectedException {
+	public ActivityController controler = new ActivityController();
+	public Object run(IWindow window) {
 
 		try {
 			File fdrProperty = new File(FDR3LocationDialog.FDR3_PROPERTY_FILE);
@@ -48,9 +52,19 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 
 						if (diagram instanceof IActivityDiagram) {
-							ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), diagram.getName(), (IActivityDiagram) diagram);
-							String diagramCSP = parser.parserDiagram();
+							
+							controler.AstahInvocation(diagram, VerificationType.DETERMINISM);
+							
+							
 
+							// Dentro do ActivityController
+							//1- criar objeto adapter do astah
+							//2- criar objeto da progressbar 
+							//3- invocar metodo de verificação do diagrama de atividade via controlador 
+							/*ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), diagram.getName(), (IActivityDiagram) diagram);
+							String diagramCSP = parser.parserDiagram();
+							
+							
 							String fs = System.getProperty("file.separator");
 							String uh = System.getProperty("user.home");
 							File directory = new File(uh+fs+"TempAstah");
@@ -65,8 +79,10 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 							CheckingProgressBar progressBar = new CheckingProgressBar();
 							progressBar.setNewTitle("Checking non-determinism");
 							progressBar.setAssertion(1);
-
-							new Thread(new Runnable() {
+							*/
+							//invocar método de invocação do fdr via controlador
+							//botar progressBar como parâmetro
+							/*new Thread(new Runnable() {
 								@Override
 								public void run() {
 									try {
@@ -76,7 +92,7 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 										e.printStackTrace();
 									}
 								}
-							}).start();
+							}).start();*/
 						}
 
 					} else {
@@ -103,6 +119,9 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 			e.printStackTrace();
 		} catch (InvalidUsingException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(FDRException e) {
+			JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Checking Non-determinism Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

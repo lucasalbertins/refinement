@@ -1,6 +1,6 @@
 package com.ref.interfaces.activityDiagram;
 
-public interface IControlNode {
+public interface IControlNode extends IActivityNode{
 
 	boolean isInitialNode();
 
@@ -12,7 +12,5 @@ public interface IControlNode {
 
 	boolean isJoinNode();
 
-	boolean isDecisionMergeNode();//TODO separar em isDecision e isMerge
-
-
+	boolean isMergeNode();
 }

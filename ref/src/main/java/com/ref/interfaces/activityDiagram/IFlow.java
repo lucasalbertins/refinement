@@ -1,15 +1,11 @@
 package com.ref.interfaces.activityDiagram;
 
-public interface IFlow {
-
-	String getId();
+public interface IFlow extends INamedElement{	
 
 	IActivityNode getTarget();
 
-	INamedElement getSource();
+	IActivityNode getSource();
 
 	String getGuard();
-
-	String[] getStereotypes();
-
+	
 }

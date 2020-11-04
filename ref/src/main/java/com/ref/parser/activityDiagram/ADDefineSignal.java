@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import com.change_vision.jude.api.inf.model.IInputPin;
-import com.change_vision.jude.api.inf.model.IOutputPin;
 import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IInputPin;
+import com.ref.interfaces.activityDiagram.IOutputPin;
 
 public class ADDefineSignal {
 

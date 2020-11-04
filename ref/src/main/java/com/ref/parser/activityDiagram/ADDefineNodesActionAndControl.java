@@ -197,14 +197,10 @@ public class ADDefineNodesActionAndControl {
                             activityNode = defineFork(activityNode, nodes, 0); // create fork node and set next action node
                         } else if (((IControlNode) activityNode).isJoinNode()) {
                             activityNode = defineJoin(activityNode, nodes, 0); // create join node and set next action node
-                        } else if (((IControlNode) activityNode).isDecisionMergeNode()) {
-
-                            if (activityNode.getOutgoings().length > 1 || (activityNode.getOutgoings()[0].getGuard() != null &&  !activityNode.getOutgoings()[0].getGuard().equals(""))) {
-                                activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node
-                            } else {
-                                activityNode = defineMerge(activityNode, nodes, 0); // create merge node and set next action node
-                            }
-                            
+                        } else if (((IControlNode) activityNode).isDecisionNode()) {
+                        	activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node                          
+                        }else if(((IControlNode) activityNode).isMergeNode()){
+                        	activityNode = defineMerge(activityNode, nodes, 0); // create merge node and set next action node
                         }
                     } else if (activityNode instanceof IActivityParameterNode) {
                         if (activityNode.getOutgoings().length > 0) {

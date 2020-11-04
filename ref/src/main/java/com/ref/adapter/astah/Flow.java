@@ -19,7 +19,7 @@ public class Flow implements IFlow{
 	}
 
 	@Override
-	public INamedElement getSource() {
+	public IActivityNode getSource() {
 		// TODO Auto-generated method stub
 		return null;
 	}

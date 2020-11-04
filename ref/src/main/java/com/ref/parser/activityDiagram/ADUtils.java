@@ -263,7 +263,7 @@ public class ADUtils {
             if (flow.getSource() instanceof IActivityParameterNode) {
                 objects.add(flow.getSource().getName());
             } else if (flow.getSource() instanceof IOutputPin) {
-                IInputPin[] inPins = ((IAction) flow.getSource().getOwner()).getInputs();
+                IInputPin[] inPins = ((IAction) ((IOutputPin)flow.getSource()).getOwner()).getInputs();
                 for (int x = 0; x < inPins.length; x++) {
                     for (IFlow flowNode : inPins[x].getIncomings()) {
                         objects.addAll(getObjects(flowNode, nodes));

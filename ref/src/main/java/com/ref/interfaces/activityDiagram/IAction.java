@@ -15,6 +15,4 @@ public interface IAction extends IActivityNode{
 
 	boolean isAcceptEventAction();
 
-	String getName();
-
 }

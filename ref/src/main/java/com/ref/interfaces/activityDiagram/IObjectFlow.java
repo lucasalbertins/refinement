@@ -1,5 +1,5 @@
 package com.ref.interfaces.activityDiagram;
 
-public interface IClass extends INamedElement{
+public interface IObjectFlow extends IFlow{
 
 }

@@ -1,15 +1,10 @@
 package com.ref.interfaces.activityDiagram;
 
-public interface IActivityNode {
+public interface IActivityNode extends INamedElement {
 
 	IFlow[] getIncomings();
 
 	IFlow[] getOutgoings();
 
-	String getName();
-
-	String getId();
-
-	String getDefinition();
 
 }

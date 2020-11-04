@@ -1,9 +1,7 @@
 package com.ref.interfaces.activityDiagram;
 
-public interface IActivityDiagram {
+public interface IActivityDiagram extends INamedElement{
 
-	String getDefinition();
-
-	String getName();
-
+	IActivity getActivity();
+	
 }
