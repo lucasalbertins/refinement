@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
+import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IControlFlow;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
+import com.ref.interfaces.activityDiagram.IObjectFlow;
 import com.ref.interfaces.activityDiagram.IOutputPin;
 
 
@@ -40,6 +43,7 @@ public class ADUtils {
     private HashMap<String,Integer> allGuards;
     public HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
     public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
+    private HashMap<String, String> objectEdges;
     private ADParser adParser;
 
     public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
@@ -48,7 +52,7 @@ public class ADUtils {
                    HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
                    HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
-                   HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, List<String> signalChannelsLocal, ADParser adParser) {
+                   HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges2, List<String> signalChannelsLocal, ADParser adParser) {
 
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -71,6 +75,7 @@ public class ADUtils {
         this.syncChannelsEdge = syncChannelsEdge2;
         this.syncObjectsEdge = syncObjectsEdge2;
         this.signalChannelsLocal = signalChannelsLocal;
+        this.objectEdges = objectEdges2;
         this.adParser = adParser;
     }
 
@@ -78,8 +83,8 @@ public class ADUtils {
         return "ce_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countCe_ad++;
     }
 
-    public String createOE(String nameObject) {
-        return "oe_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countOe_ad++;
+    public String createOE() {
+        return "oe_" + adParser.countOe_ad++ + "_" + nameDiagramResolver(ad.getName()) + ".id" ;
     }
 
     
@@ -530,6 +535,239 @@ public class ADUtils {
 
 	public void setCallBehaviourOutputs(HashMap<String, List<String>> callBehaviourOutputs) {
 		this.callBehaviourOutputs = callBehaviourOutputs;
+	}
+	
+	public void incomingEdges(IActivityNode activityNode, StringBuilder action, ArrayList<String> alphabet, IFlow[] inFlows,
+			IInputPin[] inPins, List<String> namesMemoryLocal, HashMap<String, String> typeMemoryLocal)
+			throws ParsingException {
+		if (inFlows.length > 0 || inPins.length > 0) {
+			action.append("(");
+			for (int i = 0; i < inFlows.length; i++) {
+	            // first control flows
+	        	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
+	        	if (inFlows[i] instanceof IControlFlow) {
+	                String ceIn;
+	                if (syncChannelsEdge.containsKey(key)) {
+	                    ceIn = syncChannelsEdge.get(key);
+	                    
+	                } else {
+	                	ceIn = createCE();
+	                    Pair<IActivity,String> pair = new Pair<IActivity, String>(ad, inFlows[i].getId());
+	                    syncChannelsEdge.put(pair, ceIn);
+	                }
+	                action.append("(");
+	                if (i < inFlows.length - 1 || inPins.length > 0) {
+	                    ce(alphabet, action, ceIn, " -> SKIP) ||| ");
+	                } else {
+	                    ce(alphabet, action, ceIn, " -> SKIP)");
+	                }
+				} else {// then object flows, which are discarded as they are not sent to pins
+					String oeIn; 
+					String typeObject;
+					try {
+						typeObject = ((IObjectFlow)inFlows[i]).getBase().getName();
+					} catch (NullPointerException e) {
+						throw new ParsingException("Object flow does not have a type.");
+					}
+					
+					if (syncObjectsEdge.containsKey(key)) {
+	                    oeIn = syncObjectsEdge.get(key);
+	                    if (!objectEdges.containsKey(oeIn)) {
+			                objectEdges.put(oeIn, typeObject);
+						}
+	                } else {
+	                	 oeIn = createOE();
+	                     Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,inFlows[i].getId());
+	                     syncObjectsEdge.put(pair, oeIn);
+	                     objectEdges.put(oeIn, typeObject);
+	                }
+					
+					action.append("(");
+					if (i < inFlows.length - 1 || inPins.length > 0) {
+						oe(alphabet, action, oeIn, "?x", " -> ");
+						action.append("SKIP) ||| ");
+					} else {
+						oe(alphabet, action, oeIn, "?x" , " -> ");
+						action.append("SKIP)");
+					}
+				}
+
+	        }
+
+	        //then object flows
+	        for (int i = 0; i < inPins.length; i++) {
+	            IFlow[] inFlowPin = inPins[i].getIncomings();
+	            for (int x = 0; x < inFlowPin.length; x++) {
+	            	String type = ((IObjectFlow)inFlowPin[i]).getBase().getName();
+	            	
+	            	if (!type.equals(inPins[i].getBase().getName())) {
+	            		throw new ParsingException("Pin "+ inPins[i].getName() + " and object flow have incompatible types!");
+					}
+	            	
+	            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlowPin[x].getId());
+	            	String nameObject = inPins[i].getName();
+	            	String oeIn;
+	            	if (syncObjectsEdge.containsKey(key)) {
+	                    oeIn = syncObjectsEdge.get(key);
+	                    if (!objectEdges.containsKey(oeIn)) {
+			                objectEdges.put(oeIn, type);
+						}
+	                } else {
+	                	 oeIn = createOE();
+	                     Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,inFlowPin[x].getId());
+	                     syncObjectsEdge.put(pair, oeIn);
+	                     objectEdges.put(oeIn, type);
+	                }
+	                
+	                action.append("(");
+	                if (i < inPins.length - 1 || x < inFlowPin.length - 1) {
+	                    oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
+	                    try {
+							setLocalInput(alphabet, action, inPins[i].getName(), nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
+						} catch (Exception e) {
+							throw new ParsingException("InputPin node "+inPins[i].getName()+" without base type\n");//TODO fix the type of exception
+						}
+	                    action.append("SKIP) ||| ");
+	                } else {
+	                    oe(alphabet, action, oeIn, "?" + nameObject, " -> ");
+	                    try {
+							setLocalInput(alphabet, action, inPins[i].getName(), nameDiagramResolver(activityNode.getName()), nameObject, oeIn,inPins[i].getBase().getName());
+						} catch (Exception e) {
+							throw new ParsingException("Pin node "+inPins[i].getName()+" without base type\n");//TODO fix the type of exception
+						}
+	                    action.append("SKIP)");
+	                }
+
+	                if (!namesMemoryLocal.contains(nameObject)) {
+	                    namesMemoryLocal.add(nameObject);
+	                    typeMemoryLocal.put(nameObject, inPins[i].getBase().getName());
+	                }
+	            }
+	        }
+	        action.append("); ");
+		}
+		
+		
+		
+	}
+	
+	public void outgoingEdges(StringBuilder action, ArrayList<String> alphabet, IFlow[] outFlows,
+			IOutputPin[] outPins, String[] definitionFinal) throws ParsingException {
+		// defining outgoing edges
+        if (outFlows.length > 0 || outPins.length > 0) {
+            action.append("(");
+        }
+
+        // creates the outgoing control edges events
+        for (int i = 0; i < outFlows.length; i++) {    
+        	Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+            String ceOut;
+        	if (syncChannelsEdge.containsKey(key)) {
+                ceOut = syncChannelsEdge.get(key);
+                
+            } else {
+            	ceOut = createCE();
+                Pair<IActivity,String> pair = new Pair<IActivity, String>(ad, outFlows[i].getId());
+                syncChannelsEdge.put(pair, ceOut);
+            }
+        	
+            action.append("(");
+
+            if (i >= 0 && (i < outFlows.length - 1 || outPins.length > 0)) {
+                ce(alphabet, action, ceOut, " -> SKIP) ||| ");
+            } else {
+                ce(alphabet, action, ceOut, " -> SKIP)");
+            }
+        }
+
+        
+        // creates the outgoing object edges events
+        
+        for (int i = 0; i < outPins.length; i++) {    
+            IFlow[] outFlowPin = outPins[i].getOutgoings();
+
+            for (int x = 0; x < outFlowPin.length; x++) {
+            	String nameObject;
+                String type;
+            	try {
+					nameObject = outPins[i].getBase().getName();
+					type = ((IObjectFlow)outFlowPin[x]).getBase().getName();
+	            	
+	            	if (!type.equals(outPins[i].getBase().getName())) {
+	            		throw new ParsingException("OutputPin "+ outPins[i].getName() + " and object flow have incompatible types!");
+					}
+				} catch (NullPointerException e) {
+					throw new ParsingException("Pin "+outPins[i].getName()+" without base class\n");
+				}
+
+            	Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,outFlowPin[x].getId());
+            	String oe;
+            	if (syncObjectsEdge.containsKey(pair)) {
+					oe = syncObjectsEdge.get(pair);
+					if (!objectEdges.containsKey(oe)) {
+		                objectEdges.put(oe, type);
+					}
+				} else {
+					oe = createOE();
+	                syncObjectsEdge.put(pair, oe);
+	                objectEdges.put(oe, type);
+				}
+            	
+            	
+            	if (definitionFinal != null) {//not call behavior
+            		String value = "";
+                    for (int j = 0; j < definitionFinal.length; j++) {
+                        String[] expression = definitionFinal[j].split("=");
+                        if (expression[0].equals(outPins[i].getName())) {
+                            value = expression[1];
+                        }
+                    }
+
+                    String typeObj = nameObject;
+
+                    // defining bounds for model checking
+                    Pair<String, String> initialAndFinalParameterValue = getInitialAndFinalParameterValue(typeObj);
+
+                    if ((value != null && !value.equals("")) && ADUtils.isInteger(initialAndFinalParameterValue.getKey())) {
+                        action.append("((");
+                        action.append("(" + value + ") >= " + initialAndFinalParameterValue.getKey() + " and (" + value + ") <= "  + initialAndFinalParameterValue.getValue() + ") & ");
+                    } else {
+                        action.append("(");
+                    }
+                    if(value !=null && !value.equals("")) {
+                        if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+                            oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP) ||| ");
+                        } else {
+                            oe(alphabet, action, oe, "!(" + value + ")", " -> SKIP)");
+                        }
+                    }
+                    else {
+                    	 if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+    	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP) ||| ");
+    	                    } else {
+    	                        oe(alphabet, action, oe, "?unknown"+i, " -> SKIP)");
+    	                    }
+                    }
+
+				} else {// node is a call behavior
+					action.append("(");
+	                    if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+	                    	getLocal(alphabet, action, nameResolver(outPins[i].getName()), nameResolver(outPins[i].getOwner().getName()), nameResolver(outPins[i].getName()),type);
+	                        oe(alphabet, action, oe, "!(" + outPins[i].getName() + ")", " -> SKIP) ||| ");
+	                    } else {
+	                    	getLocal(alphabet, action, nameResolver(outPins[i].getName()), nameResolver(outPins[i].getOwner().getName()), nameResolver(outPins[i].getName()),type);
+	                        oe(alphabet, action, oe, "!(" + outPins[i].getName() + ")", " -> SKIP)");
+	                    }
+				}
+            	
+            	
+                
+            }
+        }
+
+        if (outFlows.length > 0 || outPins.length > 0) {
+            action.append("); ");
+        }
 	}
     
 
