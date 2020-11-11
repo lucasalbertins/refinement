@@ -134,17 +134,17 @@ public class ADDefineNodesActionAndControl {
                  }
              } else if (activityNode instanceof IControlNode) {
                  if (((IControlNode) activityNode).isFinalNode()) {
-                     activityNode = defineFinalNode(activityNode, nodes); // create final node and set next action node
+                     nodes.append(defineFinalNode(activityNode)); // create final node and set next action node
                  } else if (((IControlNode) activityNode).isFlowFinalNode()) {
-                     activityNode = defineFlowFinal(activityNode, nodes); // create flow final and set next action node
+                     nodes.append(defineFlowFinal(activityNode)); // create flow final and set next action node
                  } else if (((IControlNode) activityNode).isInitialNode()) {
-                     activityNode = defineInitialNode(activityNode, nodes); // create initial node and set next action node
+                     nodes.append(defineInitialNode(activityNode)); // create initial node and set next action node
                  } else if (((IControlNode) activityNode).isForkNode()) {
-                     activityNode = defineFork(activityNode, nodes, 0); // create fork node and set next action node
+                	 nodes.append(defineFork(activityNode)); // create fork node and set next action node
                  } else if (((IControlNode) activityNode).isJoinNode()) {
-                     activityNode = defineJoin(activityNode, nodes, 0); // create join node and set next action node
+                	 nodes.append(defineJoin(activityNode)); // create join node and set next action node
                  } else if (((IControlNode) activityNode).isDecisionNode()) {
-                 	activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node                          
+                	 nodes.append(defineDecision(activityNode)); // create decision node and set next action node                          
                  }else if(((IControlNode) activityNode).isMergeNode()){
                  	activityNode = defineMerge(activityNode, nodes, 0); // create merge node and set next action node
                  }
@@ -473,20 +473,20 @@ public class ADDefineNodesActionAndControl {
         return dAction.defineAction(activityNode);
     }
 
-    private IActivityNode defineFinalNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineFinalNode(IActivityNode activityNode) {
         ADUtils adUtils = defineADUtils();
 
         dFinalNode = new ADDefineFinalNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dFinalNode.defineFinalNode(activityNode, nodes);
+        return dFinalNode.defineFinalNode(activityNode);
     }
 
-    private IActivityNode defineInitialNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineInitialNode(IActivityNode activityNode) {
         ADUtils adUtils = defineADUtils();
 
         dInitialNode = new ADDefineInitialNode(ad, allInitial, alphabetAllInitialAndParameter, queueNode, syncChannelsEdge, adUtils,alphabetNode);
 
-        return dInitialNode.defineInitialNode(activityNode, nodes);
+        return dInitialNode.defineInitialNode(activityNode);
     }
 
     private String defineCallBehaviour(IActivityNode activityNode) throws ParsingException {
@@ -497,21 +497,20 @@ public class ADDefineNodesActionAndControl {
         return dCallBehavior.defineCallBehaviour(activityNode);
     }
 
-    private IActivityNode defineFork(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineFork(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dFork = new  ADDefineFork(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges,queueNode, adUtils);
+        dFork = new  ADDefineFork(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dFork.defineFork(activityNode, nodes, code);
+        return dFork.defineFork(activityNode);
     }
 
-    private IActivityNode defineJoin(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineJoin(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dJoin = new ADDefineJoin(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,  objectEdges, parameterNodesInput,
-                unionList, typeUnionList, adUtils, adParser);
+        dJoin = new ADDefineJoin(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,  objectEdges, adUtils);
 
-        return dJoin.defineJoin(activityNode, nodes, code);
+        return dJoin.defineJoin(activityNode);
     }
 
     private IActivityNode defineMerge(IActivityNode activityNode, StringBuilder nodes, int code) {
@@ -523,21 +522,20 @@ public class ADDefineNodesActionAndControl {
         return dMerge.defineMerge(activityNode, nodes, code);
     }
 
-    private IActivityNode defineDecision(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineDecision(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dDecision = new ADDefineDecision(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                parameterNodesInput, adUtils);
+        dDecision = new ADDefineDecision(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dDecision.defineDecision(activityNode, nodes, code);
+        return dDecision.defineDecision(activityNode);
     }
 
-    private IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) throws ParsingException {
+    private String defineFlowFinal(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dFlowFinal = new ADDefineFlowFinal(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dFlowFinal.defineFlowFinal(activityNode, nodes);
+        return dFlowFinal.defineFlowFinal(activityNode);
     }
 
     private IActivityNode defineInputParameterNode(IActivityNode activityNode, StringBuilder nodes) {

@@ -31,7 +31,7 @@ public class ADDefineInitialNode {
         this.alphabetNode = alphabetNode2;
     }
 
-    public IActivityNode defineInitialNode(IActivityNode activityNode, StringBuilder nodes) {
+    public String defineInitialNode(IActivityNode activityNode) {
         StringBuilder initialNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String diagram = adUtils.nameDiagramResolver(ad.getName());
@@ -82,8 +82,6 @@ public class ADDefineInitialNode {
             }
         }
 
-        nodes.append(initialNode.toString());
-           
-        return activityNode;
+        return initialNode.toString();
     }
 }
