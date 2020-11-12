@@ -146,19 +146,19 @@ public class ADDefineNodesActionAndControl {
                  } else if (((IControlNode) activityNode).isDecisionNode()) {
                 	 nodes.append(defineDecision(activityNode)); // create decision node and set next action node                          
                  }else if(((IControlNode) activityNode).isMergeNode()){
-                 	activityNode = defineMerge(activityNode, nodes, 0); // create merge node and set next action node
+                 	nodes.append(defineMerge(activityNode)); // create merge node and set next action node
                  }
              } else if (activityNode instanceof IActivityParameterNode) {
                  if (activityNode.getOutgoings().length > 0) {
-                     activityNode = defineInputParameterNode(activityNode, nodes);
+                	 nodes.append(defineInputParameterNode(activityNode));
                  } else if (activityNode.getIncomings().length > 0) {
-                     activityNode = defineOutputParameterNode(activityNode, nodes);
+                	 nodes.append(defineOutputParameterNode(activityNode));
                  } else {
                      activityNode = null;
                  }
 
              } else if (activityNode instanceof IObjectNode) {
-                 activityNode = defineObjectNode(activityNode, nodes, 0);
+            	 nodes.append(defineObjectNode(activityNode));
              }
 		}
     	
@@ -513,13 +513,13 @@ public class ADDefineNodesActionAndControl {
         return dJoin.defineJoin(activityNode);
     }
 
-    private IActivityNode defineMerge(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineMerge(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dMerge = new ADDefineMerge(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, parameterNodesInput,
                 unionList, typeUnionList, adUtils);
 
-        return dMerge.defineMerge(activityNode, nodes, code);
+        return dMerge.defineMerge(activityNode);
     }
 
     private String defineDecision(IActivityNode activityNode) throws ParsingException {
@@ -538,31 +538,30 @@ public class ADDefineNodesActionAndControl {
         return dFlowFinal.defineFlowFinal(activityNode);
     }
 
-    private IActivityNode defineInputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineInputParameterNode(IActivityNode activityNode) {
         ADUtils adUtils = defineADUtils();
 
         dInputParameterNode = new ADDefineInputParameterNode(ad, parameterAlphabetNode, syncObjectsEdge, objectEdges,
-                queueNode, allInitial, alphabetAllInitialAndParameter, adUtils,alphabetNode);
+                allInitial, alphabetAllInitialAndParameter, adUtils,alphabetNode);
 
-        return dInputParameterNode.defineInputParameterNode(activityNode, nodes);
+        return dInputParameterNode.defineInputParameterNode(activityNode);
     }
 
-    private IActivityNode defineOutputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineOutputParameterNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dOutputParameterNode = new ADDefineOutputParameterNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,
-                objectEdges,  parameterNodesInput, typeUnionList, adUtils);
+                objectEdges,  adUtils);
 
-        return dOutputParameterNode.defineOutputParameterNode(activityNode, nodes);
+        return dOutputParameterNode.defineOutputParameterNode(activityNode);
     }
 
-    private IActivityNode defineObjectNode(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineObjectNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dObjectNode = new ADDefineObjectNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                parameterNodesInput, unionList, typeUnionList, adUtils);
+        dObjectNode = new ADDefineObjectNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dObjectNode.defineObjectNode(activityNode, nodes, code);
+        return dObjectNode.defineObjectNode(activityNode);
     }
 
     private String defineSignal(IActivityNode activityNode) throws ParsingException {
