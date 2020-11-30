@@ -1,4 +1,6 @@
-package com.ref.activityDiagram;
+package com.ref.activityDiagram.parser;
+
+import static org.junit.Assert.assertEquals;
 
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -14,19 +16,17 @@ import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
 
-public class ADParserTestException {
+public class AdParserTestTokenManager {
+
 	public static IActivityDiagram ad;
 	private static ADParser parser1;
 	private static ADParser parser2;
-	private static ADParser parser3;
-	private static ADParser parser4;
-	
 	
 	@BeforeClass
 	public static void GetDiagram() throws Exception {
 		try {
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/Exception1.asta");
+			projectAccessor.open("src/test/resources/activityDiagram/action1.asta");
 			INamedElement[] findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
@@ -34,28 +34,12 @@ public class ADParserTestException {
 			parser1 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/Exception2.asta");
+			projectAccessor.open("src/test/resources/activityDiagram/decision1.asta");
 			findElements = findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
 			
 			parser2 = new ADParser(ad.getActivity(), ad.getName(), ad);
-			
-			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/Exception3.asta");
-			findElements = findElements(projectAccessor);
-
-			ad = (IActivityDiagram) findElements[0];
-			
-			parser3 = new ADParser(ad.getActivity(), ad.getName(), ad);
-			
-			projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
-			projectAccessor.open("src/test/resources/activityDiagram/Exception4.asta");
-			findElements = findElements(projectAccessor);
-
-			ad = (IActivityDiagram) findElements[0];
-			
-			parser4 = new ADParser(ad.getActivity(), ad.getName(), ad);
 			
 		} catch (ProjectNotFoundException e) {
 			e.printStackTrace();
@@ -78,8 +62,6 @@ public class ADParserTestException {
 	public void clearBuffer() {
 		parser1.clearBuffer();
 		parser2.clearBuffer();
-		parser3.clearBuffer();
-		parser4.clearBuffer();
 	}
 	
 	@AfterClass
@@ -87,24 +69,32 @@ public class ADParserTestException {
 		AstahAPI.getAstahAPI().getProjectAccessor().close();
 	}
 	
-	@Test(expected = ParsingException.class)
-	public void TestException1() throws ParsingException {
-		parser1.clearBuffer();
-		parser1.parserDiagram();
+	/*
+	 * Teste de Tradução TokenManager
+	 * */
+	@Test
+	public void TestNodesTokenManager1() throws ParsingException {
+		parser1.defineNodesActionAndControl();
+		String actual = parser1.defineTokenManager();
+		StringBuffer expected = new StringBuffer();
+		expected.append("TokenManager_action1(x,init) = update_action1?c?y:limiteUpdate_action1 -> x+y < 10 & x+y > -10 & TokenManager_action1(x+y,1) [] clear_action1?c -> endDiagram_action1 -> SKIP [] x == 0 & init == 1 & endDiagram_action1 -> SKIP\n" + 
+				"TokenManager_action1_t(x,init) = TokenManager_action1(x,init)\n");
+		
+		assertEquals(expected.toString(), actual);
 	}
-	@Test(expected = ParsingException.class)
-	public void TestException2() throws ParsingException {
-		parser2.clearBuffer();
-		parser2.parserDiagram();
+	
+	/*
+	 * Teste de Tradução TokenManager
+	 * */
+	@Test
+	public void TestNodesTokenManager2() throws ParsingException {
+		parser2.defineNodesActionAndControl();
+		String actual = parser2.defineTokenManager();
+		StringBuffer expected = new StringBuffer();
+		expected.append("TokenManager_decision1(x,init) = update_decision1?c?y:limiteUpdate_decision1 -> x+y < 10 & x+y > -10 & TokenManager_decision1(x+y,1) [] clear_decision1?c -> endDiagram_decision1 -> SKIP [] x == 0 & init == 1 & endDiagram_decision1 -> SKIP\n" + 
+				"TokenManager_decision1_t(x,init) = TokenManager_decision1(x,init)\n");
+		
+		assertEquals(expected.toString(), actual);
 	}
-	@Test(expected = ParsingException.class)
-	public void TestException3() throws ParsingException {
-		parser3.clearBuffer();
-		parser3.parserDiagram();
-	}
-	@Test(expected = ParsingException.class)
-	public void TestException4() throws ParsingException {
-		parser4.clearBuffer();
-		parser4.parserDiagram();
-	}
+	
 }

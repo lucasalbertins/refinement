@@ -2,38 +2,59 @@ package com.ref.adapter.astah;
 
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
-import com.ref.interfaces.activityDiagram.INamedElement;
 
-public class Flow implements IFlow{
+public abstract class Flow implements IFlow{
+	protected com.change_vision.jude.api.inf.model.IFlow flow;
+	protected IActivityNode target;
+	protected IActivityNode source;
+	
+	public Flow(com.change_vision.jude.api.inf.model.IFlow flow) {
+		this.flow = flow;	
+	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return flow.getId();
 	}
 
 	@Override
-	public IActivityNode getTarget() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getName() {
+		return flow.getName();
 	}
 
 	@Override
-	public IActivityNode getSource() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getGuard() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getDefinition() {
+		return flow.getDefinition();
 	}
 
 	@Override
 	public String[] getStereotypes() {
-		// TODO Auto-generated method stub
-		return null;
+		return flow.getStereotypes();
 	}
+
+	@Override
+	public IActivityNode getTarget() {
+		return target;
+	}
+
+	@Override
+	public IActivityNode getSource() {
+		return source;
+	}
+
+	@Override
+	public String getGuard() {
+		return flow.getGuard();
+	}
+
+	public void setTarget(IActivityNode target) {
+		this.target = target;
+	}
+
+	public void setSource(IActivityNode source) {
+		this.source = source;
+	}
+	
+	
 
 }

@@ -1,40 +1,84 @@
 package com.ref.adapter.astah;
 
-import com.ref.exceptions.InvalidEditingException;
+import com.change_vision.jude.api.inf.model.IAction;
+import com.change_vision.jude.api.inf.model.IActivityParameterNode;
+import com.change_vision.jude.api.inf.model.IControlNode;
+import com.change_vision.jude.api.inf.model.IObjectNode;
+import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 
 public class Activity implements IActivity{
-
-	@Override
-	public IActivityDiagram getActivityDiagram() {
-		// TODO Auto-generated method stub
-		return null;
+	private com.change_vision.jude.api.inf.model.IActivity activity;
+	private IActivityDiagram activityDiagram;
+	private IActivityNode[] activityNodes;
+	
+	public Activity(com.change_vision.jude.api.inf.model.IActivity activity) throws WellFormedException {
+		super();
+		this.activity = activity;
+		this.activityNodes = new IActivityNode[activity.getActivityNodes().length];
+		for (int i = 0; i < activityNodes.length; i++) {
+			com.change_vision.jude.api.inf.model.IActivityNode node = activity.getActivityNodes()[i];
+			//if  not pino
+			if(!(node instanceof com.change_vision.jude.api.inf.model.IPin)) {	
+				if(node instanceof com.change_vision.jude.api.inf.model.IAction) {
+					this.activityNodes[i] = new Action((IAction) node);
+				}else if(node instanceof com.change_vision.jude.api.inf.model.IControlNode) {
+					this.activityNodes[i] = new ControlNode((IControlNode) node);
+				}else if(node instanceof com.change_vision.jude.api.inf.model.IActivityParameterNode) {
+					this.activityNodes[i] = new ActivityParameterNode((IActivityParameterNode) node);
+				}else if(node instanceof com.change_vision.jude.api.inf.model.IObjectNode) {
+					this.activityNodes[i] = new ObjectNode((IObjectNode) node);
+				}
+			}
+			//this.activityNodes[i] = new ActivityNode(activity.getActivityNodes()[i]);
+		}
 	}
 
-	@Override
-	public IActivityNode[] getActivityNodes() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setName(String nameAD) throws InvalidEditingException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+	public void setActivityDiagram(IActivityDiagram activityDiagram) {
+		this.activityDiagram = activityDiagram;
 	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return activity.getId();
 	}
+
+	@Override
+	public String getName() {
+		return activity.getName();
+	}
+
+	@Override
+	public String getDefinition() {
+		return activity.getDefinition();
+	}
+
+	@Override
+	public String[] getStereotypes() {
+		return activity.getStereotypes();
+	}
+
+	@Override
+	public IActivityDiagram getActivityDiagram() {
+		return this.activityDiagram;
+	}
+
+	@Override
+	public IActivityNode[] getActivityNodes() {
+		return this.activityNodes;
+	}
+
+	/*@Override
+	public void setName(String nameAD) throws InvalidEditingException {
+		try {
+			this.activity.setName(nameAD);
+		} catch (com.change_vision.jude.api.inf.exception.InvalidEditingException e) {
+			// TODO ver essa parte
+			e.printStackTrace();
+		}
+	}*/
+	
 
 }

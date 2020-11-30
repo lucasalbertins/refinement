@@ -17,7 +17,7 @@ import com.ref.ui.FDR3LocationDialog;
 
 public class TemplateAction implements IPluginActionDelegate {
 
-	public Object run(IWindow window) throws UnExpectedException {
+	public Object run(IWindow window){
 
 		try {
 			FDR3LocationDialog dialog = new FDR3LocationDialog((JFrame) window.getParent(), true);			

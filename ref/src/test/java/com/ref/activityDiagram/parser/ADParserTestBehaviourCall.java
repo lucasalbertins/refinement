@@ -1,4 +1,4 @@
-package com.ref.activityDiagram;
+package com.ref.activityDiagram.parser;
 
 import static org.junit.Assert.assertEquals;
 

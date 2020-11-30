@@ -10,10 +10,25 @@ public class Class implements IClass {
 		this.classe = classe;
 	}
 
+	@Override
+	public String getId() {
+		return classe.getId();
+	}
 
 	@Override
 	public String getName() {
 		return classe.getName();
 	}
+
+	@Override
+	public String getDefinition() {
+		return classe.getDefinition();
+	}
+
+	@Override
+	public String[] getStereotypes() {
+		return classe.getStereotypes();
+	}
+
 
 }

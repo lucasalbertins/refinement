@@ -1,95 +1,148 @@
 package com.ref.adapter.astah;
 
+import com.ref.adapter.astah.AdapterUtils.WhiteDiamondNodeType;
+import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IControlNode;
 import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IObjectFlow;
 
-public class ControlNode implements IControlNode{
+public class ControlNode extends ActivityNode implements IControlNode{
+	//com.change_vision.jude.api.inf.model.IControlNode controlNode;
+	//private IFlow[] incomings;
+	//private IFlow[] outgoings;
+	
+	public ControlNode(com.change_vision.jude.api.inf.model.IControlNode controlNode) throws WellFormedException {
+		super(controlNode);
+		//this.controlNode = controlNode;
 
-	@Override
-	public boolean isInitialNode() {
-		// TODO Auto-generated method stub
-		return false;
+		//TODO verificar se todas as arestas são do mesmo tipo
+		
+		if(isMergeNode()) {//todas as arestas de entrada tem que ser do mesmo tipo 
+			IFlow edge = incomings[0];
+			for(IFlow flow : incomings) {
+				if(!flow.getClass().equals(edge.getClass()) ) {
+					throw new WellFormedException("There is Control and Object flows on the incoming flows.\n");
+				}
+			}
+		}
+		
+		if(isDecisionNode()) {// todas as arestas de saida tem que ser do mesmo tipo
+			IFlow edge = outgoings[0];
+			for(IFlow flow : outgoings) {
+				if(!flow.getClass().equals(edge.getClass()) ) {
+					throw new WellFormedException("There are Control and Object flows on the incoming flows.\n");
+				}
+			}
+		}
+		
+		if(isInitialNode()) {// todas as arestas tem que ser de controle
+			for(int i = 0; i < outgoings.length ; i++) {
+				if(outgoings[i] instanceof IObjectFlow) {
+					throw new WellFormedException("The outgoing edges of a initialNode must be a Control Flow.\n");
+				}
+			}
+		}
+		
+		if(isForkNode()) {// todas as arestas de saida devem ser do mesmo tipo da de entrada
+			IFlow edge = incomings[0];
+			for(IFlow flow : outgoings) {
+				if(!flow.getClass().equals(edge.getClass()) ) {
+					throw new WellFormedException("At least one outgoing flow is not of the same type of the incoming flow.\n");
+				}
+			}
+		}
+		
+		if(isJoinNode()) {// se existir pelo menos 1 aresta de entrada que seja de objeto entao a saida tem que ser objeto
+			boolean object = false;
+			for(IFlow flow : incomings) {
+				if(flow instanceof IObjectFlow){
+					object = true;
+				}
+			}
+			if(outgoings[0] instanceof IObjectFlow) {
+				if(!object) {
+					throw new WellFormedException("There is at least one incoming Object Flow but the outgoing is a Control Flow. \n");
+				}
+			}else {
+				if(object) {
+					throw new WellFormedException("There are no incoming Object Flow but the outgoing is a Object Flow. \n");
+				}
+			}
+		}
 	}
 
 	@Override
-	public boolean isFlowFinalNode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isFinalNode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isForkNode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isJoinNode() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean isDecisionMergeNode() {
-		if () {
-            activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node
-        } else {
-            activityNode = defineMerge(activityNode, nodes, 0); // create merge node and set next action node
-        }
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public IFlow[] getIncomings() {
-		// TODO Auto-generated method stub
-		return null;
+	public IFlow[] getIncomings() {	
+		return this.incomings;		
 	}
 
 	@Override
 	public IFlow[] getOutgoings() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.outgoings;	
 	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).getId();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).getName();
 	}
 
 	@Override
 	public String getDefinition() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).getDefinition();
 	}
 
 	@Override
 	public String[] getStereotypes() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).getStereotypes();
 	}
 
 	@Override
-	public boolean isDecisionNode() {
-		return (activityNode.getOutgoings().length > 1 || (activityNode.getOutgoings()[0].getGuard() != null &&  !activityNode.getOutgoings()[0].getGuard().equals("")));
+	public boolean isInitialNode() {
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).isInitialNode();
+	}
+
+	@Override
+	public boolean isFlowFinalNode() {
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).isFlowFinalNode();
+	}
+
+	@Override
+	public boolean isFinalNode() {
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).isFinalNode();
+	}
+
+	@Override
+	public boolean isForkNode() {
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).isForkNode();
+	}
+
+	@Override
+	public boolean isJoinNode() {
+		return ((com.change_vision.jude.api.inf.model.IControlNode)activityNode).isJoinNode();
 	}
 
 	@Override
 	public boolean isMergeNode() {
-		return !(activityNode.getOutgoings().length > 1 || (activityNode.getOutgoings()[0].getGuard() != null &&  !activityNode.getOutgoings()[0].getGuard().equals("")));
+		if(AdapterUtils.wDNodeType(((com.change_vision.jude.api.inf.model.IControlNode)activityNode)) == WhiteDiamondNodeType.MERGE_NODE) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
+	@Override
+	public boolean isDecisionNode() {
+		if(AdapterUtils.wDNodeType(((com.change_vision.jude.api.inf.model.IControlNode)activityNode)) == WhiteDiamondNodeType.DECISION_NODE) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 }

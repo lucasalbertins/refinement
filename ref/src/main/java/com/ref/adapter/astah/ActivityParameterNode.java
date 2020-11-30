@@ -1,20 +1,56 @@
 package com.ref.adapter.astah;
 
+import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.interfaces.activityDiagram.IClass;
+import com.ref.interfaces.activityDiagram.IFlow;
 
-public class ActivityParameterNode implements IActivityParameterNode{
-	com.change_vision.jude.api.inf.model.IActivityParameterNode action;	
+public class ActivityParameterNode extends ObjectNode implements IActivityParameterNode{
+	//com.change_vision.jude.api.inf.model.IActivityParameterNode activityParameterNode;
+	//private IFlow[] incomings;
+	//private IFlow[] outgoings;
+	private IClass base;
+
+	public ActivityParameterNode(com.change_vision.jude.api.inf.model.IActivityParameterNode activityParameterNode) throws WellFormedException {
+		super(activityParameterNode);
+		//this.activityParameterNode = activityParameterNode;
+		
+		this.base = new Class(activityParameterNode.getBase());
+	}
 	
-	public ActivityParameterNode(com.change_vision.jude.api.inf.model.IActivityParameterNode action) {
-		this.action = action;
+	@Override
+	public IFlow[] getIncomings() {
+		return this.incomings;
 	}
 
+	@Override
+	public IFlow[] getOutgoings() {
+		return this.outgoings;
+	}
+
+	@Override
+	public String getId() {
+		return ((com.change_vision.jude.api.inf.model.IActivityParameterNode)activityNode).getId();
+	}
+
+	@Override
+	public String getName() {
+		return ((com.change_vision.jude.api.inf.model.IActivityParameterNode)activityNode).getName();
+	}
+
+	@Override
+	public String getDefinition() {
+		return ((com.change_vision.jude.api.inf.model.IActivityParameterNode)activityNode).getDefinition();
+	}
+
+	@Override
+	public String[] getStereotypes() {
+		return ((com.change_vision.jude.api.inf.model.IActivityParameterNode)activityNode).getStereotypes();
+	}
 
 	@Override
 	public IClass getBase() {
-		IClass c = new Class(action.getBase());
-		return c;
+		return this.base;
 	}
 
 }

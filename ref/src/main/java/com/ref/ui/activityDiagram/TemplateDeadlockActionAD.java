@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
@@ -17,12 +16,11 @@ import com.change_vision.jude.api.inf.ui.IPluginActionDelegate;
 import com.change_vision.jude.api.inf.ui.IWindow;
 import com.ref.exceptions.FDRException;
 import com.ref.exceptions.ParsingException;
+import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.log.Logador;
-import com.ref.parser.activityDiagram.ADParser;
 import com.ref.refinement.activityDiagram.ActivityController;
 import com.ref.refinement.activityDiagram.ActivityController.VerificationType;
-import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 
 public class TemplateDeadlockActionAD implements IPluginActionDelegate {
@@ -116,8 +114,11 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 		} catch(FDRException e) {
 		 	JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Checking Non-determinism Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
+		} catch (WellFormedException e) {
+			JOptionPane.showMessageDialog(window.getParent(), e.getMessage(),"Well-formedness Error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(window.getParent(), e.getMessage(),"Fatal Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			Logador.getInstance().log(e.getMessage());
 		}

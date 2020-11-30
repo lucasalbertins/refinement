@@ -7,13 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.ref.exceptions.InvalidEditingException;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
-import com.ref.refinement.activityDiagram.CounterExamples;
 
 public class ADParser {
 
@@ -185,11 +183,7 @@ public class ADParser {
     }
 
     private void setName(String nameAD) {
-        try {
-            this.ad.setName(nameAD);
-        } catch (InvalidEditingException e) {
-            e.printStackTrace();
-        }
+        this.ad.setName(nameAD);
     }
 
     /*

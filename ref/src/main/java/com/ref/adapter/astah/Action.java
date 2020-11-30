@@ -1,90 +1,103 @@
 package com.ref.adapter.astah;
 
+import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IOutputPin;
 
-public class Action implements IAction{
+public class Action extends ActivityNode implements IAction {
 
-	private com.change_vision.jude.api.inf.model.IAction action;
+	//private com.change_vision.jude.api.inf.model.IAction action;
+	//private IFlow[] incomings;
+	//private IFlow[] outgoings;
+	private IInputPin[] inputs;
+	private IOutputPin[] outputs;
+	private IActivity activity;
 	
-	
-	public Action(com.change_vision.jude.api.inf.model.IAction action) {
-		this.action = action;
+	public Action(com.change_vision.jude.api.inf.model.IAction action) throws WellFormedException {
+		super(action);
+		//this.action = action;
+		
+		this.inputs = new IInputPin[action.getInputs().length];
+		for (int i = 0; i < inputs.length; i++) {
+			this.inputs[i] = new InputPin(action.getInputs()[i]);
+		}
+		
+		this.outputs = new IOutputPin[action.getOutputs().length];
+		for (int i = 0; i < inputs.length; i++) {
+			this.outputs[i] = new OutputPin(action.getOutputs()[i]);
+		}
+		
+		if (isCallBehaviorAction()) {
+			this.activity = new Activity(action.getCallingActivity());
+		}
 	}
 
 	@Override
-	public IFlow[] getIncomings() {
-		// TODO Auto-generated method stub
-		return null;
+	public IFlow[] getIncomings() {	
+		return this.incomings;		
 	}
 
 	@Override
 	public IFlow[] getOutgoings() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.outgoings;	
 	}
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getId();
 	}
 
 	@Override
 	public String getDefinition() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getDefinition();
 	}
 
 	@Override
 	public IInputPin[] getInputs() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.inputs;
 	}
 
 	@Override
 	public IOutputPin[] getOutputs() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.outputs;
 	}
 
 	@Override
 	public IActivity getCallingActivity() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.activity;
 	}
 
 	@Override
 	public boolean isCallBehaviorAction() {
-		// TODO Auto-generated method stub
-		return false;
+		//return action.isCallBehaviorAction();
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isCallBehaviorAction();
 	}
 
 	@Override
 	public boolean isSendSignalAction() {
-		// TODO Auto-generated method stub
-		return false;
+		//return action.isSendSignalAction();
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isSendSignalAction();
 	}
 
 	@Override
 	public boolean isAcceptEventAction() {
-		// TODO Auto-generated method stub
-		return false;
+		//return action.isAcceptEventAction();
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isAcceptEventAction();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		//return action.getName();
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getName();
 	}
 
 	@Override
 	public String[] getStereotypes() {
-		// TODO Auto-generated method stub
-		return null;
+		//return action.getStereotypes();
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getStereotypes();
 	}
 
 }

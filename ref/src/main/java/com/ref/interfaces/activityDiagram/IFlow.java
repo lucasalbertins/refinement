@@ -8,4 +8,7 @@ public interface IFlow extends INamedElement{
 
 	String getGuard();
 	
+	void setSource(IActivityNode node);
+	
+	void setTarget(IActivityNode node);
 }
