@@ -26,7 +26,7 @@ public class ADDefineFinalNode {
         this.adUtils = adUtils;
     }
 
-    public IActivityNode defineFinalNode(IActivityNode activityNode, StringBuilder nodes) {
+    public String defineFinalNode(IActivityNode activityNode) {
         StringBuilder finalNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String nameFinalNode = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
@@ -92,8 +92,7 @@ public class ADDefineFinalNode {
 
         activityNode = null;
 
-        nodes.append(finalNode.toString());
+        return finalNode.toString();
 
-        return activityNode;
     }
 }

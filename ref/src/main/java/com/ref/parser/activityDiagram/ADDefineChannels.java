@@ -119,12 +119,15 @@ public class ADDefineChannels {
         if (syncObjectsEdge.size() > 0) {
             ArrayList<String> allObjectEdges = new ArrayList<>();
             for (String objectEdge : syncObjectsEdge.values()) {    //get sync channel
-                String nameParamater = objectEdges.get(objectEdge);
+                         	
+            	
+            	String type = objectEdges.get(objectEdge);
+            	objectEdge = objectEdge.substring(0, objectEdge.length()-3);
 
-                if (!allObjectEdges.contains(nameParamater)) {
-                    allObjectEdges.add(nameParamater);
-                    channels.append("channel oe_" + nameParamater + "_" + nameDiagram + ": ID_"+nameDiagram +".countOe_" + nameDiagram + "." + nameParamater + "_" + nameDiagram + "\n");
+                if (!allObjectEdges.contains(type)) {
+                    allObjectEdges.add(type);
                 }
+                channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "_" + nameDiagram + "\n");
             }
 
         }

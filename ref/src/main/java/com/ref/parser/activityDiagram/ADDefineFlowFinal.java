@@ -29,7 +29,7 @@ public class ADDefineFlowFinal {
         this.adUtils = adUtils;
     }
 
-    public IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) throws ParsingException {
+    public String defineFlowFinal(IActivityNode activityNode) throws ParsingException {
         StringBuilder flowFinal = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String nameFlowFinal = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
@@ -99,8 +99,6 @@ public class ADDefineFlowFinal {
 
         activityNode = null;
 
-        nodes.append(flowFinal.toString());
-
-        return activityNode;
+        return flowFinal.toString();
     }
 }
