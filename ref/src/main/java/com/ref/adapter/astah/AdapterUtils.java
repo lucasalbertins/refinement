@@ -86,13 +86,12 @@ public class AdapterUtils {
 
 	public static WhiteDiamondNodeType wDNodeType(IControlNode controlNode) {
 		if(controlNode.isDecisionMergeNode() && 
-				(controlNode.getOutgoings().length > 0 && controlNode.getOutgoings().length > 1 && 
-						controlNode.getOutgoings()[0].getGuard() != null && !(controlNode.getOutgoings()[0].getGuard().equals("")))) {
-			return WhiteDiamondNodeType.DECISION_NODE;
+				(controlNode.getIncomings().length > 1 && controlNode.getOutgoings().length == 1)) {
+			return WhiteDiamondNodeType.MERGE_NODE;			
 		}
 		else if(controlNode.isDecisionMergeNode() && 
-				(controlNode.getOutgoings().length > 0 && controlNode.getOutgoings().length == 1 )){
-			return WhiteDiamondNodeType.MERGE_NODE;
+				(controlNode.getIncomings().length == 1 && controlNode.getOutgoings().length > 0 )){
+			return WhiteDiamondNodeType.DECISION_NODE;
 		}else {
 			return WhiteDiamondNodeType.OTHERS;
 		}

@@ -128,21 +128,11 @@ public class ControlNode extends ActivityNode implements IControlNode{
 
 	@Override
 	public boolean isMergeNode() {
-		if(AdapterUtils.wDNodeType(((com.change_vision.jude.api.inf.model.IControlNode)activityNode)) == WhiteDiamondNodeType.MERGE_NODE) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return AdapterUtils.wDNodeType(((com.change_vision.jude.api.inf.model.IControlNode)activityNode)) == WhiteDiamondNodeType.MERGE_NODE;
 	}
 
 	@Override
 	public boolean isDecisionNode() {
-		if(AdapterUtils.wDNodeType(((com.change_vision.jude.api.inf.model.IControlNode)activityNode)) == WhiteDiamondNodeType.DECISION_NODE) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		return AdapterUtils.wDNodeType(((com.change_vision.jude.api.inf.model.IControlNode)activityNode)) == WhiteDiamondNodeType.DECISION_NODE; 
 	}
 }
