@@ -8,6 +8,7 @@ import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ADDefineFlowFinal {
 
@@ -58,29 +59,48 @@ public class ADDefineFlowFinal {
         flowFinal.append("(");
         for (int i = 0; i < ceInitials.size(); i++) {
         	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,ceInitials.get(i));
-            String ceIn = syncChannelsEdge.get(key);    //get the parallel input channels
-            String oeIn = syncObjectsEdge.get(key);
+        	if (inFlows[i] instanceof IObjectFlow) {
+				String typeObject;
+				try {
+					typeObject = ((IObjectFlow) inFlows[i]).getBase().getName();
+				} catch (NullPointerException e) {
+					throw new ParsingException("Object flow does not have a type.");
+				}
+				String oeIn;
+				if (syncObjectsEdge.containsKey(key)) {
+					oeIn = syncObjectsEdge.get(key);
+					if (!objectEdges.containsKey(oeIn)) {
+						objectEdges.put(oeIn, typeObject);
+					}
+				} else {
+					oeIn = adUtils.createOE();
+					syncObjectsEdge.put(key, oeIn);
+					objectEdges.put(oeIn, typeObject);
+				}
+				flowFinal.append("(");
 
-            if (ceIn != null) {
-                flowFinal.append("(");
+				if (i >= 0 && i < ceInitials.size() - 1) {
+					adUtils.ce(alphabet, flowFinal, oeIn, "?x" + " -> SKIP) [] ");
+				} else {
+					adUtils.ce(alphabet, flowFinal, oeIn, "?x" + " -> SKIP)");
+				}
 
-                if (i >= 0 && i < ceInitials.size() - 1) {
-                    adUtils.ce(alphabet, flowFinal, ceIn, " -> SKIP) [] ");
-                } else {
-                    adUtils.ce(alphabet, flowFinal, ceIn, " -> SKIP)");
-                }
-            } else {
+			} else {
+				String ceIn;
 
-                String nameObject = nameObjects.get(ceInitials.get(i));
+				if (syncChannelsEdge.containsKey(key)) {
+					ceIn = syncChannelsEdge.get(key);
+				} else {
+					ceIn = adUtils.createCE();
+					syncChannelsEdge.put(key, ceIn);
+				}
 
-                flowFinal.append("(");
-
-                if (i >= 0 && i < ceInitials.size() - 1) {
-                    adUtils.ce(alphabet, flowFinal, oeIn, "?" + nameObject + " -> SKIP) [] ");
-                } else {
-                    adUtils.ce(alphabet, flowFinal, oeIn, "?" + nameObject + " -> SKIP)");
-                }
-            }
+				if (i >= 0 && i < ceInitials.size() - 1) {
+					adUtils.ce(alphabet, flowFinal, ceIn, " -> SKIP) [] ");
+				} else {
+					adUtils.ce(alphabet, flowFinal, ceIn, " -> SKIP)");
+				}
+			}
 
         }
 

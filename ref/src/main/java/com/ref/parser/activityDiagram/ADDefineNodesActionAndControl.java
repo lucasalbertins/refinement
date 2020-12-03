@@ -473,7 +473,7 @@ public class ADDefineNodesActionAndControl {
         return dAction.defineAction(activityNode);
     }
 
-    private String defineFinalNode(IActivityNode activityNode) {
+    private String defineFinalNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dFinalNode = new ADDefineFinalNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
