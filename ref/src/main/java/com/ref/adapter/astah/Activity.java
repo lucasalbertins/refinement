@@ -20,10 +20,11 @@ public class Activity implements IActivity{
 		this.activityNodes = new IActivityNode[activity.getActivityNodes().length];
 		for (int i = 0; i < activityNodes.length; i++) {
 			com.change_vision.jude.api.inf.model.IActivityNode node = activity.getActivityNodes()[i];
-			//if  not pino
+			//trocar if not pino por else if pino
 			if(!(node instanceof com.change_vision.jude.api.inf.model.IPin)) {	
 				if(node instanceof com.change_vision.jude.api.inf.model.IAction) {
 					this.activityNodes[i] = new Action((IAction) node);
+					((com.ref.interfaces.activityDiagram.IAction)this.activityNodes[i]).getInputs();
 				}else if(node instanceof com.change_vision.jude.api.inf.model.IControlNode) {
 					this.activityNodes[i] = new ControlNode((IControlNode) node);
 				}else if(node instanceof com.change_vision.jude.api.inf.model.IActivityParameterNode) {
@@ -32,6 +33,11 @@ public class Activity implements IActivity{
 					this.activityNodes[i] = new ObjectNode((IObjectNode) node);
 				}
 			}
+
+			//Fazer for pra varrer os nos e atribuir os pinos aos actions 
+			
+			
+			
 			//this.activityNodes[i] = new ActivityNode(activity.getActivityNodes()[i]);
 		}
 	}
@@ -70,15 +76,15 @@ public class Activity implements IActivity{
 		return this.activityNodes;
 	}
 
-	/*@Override
-	public void setName(String nameAD) throws InvalidEditingException {
+	@Override
+	public void setName(String nameAD){
 		try {
 			this.activity.setName(nameAD);
 		} catch (com.change_vision.jude.api.inf.exception.InvalidEditingException e) {
 			// TODO ver essa parte
 			e.printStackTrace();
 		}
-	}*/
+	}
 	
 
 }

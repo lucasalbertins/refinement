@@ -30,6 +30,7 @@ public class ActivityController {
 			progressBar = new CheckingProgressBar();
 			Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
 			ActivityDiagram activityDiagram = new ActivityDiagram( (IActivityDiagram) diagram);
+			activity.setActivityDiagram(activityDiagram);
 			ADParser parser = new ADParser(activity, diagram.getName(),activityDiagram);
 			String diagramCSP = parser.parserDiagram();
 			

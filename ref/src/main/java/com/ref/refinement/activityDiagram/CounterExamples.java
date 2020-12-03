@@ -12,7 +12,7 @@ import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.parser.activityDiagram.ADAlphabet;
-import com.ref.parser.activityDiagram.ADCompositeAlphabet;
+//import com.ref.parser.activityDiagram.ADCompositeAlphabet;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.Pair;
 
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CounterExamples {
-    private static HashMap<String, INodePresentation> nodeAdded;
+ /*   private static HashMap<String, INodePresentation> nodeAdded;
     private static HashMap<String, INodePresentation> objPresent;
     private static List<String> trace;
     private static IPackage packageCounterExample;
@@ -73,7 +73,6 @@ public class CounterExamples {
 
             
             IDiagram[] diagrams = AstahAPI.getAstahAPI().getProjectAccessor().getProject().getDiagrams();
-            		//getCurrentProject().getDiagrams()getViewManager().getDiagramViewManager().getOpenDiagrams();
             IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
             
             ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
@@ -266,16 +265,7 @@ public class CounterExamples {
             newIdSignals.put(actionNode.getID(),node.getId());
             actNode.setDefinition(node.getDefinition());
             paintNodes(node, actionNode,diagram);
-            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        actionNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
-
+            
             nodeAdded.put(node.getId(), actionNode);
 
             for (int i = 0; i < inPins.length; i++) {
@@ -319,22 +309,7 @@ public class CounterExamples {
                         setFlowPoints(flow, targetOutFlows[x]);
                         
                         flowPinTargetSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
-                        
-                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) ||alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
-                            String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
-                            String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
-
-                            if (channel != null && trace.contains(channel)) {
-                                flow.setProperty("line.color", "#FF0000");
-                                pinPresent.setProperty("fill.color", "#FF0000");
-                                targetPresent.setProperty("fill.color", "#FF0000");
-                            } else if (channelObj != null && trace.contains(channelObj)) {
-                                flow.setProperty("line.color", "#FF0000");
-                                pinPresent.setProperty("fill.color", "#FF0000");
-                                targetPresent.setProperty("fill.color", "#FF0000");
-                            }
-                        }*/
-
+                       
                     } else {
                         INodePresentation targetPresent = createNode(targetOutFlows[x].getTarget(), adEditor,diagram);
                         INodePresentation pinPresent = objPresent.get(outPins[i].getId());
@@ -349,18 +324,7 @@ public class CounterExamples {
                         setFlowPoints(flow, targetOutFlows[x]);
                         
                         flowPinSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
-                        /*if (alphabet.getSyncChannelsEdge().containsKey(targetOutFlows[x].getId()) || alphabet.getSyncObjectsEdge().containsKey(targetOutFlows[x].getId())) {
-                            String channel = alphabet.getSyncChannelsEdge().get(targetOutFlows[x].getId());
-                            String channelObj = alphabet.getSyncObjectsEdge().get(targetOutFlows[x].getId());
-
-                            if (channel != null && trace.contains(channel)) {
-                                flow.setProperty("line.color", "#FF0000");
-                                pinPresent.setProperty("fill.color", "#FF0000");
-                            } else if (channelObj != null && trace.contains(channelObj)) {
-                                flow.setProperty("line.color", "#FF0000");
-                                pinPresent.setProperty("fill.color", "#FF0000");
-                            }
-                        }*/
+                       
 
                     }
                 }
@@ -398,17 +362,7 @@ public class CounterExamples {
                 setFlowPoints(flow, outFlows[i]);
                 
                 flowSP(outFlows, i, flow,diagram);
-                
-                /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                    String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                    String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                    if (channel != null && trace.contains(channel)) {
-                        flow.setProperty("line.color", "#FF0000");
-                    } else if (channelObj != null && trace.contains(channelObj)) {
-                        flow.setProperty("line.color", "#FF0000");
-                    }
-                }*/
+             
 
             }
 
@@ -427,16 +381,7 @@ public class CounterExamples {
             parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
             
             paintNodes(node, parameterNode,diagram);
-            /*if (alphabet.getParameterAlphabetNode().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getParameterAlphabetNode().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        parameterNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
-
+           
             nodeAdded.put(node.getId(), parameterNode);
 
             for (int i = 0; i < outFlows.length; i++) {
@@ -469,17 +414,7 @@ public class CounterExamples {
 
                     flowSP(outFlows, i, flow,diagram);
                     
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            System.out.println("aqui");
-                            flow.setProperty("line.color", "#FF0000");
-                        }
-                    }*/
+                 
                 }
             }
 
@@ -499,15 +434,7 @@ public class CounterExamples {
             decisionNode.setLabel(node.getName());
             
             paintNodes(node, decisionNode,diagram);
-            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        decisionNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
+          
 
             nodeAdded.put(node.getId(), decisionNode);
 
@@ -527,19 +454,7 @@ public class CounterExamples {
 
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        }
-                    }*/
-
+                  
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
                     ILinkPresentation flow = adEditor.createFlow(decisionNode, targetPresent);
@@ -553,18 +468,7 @@ public class CounterExamples {
                     setFlowPoints(flow, outFlows[i]);
                     
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
-                    
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        }
-                    }*/
-
+                  
                 }
             }
 
@@ -585,15 +489,7 @@ public class CounterExamples {
             forkNode.setLabel(node.getName());
 
             paintNodes(node, forkNode,diagram);
-            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        forkNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
+            
 
             nodeAdded.put(node.getId(), forkNode);
 
@@ -612,18 +508,7 @@ public class CounterExamples {
                     setFlowPoints(flow, outFlows[i]);
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        }
-                    }*/
+               
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
@@ -637,18 +522,7 @@ public class CounterExamples {
 
                     setFlowPoints(flow, outFlows[i]);
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
-                    
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        }
-                    }*/
-
+                  
                 }
             }
 
@@ -669,15 +543,7 @@ public class CounterExamples {
             joinNode.setLabel(node.getName());
 
             paintNodes(node, joinNode,diagram);
-            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        joinNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
+     
 
             nodeAdded.put(node.getId(), joinNode);
 
@@ -711,16 +577,7 @@ public class CounterExamples {
 
                     flowSP(outFlows, i, flow,diagram);
                     
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        }
-                    }*/
+            
 
                 }
             }
@@ -733,7 +590,6 @@ public class CounterExamples {
     }
 
     private static INodePresentation createFinal(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
-        //IFlow[] outFlows = node.getOutgoings();
         INodePresentation FinalNode = null;
 
         try {
@@ -749,22 +605,13 @@ public class CounterExamples {
     }
 
     private static INodePresentation createFlowFinal(IActivityNode node, ActivityDiagramEditor adEditor, IActivity diagram) {
-        //IFlow[] outFlows = node.getOutgoings();
         INodePresentation flowFinalNode = null;
 
         try {
             flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
             
             paintNodes(node, flowFinalNode,diagram);
-            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        flowFinalNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
+         
 
             nodeAdded.put(node.getId(), flowFinalNode);
         } catch (Exception e) {
@@ -775,9 +622,7 @@ public class CounterExamples {
     }
 
     private static INodePresentation createInputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IInputPin pin) {
-        //IFlow[] outFlows = node.getOutgoings();
-        //IInputPin[] inPins = ((IAction) node).getInputs();
-        //IOutputPin[] outPins = ((IAction) node).getOutputs();
+
         INodePresentation targetPresent = null;
 
         try{
@@ -792,9 +637,7 @@ public class CounterExamples {
     }
 
     private static INodePresentation createOutputPin(IActivityNode node, ActivityDiagramEditor adEditor, INodePresentation actionNode, IOutputPin pin) {
-        //IFlow[] outFlows = node.getOutgoings();
-        //IInputPin[] inPins = ((IAction) node).getInputs();
-        //IOutputPin[] outPins = ((IAction) node).getOutputs();
+
         INodePresentation targetPresent = null;
 
         try {
@@ -816,16 +659,7 @@ public class CounterExamples {
             objectNode = adEditor.createObjectNode(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
             
             paintNodes(node, objectNode,diagram);
-            /*if (alphabet.getAlphabetAD().containsKey(nameNodeResolver(node.getName()))) {
-                List<String> allflowsNode =  alphabet.getAlphabetAD().get(nameNodeResolver(node.getName()));
-
-                for (String objTrace : trace) {
-                    if (allflowsNode.contains(objTrace)) {
-                        objectNode.setProperty("fill.color", "#FF0000");
-                    }
-                }
-            }*/
-
+          
             nodeAdded.put(node.getId(), objectNode);
 
             for (int i = 0; i < outFlows.length; i++) {
@@ -844,18 +678,7 @@ public class CounterExamples {
                     
                     flowTargetSP(outFlows, i, targetPresent, flow,diagram);
                     
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                            targetPresent.setProperty("fill.color", "#FF0000");
-                        }
-                    }*/
+               
 
                 } else {
                     INodePresentation targetPresent = createNode(outFlows[i].getTarget(), adEditor,diagram);
@@ -871,16 +694,7 @@ public class CounterExamples {
                     
                     flowSP(outFlows,i,flow,diagram);
                     
-                    /*if (alphabet.getSyncChannelsEdge().containsKey(outFlows[i].getId()) || alphabet.getSyncObjectsEdge().containsKey(outFlows[i].getId())) {
-                        String channel = alphabet.getSyncChannelsEdge().get(outFlows[i].getId());
-                        String channelObj = alphabet.getSyncObjectsEdge().get(outFlows[i].getId());
-
-                        if (channel != null && trace.contains(channel)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        } else if (channelObj != null && trace.contains(channelObj)) {
-                            flow.setProperty("line.color", "#FF0000");
-                        }
-                    }*/
+                  
 
                 }
             }
@@ -1089,6 +903,6 @@ public class CounterExamples {
 		        }
 		    }
 		}
-	}
+	}*/
 
 }

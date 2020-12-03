@@ -21,7 +21,7 @@ public class Action extends ActivityNode implements IAction {
 		//this.action = action;
 		
 		this.inputs = new IInputPin[action.getInputs().length];
-		for (int i = 0; i < inputs.length; i++) {
+		for (int i = 0; i < inputs.length; i++) {//tirar daqui e botar no Activity
 			this.inputs[i] = new InputPin(action.getInputs()[i]);
 		}
 		

@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.interfaces.activityDiagram.IControlFlow;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;

@@ -3,15 +3,15 @@ package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;import com.change_vision.jude.api.inf.model.IObjectNode;
+import java.util.List;
+
+
 import com.ref.exceptions.ParsingException;
-import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
-import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
-import com.ref.interfaces.activityDiagram.IPin;
+import com.ref.interfaces.activityDiagram.IObjectNode;
 
 public class ADDefineDecision {
 

@@ -2,15 +2,12 @@ package com.ref.parser.activityDiagram;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.ref.exceptions.ParsingException;
-import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.interfaces.activityDiagram.IFlow;
-import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ADDefineObjectNode {

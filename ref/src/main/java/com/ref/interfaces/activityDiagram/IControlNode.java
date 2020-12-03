@@ -15,7 +15,5 @@ public interface IControlNode extends IActivityNode{
 	boolean isDecisionNode();
 	
 	boolean isMergeNode();
-	
-	boolean isDecisionNode();
-	
+		
 }
