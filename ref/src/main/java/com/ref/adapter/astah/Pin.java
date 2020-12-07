@@ -60,9 +60,10 @@ public abstract class Pin extends ObjectNode implements IPin{
 	public IAction getOwner() {
 		return this.owner;
 	}
-
-	public void setOwner(com.change_vision.jude.api.inf.model.IAction owner) throws WellFormedException {
-		this.owner = new Action(owner);
+	
+	@Override
+	public void setOwner(IAction owner) {
+		this.owner = owner;
 	}
 
 }

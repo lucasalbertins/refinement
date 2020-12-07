@@ -94,6 +94,8 @@ public class ADDefineFlowFinal {
 					ceIn = adUtils.createCE();
 					syncChannelsEdge.put(key, ceIn);
 				}
+				
+				flowFinal.append("(");
 
 				if (i >= 0 && i < ceInitials.size() - 1) {
 					adUtils.ce(alphabet, flowFinal, ceIn, " -> SKIP) [] ");

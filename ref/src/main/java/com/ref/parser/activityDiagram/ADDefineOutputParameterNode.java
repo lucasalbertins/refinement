@@ -19,17 +19,20 @@ public class ADDefineOutputParameterNode {
 	private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
 	private HashMap<String, String> objectEdges;
 	private ADUtils adUtils;
+	private HashMap<String,String> parameterNodesOutput;
+
 
 	public ADDefineOutputParameterNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
 			HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
 			HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges,
-			ADUtils adUtils) {
+			ADUtils adUtils, HashMap<String,String> parameterNodesOutput) {
 		this.ad = ad;
 		this.alphabetNode = alphabetNode2;
 		this.syncChannelsEdge = syncChannelsEdge2;
 		this.syncObjectsEdge = syncObjectsEdge2;
 		this.objectEdges = objectEdges;
 		this.adUtils = adUtils;
+		this.parameterNodesOutput = parameterNodesOutput;
 	}
 
 	public String defineOutputParameterNode(IActivityNode activityNode) throws ParsingException {
@@ -43,6 +46,12 @@ public class ADDefineOutputParameterNode {
 		String nameObjectUnique = "outParam";
 		String parameterType = ((IActivityParameterNode) activityNode).getBase().getName();
 
+		try {
+			parameterNodesOutput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+		} catch (Exception e) {
+			throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
+		}
+		
 		outParameter.append(nameOutParameter + "(id) = ");
 
 		outParameter.append("(");

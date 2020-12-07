@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.ref.interfaces.activityDiagram.IActivityParameterNode;
+import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
@@ -23,12 +24,13 @@ public class ADDefineInputParameterNode {
     private ArrayList<String> alphabetAllInitialAndParameter;
     private ADUtils adUtils;
     private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+	private HashMap<String,String> parameterNodesInput;
 
 
     public ADDefineInputParameterNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, 
     		HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, 
     		List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter, ADUtils adUtils,
-    		HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2) {
+    		HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,HashMap<String,String> parameterNodesInput) {
         this.ad = ad;
         this.parameterAlphabetNode = parameterAlphabetNode2;
         this.syncObjectsEdge = syncObjectsEdge2;
@@ -37,15 +39,22 @@ public class ADDefineInputParameterNode {
         this.alphabetAllInitialAndParameter = alphabetAllInitialAndParameter;
         this.adUtils = adUtils;
         this.alphabetNode = alphabetNode2;
+        this.parameterNodesInput = parameterNodesInput;
     }
 
-    public String defineInputParameterNode(IActivityNode activityNode) {
+    public String defineInputParameterNode(IActivityNode activityNode) throws ParsingException {
         StringBuilder parameterNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String nameParameterNode = "parameter_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
 
+        try {
+			parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+		} catch (Exception e) {
+			throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
+		}
+        
         parameterNode.append(nameParameterNode + "(id) = ");
         
         adUtils.update(alphabet, parameterNode, inFlows.length, outFlows.length, false);

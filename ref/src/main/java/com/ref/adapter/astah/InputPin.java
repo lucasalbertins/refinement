@@ -60,10 +60,6 @@ public class InputPin extends Pin implements IInputPin{
 		return this.owner;
 	}
 
-	@Override
-	public void setOwner(com.change_vision.jude.api.inf.model.IAction owner) throws WellFormedException {
-		this.owner = new Action(owner);
-	}
 
 	
 }

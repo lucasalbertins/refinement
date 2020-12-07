@@ -6,11 +6,13 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import com.ref.adapter.astah.Activity;
 import com.ref.adapter.astah.ActivityDiagram;
+import com.ref.adapter.astah.AdapterUtils;
 import com.ref.exceptions.FDRException;
 import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.parser.activityDiagram.ADUtils;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.wellformedness.WellFormedness;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
@@ -41,17 +43,17 @@ public class ActivityController {
 			PrintWriter writer;
 			
 		
-			writer = new PrintWriter(uh + fs + "TempAstah" + fs + activity + ".csp", "UTF-8");
+			writer = new PrintWriter(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "UTF-8");
 			writer.print(diagramCSP);
 			writer.flush();
 			writer.close();
 		
 			if (type == VerificationType.DEADLOCK) {
 				progressBar.setNewTitle("Checking deadlock");
-				progressBar.setAssertion(1);
-				
+				progressBar.setAssertion(0);
+				AdapterUtils.resetStatics();
 				try {
-					FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ((IActivityDiagram) diagram).getActivity() + ".csp", parser, diagram.getName(), progressBar);
+					FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(((IActivityDiagram) diagram).getName()) + ".csp", parser, diagram.getName(), progressBar);
 				} catch (Exception e) {
 					throw new FDRException("An error occurred during checking deadlock.");
 				}

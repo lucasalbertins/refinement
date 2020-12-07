@@ -116,4 +116,8 @@ public class AdapterUtils {
 		}
 		
 	}
+	
+	public static void resetStatics(){
+		edges = new HashMap<>();
+	}
 }

@@ -5,9 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ADDefineInitialNode {
 
@@ -31,7 +33,7 @@ public class ADDefineInitialNode {
         this.alphabetNode = alphabetNode2;
     }
 
-    public String defineInitialNode(IActivityNode activityNode) {
+    public String defineInitialNode(IActivityNode activityNode) throws ParsingException {
         StringBuilder initialNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String diagram = adUtils.nameDiagramResolver(ad.getName());
@@ -45,19 +47,30 @@ public class ADDefineInitialNode {
         adUtils.update(alphabet, initialNode, inFlows.length, outFlows.length, false);
 
         initialNode.append("(");
-
-        for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-            String ce = adUtils.createCE();
+        for (int i = 0; i < outFlows.length; i++) { // creates the parallel output channels
+			if (outFlows[i] instanceof IObjectFlow) {
+				throw new ParsingException("If the incoming edge of fork node "+activityNode.getName()+" is a ControlFlow, then\r\n" + 
+						"all outgoing edges shall be ControlFlows");
+			}
+			//key = new Pair<IActivity, String>(ad, outFlows[i].getId());
+			String ce;
             Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
-            syncChannelsEdge.put(key, ce);
-            initialNode.append("(");
 
-            if (i >= 0 && i < outFlows.length - 1) {
-                adUtils.ce(alphabet, initialNode, ce, " -> SKIP) ||| ");
-            } else {
-                adUtils.ce(alphabet, initialNode, ce, " -> SKIP)");
-            }
-        }
+			if (syncChannelsEdge.containsKey(key)) {
+				ce = syncChannelsEdge.get(key);
+			} else {
+				ce = adUtils.createCE();
+				syncChannelsEdge.put(key, ce);
+			}
+
+			initialNode.append("(");
+
+			if (i >= 0 && i < outFlows.length - 1) {
+				adUtils.ce(alphabet, initialNode, ce, " -> SKIP) ||| ");
+			} else {
+				adUtils.ce(alphabet, initialNode, ce, " -> SKIP)");
+			}
+		}
 
         initialNode.append(")\n");
         

@@ -68,8 +68,7 @@ public class ADDefineDecision {
 				}
             } else {
             	 oeIn = adUtils.createOE();
-                 Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,inEdge.getId());
-                 syncObjectsEdge.put(pair, oeIn);
+                 syncObjectsEdge.put(key, oeIn);
                  objectEdges.put(oeIn, typeObject);
             }
         	
@@ -121,9 +120,8 @@ public class ADDefineDecision {
     				}
                 } else {
                 	 oeOut = adUtils.createOE();
-                     Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,inEdge.getId());
-                     syncObjectsEdge.put(pair, oeIn);
-                     objectEdges.put(oeIn, outputType);
+                     syncObjectsEdge.put(key, oeOut);
+                     objectEdges.put(oeOut, outputType);
                 }
                    
                 if(!adUtils.nameDiagramResolver(outFlows[i].getGuard()).equalsIgnoreCase("else")) {// se a guarda não for else
@@ -194,9 +192,15 @@ public class ADDefineDecision {
             decision.append("(");
 
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                String ce = adUtils.createCE();
+            	String ce;
                 key = new Pair<IActivity, String>(ad,outFlows[i].getId());
-                syncChannelsEdge.put(key, ce);
+
+            	if (syncChannelsEdge.containsKey(key)) {
+    				ce = syncChannelsEdge.get(key);
+    			} else {
+    				ce = adUtils.createCE();
+    				syncChannelsEdge.put(key, ce);
+    			}
 
                 // tratamento de guarda
                 if (outFlows[i].getGuard().length() == 0) {

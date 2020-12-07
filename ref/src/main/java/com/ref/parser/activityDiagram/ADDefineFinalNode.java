@@ -92,7 +92,9 @@ public class ADDefineFinalNode {
 					ceIn = adUtils.createCE();
 					syncChannelsEdge.put(key, ceIn);
 				}
-
+				
+				finalNode.append("(");
+				
 				if (i >= 0 && i < ceInitials.size() - 1) {
 					adUtils.ce(alphabet, finalNode, ceIn, " -> SKIP) [] ");
 				} else {

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
@@ -13,8 +12,8 @@ import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.interfaces.activityDiagram.IControlNode;
-import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IObjectNode;
+import com.ref.interfaces.activityDiagram.IPin;
 
 public class ADDefineNodesActionAndControl {
 
@@ -157,7 +156,7 @@ public class ADDefineNodesActionAndControl {
                      activityNode = null;
                  }
 
-             } else if (activityNode instanceof IObjectNode) {
+             } else if (activityNode instanceof IObjectNode && !(activityNode instanceof IPin)) {
             	 nodes.append(defineObjectNode(activityNode));
              }
 		}
@@ -481,7 +480,7 @@ public class ADDefineNodesActionAndControl {
         return dFinalNode.defineFinalNode(activityNode);
     }
 
-    private String defineInitialNode(IActivityNode activityNode) {
+    private String defineInitialNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dInitialNode = new ADDefineInitialNode(ad, allInitial, alphabetAllInitialAndParameter, queueNode, syncChannelsEdge, adUtils,alphabetNode);
@@ -538,11 +537,11 @@ public class ADDefineNodesActionAndControl {
         return dFlowFinal.defineFlowFinal(activityNode);
     }
 
-    private String defineInputParameterNode(IActivityNode activityNode) {
+    private String defineInputParameterNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dInputParameterNode = new ADDefineInputParameterNode(ad, parameterAlphabetNode, syncObjectsEdge, objectEdges,
-                allInitial, alphabetAllInitialAndParameter, adUtils,alphabetNode);
+                allInitial, alphabetAllInitialAndParameter, adUtils,alphabetNode, parameterNodesInput);
 
         return dInputParameterNode.defineInputParameterNode(activityNode);
     }
@@ -551,7 +550,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = defineADUtils();
 
         dOutputParameterNode = new ADDefineOutputParameterNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,
-                objectEdges,  adUtils);
+                objectEdges,  adUtils, parameterNodesOutput);
 
         return dOutputParameterNode.defineOutputParameterNode(activityNode);
     }

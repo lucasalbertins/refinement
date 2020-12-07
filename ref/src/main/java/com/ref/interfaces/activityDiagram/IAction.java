@@ -14,5 +14,7 @@ public interface IAction extends IActivityNode{
 	boolean isSendSignalAction();
 
 	boolean isAcceptEventAction();
-
+	
+	void addPin(IPin pin);
+	
 }

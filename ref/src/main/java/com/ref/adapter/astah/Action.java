@@ -6,6 +6,7 @@ import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IOutputPin;
+import com.ref.interfaces.activityDiagram.IPin;
 
 public class Action extends ActivityNode implements IAction {
 
@@ -26,12 +27,13 @@ public class Action extends ActivityNode implements IAction {
 		}
 		
 		this.outputs = new IOutputPin[action.getOutputs().length];
-		for (int i = 0; i < inputs.length; i++) {
+		for (int i = 0; i < outputs.length; i++) {
 			this.outputs[i] = new OutputPin(action.getOutputs()[i]);
 		}
 		
 		if (isCallBehaviorAction()) {
 			this.activity = new Activity(action.getCallingActivity());
+			this.activity.setActivityDiagram(new ActivityDiagram(action.getCallingActivity().getActivityDiagram()));
 		}
 	}
 
@@ -100,4 +102,23 @@ public class Action extends ActivityNode implements IAction {
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getStereotypes();
 	}
 
+	@Override
+	public void addPin(IPin pin) {
+		if(pin instanceof InputPin) {
+			for(int i = 0; i<inputs.length;i++) {
+				if(inputs[i] == null) {
+					inputs[i] = (IInputPin) pin;
+				}
+			}
+		}else if(pin instanceof OutputPin){
+			for(int i = 0; i<outputs.length;i++) {
+				if(outputs[i] == null) {
+					outputs[i] = (IOutputPin) pin;
+				}
+			}
+		}
+		else {
+			//algo deu errado
+		}
+	}
 }
