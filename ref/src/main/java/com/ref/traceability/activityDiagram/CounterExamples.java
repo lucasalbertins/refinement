@@ -1,4 +1,4 @@
-package com.ref.refinement.activityDiagram;
+package com.ref.traceability.activityDiagram;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.editor.ActivityDiagramEditor;
@@ -11,10 +11,10 @@ import com.change_vision.jude.api.inf.model.*;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.parser.activityDiagram.ADAlphabet;
+//import com.ref.parser.activityDiagram.ADAlphabet;
 //import com.ref.parser.activityDiagram.ADCompositeAlphabet;
 import com.ref.parser.activityDiagram.ADParser;
-import com.ref.parser.activityDiagram.Pair;
+import com.ref.parser.activityDiagram.Pair;//TODO ver isso
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class CounterExamples {
- /*   private static HashMap<String, INodePresentation> nodeAdded;
+    private static HashMap<String, INodePresentation> nodeAdded;
     private static HashMap<String, INodePresentation> objPresent;
     private static List<String> trace;
     private static IPackage packageCounterExample;
@@ -73,6 +73,8 @@ public class CounterExamples {
 
             
             IDiagram[] diagrams = AstahAPI.getAstahAPI().getProjectAccessor().getProject().getDiagrams();
+            callBehaviourList = CounterExampleAdapter.generateCBAList(diagrams);//preencher callBehaviourList
+            
             IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
             
             ProjectAccessor prjAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
@@ -707,7 +709,8 @@ public class CounterExamples {
     }
   
     private static void paintNodes(IActivityNode node, INodePresentation actionNode,IActivity diagram) throws InvalidEditingException {
-    	Pair<IActivity, String> key = null; 	
+    	//node = nó antigo, actionNode = nó novo
+    	Pair<IActivity, String> key = null;//diagrama,nome do no 	
     	if(node instanceof IAction) {
     		if(((IAction)node).isAcceptEventAction()) {
     			String idAntigo = newIdSignals.get(actionNode.getID());
@@ -727,7 +730,7 @@ public class CounterExamples {
     		key = new Pair<IActivity, String>(diagram,nameNodeResolver(node.getName()));
     	}
     	
-    	if(alphabet instanceof ADCompositeAlphabet) {
+    	if(alphabet instanceof ADCompositeAlphabet) {//se o diagram mais externo tiver CBAs
 			HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
 			aux =((ADCompositeAlphabet) alphabet).getAllAlphabetNodes();		
 			if(aux.containsKey(key)) {
@@ -903,6 +906,6 @@ public class CounterExamples {
 		        }
 		    }
 		}
-	}*/
+	}
 
 }

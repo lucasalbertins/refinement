@@ -10,7 +10,7 @@ import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.adapter.astah.NamedElement;
+import com.ref.astah.adapter.NamedElement;
 
 public class NamedElementTest {
 	public static com.change_vision.jude.api.inf.model.IActivityDiagram ad;

@@ -1,4 +1,4 @@
-package com.ref.adapter.astah;
+package com.ref.astah.adapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import com.change_vision.jude.api.inf.model.IActivityParameterNode;
 import com.change_vision.jude.api.inf.model.IObjectNode;
 import com.change_vision.jude.api.inf.model.IPin;
-import com.ref.adapter.astah.AdapterUtils.WhiteDiamondNodeType;
+import com.ref.astah.adapter.AdapterUtils.WhiteDiamondNodeType;
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IClass;

@@ -18,7 +18,7 @@ import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.SDParser;
-import com.ref.refinement.CounterexampleDescriptor;
+import com.ref.traceability.CounterexampleDescriptor;
 
 public class SDGeneratorTest {
 

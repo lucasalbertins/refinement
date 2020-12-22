@@ -19,8 +19,8 @@ import com.ref.exceptions.FDRException;
 import com.ref.exceptions.ParsingException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
-import com.ref.refinement.activityDiagram.ActivityController;
-import com.ref.refinement.activityDiagram.ActivityController.VerificationType;
+import com.ref.traceability.activityDiagram.ActivityController;
+import com.ref.traceability.activityDiagram.ActivityController.VerificationType;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 

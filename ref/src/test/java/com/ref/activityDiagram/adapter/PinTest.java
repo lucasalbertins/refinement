@@ -13,7 +13,7 @@ import com.change_vision.jude.api.inf.model.IInputPin;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.IPin;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.adapter.astah.InputPin;
+import com.ref.astah.adapter.InputPin;
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IFlow;
 

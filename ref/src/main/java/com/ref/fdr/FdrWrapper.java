@@ -15,16 +15,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.editor.*;
+import com.change_vision.jude.api.inf.editor.TransactionManager;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
-import com.ref.refinement.activityDiagram.CounterExamples;
 //import com.ref.refinement.activityDiagram.CounterExamples.CounterExType;
 import com.ref.ui.CheckingProgressBar;
 
 public class FdrWrapper {
 
+	public static List<String> traceCounterExample;
+	
 	private static FdrWrapper instance;
 
 	private Map<Integer, List<String>> resultado;
@@ -425,7 +426,8 @@ public class FdrWrapper {
     }
 
 	
-	public int checkDeadlock(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
+	public List<String> checkDeadlock(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
+		//retornar o trace
 		
 	/*
 	0 = error
@@ -438,7 +440,7 @@ public class FdrWrapper {
 		progressBar.setProgress(1, "", false);
 
 		int hasError = 0;
-
+		List<String> trace = null;
 		try {
 
 			Object fdr = fdrClass.newInstance();
@@ -464,8 +466,8 @@ public class FdrWrapper {
 							"counterexamples", null, null)) {
 
 						progressBar.setProgress(3, "", false);
-						List<String> trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-						//CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DEADLOCK_COUNTEREXAMPLE);
+						trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
+						//CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DEADLOCK_COUNTEREXAMPLE);//TODO remover isso
 
 						hasError = 2;
 					}
@@ -502,7 +504,7 @@ public class FdrWrapper {
 		} else {
 			progressBar.setProgress(5, handleLogDeadlock(hasError, nameDiagram), false);
 		}
-		return hasError;
+		return trace;
 	}
 
 	public int checkLivelock(String filename) throws Exception{
@@ -570,7 +572,7 @@ public class FdrWrapper {
 		return hasError;
 	}
 
-	public int checkDeterminism(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
+	public List<String> checkDeterminism(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
 
 	/*
 	0 = error
@@ -583,7 +585,8 @@ public class FdrWrapper {
 		progressBar.setProgress(1, "", false);
 
 		int hasError = 0;
-
+		List<String> trace = null;
+		
 		try {
 
 			Object fdr = fdrClass.newInstance();
@@ -600,7 +603,7 @@ public class FdrWrapper {
 					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
 					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-					Object assertion = assertions.get(2);
+					Object assertion = assertions.get(0);
 
 					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
@@ -609,7 +612,7 @@ public class FdrWrapper {
 							"counterexamples", null, null)) {
 
 						progressBar.setProgress(3, "", false);
-						List<String> trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
+						trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
 						//CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DETERMINISM_COUNTEREXAMPLE);
 
 						hasError = 2;
@@ -621,8 +624,11 @@ public class FdrWrapper {
 
 					progressBar.setProgress(4, "", false);
 
+				} catch (InvalidEditingException e) {
+					TransactionManager.abortTransaction();
 				} catch (Exception e) {
-					hasError = 2;
+					TransactionManager.abortTransaction();
+					hasError = 3;
 				}
 			}
 
@@ -645,7 +651,7 @@ public class FdrWrapper {
 			progressBar.setProgress(5, handleLogDeterminism(hasError, nameDiagram), false);
 		}
 
-		return hasError;
+		return trace;
 	}
 
 	private String handleLogDeadlock(int hasError, String nameDiagram) {
@@ -679,5 +685,4 @@ public class FdrWrapper {
 
 		return log;
 	}
-
 }

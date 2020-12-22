@@ -13,6 +13,7 @@ import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 
+
 public class ADParser {
 
     private IActivity ad;
@@ -56,7 +57,6 @@ public class ADParser {
     private static HashMap<String, List<String>> callBehaviourInputs = new HashMap<>(); //name; List inputs
     private static HashMap<String, List<String>> callBehaviourOutputs = new HashMap<>(); //name; List outputs
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
-    public  List<Pair<String,Integer>> IdSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
     private static HashMap<String,List<IActivity>> signalChannels = new HashMap<>();
     private List<String> signalChannelsLocal;
@@ -248,7 +248,7 @@ public class ADParser {
         //reseta os valores estaticos
         if (reset) {
         	//TODO corrigir contraexemplo no astah
-        	//CounterExamples.callBehaviourList = callBehaviourList;
+        	//CounterExampleAdapter.callBehaviourList = callBehaviourList;
         	//DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();
         }
@@ -306,16 +306,21 @@ public class ADParser {
                     	if(((IAction) activityNode).getCallingActivity() == null) {
                     		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
                     	}else {
-                    		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+                    		if(!containsCBA(((IAction) activityNode).getCallingActivity())) {
+		                		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+                    		}
                     		addCountCallBehavior(((IAction) activityNode).getCallingActivity().getId(), activityNode.getId(),activityNode.getName());
+	                		
                     	}
                     }
         		}
         	}
+        	
         	boolean mudou =true;
         	List<IActivity> aux1 = new ArrayList<>();
         	List<IActivity> aux3 = new ArrayList<>();
         	aux3.addAll(callBehaviourList);
+        	
         	while(mudou) {
 	        	if(callBehaviourList.size() != 0) {//pega os CBA dentro de CBA
 	        		for(IActivity CBAs: callBehaviourList) {//para cada CBA
@@ -333,7 +338,7 @@ public class ADParser {
 	        	}
 	        	
 	        	for(IActivity CBA:aux1) {//faz a união dos conjuntos
-	        		if(!callBehaviourList.contains(CBA)) {
+	        		if(!containsCBA(CBA)) {
 	        			callBehaviourList.add(CBA);
 	        		}
 	        	}
@@ -344,6 +349,15 @@ public class ADParser {
 	        	}
         	}
         }
+	}
+
+	private boolean containsCBA(IActivity callingActivity) {
+		for(IActivity activity: callBehaviourList) {
+			if(callingActivity.getId().equals(activity.getId())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void definePoolAlphabet() {

@@ -19,8 +19,9 @@ import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.log.Logador;
-import com.ref.refinement.activityDiagram.ActivityController;
-import com.ref.refinement.activityDiagram.ActivityController.VerificationType;
+import com.ref.traceability.activityDiagram.ActivityController;
+import com.ref.traceability.activityDiagram.ActivityController.VerificationType;
+import com.ref.ui.CheckingProgressBar;
 import com.ref.ui.FDR3LocationDialog;
 
 public class TemplateDeadlockActionAD implements IPluginActionDelegate {
@@ -51,8 +52,32 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 						IDiagram diagram = AstahAPI.getAstahAPI().getViewManager().getDiagramViewManager().getCurrentDiagram();
 
 						if (diagram instanceof IActivityDiagram) {
+							CheckingProgressBar progressBar = new CheckingProgressBar();
+							progressBar.setNewTitle("Checking deadlock");
+							progressBar.setAssertion(0);
+
+							//controler.AstahInvocation(diagram, VerificationType.DEADLOCK,progressBar);
+							new Thread(new Runnable() {
+								@Override
+								public void run() {
+									try {
+										controler.AstahInvocation(diagram, VerificationType.DEADLOCK,progressBar);
+									}catch(ParsingException e) {
+										JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"File Error", JOptionPane.ERROR_MESSAGE);
+										e.printStackTrace();
+									} catch(FDRException e) {
+									 	JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Checking Non-determinism Error", JOptionPane.ERROR_MESSAGE);
+										e.printStackTrace();
+									} catch (WellFormedException e) {
+										JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Well-formedness Error", JOptionPane.ERROR_MESSAGE);
+										e.printStackTrace();
+									} catch (Exception e) {
+										JOptionPane.showMessageDialog( window.getParent(), "An error occurred during checking deadlock.","Checking Deadlock Error", JOptionPane.ERROR_MESSAGE);
+										e.printStackTrace();
+									}
+								}
+							}).start();
 							
-							controler.AstahInvocation(diagram, VerificationType.DEADLOCK);
 							/*ADParser parser = new ADParser(((IActivityDiagram) diagram).getActivity(), diagram.getName(), (IActivityDiagram) diagram);
 							String diagramCSP = parser.parserDiagram();
 
@@ -104,20 +129,20 @@ public class TemplateDeadlockActionAD implements IPluginActionDelegate {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Logador.getInstance().log(e.getMessage());
-		} catch(ParsingException e) {
+		}/* catch(ParsingException e) {
 			JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"File Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
-		} catch (InvalidUsingException e) {
+		}*/ catch (InvalidUsingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			Logador.getInstance().log(e.getMessage());
-		} catch(FDRException e) {
+		}/* catch(FDRException e) {
 		 	JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Checking Non-determinism Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 		} catch (WellFormedException e) {
 			JOptionPane.showMessageDialog(window.getParent(), e.getMessage(),"Well-formedness Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
-		} catch (Exception e) {
+		}*/ catch (Exception e) {
 			JOptionPane.showMessageDialog(window.getParent(), e.getMessage(),"Fatal Error", JOptionPane.ERROR_MESSAGE);
 			e.printStackTrace();
 			Logador.getInstance().log(e.getMessage());

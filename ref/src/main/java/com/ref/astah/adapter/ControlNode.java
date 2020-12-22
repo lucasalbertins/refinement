@@ -1,6 +1,6 @@
-package com.ref.adapter.astah;
+package com.ref.astah.adapter;
 
-import com.ref.adapter.astah.AdapterUtils.WhiteDiamondNodeType;
+import com.ref.astah.adapter.AdapterUtils.WhiteDiamondNodeType;
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IControlNode;
 import com.ref.interfaces.activityDiagram.IFlow;

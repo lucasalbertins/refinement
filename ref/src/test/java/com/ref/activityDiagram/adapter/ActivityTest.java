@@ -10,8 +10,8 @@ import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.adapter.astah.Activity;
-import com.ref.adapter.astah.ActivityDiagram;
+import com.ref.astah.adapter.Activity;
+import com.ref.astah.adapter.ActivityDiagram;
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 

@@ -12,9 +12,9 @@ import com.change_vision.jude.api.inf.model.IControlNode;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.IOutputPin;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.ref.adapter.astah.ControlNode;
-import com.ref.adapter.astah.ObjectFlow;
-import com.ref.adapter.astah.OutputPin;
+import com.ref.astah.adapter.ControlNode;
+import com.ref.astah.adapter.ObjectFlow;
+import com.ref.astah.adapter.OutputPin;
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IFlow;
 

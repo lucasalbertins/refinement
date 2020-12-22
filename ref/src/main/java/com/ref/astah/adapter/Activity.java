@@ -1,4 +1,4 @@
-package com.ref.adapter.astah;
+package com.ref.astah.adapter;
 
 import java.util.HashMap;
 

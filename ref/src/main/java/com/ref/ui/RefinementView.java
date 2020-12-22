@@ -34,7 +34,7 @@ import com.change_vision.jude.api.inf.ui.ISelectionListener;
 import com.ref.fdr.FdrWrapper;
 import com.ref.log.Logador;
 import com.ref.parser.SDParser;
-import com.ref.refinement.CounterexampleDescriptor;
+import com.ref.traceability.CounterexampleDescriptor;
 
 //import JP.co.esm.caddies.jomt.jmodel.IMessagePresentation;
 
