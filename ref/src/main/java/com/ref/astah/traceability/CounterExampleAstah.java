@@ -313,7 +313,7 @@ public class CounterExampleAstah {
 	                        if(trace.contains(targetOutFlows[x].getId())) {//TODO aqui que ta dando erro
 		                    	 flow.setProperty("line.color", "#FF0000");
 		                    	 pinPresent.setProperty("fill.color", "#FF0000");
-		 			             targetPresent.setProperty("fill.color", "#FF0000");
+		 			             //targetPresent.setProperty("fill.color", "#FF0000");
 		                    }
 	                        
 	                    } else {
@@ -417,7 +417,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                } else {
@@ -479,7 +479,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                  
 	                } else {
@@ -497,7 +497,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                }
@@ -542,7 +542,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	               
 
@@ -560,7 +560,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                }
@@ -606,7 +606,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                } else {
@@ -736,7 +736,7 @@ public class CounterExampleAstah {
 	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             targetPresent.setProperty("fill.color", "#FF0000");
+	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	               
 

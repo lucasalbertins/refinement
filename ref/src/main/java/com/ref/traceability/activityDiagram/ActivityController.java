@@ -61,6 +61,7 @@ public class ActivityController {
 				try {
 					traceCounterExample = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(((IActivityDiagram) diagram).getName()) + ".csp", parser, diagram.getName(), progressBar);
 				} catch (Exception e) {
+					AdapterUtils.resetStatics();
 					throw new FDRException("An error occurred during checking deadlock.");
 				}
 			} else {
@@ -70,6 +71,7 @@ public class ActivityController {
 				try {
 					traceCounterExample = FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(((IActivityDiagram) diagram).getName()) + ".csp", parser, diagram.getName(), progressBar);
 				} catch (Exception e) {
+					AdapterUtils.resetStatics();
 					throw new FDRException("An error occurred during checking non-determinism.");
 				}
 			} 

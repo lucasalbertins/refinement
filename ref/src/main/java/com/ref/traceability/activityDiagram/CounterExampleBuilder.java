@@ -20,19 +20,18 @@ import com.ref.parser.activityDiagram.Pair;
 public class CounterExampleBuilder {
 
 	private ADAlphabet alphabetAD;
-	private Activity activity;
 	private List<String> traceCounterExample;
 	private HashMap<String,Integer> IdSignals;
 
 	public CounterExampleBuilder(List<String> traceCounterExample, Activity activity, ADAlphabet alphabetAD, HashMap<String,Integer> IdSignals) {
-		this.activity = activity;
 		this.alphabetAD = alphabetAD;
 		this.IdSignals = IdSignals;
 		
+		//TODO futuramente verificar se essa parte continua correta
 		List<String> trace = new ArrayList<>();// tratamento necessário no trace
 		for (String objTrace : traceCounterExample) {
             String[] objTracePartition = objTrace.split("\\.");
-            if (objTracePartition.length > 1) {
+            if (objTracePartition.length > 1 && !objTracePartition[0].startsWith("startActivity_") && !objTracePartition[0].startsWith("endActivity_")) {
             	String aux = objTracePartition[0] + ".id";
             	if(!objTracePartition[0].startsWith("oe_")) {
 	            	for(int i=2;i<objTracePartition.length;i++) {
@@ -56,7 +55,8 @@ public class CounterExampleBuilder {
 		HashMap<IActivity,List<String>> nodesCE = new HashMap<>();
 		nodesCE.put(diagram, searchDiagram(diagram));
 		for (int i = 0; i < diagram.getActivityNodes().length ; i++) {
-			if(diagram.getActivityNodes()[i] instanceof IAction && ((IAction)diagram.getActivityNodes()[i]).isCallBehaviorAction()) {
+			IActivityNode node = diagram.getActivityNodes()[i]; 
+			if(node instanceof IAction && ((IAction)node).isCallBehaviorAction()) {
 				nodesCE.putAll(createCounterExample(((IAction)diagram.getActivityNodes()[i]).getCallingActivity()));
 			}
 		}
@@ -73,12 +73,12 @@ public class CounterExampleBuilder {
 				if (((IAction) node).isAcceptEventAction()) {
 					//String idAntigo = newIdSignals.get(actionNode.getID());
 					int signalNumber = IdSignals.get(node.getId());
-					key = new Pair<IActivity, String>(activity,"accept_"+nameNodeResolver(node.getName())+"_"+signalNumber);
+					key = new Pair<IActivity, String>(diagram,"accept_"+nameNodeResolver(node.getName())+"_"+signalNumber);
 				}
 				else if(((IAction)node).isSendSignalAction()) {
 					//String idAntigo = newIdSignals.get(actionNode.getID());
 					int signalNumber = IdSignals.get(node.getId());
-					key = new Pair<IActivity, String>(activity,"signal_"+nameNodeResolver(node.getName())+"_"+signalNumber);
+					key = new Pair<IActivity, String>(diagram,"signal_"+nameNodeResolver(node.getName())+"_"+signalNumber);
 				} else {
 					key = new Pair<IActivity, String>(diagram,nameNodeResolver(node.getName()));
 				}

@@ -35,4 +35,8 @@ public class NamedElement implements INamedElement{
 		return this.getId().equals(namedElement.getId());
 	}
 	
+	public String toString() {
+		return this.getName();
+	}
+	
 }
