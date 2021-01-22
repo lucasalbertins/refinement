@@ -240,9 +240,9 @@ public class ADDefineChannels {
         		channels.append("channel begin, end:  {1.." + adParser.countUntil_ad + "}\n");				
         	}
         	//-----------------CALLBEHAVIOUR----------------------------
-//        	if (adParser.countCallB_ad > 0) {
-//        		channels.append("channel chaos:  {1.." + adParser.countCallB_ad + "}\n");				
-//			}
+        	if (adParser.countAny_ad > 0) {
+        		channels.append("channel chaos:  {1.." + adParser.countAny_ad + "}\n");				
+			}
         	//----------------------------------------------
         	
 //            for (String signalChannel : keySignalChannels) {

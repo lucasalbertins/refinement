@@ -26,7 +26,7 @@ public class ADParser {
     public int countCe_ad;
     public int countOe_ad;
     public int countUntil_ad;
-    public int countCallB_ad;
+    public int countAny_ad;
     public int countUpdate_ad;
     public int countClear_ad;
     public int limiteInf;
@@ -94,7 +94,7 @@ public class ADParser {
         this.countCe_ad = 1;
         this.countOe_ad = 1;
         this.countUntil_ad = 0;
-        this.countCallB_ad = 0;
+        this.countAny_ad = 0;
         this.countUpdate_ad = 1;
         this.countClear_ad = 1;
         this.limiteInf = 99;
@@ -149,7 +149,7 @@ public class ADParser {
         this.countCe_ad = 1;
         this.countOe_ad = 1;
         this.countUntil_ad = 1;
-        this.countCallB_ad = 1;
+        this.countAny_ad = 1;
         this.countUpdate_ad = 1;
         this.countClear_ad = 1;
         this.limiteInf = 99;
@@ -263,18 +263,33 @@ public class ADParser {
 		}
         
         // ----------------------------------------------
-    	String footer = "\n\n";
-    	footer += "NRecurse(S, P) = |~| ev : S @ ev -> P\n"
+    	String check_props = "\n\n";
+    	check_props += 
+    			"NRecurse(S, P) = |~| ev : S @ ev -> P\n"
     			+ "\n"
     			+ "WAIT(alphabet,event) = \n"
     			+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
     			+ "	|~|\n"
     			+ "	event -> SKIP\n"
     			+ "\n"
-    			+ "WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL\n"
-    			+ "\n"
-    			+ "PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n"
-    			+ "\n"
+    			+ "WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL\n\n"
+    			+ "Prop = PROP(Wait_control_processes) \n\n";
+    	
+    	if (countAny_ad > 0 && countUntil_ad > 0) {
+			check_props +=
+					"PROP(processes) = (MAIN [|{|begin, end, chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end, chaos|}\n\n";
+		} else if (countUntil_ad > 0) {
+			check_props +=
+					"PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n\n";
+		} else if (countAny_ad > 0) {
+			check_props +=
+					"PROP(processes) = (MAIN [|{|chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|chaos|}\n\n";
+		} else {
+			check_props +=
+					"PROP(processes) = (MAIN)\n\n";
+		}
+    	   
+    	check_props += ""
     			+ adUtils.alphabetRobo(robochart_alphabet)
         		+ "\n\n"
         		+ adUtils.printUntils()
@@ -284,8 +299,14 @@ public class ADParser {
         		+ "\n"
     			+ "assert Wait [FD= Prop \\ alphabet_Astah"
     			+ "\n"
-    			+ "assert Prop \\ alphabet_Astah [FD= Wait";
-
+    			+ "assert Prop \\ alphabet_Astah [FD= Wait"
+    			+ "\n\n";
+    	
+//    	if (callBehaviourList.size() > 0) {
+//    		check_props += "callBehaviourList total de elementos: " + callBehaviourList.size();
+//		} else {
+//			check_props += "callBehaviourList VAZIO -> total de elementos: " + callBehaviourList.size();
+//		}
     	
         String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+
         		robochart +
@@ -300,11 +321,11 @@ public class ADParser {
                 // pool +
                 // (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
                 callBehaviour +
-                check; 
-//                footer;
-		if (adUtils.untilList.size() > 0) {
-			parser += footer;
-		}
+                check +
+                check_props;
+//		if (adUtils.untilList.size() > 0) {
+//			parser += check_props;
+//		}
 
         //reseta os valores estaticos
         if (reset) {
@@ -363,11 +384,13 @@ public class ADParser {
         	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
         		if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
-                    	if(((IAction) activityNode).getCallingActivity() == null) {
-                    		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
-                    	}else {
-                    		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
-                    		addCountCallBehavior(((IAction) activityNode).getCallingActivity().getId(), activityNode.getId(),activityNode.getName());
+                    	if (!activityNode.hasStereotype("ANY")) {
+                    		if(((IAction) activityNode).getCallingActivity() == null) {
+                        		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
+                        	}else {
+                        		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+                        		addCountCallBehavior(((IAction) activityNode).getCallingActivity().getId(), activityNode.getId(),activityNode.getName());
+                        	}
                     	}
                     }
         		}

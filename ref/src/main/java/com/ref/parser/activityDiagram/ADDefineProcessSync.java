@@ -89,7 +89,7 @@ public class ADDefineProcessSync {
 		for(int i=0; i<nodes.length;i++) {//varre os nós
 			if(ADUtils.nameResolver(nodes[i].getName()).equals(nodeName) && nodes[i] instanceof IAction) {
 				nodeFound = (IAction) nodes[i];
-				if(nodeFound.isCallBehaviorAction()) {
+				if(nodeFound.isCallBehaviorAction() && !nodeFound.hasStereotype("ANY")) {
 					return nodeFound;
 				}
 			}

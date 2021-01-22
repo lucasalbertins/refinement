@@ -134,17 +134,34 @@ public class ADDefineCallBehavior {
             try {
                 	((IAction) activityNode).getCallingActivity().getActivityDiagram().getName();
 				} catch (Exception e) {
-					throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
+					if (!activityNode.hasStereotype("ANY")) {
+						throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
+					}
+					
 				}
-/*
-        	String stereotype = activityNode.getStereotypes()[0];
+
+            
+            if (activityNode.getStereotypes().length > 0) {
+            	for (int i = 0; i < activityNode.getStereotypes().length; i++) {
+            		if (activityNode.getStereotypes()[i].equals("ANY")) {
+        	        	String stereotype = activityNode.getStereotypes()[i];
+        	        	adUtils.createAny(alphabet, callBehaviour);
+        	        	callBehaviour.append(nameCallBehaviour+"(id)\n");
+        	        	callBehaviour.append(namCallBehaviourTermination + "(id) = ");
+        	        	callBehaviour.append(nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)\n");
+        	        	alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
+        	            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        	            alphabetNode.put(key, alphabet);
+        	            nodes.append(callBehaviour.toString());
+        	        	
+            			return null;
+            		} 
+					
+				}
+				
+			}
         	
-        	if (stereotype.equals("ANY")) {
-//    			passar o conjunto de eventos do robo
-//        		callBehaviour.append("nome_do_processo_CHAOS");
-        		return null;
-    		} 
-*/
+
             callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
            
             adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);

@@ -237,7 +237,19 @@ public class ADUtils {
 		untilEvents.add(partitionName + "::" + eventName);
 		untilList.put("" + adParser.countUntil_ad, partitionName + "::" + eventName);
 	}
-
+	
+	public void chaos(ArrayList<String> alphabetNode, StringBuilder action, String eventName, String posChaos) {
+		String partitionName;        
+		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
+		
+		adParser.countUntil_ad++;
+		alphabetNode.add("chaos." + adParser.callBehaviourList);//TODO olhar
+		action.append("chaos." + adParser.callBehaviourList + " -> CHAOS(Events)");
+//		robo.add(partitionName + "::" + eventName);
+//		untilEvents.add(partitionName + "::" + eventName);
+//		untilList.put("" + adParser.countUntil_ad, partitionName + "::" + eventName);
+	}
+	
 	public void update(ArrayList<String> alphabetNode, StringBuilder action, int countInFlows, int countOutFlows, boolean canBeNegative) {
 		int result = countOutFlows - countInFlows;
 
@@ -694,6 +706,14 @@ public class ADUtils {
 			c++;
 		}
 		return channels.toString();
+	}
+
+	public void createAny(ArrayList<String> alphabet, StringBuilder callBehaviour) {
+		int index = ++adParser.countAny_ad;
+		alphabet.add("chaos." + index);
+		callBehaviour.append("chaos." + index + " -> SKIP;");
+		
+		
 	}
 	
 }
