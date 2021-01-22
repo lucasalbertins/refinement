@@ -41,6 +41,7 @@ public class ADDefineSignal {
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
+        
 
         int idSignal = 1;
         for (int i = 0; i < countSignal.size(); i++) {
@@ -49,7 +50,7 @@ public class ADDefineSignal {
                 break;
             }
         }
-
+     
         String nameSignal = adUtils.nameDiagramResolver("signal_" + activityNode.getName()) + "_" + idSignal + "_" + adUtils.nameDiagramResolver(ad.getName());
         String nameSignalTermination = adUtils.nameDiagramResolver("signal_" + activityNode.getName()) + "_" + idSignal + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
 
@@ -72,8 +73,31 @@ public class ADDefineSignal {
             }
 
             signal.append("); ");
+            
+            if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
+    			adUtils.until(alphabet, signal, adUtils.nameDiagramResolver(activityNode.getName()) + ".out", " -> SKIP; ");
+            } else {
+            	adUtils.signal(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), signal);
+            }
+            
+//            if (inFlows.length > 0) {
+//                for (int i = 0; i < inFlows.length; i++) {
+//                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+//                    if (syncChannelsEdge.containsKey(key)) {
+//                    	for (int j = 0; j < inFlows.length; j++) {
+//                        	String untilIn = inFlows[i].getStereotypes()[j];							
+//                        	if (i >= 0 && (i < inFlows.length - 1)) {
+//                        		adUtils.until(alphabet, signal, untilIn, " -> SKIP; ||| ");
+//                        	} else {
+//                        		adUtils.until(alphabet, signal, untilIn, " -> SKIP; ");
+//                        	}
+//                        }
+//                        
+//                    }
+//                }
+//            }
 
-            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
+//            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
 
             adUtils.update(alphabet, signal, inFlows.length, outFlows.length, false);
 

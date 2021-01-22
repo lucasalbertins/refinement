@@ -43,9 +43,13 @@ public class ADDefineMainNodes {
         ArrayList<String> alphabet = new ArrayList<>();
 
         if (firstDiagram.equals(ad.getId())) {
-            mainNode.append("MAIN = normal(" + nameDiagram + "(1)); LOOP\n");
-            mainNode.append("LOOP = loop -> LOOP\n");
+            mainNode.append("MAIN = normal(" + nameDiagram + "(1))\n");
         }
+        
+//        if (firstDiagram.equals(ad.getId())) {
+//            mainNode.append("MAIN = normal(" + nameDiagram + "(1)); LOOP\n");
+//            mainNode.append("LOOP = loop -> LOOP\n");
+//        }
 
         mainNode.append("END_DIAGRAM_" + nameDiagram + "(id) = endDiagram_" + nameDiagram + ".id -> SKIP\n");
         mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
@@ -67,7 +71,9 @@ public class ADDefineMainNodes {
         }*/
 
         //for (int i = 0; i < signalChannelsLocal.size(); i++) {
-            if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) mainNode.append("(");
+//            if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {
+//            	mainNode.append("(");
+//            }
         //}
 
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ")");
@@ -84,9 +90,9 @@ public class ADDefineMainNodes {
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
         mainNode.append("TokenManager_" + nameDiagram + "_t(ID_"+nameDiagram+",0,0))");
         
-        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//se for o 1 diagrama
-        	mainNode.append("[|AlphabetPool|]pools(ID_"+nameDiagram+"))");
-        }
+//        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//se for o 1 diagrama
+//        	mainNode.append("[|AlphabetPool|]pools(ID_"+nameDiagram+"))");
+//        }
         
         /*if(signalChannelsLocal.size()> 0) {
 	        StringBuilder alfabetoPools = new StringBuilder();

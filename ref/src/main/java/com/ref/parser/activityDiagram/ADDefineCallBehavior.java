@@ -136,7 +136,16 @@ public class ADDefineCallBehavior {
 				} catch (Exception e) {
 					throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
 				}
-                callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
+/*
+        	String stereotype = activityNode.getStereotypes()[0];
+        	
+        	if (stereotype.equals("ANY")) {
+//    			passar o conjunto de eventos do robo
+//        		callBehaviour.append("nome_do_processo_CHAOS");
+        		return null;
+    		} 
+*/
+            callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
            
             adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
 
@@ -756,6 +765,7 @@ public class ADDefineCallBehavior {
     }
     
     private void callBehavior(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins, List<String> outputPins,IActivityNode activityNode) {
+    	
     	int count = 0;
     	count = adUtils.addCountCall(adUtils.nameDiagramResolver(nameAD));
     	String Activity = "";

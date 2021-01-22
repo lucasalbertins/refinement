@@ -39,11 +39,12 @@ public class ADDefineAction {
         //this.adParser = adParser;
     }
 
-    public IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
+    public IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException { 	
         StringBuilder action = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
+        String nameEvent = adUtils.nameRobochartResolver(activityNode.getName());
         String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
-        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";      
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
@@ -65,9 +66,9 @@ public class ADDefineAction {
             }
 
             action.append(nameAction + "(id) = ");
-
             action.append("(");
-            for (int i = 0; i < inFlows.length; i++) {
+            for (int i = 0; i < inFlows.length; i++) {  
+//            	System.out.println(inFlows[i].getStereotypes()[0]);
                 Pair<IActivity,String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
                 if (syncChannelsEdge.containsKey(key)) {
                     String ceIn = syncChannelsEdge.get(key);//TODO
@@ -80,7 +81,24 @@ public class ADDefineAction {
                     }
                 }
             }
-
+            
+//            if (inFlows.length > 0) {
+//                for (int i = 0; i < inFlows.length; i++) {
+//            	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+//                    if (syncChannelsEdge.containsKey(key)) {
+//	                    for (int j = 0; j < inFlows.length; j++) {
+//	                         String untilIn = inFlows[i].getStereotypes()[j];							
+//	                         if (i >= 0 && (i < inFlows.length - 1)) {
+//	                               adUtils.until(alphabet, action, untilIn, " -> SKIP ; ||| ");
+//	                         } else {
+//	                               adUtils.until(alphabet, action, untilIn, " -> SKIP ; ");
+//	                         }
+//                     	}
+//                                    
+//                    }
+//                }
+//            }
+            
             for (int i = 0; i < inPins.length; i++) {
                 IFlow[] inFlowPin = inPins[i].getIncomings();
                 for (int x = 0; x < inFlowPin.length; x++) {
@@ -118,9 +136,16 @@ public class ADDefineAction {
             }
 
             action.append("); ");
+            
+            if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
+    			adUtils.until(alphabet, action, nameEvent, " -> SKIP; ");
+            } else {
+            	adUtils.event(alphabet, nameEvent, action);//TODO
+            }
 
             //adUtils.lock(alphabet, action, 0, nameAction);
-            adUtils.event(alphabet, nameAction, action);//TODO
+//            adUtils.event(alphabet, nameEvent, action);//TODO
+//            adUtils.event(alphabet, nameAction, action);//TODO
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
                 for (int j = 0; j < definitionFinal.length; j++) {
@@ -611,7 +636,8 @@ public class ADDefineAction {
             action.append("); ");
 
             //adUtils.lock(alphabet, action, 0, nameAction);
-            adUtils.event(alphabet, nameAction, action);
+            adUtils.event(alphabet, nameEvent, action);
+//            adUtils.event(alphabet, nameAction, action);
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
                 for (int j = 0; j < definitionFinal.length; j++) {

@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.mail.internet.ParseException;
+
 import com.change_vision.jude.api.inf.model.IActivity;
 import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.change_vision.jude.api.inf.model.IFlow;
+import com.sun.mail.iap.ParsingException;
 
 
 public class ADDefineAccept {
@@ -31,7 +34,7 @@ public class ADDefineAccept {
         this.adUtils = adUtils;
     }
 
-    public IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) {
+    public IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) throws com.ref.exceptions.ParsingException {
         StringBuilder accept = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
@@ -55,23 +58,63 @@ public class ADDefineAccept {
             if (inFlows.length > 0) {
                 accept.append("(");
                 for (int i = 0; i < inFlows.length; i++) {
-                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
-                    if (syncChannelsEdge.containsKey(key)) {
-                        String ceIn = syncChannelsEdge.get(key);
-
-                        accept.append("(");
-                        if (i >= 0 && (i < inFlows.length - 1)) {
-                            adUtils.ce(alphabet, accept, ceIn, " -> SKIP) ||| ");
-                        } else {
-                            adUtils.ce(alphabet, accept, ceIn, " -> SKIP)");
-                        }
-                    }
+//                	System.out.println(inFlows[i].getStereotypes()[0]); //-> RETORNA Until
+                		Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+                		if (syncChannelsEdge.containsKey(key)) {
+                			String ceIn = syncChannelsEdge.get(key);
+                			
+                			accept.append("(");
+                			if (i >= 0 && (i < inFlows.length - 1)) {
+                				adUtils.ce(alphabet, accept, ceIn, " -> SKIP) ||| ");
+                			} else {
+                				adUtils.ce(alphabet, accept, ceIn, " -> SKIP)");
+                			}
+                		}                		
+                	
                 }
 
                 accept.append("); ");
             }
+            
+            if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
+    			adUtils.until(alphabet, accept, adUtils.nameDiagramResolver(activityNode.getName()) + ".in", " -> SKIP; ");  
+            } else {
+            	adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
+            }
+            
+//------------------------------------------------------------------            
+//            String untilIn = inFlows[i].getStereotypes()[0];							
+//        	if (untilIn.equals("UNTIL")) {
+//        		if (inFlows.length > 1) {
+//					throw new com.ref.exceptions.ParsingException("When using UNTIL stereotype only one edge is allowed ( see " + activityNode.getName() + ").");
+//				}
+//        		if (i >= 0 && (i < inFlows.length - 1)) {
+//        			adUtils.until(alphabet, accept, untilIn, " -> SKIP; ||| ");
+//        		} else {
+//        			adUtils.until(alphabet, accept, untilIn, " -> SKIP; ");
+//        		}
+//        	}  
+//------------------------------------------------------------------
+//            if (inFlows.length > 0) {
+//                for (int i = 0; i < inFlows.length; i++) {
+//                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
+//                    if (syncChannelsEdge.containsKey(key)) {
+//                    	for (int j = 0; j < inFlows.length; j++) {
+//                    		if (inFlows[i].getStereotypes()[j] == "UNTIL") {
+//                    			String untilIn = inFlows[i].getStereotypes()[j];							
+//                    			if (i >= 0 && (i < inFlows.length - 1)) {
+//                    				adUtils.until(alphabet, accept, untilIn, " -> SKIP; ||| ");
+//                    			} else {
+//                    				adUtils.until(alphabet, accept, untilIn, " -> SKIP; ");
+//                    			}								
+//							}
+//                        }
+//                        
+//                    }
+//                }
+//            }
 
-            adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
+//            adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
 
             if (inFlows.length == 0) {
                 adUtils.update(alphabet, accept, 1, outFlows.length, false); // outFlows - 1
