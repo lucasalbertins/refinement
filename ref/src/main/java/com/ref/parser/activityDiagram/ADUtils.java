@@ -646,22 +646,22 @@ public class ADUtils {
         return channels.toString();
 	}
 	
-	public String alphabetRobo2() {
-		StringBuilder channels = new StringBuilder();
-		channels.append("alphabet_robochart_" + ad.getName() + " = {| ");
-//		channels.append("alphabet_robochart_" + ad.getName() + " = ");
-        for (int i = 0; i < robo.size(); i++) {
-        	channels.append(robo.get(i));
-        	
-        	if ((i + 1) < robo.size()) {
-        		channels.append(", ");
-        	} else {
-        		channels.append(" |}\n");
-        	}
-        }
-//        channels.append(alphabet);
-        return channels.toString();
-	}
+//	public String alphabetRobo2() {
+//		StringBuilder channels = new StringBuilder();
+//		channels.append("alphabet_robochart_" + ad.getName() + " = {| ");
+////		channels.append("alphabet_robochart_" + ad.getName() + " = ");
+//        for (int i = 0; i < robo.size(); i++) {
+//        	channels.append(robo.get(i));
+//        	
+//        	if ((i + 1) < robo.size()) {
+//        		channels.append(", ");
+//        	} else {
+//        		channels.append(" |}\n");
+//        	}
+//        }
+////        channels.append(alphabet);
+//        return channels.toString();
+//	}
 	
 	
 	public String alphabetUntil() {
@@ -684,8 +684,16 @@ public class ADUtils {
 	public String printUntils() {
 		StringBuilder channels = new StringBuilder();
 		for(String i : untilList.keySet()) {
-			channels.append("Wait_AD_" + i + " = WAIT(alphabet_robochart_" + ad.getName() + ", " + untilList.get(i) + ")\n\n");
-			channels.append("Wait_DA_control_" + i + " = begin."+ i + " -> Wait_DA_" + i + "; end." + i + " -> Wait_DA_control_" + i + "\n\n");
+			channels.append("Wait_" + ad.getName() + "_" + i + " = WAIT(alphabet_robochart_" + ad.getName() + ", " + untilList.get(i) + ")\n\n");
+			channels.append("Wait_" + ad.getName() + "_control_" + i + " = begin."+ i + " -> Wait_" + ad.getName() + "_" + i + "; end." + i + " -> Wait_" + ad.getName() + "_control_" + i + "\n\n");
+		}
+		return channels.toString();
+	}
+	
+	public String printAny() {
+		StringBuilder channels = new StringBuilder();
+		for(int i = 1; i <= adParser.countAny_ad; i++) {
+			channels.append("Wait_" + ad.getName() + "_chaos_" + i + " = chaos."+ i + " -> CHAOS(alphabet_robochart_" + ad.getName() + ")\n\n");
 		}
 		return channels.toString();
 	}
@@ -695,16 +703,33 @@ public class ADUtils {
 //		channels.append("Wait_control_processes = {Wait_" + ad.getName() + "_control_" + i + "}\n");
 		channels.append("Wait_control_processes = {");
 		int c = 0;
+		
 		for(String i : untilList.keySet()) {
 			channels.append("Wait_" + ad.getName() + "_control_" + i);
 			
 			if ((c + 1) < untilList.size()) {
 				channels.append(", ");
-			} else {
-				channels.append("}\n");
+			} 
+//			else {
+//				channels.append("}\n");
+//			}
+			c++;
+		}
+		
+		if (adParser.countAny_ad > 0 && untilList.size() > 0) {
+			channels.append(", ");
+		}
+		
+		c = 0;
+		for (int i = 1; i <= adParser.countAny_ad; i++) {
+			channels.append("Wait_" + ad.getName() + "_chaos_" + i);
+			if ((c + 1) < adParser.countAny_ad) {
+				channels.append(", ");
 			}
 			c++;
 		}
+		
+		channels.append("}\n");
 		return channels.toString();
 	}
 

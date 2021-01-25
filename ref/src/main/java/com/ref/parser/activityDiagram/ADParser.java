@@ -273,29 +273,30 @@ public class ADParser {
     			+ "	event -> SKIP\n"
     			+ "\n"
     			+ "WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL\n\n"
-    			+ "Prop = PROP(Wait_control_processes) \n\n";
+    			+ "Prop = PROP(Wait_control_processes) \n\n"
+    			+  adUtils.alphabetRobo(robochart_alphabet)
+    			+ "\n\n";
     	
     	if (countAny_ad > 0 && countUntil_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|begin, end, chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end, chaos|}\n\n";
+					"PROP(processes) = (MAIN [|{|begin, end, chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end, chaos|}\n\n"
+					+ adUtils.printUntils()
+					+ adUtils.printAny();
 		} else if (countUntil_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n\n";
+					"PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n\n"
+					+ adUtils.printUntils();
 		} else if (countAny_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|chaos|}\n\n";
+					"PROP(processes) = (MAIN [|{|chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|chaos|}\n\n"
+					+ adUtils.printAny();
 		} else {
 			check_props +=
 					"PROP(processes) = (MAIN)\n\n";
 		}
     	   
     	check_props += ""
-    			+ adUtils.alphabetRobo(robochart_alphabet)
-        		+ "\n\n"
-        		+ adUtils.printUntils()
 				+ adUtils.printControlProcesses()
-        		+ "\n"
-        		+ "Prop = PROP(Wait_control_processes) \n"
         		+ "\n"
     			+ "assert Wait [FD= Prop \\ alphabet_Astah"
     			+ "\n"
