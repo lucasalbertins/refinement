@@ -54,8 +54,6 @@ public class SDParser {
 		alfabets = new HashMap<String, String>();
 		procs = new ArrayList<String>(); {
 		}
-		// alfabetosd1 = new ArrayList<String>();
-		// alfabetosd2 = new ArrayList<String>();
 	}
 	
 	private String getLifelineBase(ILifeline lifeline) {
@@ -144,7 +142,6 @@ public class SDParser {
 			}
 		}
 
-		// types.deleteCharAt(types.length() - 1);
 		types.append("\n");
 		types.append("datatype ID_SD = ").append("sd1id").append("|").append("sd2id").append("\n");
 
@@ -168,49 +165,7 @@ public class SDParser {
 
 		return types.toString();
 	}
-
-	// private String getReplyIndexes() {
-	// StringBuilder sb = new StringBuilder();
-	// for (IMessage msg : seq1.getInteraction().getMessages()) {
-	// if (msg.isSynchronous()) {
-	// sb.append(msg.getIndex()).append("r,");
-	// // System.out.println("seq 1 adicionou " + msg.getIndex());
-	// }
-	// }
-	// for (IMessage msg : seq2.getInteraction().getMessages()) {
-	// if (msg.isSynchronous()) {
-	// sb.append(msg.getIndex()).append("r,");
-	// }
-	// }
-	// sb.deleteCharAt(sb.length() - 1);
-	// return sb.toString();
-	// }
-
-	// private String getLifelineId(ILifeline lifeline) {
-	// return lifeline.getId();// lifeline.getName() != null ?
-	// // lifeline.getName()+"_"+lifeline.getBase()+"_id":
-	// // lifeline.getBase()+"_id";
-	// }
-
-
-	// private int checkMaxIndex() {
-	// int idx1 = 0;
-	// int idx2 = 0;
-	// for (IMessage msg : seq1.getInteraction().getMessages()) {
-	// if (!msg.isReturnMessage() && !msg.isCreateMessage() &&
-	// !msg.isDestroyMessage()) {
-	// idx1++;
-	// }
-	// }
-	// for (IMessage msg : seq2.getInteraction().getMessages()) {
-	// if (!msg.isReturnMessage() && !msg.isCreateMessage() &&
-	// !msg.isDestroyMessage()) {
-	// idx2++;
-	// }
-	// }
-	// return Math.max(idx1, idx2);
-	// }
-
+	
 	private void defineBlockMessages(StringBuilder types, IClass block) {
 
 		List<IMessage> messages = getBlockMessages(block);
@@ -232,10 +187,6 @@ public class SDParser {
 			if (message.isAsynchronous()) {
 				signalsAux.append(message.getName());
 				gettersAux.append("get_id(").append(message.getName());
-				if (!"".equals(message.getArgument())) {
-					// treatArguments(signalsAux, message.getArgument());
-					// treatGetterArguments(gettersAux, message.getArgument());
-				}
 				gettersAux.append(") = ").append(message.getName()).append("\n");
 				if (!sig.contains(signalsAux.toString())) {
 					mensagens.add(signalsAux.toString());
@@ -247,10 +198,6 @@ public class SDParser {
 			} else if (message.isSynchronous()) {
 				operationsAux.append(message.getName() + "_I");
 				gettersAux.append("get_id(").append(message.getName()).append("_I");
-				if (!"".equals(message.getArgument())) {
-					// treatArguments(operationsAux, message.getArgument());
-					// treatGetterArguments(gettersAux, message.getArgument());
-				}
 				gettersAux.append(") = ").append(message.getName()).append("_I\n");
 
 				if (!op.contains(operationsAux.toString())) {
@@ -264,11 +211,6 @@ public class SDParser {
 
 				operationsAux.append(message.getName() + "_O");
 				gettersAux.append("get_id(").append(message.getName()).append("_O");
-				if (!"".equals(message.getReturnValueVariable())) {
-					// treatArguments(operationsAux,
-					// message.getReturnValueVariable());
-					// treatGetterArguments(gettersAux, message.getArgument());
-				}
 				gettersAux.append(") = ").append(message.getName()).append("_O\n");
 
 				if (!op.contains(operationsAux.toString())) {
@@ -305,8 +247,6 @@ public class SDParser {
 				datatypes.add(auxiliar.toString());
 			}
 		}
-
-		// types.append(finalGetters.toString());
 	}
 
 	private List<IMessage> getBlockMessages(IClass block) {
@@ -330,20 +270,6 @@ public class SDParser {
 				ret.add(msg);
 			}
 		}
-
-		// for (IOperation operation : block.getOperations()) {
-		// for (IMessage iMessage : messages) {
-		// // System.out.println("MSG " + iMessage.getName());
-		// if (iMessage.getOperation() != null &&
-		// iMessage.getOperation().getOwner() != null
-		// && iMessage.getOperation().getOwner().equals(block)
-		// && iMessage.getOperation().getName().equals(operation.getName())
-		// && !existMessage(ret, iMessage)) {
-		// //System.out.println("Adicionou " + iMessage.getName());
-		// ret.add(iMessage);
-		// }
-		// }
-		// }
 		return ret;
 	}
 
@@ -357,40 +283,6 @@ public class SDParser {
 		}
 		return false;
 	}
-
-	// private void treatArguments(StringBuilder types, String argument) {
-	// StringBuilder aux = new StringBuilder();
-	//
-	// if (argument.contains(":")) {
-	// String[] arguments = argument.split(",");
-	// for (int i = 0; i < arguments.length; i++) {
-	// if (arguments[i].contains(":")) {
-	// String[] temp = arguments[i].split(":");
-	// aux.append(".My" + temp[1]);
-	// } else {
-	// if (isInteger(arguments[i])) {
-	// aux.append(".IntParams");
-	// } else if (isDouble(arguments[i])) {
-	// aux.append(".DoubleParams");
-	// } else if (isChar(arguments[i])) {
-	// aux.append(".CharParams");
-	// } else if (isString(arguments[i])) {
-	// aux.append(".StringParams");
-	// }
-	// }
-	// }
-	// }
-	// types.append(aux.toString());
-	// }
-
-	// private void treatGetterArguments(StringBuilder sb, String argument) {
-	// if (argument.contains(":")) {
-	// String[] arguments = argument.split(",");
-	// for (int i = 0; i < arguments.length; i++) {
-	// sb.append("._");
-	// }
-	// }
-	// }
 
 	public String defineArguments() {
 
@@ -438,7 +330,7 @@ public class SDParser {
 							strings += arguments[i];
 							hasString = true;
 						} else if (!arguments[i].equals(""))
-							System.out.println("ERRO");// jogar exception
+							System.out.println("ERRO");// throw exception
 					}
 				}
 			}
@@ -459,9 +351,6 @@ public class SDParser {
 			strings += "}\n";
 			parametros.append(strings);
 		}
-
-		// System.out.println(parametros.toString());
-
 		return parametros.toString();
 	}
 
@@ -601,10 +490,9 @@ public class SDParser {
 		paralel = aux.toString();
 		aux.append(" = ");
 		numLife = i - 1;
-		// i-1 = numero de lifelines
+		// i-1 = number of lifelines
 
 		StringBuilder sb = new StringBuilder();
-		// sb.append(alfabeto.get(0));
 		sb.append(alfabets.get(bases.get(0)));
 
 		for (int x = 2; x < i - 1; x++) {
@@ -620,8 +508,6 @@ public class SDParser {
 
 			aux.append("[ {|");
 			aux.append(sb.toString());
-			// aux.append(alfabeto.get(j));
-			// sb.append(", " + alfabets.get(bases.get(j)));
 			aux.append("|} || {|");
 			aux.append(alfabets.get(bases.get(j + 1)));
 			sb.append(", " + alfabets.get(bases.get(j + 1)));
@@ -754,16 +640,13 @@ public class SDParser {
 		if(adicionou){
 			ArrayList<String> elementos1 = new ArrayList<String>();
 			for (Map.Entry<String, String> entry : lifelines.entrySet()) {
-				//System.out.println(entry.getKey() + "/" + entry.getValue());
 				elementos1.add(entry.getValue());
 			}
 			
 			ArrayList<String> elementos2 = new ArrayList<String>();
 			for (Map.Entry<String, String> entry : lifelines2.entrySet()) {
-				//System.out.println(entry.getKey() + "/" + entry.getValue());
 				elementos2.add(entry.getValue());
-			}
-			
+			}		
 			
 			String resultado = sb.deleteCharAt(sb.length() - 1).toString();
 			

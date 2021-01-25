@@ -1,4 +1,4 @@
-package com.ref.ui;
+package com.ref.astah.ui;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -8,12 +8,7 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -24,35 +19,21 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
-import com.ref.fdr.FdrWrapper;
+import com.ref.exceptions.FDRException;
+import com.ref.traceability.activityDiagram.ActivityController;
 
 public class FDR3LocationDialog extends JDialog {
-	public static final String FDR3_PROPERTY_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "ref.properties";
-	public static final String FDR3_LOCATION_PROPERTY = "fdr3_location";
-	public static final String FDR3_JAR_LOCATION_PROPERTY = "fdr3_jar_location";
 
 	private JTextField tf;
 	private JButton findButton;
 	private JButton applyButton;
 	private JFileChooser fc;
 	private JLabel msg;
-	private Properties prop;
 
 	public FDR3LocationDialog(JFrame frame, boolean modal)
 			throws IOException, ClassNotFoundException {
 		super(frame, modal);
-		File propertyFile = new File(FDR3_PROPERTY_FILE);
 		if (!propertyFile.exists()) {
-			propertyFile.createNewFile();
-			prop = new Properties();
-			prop.load(new FileInputStream(propertyFile));
-			prop.setProperty(FDR3_LOCATION_PROPERTY, "");
-			prop.setProperty(FDR3_JAR_LOCATION_PROPERTY, "");
-			prop.store(new FileOutputStream(propertyFile), null);
-		} else {
-			prop = new Properties();
-			prop.load(new FileInputStream(propertyFile));
-		}
 		initComponents();
 		this.setTitle("FDR3 Location");
 		this.setLocation(new Point(276, 182));
@@ -76,7 +57,11 @@ public class FDR3LocationDialog extends JDialog {
 
 		tf = new JTextField();
 
-		tf.setText(prop.getProperty(FDR3_LOCATION_PROPERTY));
+		try {
+			tf.setText(ActivityController.getInstance().getFDRLocation());
+		} catch (IOException e1) {
+			msg.setText("Error: could not retrieve FDR Location from property file.");
+		}
 		tf.setSize(300, tf.getHeight());
 		add(tf, gbc);
 		gbc.fill = GridBagConstraints.NONE;
@@ -117,39 +102,19 @@ public class FDR3LocationDialog extends JDialog {
 				if (tf.getText().equals("")) {
 					msg.setText("Please select a valid folder!");
 				} else {
-					String filename = null;
-					if (System.getProperty("os.name").startsWith("Mac OS X")) {
-						filename = tf.getText() + "/Contents/Frameworks/fdr.jar";
-
-					} else if (System.getProperty("os.name").contains("Win")) {
-						filename = tf.getText() + "\\bin\\fdr.jar";
-					}else {
-						filename = tf.getText() + "/lib/fdr.jar";
-					}
-					File fdrlib = new File(filename);
-					if (!fdrlib.exists()) {
-						msg.setText("Library fdr.jar not found!");
-					} else {
-						try {
-							prop.setProperty(FDR3_LOCATION_PROPERTY, tf.getText());
-							prop.setProperty(FDR3_JAR_LOCATION_PROPERTY, filename);
-							FdrWrapper wrapper = FdrWrapper.getInstance();
-							wrapper.loadFDR(filename);
-							wrapper.loadClasses();
-							prop.store(new FileOutputStream(new File(FDR3_PROPERTY_FILE)), null);
-						} catch (FileNotFoundException e1) {
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							e1.printStackTrace();
-						} catch (ClassNotFoundException e1) {
-							e1.printStackTrace();
-						}
+					
+					try {
+						ActivityController.getInstance().setFDRLocation(tf.getText());
 						FDR3LocationDialog.this.setVisible(false);
 						FDR3LocationDialog.this
 								.dispatchEvent(new WindowEvent(FDR3LocationDialog.this, WindowEvent.WINDOW_CLOSING));
-
+					} catch (FDRException ex) {
+						msg.setText("Error: " + ex.getMessage());
+					} catch (IOException e1) {
+						msg.setText("Error: " + e1.getMessage());
 					}
-					// TODO: Add other operating systems
+					
+					
 
 				}
 
@@ -164,7 +129,4 @@ public class FDR3LocationDialog extends JDialog {
 		add(msg, gbc);
 	}
 
-	public static void main(String[] args) throws ClassNotFoundException {
-
-	}
 }

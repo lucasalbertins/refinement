@@ -33,16 +33,16 @@ public class Activity implements IActivity{
 			}else if(node instanceof com.change_vision.jude.api.inf.model.IActivityParameterNode) {
 				this.activityNodes[i] = new ActivityParameterNode((IActivityParameterNode) node);
 			}else if(node instanceof com.change_vision.jude.api.inf.model.IPin) {
-				com.change_vision.jude.api.inf.model.IAction owner = (IAction) node.getOwner();// vê quem é o dono do pino
+				com.change_vision.jude.api.inf.model.IAction owner = (IAction) node.getOwner();//Finds the owner of the pin
 				
-				for(com.change_vision.jude.api.inf.model.IPin pin : owner.getInputs()) {// varre os pinos de entrada do nó
-					if(pin.getId().equals(node.getId())) {// se encontrar
+				for(com.change_vision.jude.api.inf.model.IPin pin : owner.getInputs()) {//Look the input Pins of the node
+					if(pin.getId().equals(node.getId())) {//If find the right one
 						this.activityNodes[i] = new InputPin((com.change_vision.jude.api.inf.model.IInputPin)node);
 						owners.put(this.activityNodes[i].getId(), owner.getId());
 					}
 				}
-				for(com.change_vision.jude.api.inf.model.IPin pin : owner.getOutputs()) {//varre os pinos de saida do nó
-					if(pin.getId().equals(node.getId())) {// se encontrar
+				for(com.change_vision.jude.api.inf.model.IPin pin : owner.getOutputs()) {//Look the output Pins of the node
+					if(pin.getId().equals(node.getId())) {//If find the right one
 						this.activityNodes[i] = new OutputPin((com.change_vision.jude.api.inf.model.IOutputPin)node);
 						owners.put(this.activityNodes[i].getId(), owner.getId());
 					}
@@ -53,16 +53,16 @@ public class Activity implements IActivity{
 			}			
 		}
 		
-		//Varre os nos e atribui os pinos aos actions e vice versa 
+		//Goes through the nodes and assigns the pins on the respective nodes and vice-versa 
 		for(int i = 0; i<this.activityNodes.length;i++) {
-			if(owners.containsKey(this.activityNodes[i].getId())) {//se for um pino
+			if(owners.containsKey(this.activityNodes[i].getId())) {//If is a pin
 				for (int j = 0; j < activityNodes.length; j++) {
-					if(activityNodes[j].getId().equals(owners.get(activityNodes[i].getId()))) {//procurando o dono do pino
-						((IPin) activityNodes[i]).setOwner((com.ref.interfaces.activityDiagram.IAction) activityNodes[j]);//colocando o dono do pino
-						if(((IPin) activityNodes[i]) instanceof InputPin) {//se for pino de entrada
+					if(activityNodes[j].getId().equals(owners.get(activityNodes[i].getId()))) {//Looks for the owner of the pin
+						((IPin) activityNodes[i]).setOwner((com.ref.interfaces.activityDiagram.IAction) activityNodes[j]);//sets the owner of the pin
+						if(((IPin) activityNodes[i]) instanceof InputPin) {//If is an input pin
 							((Action) activityNodes[j]).addPin(((InputPin) activityNodes[i]));
 
-						}else {//se for pino de saida
+						}else {//If is an output pin
 							((Action) activityNodes[j]).addPin(((OutputPin) activityNodes[i]));
 						}
 					}
@@ -110,7 +110,7 @@ public class Activity implements IActivity{
 		try {
 			this.activity.setName(nameAD);
 		} catch (com.change_vision.jude.api.inf.exception.InvalidEditingException e) {
-			// TODO ver essa parte
+			// TODO not sure if is 100% right
 			e.printStackTrace();
 		}
 	}

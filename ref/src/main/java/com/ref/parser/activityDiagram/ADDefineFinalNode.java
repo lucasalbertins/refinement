@@ -48,7 +48,6 @@ public class ADDefineFinalNode {
 			ceInitials.add(inFlows[i].getId());
 			Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
 			if (syncObjectsEdge.containsKey(key)) {
-				// String ceIn2 = syncObjectsEdge.get(key);
 				nameObjects.put(inFlows[i].getId(), inFlows[i].getSource().getName());
 			}
 

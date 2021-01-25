@@ -55,6 +55,4 @@ public abstract class Flow implements IFlow{
 		this.source = source;
 	}
 	
-	
-
 }

@@ -27,12 +27,10 @@ public class Logador {
 				file.setFormatter(new SimpleFormatter());
 				logger.addHandler(file);
 			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchFileException e) {
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			instance = new Logador();

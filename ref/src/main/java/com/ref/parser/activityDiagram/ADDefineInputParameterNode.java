@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.exceptions.ParsingException;
-import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IActivityParameterNode;
 import com.ref.interfaces.activityDiagram.IFlow;
-import com.ref.interfaces.activityDiagram.IInputPin;
 
 public class ADDefineInputParameterNode {
 
@@ -97,96 +95,8 @@ public class ADDefineInputParameterNode {
                 alphabetAllInitialAndParameter.add(channel);
             }
         }
-
         
         return parameterNode.toString();
     }
     
-/*    
-    public IActivityNode defineInputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
-        StringBuilder parameterNode = new StringBuilder();
-        ArrayList<String> alphabet = new ArrayList<>();
-        String nameParameterNode = "parameter_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
-        IFlow[] outFlows = activityNode.getOutgoings();
-        IFlow[] inFlows = activityNode.getIncomings();
-
-        parameterNode.append(nameParameterNode + "(id) = ");
-
-        adUtils.update(alphabet, parameterNode, inFlows.length, outFlows.length, false);
-        adUtils.get(alphabet, parameterNode, adUtils.nameDiagramResolver(activityNode.getName()));
-
-        parameterNode.append("(");
-
-        for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-            //String oe = adUtils.createOE(adUtils.nameDiagramResolver(activityNode.getName()));
-        	String typeObject = ((IActivityParameterNode)activityNode).getBase().getName();
-        	String oe = adUtils.createOE(typeObject);
-        	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
-            syncObjectsEdge.put(key, oe);
-            objectEdges.put(oe, typeObject);
-
-            parameterNode.append("(");
-
-            if (i >= 0 && i < outFlows.length - 1) {
-                adUtils.oe(alphabet, parameterNode, oe, "!" + adUtils.nameDiagramResolver(activityNode.getName()), " -> SKIP) ||| ");
-            } else {
-                adUtils.oe(alphabet, parameterNode, oe, "!" + adUtils.nameDiagramResolver(activityNode.getName()), " -> SKIP)");
-            }
-        }
-
-        parameterNode.append(")\n");
-        Pair<IActivity,String> key = new Pair<IActivity, String>(ad,"parameter_"+adUtils.nameDiagramResolver(activityNode.getName()));
-        parameterAlphabetNode.put(key, alphabet);
-        alphabetNode.put(key, alphabet);
-        allInitial.add(nameParameterNode);
-        for (String channel : alphabet) {
-            if (!alphabetAllInitialAndParameter.contains(channel)) {
-                alphabetAllInitialAndParameter.add(channel);
-            }
-        }
-        
-        if (outFlows[0].getTarget() instanceof IInputPin) {
-            for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
-                if (activityNodeSearch instanceof IAction) {
-                    IInputPin[] inFlowPin = ((IAction) activityNodeSearch).getInputs();
-                    for (int y = 0; y < inFlowPin.length; y++) {
-                        if (inFlowPin[y].getId().equals(outFlows[0].getTarget().getId())) {
-                            activityNode = activityNodeSearch;
-                        }
-                    }
-                }
-            }
-        } else {
-            activityNode = outFlows[0].getTarget();
-        }
-
-
-        for (int i = 1; i < outFlows.length; i++) {    //creates the parallel output channels
-            if (outFlows[i].getTarget() instanceof IInputPin) {
-                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
-                    if (activityNodeSearch instanceof IAction) {
-                        IInputPin[] inFlowPin = ((IAction) activityNodeSearch).getInputs();
-                        for (int y = 0; y < inFlowPin.length; y++) {
-                            if (inFlowPin[y].getId().equals(outFlows[i].getTarget().getId())) {
-                                if (!queueNode.contains(activityNodeSearch)) {
-                                    queueNode.add(activityNodeSearch);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (!queueNode.contains(outFlows[i].getTarget())) {
-                    queueNode.add(outFlows[i].getTarget());
-                }
-            }
-        }
-
-
-        nodes.append(parameterNode.toString());
-
-        //Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
-       //alphabetNode.put(pair, alphabet);
-        return activityNode;
-    }*/
 }

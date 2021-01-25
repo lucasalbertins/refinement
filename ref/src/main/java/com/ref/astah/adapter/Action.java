@@ -9,20 +9,15 @@ import com.ref.interfaces.activityDiagram.IOutputPin;
 import com.ref.interfaces.activityDiagram.IPin;
 
 public class Action extends ActivityNode implements IAction {
-
-	//private com.change_vision.jude.api.inf.model.IAction action;
-	//private IFlow[] incomings;
-	//private IFlow[] outgoings;
 	private IInputPin[] inputs;
 	private IOutputPin[] outputs;
 	private IActivity activity;
 	
 	public Action(com.change_vision.jude.api.inf.model.IAction action) throws WellFormedException {
 		super(action);
-		//this.action = action;
 		
 		this.inputs = new IInputPin[action.getInputs().length];
-		for (int i = 0; i < inputs.length; i++) {//tirar daqui e botar no Activity
+		for (int i = 0; i < inputs.length; i++) {//TODO look if this part is still needed
 			this.inputs[i] = new InputPin(action.getInputs()[i]);
 		}
 		
@@ -74,31 +69,26 @@ public class Action extends ActivityNode implements IAction {
 
 	@Override
 	public boolean isCallBehaviorAction() {
-		//return action.isCallBehaviorAction();
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isCallBehaviorAction();
 	}
 
 	@Override
 	public boolean isSendSignalAction() {
-		//return action.isSendSignalAction();
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isSendSignalAction();
 	}
 
 	@Override
 	public boolean isAcceptEventAction() {
-		//return action.isAcceptEventAction();
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isAcceptEventAction();
 	}
 
 	@Override
 	public String getName() {
-		//return action.getName();
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getName();
 	}
 
 	@Override
 	public String[] getStereotypes() {
-		//return action.getStereotypes();
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).getStereotypes();
 	}
 
@@ -118,7 +108,7 @@ public class Action extends ActivityNode implements IAction {
 			}
 		}
 		else {
-			//algo deu errado
+			//something went wrong
 		}
 	}
 }

@@ -28,7 +28,7 @@ public class AdapterUtils {
 		else if(previous instanceof IControlNode){
 			return findOrigin((IControlNode) previous, searched);
 		}
-		return FlowType.CONTROL_FLOW; // se for nó de ação então necessariamente é controle
+		return FlowType.CONTROL_FLOW; //if is a actionNode then it must be a controlFlow
 		
 	}
 
@@ -80,7 +80,7 @@ public class AdapterUtils {
 				return flowType(controlNode.getIncomings()[0], searched);
 			}
 		}
-		return null; //caso por um milagre chegue em um final/flowFinal node
+		return null; //if arrives in a final/flowFinal node
 	}
 
 

@@ -7,16 +7,9 @@ import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
 
 public class InputPin extends Pin implements IInputPin{
-
-	//com.change_vision.jude.api.inf.model.IInputPin inputPin;	
-	//private IFlow[] incomings;
-	//private IFlow[] outgoings;
-	//private IClass base;
-	//private IAction owner;
 	
 	public InputPin(com.change_vision.jude.api.inf.model.IInputPin pin) throws WellFormedException {
 		super(pin);
-		//this.inputPin = pin;
 		this.base = new Class(pin.getBase());
 	}
 
@@ -59,7 +52,5 @@ public class InputPin extends Pin implements IInputPin{
 	public IAction getOwner() {
 		return this.owner;
 	}
-
-
 	
 }

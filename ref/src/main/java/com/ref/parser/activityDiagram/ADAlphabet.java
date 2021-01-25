@@ -52,9 +52,7 @@ public abstract class ADAlphabet {
 		this.parameterAlphabetNode = parameterAlphabetNode;
 	}
 
-	public void add(ADAlphabet adAlphabet) {
-		// TODO Auto-generated method stub
-		
+	public void add(ADAlphabet adAlphabet) {		
 	}
 	
 	public IActivity getAd() {

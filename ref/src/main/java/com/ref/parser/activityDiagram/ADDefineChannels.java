@@ -19,7 +19,6 @@ public class ADDefineChannels {
     private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;                //channel; name
     private List<String> eventChannel;
-    //private List<String> lockChannel;
     private String firstDiagram;
     private HashMap<String, List<IActivity>> signalChannels;
     private ADUtils adUtils;
@@ -38,7 +37,6 @@ public class ADDefineChannels {
         this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.eventChannel = eventChannel;
-        //this.lockChannel = lockChannel;
         this.firstDiagram = firstDiagram;
         this.signalChannels = signalChannels2;
         this.adUtils = adUtils;
@@ -152,20 +150,6 @@ public class ADDefineChannels {
             channels.append(": ID_"+nameDiagram+"\n");
         }
 
-        /*if (lockChannel.size() > 0) {
-            channels.append("channel ");
-
-            for (int i = 0; i < lockChannel.size(); i++) {
-                channels.append("lock_" + lockChannel.get(i));
-
-                if ((i + 1) < lockChannel.size()) {
-                    channels.append(",");
-                }
-            }
-
-            channels.append(": T\n");
-        }*/
-
         if (firstDiagram.equals(ad.getId())) {
         	List<String> keySignalChannels = new ArrayList<String>();
         	keySignalChannels.addAll(signalChannels.keySet());
@@ -180,13 +164,7 @@ public class ADDefineChannels {
             			nameMax = ADUtils.nameResolver(diagram.getName());
             			numMax = ADParser.countCall.get(ADUtils.nameResolver(diagram.getName()));
             		}
-        		}
-        		
-        		/*for(Pair<IActivity,Integer> pair : valueList) {
-        			if(pair.getValue()>numMax) {
-        				nameMax = ADUtils.nameResolver(pair.getKey().getName());
-        			}
-        		}*/
+        		}        		
         	}
         	
             for (String signalChannel : keySignalChannels) {

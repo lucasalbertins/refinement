@@ -14,15 +14,11 @@ import com.ref.interfaces.activityDiagram.IControlNode;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ObjectFlow extends Flow implements IObjectFlow {
-	//com.change_vision.jude.api.inf.model.IFlow flow;
-	//private IActivityNode target;
-	//private IActivityNode source;
 	private IClass base;
 
 	
 	public ObjectFlow(com.change_vision.jude.api.inf.model.IFlow flow) throws WellFormedException {
 		super(flow);
-		//this.flow = flow;
 		com.change_vision.jude.api.inf.model.IActivityNode aux = findBase(flow.getSource(),new ArrayList<>());
 		if(aux instanceof com.change_vision.jude.api.inf.model.IPin) {
 			this.base = new Class(((com.change_vision.jude.api.inf.model.IObjectNode) aux).getBase());
@@ -32,8 +28,7 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 		}else if(aux instanceof com.change_vision.jude.api.inf.model.IActivityParameterNode) {
 			this.base = new Class(((com.change_vision.jude.api.inf.model.IObjectNode) aux).getBase());
 		}else {
-			//algo deu errado
-			System.out.println("Deu ruim cambada!!!\n");
+			System.out.println("Something went wrong!\n");
 		}
 		
 	}
@@ -85,21 +80,19 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 		this.source = source;
 	}
 	
-	private com.change_vision.jude.api.inf.model.IActivityNode findBase(com.change_vision.jude.api.inf.model.IActivityNode base, List<String> searched) throws WellFormedException {
-		//com.change_vision.jude.api.inf.model.IActivityNode base = flow.getSource();
-		
+	private com.change_vision.jude.api.inf.model.IActivityNode findBase(com.change_vision.jude.api.inf.model.IActivityNode base, List<String> searched) throws WellFormedException {		
 		if(base instanceof com.change_vision.jude.api.inf.model.IActivityParameterNode) {
 			return base;
 		}
 		else if( base instanceof com.change_vision.jude.api.inf.model.IObjectNode) {
 			return base;
 		}else if(base instanceof com.change_vision.jude.api.inf.model.IPin) {
-			return base;//não é pra ter como ser Input
+			return base;
 		}
 		else if(base instanceof com.change_vision.jude.api.inf.model.IControlNode){
 			return navegateForBase((com.change_vision.jude.api.inf.model.IControlNode) flow.getSource(),searched);
-		}else {//se for IAction
-			return null;//deu erro em algum lugar
+		}else {//if is an IAction
+			return null;//something went wrong
 		}
 	}
 	
@@ -135,11 +128,11 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 		}else if(base.isJoinNode()) {
 			List<IClass> types = new ArrayList<>();
 			com.change_vision.jude.api.inf.model.IActivityNode baseNode;
-			for(int i = 0; i< base.getIncomings().length; i++) {//acha os tipos dos caminhos
+			for(int i = 0; i< base.getIncomings().length; i++) {//finds the types of the flows
 				if (!searched.contains(base.getIncomings()[i].getId())) {
 					searched.add(base.getIncomings()[i].getId());
-					if(AdapterUtils.flowType(base.getIncomings()[i], searched) == AdapterUtils.FlowType.OBJECT_FLOW) {//se o caminho resultar em object seguir ele 
-						baseNode = findBase(base.getIncomings()[i].getSource(),searched);// não tenho certeza
+					if(AdapterUtils.flowType(base.getIncomings()[i], searched) == AdapterUtils.FlowType.OBJECT_FLOW) {//if the flow results in object  
+						baseNode = findBase(base.getIncomings()[i].getSource(),searched);// not sure
 						
 						if( baseNode instanceof IObjectNode) {
 							types.add(new Class(((IObjectNode) baseNode).getBase()));
@@ -153,20 +146,12 @@ public class ObjectFlow extends Flow implements IObjectFlow {
 				}
 			}
 			
-			for(int i =0; i< types.size();i++) {//se algum tipo for diferente entao algo deu errado
-				if(!(types.get(0).equals(types.get(i)))) {//se algum for diferente
+			for(int i =0; i< types.size();i++) {//if any type is different, then something went wrong
+				if(!(types.get(0).equals(types.get(i)))) {
 					throw new WellFormedException("There is more then 1 type of objectFlow in the "+base.getName() +" Node. \n");
 				}
-			}
-			
-			
-		}
-		
-		
-		
-		
-		
-		
+			}						
+		}	
 		return null;
 	}
 }

@@ -27,8 +27,8 @@ public class CounterExampleBuilder {
 		this.alphabetAD = alphabetAD;
 		this.IdSignals = IdSignals;
 		
-		//TODO futuramente verificar se essa parte continua correta
-		List<String> trace = new ArrayList<>();// tratamento necessário no trace
+		//TODO In the future, verify if this part continues working
+		List<String> trace = new ArrayList<>();// necessary treatment of the trace
 		for (String objTrace : traceCounterExample) {
             String[] objTracePartition = objTrace.split("\\.");
             if (objTracePartition.length > 1 && !objTracePartition[0].startsWith("startActivity_") && !objTracePartition[0].startsWith("endActivity_")) {
@@ -63,20 +63,18 @@ public class CounterExampleBuilder {
 		return nodesCE;
 	}
 	
-	//varre o diagrama e devolve o id de quem pertece ao trace
+	//Sweeps the diagram and returns the id of who belongs to the trace
 	private List<String> searchDiagram(IActivity diagram){
 		List<String> ids = new ArrayList<>();
-		Pair<IActivity, String> key = null;//diagrama,nome do no 	
+		Pair<IActivity, String> key = null;//diagram,node name 	
     	for (int i = 0; i < diagram.getActivityNodes().length ; i++) {
     		IActivityNode node = diagram.getActivityNodes()[i];
 			if (node instanceof IAction) {
 				if (((IAction) node).isAcceptEventAction()) {
-					//String idAntigo = newIdSignals.get(actionNode.getID());
 					int signalNumber = IdSignals.get(node.getId());
 					key = new Pair<IActivity, String>(diagram,"accept_"+nameNodeResolver(node.getName())+"_"+signalNumber);
 				}
 				else if(((IAction)node).isSendSignalAction()) {
-					//String idAntigo = newIdSignals.get(actionNode.getID());
 					int signalNumber = IdSignals.get(node.getId());
 					key = new Pair<IActivity, String>(diagram,"signal_"+nameNodeResolver(node.getName())+"_"+signalNumber);
 				} else {
@@ -87,7 +85,7 @@ public class CounterExampleBuilder {
 			}else {
 				key = new Pair<IActivity, String>(diagram, nameNodeResolver(node.getName()));
 			}
-			if (alphabetAD instanceof ADCompositeAlphabet) {//se o diagram mais externo tiver CBAs
+			if (alphabetAD instanceof ADCompositeAlphabet) {//If the most external diagram has CBAs
 				HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
 				aux = ((ADCompositeAlphabet) alphabetAD).getAllAlphabetNodes();
 				HashMap<Pair<IActivity,String>,String> allSyncChannels = ((ADCompositeAlphabet) alphabetAD).getAllsyncChannelsEdge(); 
@@ -100,39 +98,39 @@ public class CounterExampleBuilder {
 				if (aux.containsKey(key)) {
 					List<String> allflowsNode = aux.get(key);
 
-					for (String objTrace : traceCounterExample) {//se contem no trace
-						if (allflowsNode != null && allflowsNode.contains(objTrace)) {//se contem no trace TODO(está errado)
+					for (String objTrace : traceCounterExample) {//If there is a trace
+						if (allflowsNode != null && allflowsNode.contains(objTrace)) {//If contains on trace TODO(is wrong)
 							if (!ids.contains(node.getId()) && 
 									((node instanceof IAction && !objTrace.startsWith("oe_") && !objTrace.startsWith("ce_")) 
 											|| node instanceof IControlNode || node instanceof IObjectNode)) {
 								ids.add(node.getId());
 							}						
-							for(int j = 0; j < node.getIncomings().length; j++) {//varrer as arestas de entrada
+							for(int j = 0; j < node.getIncomings().length; j++) {//sweeps the incoming flows
 								IFlow flow = node.getIncomings()[j];
 								Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-								String channel = allSyncChannels.get(chave);//verifica nas arestas de controle
-								String channelObj = allSyncObj.get(chave);//verifica nas arestas de objeto
-								if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+								String channel = allSyncChannels.get(chave);//Verify the control edges
+								String channelObj = allSyncObj.get(chave);//Verify the object edges
+								if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 									if (!ids.contains(flow.getId())) {
 										ids.add(flow.getId());
 									}
-								}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+								}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 									if (!ids.contains(flow.getId())) {
 										ids.add(flow.getId());
 									}
 								}
 							}
 							
-							for(int j = 0; j < node.getOutgoings().length; j++) {//varrer as arestas de saida
+							for(int j = 0; j < node.getOutgoings().length; j++) {//sweeps the outgoings flows
 								IFlow flow = node.getOutgoings()[j];
 								Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-								String channel = allSyncChannels.get(chave);//verifica nas arestas de controle
-								String channelObj = allSyncObj.get(chave);//verifica nas arestas de objeto
-								if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+								String channel = allSyncChannels.get(chave);//Verify the control edges
+								String channelObj = allSyncObj.get(chave);//Verify the object edges
+								if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 									if (!ids.contains(flow.getId())) {
 										ids.add(flow.getId());
 									}
-								}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+								}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 									if (!ids.contains(flow.getId())) {
 										ids.add(flow.getId());
 									}
@@ -145,13 +143,13 @@ public class CounterExampleBuilder {
 										IPin pin = ((IAction)node).getInputs()[j];
 										for(IFlow flow :pin.getIncomings()) {
 											Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-											String channel = allSyncChannels.get(chave);//verifica nas arestas de controle
-											String channelObj = allSyncObj.get(chave);//verifica nas arestas de objeto
-											if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+											String channel = allSyncChannels.get(chave);//Verify the control edges
+											String channelObj = allSyncObj.get(chave);//Verify the object edges
+											if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 												if (!ids.contains(flow.getId())) {
 													ids.add(flow.getId());
 												}
-											}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+											}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 												if (!ids.contains(flow.getId())) {
 													ids.add(flow.getId());
 												}
@@ -165,13 +163,13 @@ public class CounterExampleBuilder {
 										IPin pin = ((IAction)node).getOutputs()[j];
 										for(IFlow flow :pin.getOutgoings()) {
 											Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-											String channel = allSyncChannels.get(chave);//verifica nas arestas de controle
-											String channelObj = allSyncObj.get(chave);//verifica nas arestas de objeto
-											if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+											String channel = allSyncChannels.get(chave);//Verify the control edges
+											String channelObj = allSyncObj.get(chave);//Verify the object edges
+											if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 												if (!ids.contains(flow.getId())) {
 													ids.add(flow.getId());
 												}
-											}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+											}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 												if (!ids.contains(flow.getId())) {
 													ids.add(flow.getId());
 												}
@@ -186,7 +184,7 @@ public class CounterExampleBuilder {
 				}
 			} else {
 				HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
-				aux = alphabetAD.getAlphabetAD();//TODO pinos não estão presentes aqui
+				aux = alphabetAD.getAlphabetAD();//TODO not every pin is here
 				HashMap<Pair<IActivity,String>,String> SyncChannels = alphabetAD.getSyncChannelsEdge(); 
 				HashMap<Pair<IActivity,String>,String> SyncObj = alphabetAD.getSyncObjectsEdge();
 				
@@ -196,38 +194,38 @@ public class CounterExampleBuilder {
 				
 				List<String> allflowsNode = aux.get(key);
 				for (String objTrace : traceCounterExample) {
-					if (allflowsNode != null && allflowsNode.contains(objTrace)) {//se contem no trace TODO(está errado)
+					if (allflowsNode != null && allflowsNode.contains(objTrace)) {//If contains on trace TODO(is wrong)
 						if (!ids.contains(node.getId()) && 
 								((node instanceof IAction && !objTrace.startsWith("oe_") && !objTrace.startsWith("ce_")) 
 										|| node instanceof IControlNode || node instanceof IObjectNode)) {
 							ids.add(node.getId());
 						}
-						for(int j = 0; j < node.getIncomings().length; j++) {//varrer as arestas de entrada
+						for(int j = 0; j < node.getIncomings().length; j++) {//sweeps the incoming flows
 							IFlow flow = node.getIncomings()[j];
 							Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-							String channel = SyncChannels.get(chave);//verifica nas arestas de controle
-							String channelObj = SyncObj.get(chave);//verifica nas arestas de objeto
-							if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+							String channel = SyncChannels.get(chave);//Verify the control edges
+							String channelObj = SyncObj.get(chave);//Verify the object edges
+							if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 								if (!ids.contains(flow.getId())) {
 									ids.add(flow.getId());
 								}
-							}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+							}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 								if (!ids.contains(flow.getId())) {
 									ids.add(flow.getId());
 								}
 							}
 							
 						}
-						for(int j = 0; j < node.getOutgoings().length; j++) {//varrer as arestas de entrada
+						for(int j = 0; j < node.getOutgoings().length; j++) {//sweeps the outgoing flows
 							IFlow flow = node.getOutgoings()[j];
 							Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-							String channel = SyncChannels.get(chave);//verifica nas arestas de controle
-							String channelObj = SyncObj.get(chave);//verifica nas arestas de objeto
-							if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+							String channel = SyncChannels.get(chave);//Verify the control edges
+							String channelObj = SyncObj.get(chave);//Verify the object edges
+							if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 								if(!ids.contains(flow.getId())) {
 									ids.add(flow.getId());
 								}
-							}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+							}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 								if(!ids.contains(flow.getId())) {
 									ids.add(flow.getId());
 								}
@@ -241,13 +239,13 @@ public class CounterExampleBuilder {
 								IPin pin = ((IAction)node).getInputs()[j];
 								for(IFlow flow :pin.getIncomings()) {
 									Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-									String channel = SyncChannels.get(chave);//verifica nas arestas de controle
-									String channelObj = SyncObj.get(chave);//verifica nas arestas de objeto
-									if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+									String channel = SyncChannels.get(chave);//Verify the control edges
+									String channelObj = SyncObj.get(chave);//Verify the object edges
+									if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 										if (!ids.contains(flow.getId())) {
 											ids.add(flow.getId());
 										}
-									}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+									}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 										if (!ids.contains(flow.getId())) {
 											ids.add(flow.getId());
 										}
@@ -261,13 +259,13 @@ public class CounterExampleBuilder {
 								IPin pin = ((IAction)node).getOutputs()[j];
 								for(IFlow flow :pin.getOutgoings()) {
 									Pair<IActivity, String> chave = new Pair<IActivity, String>(diagram,flow.getId());
-									String channel = SyncChannels.get(chave);//verifica nas arestas de controle
-									String channelObj = SyncObj.get(chave);//verifica nas arestas de objeto
-									if(channel != null && traceCounterExample.contains(channel)) {//se for de controle e estiver no trace
+									String channel = SyncChannels.get(chave);//Verify the control edges
+									String channelObj = SyncObj.get(chave);//Verify the object edges
+									if(channel != null && traceCounterExample.contains(channel)) {//If is a control flow and is on the trace
 										if (!ids.contains(flow.getId())) {
 											ids.add(flow.getId());
 										}
-									}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//se for de objeto e estiver no trace
+									}else if(channelObj != null && traceCounterExample.contains(channelObj)) {//If is a object flow and is on the trace
 										if (!ids.contains(flow.getId())) {
 											ids.add(flow.getId());
 										}

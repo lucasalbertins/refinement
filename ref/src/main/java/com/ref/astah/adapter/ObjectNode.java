@@ -6,17 +6,11 @@ import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IObjectNode;
 
 public class ObjectNode  extends ActivityNode implements IObjectNode{
-
-	//com.change_vision.jude.api.inf.model.IObjectNode objectNode;
-	//protected IFlow[] incomings;
-	//protected IFlow[] outgoings;
 	protected IClass base;
 	
 	public ObjectNode(com.change_vision.jude.api.inf.model.IObjectNode objectNode) throws WellFormedException {
 		super(objectNode);
-		//this.objectNode = objectNode;
 		this.base = new Class(objectNode.getBase());
-
 	}
 
 	@Override

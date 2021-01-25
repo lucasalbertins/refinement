@@ -25,10 +25,10 @@ public class ADCompositeAlphabet extends ADAlphabet{
 	}
 	
 	public HashMap<Pair<IActivity,String>, ArrayList<String>> getAllAlphabetNodes() {
-		for(ADAlphabet alphabet: this.alphabetList) {//para cada ADAlphabet da lista
-			//se ele n for folha
+		for(ADAlphabet alphabet: this.alphabetList) {//For each ADAlphabet of the List
+			//If not leaf
 			if(alphabet instanceof ADCompositeAlphabet && !((ADCompositeAlphabet)alphabet).alphabetList.isEmpty()) {
-				allAlphabets.putAll(getLeafAlphabet(alphabet));//add o alphabeto das folhas
+				allAlphabets.putAll(getLeafAlphabet(alphabet));//add the alphabet of the leaves
 			}
 			else{
 				allAlphabets.putAll(alphabet.alphabetAD);
@@ -39,9 +39,9 @@ public class ADCompositeAlphabet extends ADAlphabet{
 	}
 	
 	private HashMap<Pair<IActivity,String>, ArrayList<String>> getLeafAlphabet(ADAlphabet alphabet){
-		//enquanto for nao folha
+		//while not leaf
 		if(alphabet instanceof ADCompositeAlphabet && !((ADCompositeAlphabet)alphabet).alphabetList.isEmpty()) {
-			//para cada elemento da lista
+			//For each element of the List
 			for(ADAlphabet listAlphabet: ((ADCompositeAlphabet)alphabet).alphabetList) {
 				allAlphabets.putAll(getLeafAlphabet(listAlphabet));
 			}
@@ -51,27 +51,23 @@ public class ADCompositeAlphabet extends ADAlphabet{
 	}
 	
 	public HashMap<Pair<IActivity,String>,String> getAllsyncChannelsEdge() {
-		
-		//if (!this.allSyncChannels.isEmpty()) {
-			for (ADAlphabet alphabet : this.alphabetList) {//para cada ADAlphabet da lista
-				//se ele n for folha
-				if (alphabet instanceof ADCompositeAlphabet) {
-						//&& !((ADCompositeAlphabet) alphabet).syncChannelsEdge.isEmpty()) {
-					allSyncChannels.putAll(getLeafsyncChannelsEdge(alphabet));//add o alphabeto das folhas
-				}
-				else {
-					allSyncChannels.putAll(alphabet.syncChannelsEdge);//add o alphabeto das folhas
-				}
+		for (ADAlphabet alphabet : this.alphabetList) {//For each ADAlphabet of the List
+			//If not leaf
+			if (alphabet instanceof ADCompositeAlphabet) {
+				allSyncChannels.putAll(getLeafsyncChannelsEdge(alphabet));//add the alphabet of the leaves
 			}
-			allSyncChannels.putAll(this.syncChannelsEdge);
-		//}
+			else {
+				allSyncChannels.putAll(alphabet.syncChannelsEdge);//add the alphabet
+			}
+		}
+		allSyncChannels.putAll(this.syncChannelsEdge);
 		return allSyncChannels;
 	}
 	
 	private HashMap<Pair<IActivity,String>,String> getLeafsyncChannelsEdge(ADAlphabet alphabet){
-		//enquanto for nao folha
+		//while not leaf
 		if(alphabet instanceof ADCompositeAlphabet && !((ADCompositeAlphabet)alphabet).alphabetList.isEmpty()) {
-			//para cada elemento da lista
+			//For each element of the List
 			for(ADAlphabet listAlphabet: ((ADCompositeAlphabet)alphabet).alphabetList) {
 				allSyncChannels.putAll(getLeafsyncChannelsEdge(listAlphabet));
 			}
@@ -80,26 +76,23 @@ public class ADCompositeAlphabet extends ADAlphabet{
 	}
 	
 	public HashMap<Pair<IActivity,String>,String> getAllsyncObjectsEdge() {
-		//if (!this.allSyncObject.isEmpty()) {
-			for (ADAlphabet alphabet : this.alphabetList) {//para cada ADAlphabet da lista
-				//se ele n for folha
-				if (alphabet instanceof ADCompositeAlphabet) {
-						//&& !((ADCompositeAlphabet) alphabet).syncObjectsEdge.isEmpty()) {
-					allSyncObject.putAll(getLeafsyncObjectsEdge(alphabet));//add o alphabeto das folhas
-				}
-				else {
-					allSyncObject.putAll(alphabet.syncObjectsEdge);
-				}
+		for (ADAlphabet alphabet : this.alphabetList) {//For each ADAlphabet of the List
+			//If not leaf
+			if (alphabet instanceof ADCompositeAlphabet) {
+				allSyncObject.putAll(getLeafsyncObjectsEdge(alphabet));//add the alphabet of the leaves
 			}
-			allSyncObject.putAll(this.syncObjectsEdge);
-		//}
+			else {
+				allSyncObject.putAll(alphabet.syncObjectsEdge);
+			}
+		}
+		allSyncObject.putAll(this.syncObjectsEdge);
 		return allSyncObject;
 	}
 	
 	private HashMap<Pair<IActivity,String>,String> getLeafsyncObjectsEdge(ADAlphabet alphabet){
-		//enquanto for nao folha
+		//while not leaf
 		if(alphabet instanceof ADCompositeAlphabet && !((ADCompositeAlphabet)alphabet).alphabetList.isEmpty()) {
-			//para cada elemento da lista
+			//For each element of the List
 			for(ADAlphabet listAlphabet: ((ADCompositeAlphabet)alphabet).alphabetList) {
 				allSyncObject.putAll(getLeafsyncObjectsEdge(listAlphabet));
 			}

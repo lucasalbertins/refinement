@@ -52,7 +52,6 @@ public class ADDefineInitialNode {
 				throw new ParsingException("If the incoming edge of fork node "+activityNode.getName()+" is a ControlFlow, then\r\n" + 
 						"all outgoing edges shall be ControlFlows");
 			}
-			//key = new Pair<IActivity, String>(ad, outFlows[i].getId());
 			String ce;
             Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
 

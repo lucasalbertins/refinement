@@ -17,8 +17,6 @@ import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 import com.ref.interfaces.activityDiagram.IOutputPin;
 
-
-
 public class ADUtils {
 
     private IActivity ad;
@@ -38,8 +36,6 @@ public class ADUtils {
     private HashMap<String, List<IActivity>> signalChannels;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
-    //private List<String> createdSignal;
-    //private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
     public HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
     public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
@@ -70,8 +66,6 @@ public class ADUtils {
         this.signalChannels = signalChannels2;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.allGuards = allGuards;
-        //this.createdSignal = createdSignal;
-        //this.createdAccept = createdAccept;
         this.syncChannelsEdge = syncChannelsEdge2;
         this.syncObjectsEdge = syncObjectsEdge2;
         this.signalChannelsLocal = signalChannelsLocal;
@@ -289,7 +283,7 @@ public class ADUtils {
             localSignalChannelsSync.add("signal_" + nameSignal);
         }
 
-        if (!signalChannels.containsKey(nameSignal)) {//TODO local onde modifica o signalchannels
+        if (!signalChannels.containsKey(nameSignal)) {
         	List<IActivity> list = new ArrayList<>();
         	list.add(ad);
             signalChannels.put(nameSignal,list );

@@ -4,13 +4,8 @@ import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IControlFlow;
 
 public class ControlFlow extends Flow implements IControlFlow{
-	//com.change_vision.jude.api.inf.model.IFlow flow;
-	//private IActivityNode target;
-	//private IActivityNode source;
-	
 	public ControlFlow(com.change_vision.jude.api.inf.model.IFlow flow) {
 		super(flow);
-		//this.flow = flow;
 	}
 	
 	@Override

@@ -1,4 +1,8 @@
-package com.ref.traceability.activityDiagram;
+/*
+ * this class is not used anymore
+ * */
+
+/*package com.ref.traceability.activityDiagram;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.editor.ActivityDiagramEditor;
@@ -908,4 +912,4 @@ public class CounterExamples {
 		}
 	}
 
-}
+}*/

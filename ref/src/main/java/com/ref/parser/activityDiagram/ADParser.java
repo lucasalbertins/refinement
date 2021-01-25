@@ -196,7 +196,7 @@ public class ADParser {
         String check = "";
         String callBehaviour = "";
 
-        if (countCall.size() == 0) { // igual a primeira ocorrencia
+        if (countCall.size() == 0) { //If first occurrence
             check = "\nassert MAIN :[deadlock free]" +
                     "\nassert MAIN :[divergence free]" +
                     "\nassert MAIN :[deterministic]";
@@ -222,7 +222,6 @@ public class ADParser {
             }
         }
 
-        //String lock = defineLock();
         String channel = defineChannels();
         String main = defineMainNodes();
         String type = defineTypes();
@@ -245,15 +244,12 @@ public class ADParser {
                 callBehaviour +
                 check;
 
-        //reseta os valores estaticos
+        //reset the static values
         if (reset) {
-        	//TODO corrigir contraexemplo no astah
-        	//CounterExampleAdapter.callBehaviourList = callBehaviourList;
-        	//DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();
         }
 
-        //alphabet usado na geração dos contraexemplos
+        //alphabet used on the counterexample
         if(alphabetAD == null) {
         	this.alphabetAD = new ADLeafAlphabet(ad);
         }
@@ -273,24 +269,24 @@ public class ADParser {
 	public static void addCountCallBehavior(String idKey,String idCalling,String nameCalling) {
         int i = 1;
         List<Pair<String,String>> aux1;
-        if (countcallBehavior.containsKey(idKey)) {//se ja tiver o CBA
+        if (countcallBehavior.containsKey(idKey)) {//If already has the CBA
             aux1 = countcallBehavior.get(idKey);
             List<String>aux2 = new ArrayList<String>();
-            for(Pair<String,String> a:aux1) {//pegar os ids
+            for(Pair<String,String> a:aux1) {//get the ids
             	aux2.add(a.getKey());
             }
-            for(String diagram:aux2) {//varrer atras do diagrama que chamou
+            for(String diagram:aux2) {//sweeps throught the calling diagram 
             	if(diagram.equals(idCalling)){
             		break;
             	}
             	i++;
             }
-            if(i > aux1.size()) {//se ele n estiver la, add
+            if(i > aux1.size()) {//If it isn't there, add it
             	Pair<String,String> pair = new Pair<String, String>(idCalling, nameCalling);
             	aux1.add(pair);
             	countcallBehavior.replace(idKey,aux1);	
             }
-        } else {//se nao existir o CBA
+        } else {//IF the CBA doesn't exist
         	aux1 = new ArrayList<Pair<String,String>>();
         	Pair<String,String> pair = new Pair<String, String>(idCalling, nameCalling);
         	aux1.add(pair);
@@ -299,8 +295,8 @@ public class ADParser {
     }
     
     private void defineCallBehaviourList() throws ParsingException {
-    	if(countCall.size() == 0) {//pega os CBA do 1 diagrama
-        	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
+    	if(countCall.size() == 0) {//Gets the CBAs of the first diagram
+        	for (IActivityNode activityNode : ad.getActivityNodes()) {//Get all nodes
         		if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
                     	if(((IAction) activityNode).getCallingActivity() == null) {
@@ -322,9 +318,9 @@ public class ADParser {
         	aux3.addAll(callBehaviourList);
         	
         	while(mudou) {
-	        	if(callBehaviourList.size() != 0) {//pega os CBA dentro de CBA
-	        		for(IActivity CBAs: callBehaviourList) {//para cada CBA
-	        			for(IActivityNode adCBAs: CBAs.getActivityNodes()) {//para cada nó
+	        	if(callBehaviourList.size() != 0) {//Gets the CBA that is inside a CBA
+	        		for(IActivity CBAs: callBehaviourList) {//For each CBA
+	        			for(IActivityNode adCBAs: CBAs.getActivityNodes()) {//For each node
 	        				if(adCBAs instanceof IAction) {
 	        					if(((IAction) adCBAs).isCallBehaviorAction() && !aux1.contains(((IAction) adCBAs).getCallingActivity())) {//se for CBA e n tiver sido add
 	        						aux1.add(((IAction) adCBAs).getCallingActivity());
@@ -337,7 +333,7 @@ public class ADParser {
 	        		}
 	        	}
 	        	
-	        	for(IActivity CBA:aux1) {//faz a união dos conjuntos
+	        	for(IActivity CBA:aux1) {//Joins the sets
 	        		if(!containsCBA(CBA)) {
 	        			callBehaviourList.add(CBA);
 	        		}
@@ -361,10 +357,10 @@ public class ADParser {
 	}
 
 	private void definePoolAlphabet() {
-		if(firstDiagram.equals(ad.getId())) {//pega do 1 diagrama
-        	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
+		if(firstDiagram.equals(ad.getId())) {//Gets from the first diagram
+        	for (IActivityNode activityNode : ad.getActivityNodes()) {//Gets all nodes
         		if (activityNode instanceof IAction) {
-                    if (((IAction) activityNode).isAcceptEventAction()||((IAction) activityNode).isSendSignalAction()) {//se for accept ou send
+                    if (((IAction) activityNode).isAcceptEventAction()||((IAction) activityNode).isSendSignalAction()) {//If is accept or send
                     	alphabetPool.add("signal_"+((IAction) activityNode).getName());
     					alphabetPool.add("accept_"+((IAction) activityNode).getName());
                     }

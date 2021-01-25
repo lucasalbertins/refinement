@@ -8,15 +8,8 @@ import com.ref.interfaces.activityDiagram.IOutputPin;
 
 public class OutputPin extends Pin implements IOutputPin{
 
-	//com.change_vision.jude.api.inf.model.IOutputPin outputPin;
-	//private IFlow[] incomings;
-	//private IFlow[] outgoings;
-	//private IClass base;
-	//private IAction owner;
-
 	public OutputPin(com.change_vision.jude.api.inf.model.IOutputPin outputPin) throws WellFormedException {
 		super(outputPin);
-		//this.outputPin = outputPin;
 		this.base = new Class(outputPin.getBase());
 	}
 

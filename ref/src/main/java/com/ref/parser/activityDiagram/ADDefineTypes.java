@@ -48,7 +48,7 @@ public class ADDefineTypes {
         StringBuilder types = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
 
-        if (firstDiagram.equals(ad.getId())) { // igual a primeira ocorrencia
+        if (firstDiagram.equals(ad.getId())) { //If is the first occurrence
 
             for (String id : countCall.keySet()) {
                 types.append("ID_" + id + " = {1.." + countCall.get(id) + "}\n");

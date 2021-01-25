@@ -7,17 +7,11 @@ import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 
 public class ControlNode extends ActivityNode implements IControlNode{
-	//com.change_vision.jude.api.inf.model.IControlNode controlNode;
-	//private IFlow[] incomings;
-	//private IFlow[] outgoings;
-	
+
 	public ControlNode(com.change_vision.jude.api.inf.model.IControlNode controlNode) throws WellFormedException {
 		super(controlNode);
-		//this.controlNode = controlNode;
-
-		//TODO verificar se todas as arestas são do mesmo tipo
 		
-		if(isMergeNode()) {//todas as arestas de entrada tem que ser do mesmo tipo 
+		if(isMergeNode()) {//Every incoming flow must be of the same type  
 			IFlow edge = incomings[0];
 			for(IFlow flow : incomings) {
 				if(!flow.getClass().equals(edge.getClass()) ) {
@@ -26,7 +20,7 @@ public class ControlNode extends ActivityNode implements IControlNode{
 			}
 		}
 		
-		if(isDecisionNode()) {// todas as arestas de saida tem que ser do mesmo tipo
+		if(isDecisionNode()) {//Every outgoing flow must be of the same type
 			IFlow edge = outgoings[0];
 			for(IFlow flow : outgoings) {
 				if(!flow.getClass().equals(edge.getClass()) ) {
@@ -35,7 +29,7 @@ public class ControlNode extends ActivityNode implements IControlNode{
 			}
 		}
 		
-		if(isInitialNode()) {// todas as arestas tem que ser de controle
+		if(isInitialNode()) {//All flows must be a control flow
 			for(int i = 0; i < outgoings.length ; i++) {
 				if(outgoings[i] instanceof IObjectFlow) {
 					throw new WellFormedException("The outgoing edges of a initialNode must be a Control Flow.\n");
@@ -43,7 +37,7 @@ public class ControlNode extends ActivityNode implements IControlNode{
 			}
 		}
 		
-		if(isForkNode()) {// todas as arestas de saida devem ser do mesmo tipo da de entrada
+		if(isForkNode()) {//Every outgoing flow must be of the same type of the incoming flow
 			IFlow edge = incomings[0];
 			for(IFlow flow : outgoings) {
 				if(!flow.getClass().equals(edge.getClass()) ) {
@@ -52,7 +46,7 @@ public class ControlNode extends ActivityNode implements IControlNode{
 			}
 		}
 		
-		if(isJoinNode()) {// se existir pelo menos 1 aresta de entrada que seja de objeto entao a saida tem que ser objeto
+		if(isJoinNode()) {//If there is at least 1 incoming flow that is a object flow then the outgoings flow must be object flow
 			boolean object = false;
 			for(IFlow flow : incomings) {
 				if(flow instanceof IObjectFlow){

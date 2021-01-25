@@ -6,15 +6,10 @@ import com.ref.interfaces.activityDiagram.IClass;
 import com.ref.interfaces.activityDiagram.IFlow;
 
 public class ActivityParameterNode extends ObjectNode implements IActivityParameterNode{
-	//com.change_vision.jude.api.inf.model.IActivityParameterNode activityParameterNode;
-	//private IFlow[] incomings;
-	//private IFlow[] outgoings;
 	private IClass base;
 
 	public ActivityParameterNode(com.change_vision.jude.api.inf.model.IActivityParameterNode activityParameterNode) throws WellFormedException {
-		super(activityParameterNode);
-		//this.activityParameterNode = activityParameterNode;
-		
+		super(activityParameterNode);		
 		this.base = new Class(activityParameterNode.getBase());
 	}
 	

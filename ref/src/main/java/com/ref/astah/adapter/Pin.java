@@ -7,18 +7,11 @@ import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IPin;
 
 public abstract class Pin extends ObjectNode implements IPin{
-
-	//com.change_vision.jude.api.inf.model.IPin pin;
-	//protected IFlow[] incomings;
-	//protected IFlow[] outgoings;
-	//private IClass base;
 	protected IAction owner;
 	
 	public Pin(com.change_vision.jude.api.inf.model.IPin pin) throws WellFormedException {
 		super(pin);
-		//this.pin = pin;
 		this.base = new Class(pin.getBase());
-		//this.owner = new Action((com.change_vision.jude.api.inf.model.IAction) pin.getOwner());
 	}
 
 	@Override

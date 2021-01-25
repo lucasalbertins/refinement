@@ -60,7 +60,7 @@ public class CounterExampleAstah {
 	            TransactionManager.beginTransaction();
 	            createPackage(basicModelEditor, project,type);
 	            ActivityDiagramEditor adEditor = prjAccessor.getDiagramEditorFactory().getActivityDiagramEditor();
-	            for(IDiagram ADdiagrams: diagrams) {//para cada diagrama
+	            for(IDiagram ADdiagrams: diagrams) {//For each diagram
 	            	if(ADdiagrams instanceof IActivityDiagram) {
 	            		com.ref.interfaces.activityDiagram.IActivity aux = null;
 		            	boolean contains = false;
@@ -70,7 +70,7 @@ public class CounterExampleAstah {
 		            			aux = act;
 		            		}
 		            	}
-		            	if(ADdiagrams == diagram || contains) {//se ta relacionado ao contraexemplo
+		            	if(ADdiagrams == diagram || contains) {//If is related to the counterExample
 		            		IActivity diagrama1 = getDiagram(ADdiagrams,diagrams);
 			            	ad = adEditor.createActivityDiagram(packageCounterExample, ADdiagrams.getName()+ "#" + data);
 			            	for (IActivityNode node : ((IActivityDiagram) ADdiagrams).getActivity().getActivityNodes()) {
@@ -94,17 +94,6 @@ public class CounterExampleAstah {
 		}
 		return null;
 	}
-
-	/*private static String nameNodeResolver(String name) {
-        return name.replace(" ", "").replace("!", "_").replace("@", "_")
-                .replace("%", "_").replace("&", "_").replace("*", "_")
-                .replace("(", "_").replace(")", "_").replace("+", "_")
-                .replace("-", "_").replace("=", "_").replace("?", "_")
-                .replace(":", "_").replace("/", "_").replace(";", "_")
-                .replace(">", "_").replace("<", "_").replace(",", "_")
-                .replace("{", "_").replace("}", "_").replace("|", "_")
-                .replace("\\", "_");
-    }*/
 	
 	private static void createPackage(BasicModelEditor basicModelEditor, IModel project,VerificationType cet) {
         try {
@@ -124,19 +113,6 @@ public class CounterExampleAstah {
             }
         }
     }
-	
-	/*private static IActivity getDiagram(IDiagram aDdiagrams, String ADdiagrams,IDiagram diagram) {
-		
-		for(IActivity diagrama: callBehaviourList) {
-			if(ADdiagrams.equals(diagrama.getName())) {
-				return diagrama;
-			}
-		}
-		if(ADdiagrams.equals(diagram.getName())) {
-			return ((IActivityDiagram) diagram).getActivity();
-		}
-		return null;
-	}*/
 	
 	private static IActivityNode getIActivityNode(INodePresentation nodePresent) {
         IActivityNode result = null;
@@ -257,9 +233,7 @@ public class CounterExampleAstah {
 	            }
 
 	            IActivityNode actNode = getIActivityNode(actionNode);
-	            //newIdSignals.put(actionNode.getID(),node.getId());
 	            actNode.setDefinition(node.getDefinition());
-	            //paintNodes(node, actionNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	actionNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -285,7 +259,6 @@ public class CounterExampleAstah {
 
 	                setFlowPoints(flow, outFlows[i]);
 	     
-	                //flowSP(outFlows, i, flow,diagram);
 	                if(trace.contains(outFlows[i].getId())) {
                    	 flow.setProperty("line.color", "#FF0000");
                    }
@@ -309,11 +282,9 @@ public class CounterExampleAstah {
 
 	                        setFlowPoints(flow, targetOutFlows[x]);
 	                        
-	                        //flowPinTargetSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
-	                        if(trace.contains(targetOutFlows[x].getId())) {//TODO aqui que ta dando erro
+	                        if(trace.contains(targetOutFlows[x].getId())) {//TODO verify here
 		                    	 flow.setProperty("line.color", "#FF0000");
 		                    	 pinPresent.setProperty("fill.color", "#FF0000");
-		 			             //targetPresent.setProperty("fill.color", "#FF0000");
 		                    }
 	                        
 	                    } else {
@@ -329,11 +300,9 @@ public class CounterExampleAstah {
 
 	                        setFlowPoints(flow, targetOutFlows[x]);
 	                        
-	                        //flowPinSP(targetOutFlows, x, targetPresent, pinPresent, flow,diagram);
 	                        if(trace.contains(targetOutFlows[i].getId())) {
 		                    	 flow.setProperty("line.color", "#FF0000");
 		                    	 pinPresent.setProperty("fill.color", "#FF0000");
-		 			             //targetPresent.setProperty("fill.color", "#FF0000");
 		                    }
 
 	                    }
@@ -355,7 +324,6 @@ public class CounterExampleAstah {
 	        try {
 	            initialNode = adEditor.createInitialNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 
-	            //paintNodes(node, initialNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	initialNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -373,7 +341,6 @@ public class CounterExampleAstah {
 
 	                setFlowPoints(flow, outFlows[i]);
 	                
-	                //flowSP(outFlows, i, flow,diagram);
 	                if(trace.contains(outFlows[i].getId())) {
                    	 flow.setProperty("line.color", "#FF0000");
                    }
@@ -394,7 +361,6 @@ public class CounterExampleAstah {
 	        try {
 	            parameterNode = adEditor.createActivityParameterNode(node.getName(), ((IActivityParameterNode) node).getBase(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 	            
-	            //paintNodes(node, parameterNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	parameterNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -414,10 +380,8 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                } else {
@@ -432,7 +396,6 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 
-	                    //flowSP(outFlows, i, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
 	                    }
@@ -455,7 +418,6 @@ public class CounterExampleAstah {
 	            decisionNode = adEditor.createDecisionMergeNode(null, ((INodePresentation) node.getPresentations()[0]).getLocation());
 	            decisionNode.setLabel(node.getName());
 	            
-	            //paintNodes(node, decisionNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	decisionNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -476,10 +438,8 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                  
 	                } else {
@@ -494,10 +454,8 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 	                    
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                }
@@ -519,7 +477,6 @@ public class CounterExampleAstah {
 	                    ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
 	            forkNode.setLabel(node.getName());
 
-	            //paintNodes(node, forkNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	forkNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -539,10 +496,8 @@ public class CounterExampleAstah {
 	                    }
 
 	                    setFlowPoints(flow, outFlows[i]);
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	               
 
@@ -557,10 +512,8 @@ public class CounterExampleAstah {
 	                    }
 
 	                    setFlowPoints(flow, outFlows[i]);
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                }
@@ -582,7 +535,6 @@ public class CounterExampleAstah {
 	                    ((INodePresentation) node.getPresentations()[0]).getWidth(), ((INodePresentation) node.getPresentations()[0]).getHeight());
 	            joinNode.setLabel(node.getName());
 
-	            //paintNodes(node, joinNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	joinNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -603,10 +555,8 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	                    
 	                } else {
@@ -621,7 +571,6 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 
-	                    //flowSP(outFlows, i, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
 	                    }
@@ -658,7 +607,6 @@ public class CounterExampleAstah {
 	        try {
 	            flowFinalNode = adEditor.createFlowFinalNode(node.getName(), ((INodePresentation) node.getPresentations()[0]).getLocation());
 	            
-	            //paintNodes(node, flowFinalNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	flowFinalNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -676,7 +624,7 @@ public class CounterExampleAstah {
 	        INodePresentation targetPresent = null;
 
 	        try{
-	            targetPresent = adEditor.createPin(pin.getName(), null, true, actionNode, ((INodePresentation) pin.getPresentations()[0]).getLocation());
+	            targetPresent = adEditor.createPin(pin.getName(), pin.getBase(), true, actionNode, ((INodePresentation) pin.getPresentations()[0]).getLocation());
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
@@ -693,7 +641,7 @@ public class CounterExampleAstah {
 	        INodePresentation targetPresent = null;
 
 	        try {
-	            targetPresent = adEditor.createPin(pin.getName(), null, false, actionNode, ((INodePresentation) pin.getPresentations()[0]).getLocation());
+	            targetPresent = adEditor.createPin(pin.getName(), pin.getBase(), false, actionNode, ((INodePresentation) pin.getPresentations()[0]).getLocation());
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
@@ -712,7 +660,6 @@ public class CounterExampleAstah {
 	        try {
 	            objectNode = adEditor.createObjectNode(node.getName(), null, ((INodePresentation) node.getPresentations()[0]).getLocation());
 	            
-	            //paintNodes(node, objectNode,diagram);
 	            if(trace.contains(node.getId())) {
 	            	objectNode.setProperty("fill.color", "#FF0000");
 	            }
@@ -733,10 +680,8 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 	                    
-	                    //flowTargetSP(outFlows, i, targetPresent, flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
-	 			             //targetPresent.setProperty("fill.color", "#FF0000");
 	                    }
 	               
 
@@ -752,7 +697,6 @@ public class CounterExampleAstah {
 
 	                    setFlowPoints(flow, outFlows[i]);
 	                    
-	                    //flowSP(outFlows,i,flow,diagram);
 	                    if(trace.contains(outFlows[i].getId())) {
 	                    	 flow.setProperty("line.color", "#FF0000");
 	                    }
@@ -767,204 +711,4 @@ public class CounterExampleAstah {
 
 	        return objectNode;
 	    }
-	    
-	    /*private static void paintNodes(IActivityNode node, INodePresentation actionNode,IActivity diagram) throws InvalidEditingException {
-	    	//node = nó antigo, actionNode = nó novo
-	    	Pair<IActivity, String> key = null;//diagrama,nome do no 	
-	    	if(node instanceof IAction) {
-	    		if(((IAction)node).isAcceptEventAction()) {
-	    			String idAntigo = newIdSignals.get(actionNode.getID());
-	    			int signalNumber = IdSignals.get(idAntigo);
-	    			key = new Pair<IActivity, String>(diagram,"accept_"+nameNodeResolver(node.getName())+"_"+signalNumber);
-	    		}
-	    		else if(((IAction)node).isSendSignalAction()) {
-	    			String idAntigo = newIdSignals.get(actionNode.getID());
-	    			int signalNumber = IdSignals.get(idAntigo);
-	    			key = new Pair<IActivity, String>(diagram,"signal_"+nameNodeResolver(node.getName())+"_"+signalNumber);
-	    		}
-	    		else {
-	    			key = new Pair<IActivity, String>(diagram,nameNodeResolver(node.getName()));
-	    		}
-	    	}
-	    	else {
-	    		key = new Pair<IActivity, String>(diagram,nameNodeResolver(node.getName()));
-	    	}
-	    	
-	    	if(alphabet instanceof ADCompositeAlphabet) {//se o diagram mais externo tiver CBAs
-				HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
-				aux =((ADCompositeAlphabet) alphabet).getAllAlphabetNodes();		
-				if(aux.containsKey(key)) {
-					List<String> allflowsNode =  aux.get(key);
-
-			        for (String objTrace : trace) {
-			            if (allflowsNode.contains(objTrace)) {
-			                actionNode.setProperty("fill.color", "#FF0000");
-			            }
-			        }	
-				}
-			}else {
-				HashMap<Pair<IActivity, String>, ArrayList<String>> aux = new HashMap<>();
-				aux = alphabet.getAlphabetAD();			
-				List<String> allflowsNode =  aux.get(key);
-			    for (String objTrace : trace) {
-			        if (allflowsNode!= null && allflowsNode.contains(objTrace)) {
-			            actionNode.setProperty("fill.color", "#FF0000");
-			        }
-			    }
-			}
-		}
-	    
-	    private static void flowSP(IFlow[] outFlows, int i, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
-	    	String outFlowID = outFlows[i].getId();
-	    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
-	    	if(alphabet instanceof ADCompositeAlphabet){
-				if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
-						((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
-					String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
-			        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			        }
-				}
-			}
-			else {
-				if (alphabet.getSyncChannelsEdge().containsKey(key) ||
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
-			        String channel = alphabet.getSyncChannelsEdge().get(key);
-			        String channelObj = alphabet.getSyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			        }
-			    }
-			}
-		}
-
-	    private static void flowTargetSP(IFlow[] outFlows, int i, INodePresentation targetPresent, ILinkPresentation flow,IActivity diagram)
-				throws InvalidEditingException {
-	    	String outFlowID = outFlows[i].getId();
-	    	Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
-			if(alphabet instanceof ADCompositeAlphabet){
-				if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
-						((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
-					String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
-			        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			           
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        }
-				}
-			}
-			else {
-				if (alphabet.getSyncChannelsEdge().containsKey(key) || 
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
-			        String channel = alphabet.getSyncChannelsEdge().get(key);
-			        String channelObj = alphabet.getSyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			            
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        }
-			    }
-			}
-		}
-	    
-	    private static void flowPinSP(IFlow[] targetOutFlows, int x, INodePresentation targetPresent,
-				INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram) throws InvalidEditingException {
-			if(alphabet instanceof ADCompositeAlphabet){
-				String outFlowID = targetOutFlows[x].getId();
-				Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
-				if(((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().containsKey(key) ||
-						((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().containsKey(key)) {
-					String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
-			        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");              		           
-			        }
-				}
-			}
-			else {
-				String targetOutFlowID = targetOutFlows[x].getId();
-				Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,targetOutFlowID);
-				if (alphabet.getSyncChannelsEdge().containsKey(key) ||
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
-			        String channel = alphabet.getSyncChannelsEdge().get(key);
-			        String channelObj = alphabet.getSyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");                		          
-			        }
-			    }
-			}
-		}
-
-	    
-	    private static void flowPinTargetSP( IFlow[] targetOutFlows, int x,
-				INodePresentation targetPresent, INodePresentation pinPresent, ILinkPresentation flow,IActivity diagram)
-				throws InvalidEditingException {
-			if(alphabet instanceof ADCompositeAlphabet){
-				String outFlowID = targetOutFlows[x].getId();
-				Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,outFlowID);
-				HashMap<Pair<IActivity, String>, String> allSyncChannelsEdge = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge();
-				HashMap<Pair<IActivity, String>, String> allsyncObjectsEdge = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge();
-				if(allSyncChannelsEdge.containsKey(key) ||allsyncObjectsEdge.containsKey(key)) {
-					String channel = ((ADCompositeAlphabet) alphabet).getAllsyncChannelsEdge().get(key);
-			        String channelObj = ((ADCompositeAlphabet) alphabet).getAllsyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        }
-				}
-			}
-			else {
-				String targetOutFlowID = targetOutFlows[x].getId();
-				Pair<IActivity, String> key = new Pair<IActivity, String>(diagram,targetOutFlowID);
-				if (alphabet.getSyncChannelsEdge().containsKey(key) || 
-					alphabet.getSyncObjectsEdge().containsKey(key)) {
-			        String channel = alphabet.getSyncChannelsEdge().get(key);
-			        String channelObj = alphabet.getSyncObjectsEdge().get(key);
-
-			        if (channel != null && trace.contains(channel)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        } else if (channelObj != null && trace.contains(channelObj)) {
-			            flow.setProperty("line.color", "#FF0000");
-			            pinPresent.setProperty("fill.color", "#FF0000");
-			            targetPresent.setProperty("fill.color", "#FF0000");
-			        }
-			    }
-			}
-		}*/
 }

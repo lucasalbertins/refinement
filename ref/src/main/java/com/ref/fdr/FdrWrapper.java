@@ -327,7 +327,6 @@ public class FdrWrapper {
 			Object evento = invokeProperty(TransitionList, transitionList, "get", int.class, 0);
 			Object eventID = invokeProperty(Transition, evento, "event", null, null);
 			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, eventID);
-			// System.out.println(result.toString());
 			if (!result.equals("τ")) {
 				sb.append(result.toString());
 			}
@@ -427,7 +426,7 @@ public class FdrWrapper {
 
 	
 	public List<String> checkDeadlock(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
-		//retornar o trace
+		//returns the trace
 		
 	/*
 	0 = error
@@ -467,8 +466,6 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
-						//CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DEADLOCK_COUNTEREXAMPLE);//TODO remover isso
-
 						hasError = 2;
 					}
 
@@ -496,7 +493,6 @@ public class FdrWrapper {
 			for(StackTraceElement element :e.getStackTrace()){
 				logger.log(element.toString());
 			}
-			//throw new Exception(e.getMessage());
 		}
 
 		if (hasError == 1) {
@@ -565,7 +561,6 @@ public class FdrWrapper {
 			for(StackTraceElement element :e.getStackTrace()){
 				logger.log(element.toString());
 			}
-			//throw new Exception(e.getMessage());
 		}
 
 
@@ -573,7 +568,7 @@ public class FdrWrapper {
 	}
 
 	public List<String> checkDeterminism(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
-
+		//returns the trace
 	/*
 	0 = error
 	1 = deadlock free
@@ -603,7 +598,7 @@ public class FdrWrapper {
 					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
 					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-					Object assertion = assertions.get(0);
+					Object assertion = assertions.get(2);
 
 					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
@@ -613,8 +608,6 @@ public class FdrWrapper {
 
 						progressBar.setProgress(3, "", false);
 						trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
-						//CounterExamples.createCounterExample(trace, parser.getAlphabetAD(),CounterExType.DETERMINISM_COUNTEREXAMPLE);
-
 						hasError = 2;
 					}
 
@@ -642,7 +635,6 @@ public class FdrWrapper {
 			for(StackTraceElement element :e.getStackTrace()){
 				logger.log(element.toString());
 			}
-			//throw new Exception(e.getMessage());
 		}
 
 		if (hasError == 1) {

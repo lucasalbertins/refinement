@@ -41,9 +41,9 @@ public class ADDefineProcessSync {
                         processSync.append(",");
                     }
                 }
-                List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
+                List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//Gets the List with every node the invokes the CBA
             	int index = 1;
-            	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
+            	for(int i=0;i<CBAList.size();i++) {//sweeps the List searching for the index of the node
             		if(Activitynode.getId().equals(CBAList.get(i).getKey())) {
             			index = i+1;
             		}
@@ -84,9 +84,9 @@ public class ADDefineProcessSync {
     }
     
     public IActivityNode findCBANode(String nodeName) {
-    	IActivityNode[] nodes = ad.getActivityNodes();//pega todos os nós do diagrama
+    	IActivityNode[] nodes = ad.getActivityNodes();//Gets all nodes
     	IAction nodeFound;
-		for(int i=0; i<nodes.length;i++) {//varre os nós
+		for(int i=0; i<nodes.length;i++) {//sweeps the nodes
 			if(ADUtils.nameResolver(nodes[i].getName()).equals(nodeName) && nodes[i] instanceof IAction) {
 				nodeFound = (IAction) nodes[i];
 				if(nodeFound.isCallBehaviorAction()) {

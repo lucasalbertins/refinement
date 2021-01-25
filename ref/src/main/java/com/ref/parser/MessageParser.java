@@ -57,9 +57,6 @@ public class MessageParser {
 		String base1 = lifeline1.getBase().toString();
 		String base2 = lifeline2.getBase().toString();
 		
-		if (msg == null) {
-			throw new NullPointerException("Message cannot be null.");
-		}
 		if (seq == null) {
 			throw new NullPointerException("The Sequence Diagram seq cannot be null.");
 		}
@@ -87,7 +84,6 @@ public class MessageParser {
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 
 			addIDS(base1,base2,sb, aux);
-			//sb.append("!"+msg.getName()+"_I");
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
@@ -110,7 +106,6 @@ public class MessageParser {
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.r");
 
 			addIDS(base1, base2, sb, aux);
-			//sb.append("!"+msg.getName()+"_I");
 			sb.append("!x -> ").append(seq.getName()).append("_");
 			addInstancesAndBases(sb, msg);
 			sb.append("_").append(msg.getName());
@@ -150,7 +145,6 @@ public class MessageParser {
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
 			
 			addIDS(base1, base2, sb, aux);
-			//sb.append("!"+msg.getName());
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
@@ -172,7 +166,6 @@ public class MessageParser {
 			aux.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.r");
 			
 			addIDS(base1, base2, sb, aux);
-			//sb.append("!"+msg.getName());
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_");
 			addInstancesAndBases(sb, msg);
@@ -198,7 +191,6 @@ public class MessageParser {
 			try {
 				syncMsg = getPreviousMessage(msg, seq);
 			} catch (InvalidUsingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			sb.append(seq.getName()).append("_");
@@ -231,7 +223,6 @@ public class MessageParser {
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 			aux.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 			addIDS(base1, base2, sb, aux);
-			//sb.append("!"+syncMsg.getName()+"_O");
 			sb.append("?x");
 			sb.append(":{x | x<-");
 			sb.append(((ILifeline) msg.getSource()).getBase()).append("_OPS");
@@ -252,7 +243,6 @@ public class MessageParser {
 			sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
 			aux.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
 			addIDS(base1, base2, sb, aux);
-			//sb.append("!"+msg.getName()+"_O");
 			sb.append("!x -> ");
 			sb.append(seq.getName()).append("_");
 			if(!syncMsg.getTarget().getName().equals(""))
@@ -281,10 +271,7 @@ public class MessageParser {
 			}
 			
 		}
-		sb.append("\n");
-//		SDParser.addAlfabeto(aux.toString());
-//		
-		
+		sb.append("\n");		
 		
 		return sb.toString();
 	}
@@ -295,9 +282,6 @@ public class MessageParser {
 		String base1 = lifeline1.getBase().toString();
 		String base2 = lifeline2.getBase().toString();
 		
-		if (msg == null) {
-			throw new NullPointerException("Message cannot be null.");
-		}
 		if (seq == null) {
 			throw new NullPointerException("The Sequence Diagram seq cannot be null.");
 		}
@@ -308,22 +292,15 @@ public class MessageParser {
 		StringBuilder aux = new StringBuilder();
 		if (msg.isSynchronous()) {
 			if (msg.getSource().getId().equals(lifeline.getId())) {
-//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
-//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mOP.s");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
 				sb.append("."+msg.getName()+"_I");
-				//treatArguments(sb, msg.getArgument());
-				//treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			} else if (msg.getTarget().getId().equals(lifeline.getId())) {
-//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
-//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(lifeline.getBase()).append("_mOP.r");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				//sb.append("!"+msg.getName()+"_I");
 				sb.append("?oper:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_OPS");
 				sb.append(",(get_id(x) == ").append(msg.getName()).append("_I)}");
 				sb.append(" -> SKIP");
@@ -331,8 +308,6 @@ public class MessageParser {
 
 		} else if (msg.isAsynchronous() && !msg.isReturnMessage()) {
 			if (msg.getSource().getId().equals(lifeline.getId())) {
-//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
-//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) msg.getTarget()).getBase()).append("_mSIG.s");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -341,12 +316,9 @@ public class MessageParser {
 				treatArguments(aux, msg.getArgument());
 				sb.append(" -> SKIP");
 			} else {
-//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
-//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(lifeline.getBase()).append("_mSIG.r");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				//sb.append("!"+msg.getName());
 				sb.append("?signal:{x | x <- ").append(((ILifeline) msg.getTarget()).getBase()).append("_SIG");
 				sb.append(",(get_id(x) == ").append(msg.getName()).append(")}");
 				aux.append(",(get_id(x) == ").append(msg.getName()).append(")}");
@@ -357,24 +329,18 @@ public class MessageParser {
 			try {
 				syncMsg = getPreviousMessage(msg, seq);
 			} catch (InvalidUsingException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 			if (msg.getTarget().getId().equals(lifeline.getId())) {
-//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
-//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.r");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
-				//sb.append("!"+msg.getName()+"_O");
 				sb.append("?out:");
 				sb.append("{x | x <-").append(((ILifeline) syncMsg.getTarget()).getBase()).append("_OPS");
 				sb.append(",(get_id(x) == ").append(syncMsg.getName()).append("_O)}");
 				sb.append(" -> SKIP");
 			} else if (msg.getSource().getId().equals(lifeline.getId())) {
-//				sb.append(((ILifeline) msg.getSource()).getBase()).append(".");
-//				sb.append(((ILifeline) msg.getSource()).getName()).append(".");
 				sb.append(((ILifeline) syncMsg.getTarget()).getBase()).append("_mOP.s");
 				sb.append("!").append(SDParser.getNome(base1));
 				sb.append("!").append(SDParser.getNome(base2));
@@ -465,7 +431,6 @@ public class MessageParser {
 				} catch (InvalidUsingException e) {
 					e.printStackTrace();
 				}
-//				process.append(seq1.getName()).append("_").append(syncMsg.getName()).append("_r");
 				aux.append(seq1.getName()).append("_");
 				if(!syncMsg.getTarget().getName().equals(""))
 					aux.append(syncMsg.getTarget().getName()).append("_");
@@ -479,7 +444,6 @@ public class MessageParser {
 
 				aux.append("_").append(syncMsg.getName()).append("_r");
 			} else {
-//				process.append(seq1.getName()).append("_").append(msg.getName());
 				aux.append(seq1.getName()).append("_");
 				addInstancesAndBases(aux, msg);
 				aux.append("_").append(msg.getName());
@@ -497,9 +461,6 @@ public class MessageParser {
 				process.append(",");
 				life = (ILifeline) msg.getTarget();
 				process.append(SDParser.getNome(life.getBase().toString()));
-				//			for(int j = 1; j<=i-1;j++){
-//				process.append("lf" + j + "_id,");
-//			}
 				process.append(")");
 				process.append(" ||| ");				
 			}
