@@ -296,12 +296,25 @@ public class ADParser {
 		}
     	   
     	check_props += ""
-				+ adUtils.printControlProcesses()
-        		+ "\n"
-    			+ "assert Wait [FD= Prop \\ alphabet_Astah"
-    			+ "\n"
-    			+ "assert Prop \\ alphabet_Astah [FD= Wait"
-    			+ "\n\n";
+				+ adUtils.printControlProcesses();
+    	
+    	if (countUntil_ad > 0) {
+    		for (int i = 1; i <= countUntil_ad; i++) {
+    			check_props += "\n"
+    					+ "assert Wait_" + ad.getName() + "_" + i + " [FD= Prop \\ alphabet_Astah"
+    					+ "\n"
+    					+ "assert Prop \\ alphabet_Astah [FD= Wait_"  + ad.getName() + "_" + i
+    					+ "\n";					
+			}
+		}
+    	
+    	if (countAny_ad > 0) {
+			check_props += "\n"
+					+ "assert Prop \\ alphabet_Astah [FD= CHAOS(alphabet_robochart_" + ad.getName() + ")\n"
+					+ "assert CHAOS(alphabet_robochart_" + ad.getName() + ") [FD= Prop \\ alphabet_Astah"
+					+ "\n";
+		}
+    	
     	
 //    	if (callBehaviourList.size() > 0) {
 //    		check_props += "callBehaviourList total de elementos: " + callBehaviourList.size();
