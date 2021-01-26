@@ -170,18 +170,18 @@ public class ADDefineChannels {
         alphabetAstah.add("update_" + nameDiagram);
         alphabetAstah.add("endDiagram_" + nameDiagram);  
         
-        if (eventChannel.size() > 0) {
-            channels.append("--channel ");
-
-            for (int i = 0; i < eventChannel.size(); i++) {
-                channels.append(eventChannel.get(i));
-                if ((i + 1) < eventChannel.size()) {
-                    channels.append(",");
-                }
-            }
-            
-            channels.append(": ID_"+nameDiagram+"\n");
-        }
+//        if (eventChannel.size() > 0) {
+//            channels.append("--channel ");
+//
+//            for (int i = 0; i < eventChannel.size(); i++) {
+//                channels.append(eventChannel.get(i));
+//                if ((i + 1) < eventChannel.size()) {
+//                    channels.append(",");
+//                }
+//            }
+//            
+//            channels.append(": ID_"+nameDiagram+"\n");
+//        }
 
         /*if (lockChannel.size() > 0) {
             channels.append("channel ");
@@ -227,10 +227,10 @@ public class ADDefineChannels {
 				throw new ParsingException("The module should have a partition. \n Please, insert and try again.");
 			}            
         	
-        	for (String signalChannel : keySignalChannels) {
-        		channels.append("--channel " + partitionName + "::" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
-                channels.append("--channel " + partitionName + "::" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
-        	}
+//        	for (String signalChannel : keySignalChannels) {
+//        		channels.append("--channel " + partitionName + "::" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
+//                channels.append("--channel " + partitionName + "::" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
+//        	}
         	
         	channels.append("channel dc\n");
         	
