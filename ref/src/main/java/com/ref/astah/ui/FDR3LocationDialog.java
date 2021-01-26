@@ -33,7 +33,6 @@ public class FDR3LocationDialog extends JDialog {
 	public FDR3LocationDialog(JFrame frame, boolean modal)
 			throws IOException, ClassNotFoundException {
 		super(frame, modal);
-		if (!propertyFile.exists()) {
 		initComponents();
 		this.setTitle("FDR3 Location");
 		this.setLocation(new Point(276, 182));
