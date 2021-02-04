@@ -80,7 +80,7 @@ public class ADParser {
     public ADDefineProcessSync dProcessSync;
     public ADDefinePool dPool;
     
-    public List<String> robo;
+    public Map<String,String> robo;
     public List<String> eventsUntil;
     public HashMap<String, String> untilList;
 
@@ -124,7 +124,7 @@ public class ADParser {
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
         
-        this.robo = new ArrayList<>();
+        this.robo = new HashMap<String, String>();
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
     }
@@ -279,16 +279,16 @@ public class ADParser {
     	
     	if (countAny_ad > 0 && countUntil_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|begin, end, chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end, chaos|}\n\n"
+					"PROP(processes) = (MAIN [|{|begin, end, chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end, chaos|} /\\ endActivity_" + ad.getName() + " -> SKIP \n\n"
 					+ adUtils.printUntils()
 					+ adUtils.printAny();
 		} else if (countUntil_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n\n"
+					"PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|} /\\ endActivity_" + ad.getName() + " -> SKIP \n\n"
 					+ adUtils.printUntils();
 		} else if (countAny_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|chaos|}\n\n"
+					"PROP(processes) = (MAIN [|{|chaos|}|] WAIT_PROCCESSES(processes) ) \\ {|chaos|} /\\ endActivity_" + ad.getName() + " -> SKIP \n\n"
 					+ adUtils.printAny();
 		} else {
 			check_props +=
@@ -296,32 +296,10 @@ public class ADParser {
 		}
     	   
     	check_props += ""
-				+ adUtils.printControlProcesses();
-    	
-    	if (countUntil_ad > 0) {
-    		for (int i = 1; i <= countUntil_ad; i++) {
-    			check_props += "\n"
-    					+ "assert Wait_" + ad.getName() + "_" + i + " [FD= Prop \\ alphabet_Astah"
-    					+ "\n"
-    					+ "assert Prop \\ alphabet_Astah [FD= Wait_"  + ad.getName() + "_" + i
-    					+ "\n";					
-			}
-		}
-    	
-    	if (countAny_ad > 0) {
-			check_props += "\n"
-					+ "assert Prop \\ alphabet_Astah [FD= CHAOS(alphabet_robochart_" + ad.getName() + ")\n"
-					+ "assert CHAOS(alphabet_robochart_" + ad.getName() + ") [FD= Prop \\ alphabet_Astah"
-					+ "\n";
-		}
-    	
-    	
-//    	if (callBehaviourList.size() > 0) {
-//    		check_props += "callBehaviourList total de elementos: " + callBehaviourList.size();
-//		} else {
-//			check_props += "callBehaviourList VAZIO -> total de elementos: " + callBehaviourList.size();
-//		}
-    	
+				+ adUtils.printControlProcesses()
+				+ "\n\n\n\n"
+				+ adUtils.mapEvents();
+    		
         String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+
         		robochart +
         		type +
@@ -337,9 +315,6 @@ public class ADParser {
                 callBehaviour +
                 check +
                 check_props;
-//		if (adUtils.untilList.size() > 0) {
-//			parser += check_props;
-//		}
 
         //reseta os valores estaticos
         if (reset) {

@@ -169,7 +169,7 @@ public class ADDefineChannels {
         alphabetAstah.add("clear_" + nameDiagram);
         alphabetAstah.add("update_" + nameDiagram);
         alphabetAstah.add("endDiagram_" + nameDiagram);  
-        
+//-----------------------------------------------------------------        
 //        if (eventChannel.size() > 0) {
 //            channels.append("--channel ");
 //
@@ -182,6 +182,7 @@ public class ADDefineChannels {
 //            
 //            channels.append(": ID_"+nameDiagram+"\n");
 //        }
+//-----------------------------------------------------------------        
 
         /*if (lockChannel.size() > 0) {
             channels.append("channel ");

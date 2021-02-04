@@ -75,9 +75,11 @@ public class ADDefineSignal {
             signal.append("); ");
             
             if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
-    			adUtils.until(alphabet, signal, adUtils.nameDiagramResolver(activityNode.getName()) + ".out", " -> SKIP; ");
+//            	adUtils.until(alphabet, signal, adUtils.nameDiagramResolver(activityNode.getName()) + ".out", " -> SKIP; ");
+    			adUtils.until(alphabet, signal, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), " -> SKIP; ");
             } else {
-            	adUtils.signal(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), signal);
+//            	adUtils.signal(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), signal);
+            	adUtils.signal(alphabet ,adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal);
             }
             
 //            if (inFlows.length > 0) {
@@ -195,7 +197,8 @@ public class ADDefineSignal {
 
             signal.append("); ");
 
-            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
+//            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
+            adUtils.signal(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal);
 
             adUtils.update(alphabet, signal, inFlows.length, outFlows.length, false);
 

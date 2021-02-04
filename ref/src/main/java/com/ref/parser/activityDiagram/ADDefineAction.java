@@ -42,10 +42,12 @@ public class ADDefineAction {
     public IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException { 	
         StringBuilder action = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameEvent = adUtils.nameRobochartResolver(activityNode.getName());
+        
+//        String actionNameEvent = adUtils.nameRobochartResolver(activityNode.getName());
         String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
         String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";      
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
+        
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
         IOutputPin[] outPins = ((IAction) activityNode).getOutputs();
@@ -138,9 +140,11 @@ public class ADDefineAction {
             action.append("); ");
             
             if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
-    			adUtils.until(alphabet, action, nameEvent, " -> SKIP; ");
+//            	adUtils.until(alphabet, action, nameEvent, " -> SKIP; ");
+    			adUtils.until(alphabet, action, adUtils.nameRobochartResolver(activityNode.getName()), " -> SKIP; ");
             } else {
-            	adUtils.event(alphabet, nameEvent, action);//TODO
+//            	adUtils.event(alphabet, nameEvent, action);//TODO
+            	adUtils.event(alphabet, adUtils.nameRobochartResolver(activityNode.getName()), action);
             }
 
             //adUtils.lock(alphabet, action, 0, nameAction);
@@ -636,7 +640,8 @@ public class ADDefineAction {
             action.append("); ");
 
             //adUtils.lock(alphabet, action, 0, nameAction);
-            adUtils.event(alphabet, nameEvent, action);
+//            adUtils.event(alphabet, nameEvent, action);
+            adUtils.event(alphabet, adUtils.nameRobochartResolver(activityNode.getName()), action);
 //            adUtils.event(alphabet, nameAction, action);
 
             for (int i = 0; i < namesMemoryLocal.size(); i++) {

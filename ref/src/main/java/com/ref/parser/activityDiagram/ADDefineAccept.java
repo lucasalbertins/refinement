@@ -35,7 +35,7 @@ public class ADDefineAccept {
     }
 
     public IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) throws com.ref.exceptions.ParsingException {
-        StringBuilder accept = new StringBuilder();
+    	StringBuilder accept = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
@@ -77,9 +77,11 @@ public class ADDefineAccept {
             }
             
             if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
-    			adUtils.until(alphabet, accept, adUtils.nameDiagramResolver(activityNode.getName()) + ".in", " -> SKIP; ");  
+//    			adUtils.until(alphabet, accept, adUtils.nameDiagramResolver(activityNode.getName()) + ".in", " -> SKIP; "); 
+    			adUtils.until(alphabet, accept, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), " -> SKIP; ");
             } else {
-            	adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
+//            	adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
+            	adUtils.accept(alphabet ,adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept);
             }
             
 //------------------------------------------------------------------            
@@ -219,7 +221,8 @@ public class ADDefineAccept {
                 accept.append("); ");
             }
 
-            adUtils.accept(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), accept);
+//            adUtils.accept(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), accept);
+            adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept);
 
             if (inFlows.length == 0) {
                 adUtils.update(alphabet, accept, 1, outFlows.length, false); // outFlows - 1
