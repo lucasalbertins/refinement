@@ -43,7 +43,9 @@ public class ADDefineAccept {
 
         int idAccept = 1;
         for (int i = 0; i < countAccept.size(); i++) {
-            if (countAccept.get(i).getKey().equals(adUtils.nameDiagramResolver(activityNode.getName()))) {
+//        	String nAccept = adUtils.nameDiagramResolver(activityNode.getName());
+        	String nAccept = adUtils.nameRobochartResolver(activityNode.getName(), ".in");
+            if (countAccept.get(i).getKey().equals(nAccept)) {
                 idAccept = countAccept.get(i).getValue();
                 break;
             }

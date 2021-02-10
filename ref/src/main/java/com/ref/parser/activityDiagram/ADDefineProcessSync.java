@@ -78,7 +78,7 @@ public class ADDefineProcessSync {
             processSync.append(node.getValue() + termination + "(id))\n");
         }
 
-        processSync.append("Node_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n");
+        processSync.append("-- Node_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n");
 
         return processSync.toString();
     }

@@ -40,29 +40,22 @@ public class ADUtils {
 	public HashMap<Pair<IActivity, String>, String> syncChannelsEdge;
 	public HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
 	private ADParser adParser;
-
-	// ----------------------------------------------------------------------
-	public Map<String, String> robo;
+	
+	//----------------------------------------------------------------------   
+	public List<String> robo;
 	public List<String> untilEvents;
 	public HashMap<String, String> untilList;
 
 	// ----------------------------------------------------------------------
 
-	public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall,
-			List<String> eventChannel, List<String> lockChannel,
-			HashMap<String, String> parameterNodesOutputObject,
-			List<Pair<String, Integer>> callBehaviourNumber,
-			Map<Pair<String, String>, String> memoryLocal,
-			List<Pair<String, String>> memoryLocalChannel,
-			HashMap<String, List<String>> callBehaviourInputs,
-			HashMap<String, List<String>> callBehaviourOutputs,
-			List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
-			HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync,
-			HashMap<String, Integer> allGuards, List<String> createdSignal,
-			List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
-			HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
-			List<String> signalChannelsLocal, ADParser adParser, Map<String, String> robo,
-			List<String> untilEvents, HashMap<String, String> untilList) {
+	public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
+			List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
+			Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, HashMap<String, List<String>> callBehaviourInputs,
+			HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept,
+			HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
+			List<String> createdSignal, List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
+			HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, List<String> signalChannelsLocal, ADParser adParser, List<String> robo, List<String> untilEvents, 
+			HashMap<String, String> untilList) {
 
 		this.ad = ad;
 		this.adDiagram = adDiagram;
@@ -225,22 +218,17 @@ public class ADUtils {
 					"The module should have a partition. \n Please, insert and try again.");
 		}
 
-		// alphabet.add(partitionName + "::" + nameAction);
-		// eventChannel.add(partitionName + "::" + nameAction);
-		// action.append(partitionName + "::" + nameAction + " -> ");
-		// robo.add(partitionName + "::" + nameAction );
-
-		alphabet.add("event_" + nameAction + ".id");
-		eventChannel.add("event_" + nameAction);
-		action.append("event_" + nameAction + ".id -> ");
-		robo.put("event_" + nameAction + ".id", partitionName + "::" + nameAction);
+//		alphabet.add(partitionName + "::" + nameAction);
+		eventChannel.add(partitionName + "::" + nameAction);
+		action.append(partitionName + "::" + nameAction + " -> "); 
+		robo.add(partitionName + "::" + nameAction );
 	}
 
-	// public void event(ArrayList<String> alphabet, String nameAction, StringBuilder action) {
-	// alphabet.add("event_" + nameAction+".id");
-	// eventChannel.add("event_" + nameAction);
-	// action.append("event_" + nameAction + ".id -> ");
-	// }
+	//    public void event(ArrayList<String> alphabet, String nameAction, StringBuilder action) {
+	//        alphabet.add("event_" + nameAction+".id");
+	//        eventChannel.add("event_" + nameAction);
+	//        action.append("event_" + nameAction + ".id -> ");
+	//    }
 
 	public void ce(ArrayList<String> alphabetNode, StringBuilder action, String ce, String posCe) {
 		alphabetNode.add(ce);// TODO olhar
@@ -259,12 +247,9 @@ public class ADUtils {
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 
 		adParser.countUntil_ad++;
-		alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);// TODO
-																								
-		action.append(
-				"begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
-		// robo.add(partitionName + "::" + eventName);
-		robo.put(partitionName + "::" + eventName, partitionName + "::" + eventName);
+		alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);//TODO olhar
+		action.append("begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
+		robo.add(partitionName + "::" + eventName);
 		untilEvents.add(partitionName + "::" + eventName);
 		untilList.put("" + adParser.countUntil_ad, partitionName + "::" + eventName);
 	}
@@ -290,7 +275,7 @@ public class ADUtils {
 			if (countOutFlows == 0 && canBeNegative || countOutFlows > 0) {
 				String update = "update_" + nameDiagramResolver(ad.getName()) + ".id."
 						+ adParser.countUpdate_ad++;
-				alphabetNode.add(update);
+//				alphabetNode.add(update);
 				action.append(update + "!(" + countOutFlows + "-" + countInFlows + ") -> ");
 
 				if (result < adParser.limiteInf) {
@@ -370,13 +355,13 @@ public class ADUtils {
 		String partitionName;
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 
-		// if (!localSignalChannelsSync.contains(partitionName + "::" + nameSignal + ".out")) {
-		// localSignalChannelsSync.add(partitionName + "::" + nameSignal + ".out");
-		// }
-
-		if (!localSignalChannelsSync.contains("signal_" + nameSignal)) {
-			localSignalChannelsSync.add("signal_" + nameSignal);
+		if (!localSignalChannelsSync.contains(partitionName + "::" + nameSignal)) {
+			localSignalChannelsSync.add(partitionName + "::" + nameSignal);
 		}
+
+		//        if (!localSignalChannelsSync.contains("signal_" + nameSignal)) {
+		//            localSignalChannelsSync.add("signal_" + nameSignal);
+		//        }
 
 		if (!signalChannels.containsKey(nameSignal)) {// TODO local onde modifica o signalchannels
 			// Pair<IActivity,Integer> pair = new Pair<>(ad,1);
@@ -400,6 +385,7 @@ public class ADUtils {
 		int index = -1;
 
 		for (int i = 0; i < countSignal.size(); i++) {
+//			if (countSignal.get(i).getKey().equals(nameCountResolver(nameSignal))) {
 			if (countSignal.get(i).getKey().equals(nameSignal)) {
 				idSignal = countSignal.get(i).getValue();
 				index = i;
@@ -407,17 +393,18 @@ public class ADUtils {
 			}
 		}
 
-		// alphabet.add(partitionName + "::" + nameSignal + ".out");
-		// signal.append(partitionName + "::" + nameSignal + ".out" + " -> ");
+//		alphabet.add(partitionName + "::" + nameSignal + ".out");
+		signal.append(partitionName + "::" + nameSignal + " -> ");
+		robo.add(partitionName + "::" + nameSignal);
 
-		alphabet.add("signal_" + nameSignal + ".id." + idSignal);
-		signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
-
-		robo.put("signal_" + nameSignal + ".id." + idSignal, partitionName + "::" + nameSignal);
+		//        alphabet.add("signal_" + nameSignal + ".id." + idSignal);
+		//        signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
 
 		if (index >= 0) {
+//			countSignal.set(index, new Pair<String, Integer>(nameCountResolver(nameSignal), idSignal + 1));
 			countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
 		} else {
+//			countSignal.add(new Pair<String, Integer>(nameCountResolver(nameSignal), idSignal + 1));
 			countSignal.add(new Pair<String, Integer>(nameSignal, idSignal + 1));
 		}
 
@@ -431,8 +418,8 @@ public class ADUtils {
 		// localSignalChannelsSync.add(partitionName + "::" + nameAccept + ".in");
 		// }
 
-		if (!localSignalChannelsSync.contains("signal_" + nameAccept)) {
-			localSignalChannelsSync.add("signal_" + nameAccept);
+		if (!localSignalChannelsSync.contains(partitionName + "::" + nameAccept)) {
+			localSignalChannelsSync.add(partitionName + "::" + nameAccept);
 		}
 
 		if (!signalChannels.containsKey(nameAccept)) {
@@ -446,6 +433,7 @@ public class ADUtils {
 		int index = -1;
 
 		for (int i = 0; i < countAccept.size(); i++) {
+//			if (countAccept.get(i).getKey().equals(nameCountResolver(nameAccept))) {
 			if (countAccept.get(i).getKey().equals(nameAccept)) {
 				idAccept = countAccept.get(i).getValue();
 				index = i;
@@ -453,17 +441,20 @@ public class ADUtils {
 			}
 		}
 
-		// alphabet.add(partitionName + "::" + nameAccept + ".in");
-		// accept.append(partitionName + "::" + nameAccept + ".in" + " -> ");
+//		alphabet.add(partitionName + "::" + nameAccept + ".in");
+		accept.append(partitionName + "::" + nameAccept + " -> ");
+		robo.add(partitionName + "::" + nameAccept);
 
-		alphabet.add("accept_" + nameAccept + ".id." + idAccept);
-		accept.append("accept_" + nameAccept + ".id." + idAccept + "?x -> ");
+//		alphabet.add("accept_" + nameAccept + ".id." + idAccept);
+//		accept.append("accept_" + nameAccept + ".id." + idAccept + "?x -> ");
 
-		robo.put("accept_" + nameAccept + ".id." + idAccept, partitionName + "::" + nameAccept);
+//		robo.put("accept_" + nameAccept + ".id." + idAccept, partitionName + "::" + nameAccept);
 
 		if (index >= 0) {
+//			countAccept.set(index, new Pair<String, Integer>(nameCountResolver(nameAccept), idAccept + 1));
 			countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));
 		} else {
+//			countAccept.add(new Pair<String, Integer>(nameCountResolver(nameAccept), idAccept + 1));
 			countAccept.add(new Pair<String, Integer>(nameAccept, idAccept + 1));
 		}
 	}
@@ -514,6 +505,10 @@ public class ADUtils {
 			}
 		}
 		return false;
+	}
+	
+	public String nameCountResolver(String name) {
+		return name.replace(".in", "").replace(".out", "");
 	}
 
 	public int addCountCall(String name) {
@@ -587,6 +582,7 @@ public class ADUtils {
 			} else {
 				typesParameter.put(keyValue[0], keyValue[1]);
 			}
+
 
 		}
 
@@ -791,31 +787,31 @@ public class ADUtils {
 
 	}
 	
-	public String mapEvents() {
-		StringBuilder channels = new StringBuilder();
-		channels.append("Valores mapeados = {");
-		int c = 0;
-		for (String i : robo.values()) {
-			channels.append(i);
-			if ((c + 1) < robo.size()) {
-				channels.append(", ");
-			}
-			c++;
-		}
-		channels.append("}\n");
-
-		channels.append("Chaves mapeadas = {");
-		c = 0;
-		for (String i : robo.keySet()) {
-			channels.append(i);
-			if ((c + 1) < robo.size()) {
-				channels.append(", ");
-			}
-			c++;
-		}
-		
-		channels.append("}\n");
-		return channels.toString();
-	}
+//	public String mapEvents() {
+//		StringBuilder channels = new StringBuilder();
+//		channels.append("Valores mapeados = {");
+//		int c = 0;
+//		for (String i : robo.values()) {
+//			channels.append(i);
+//			if ((c + 1) < robo.size()) {
+//				channels.append(", ");
+//			}
+//			c++;
+//		}
+//		channels.append("}\n");
+//
+//		channels.append("Chaves mapeadas = {");
+//		c = 0;
+//		for (String i : robo.keySet()) {
+//			channels.append(i);
+//			if ((c + 1) < robo.size()) {
+//				channels.append(", ");
+//			}
+//			c++;
+//		}
+//		
+//		channels.append("}\n");
+//		return channels.toString();
+//	}
 
 }

@@ -80,7 +80,7 @@ public class ADParser {
     public ADDefineProcessSync dProcessSync;
     public ADDefinePool dPool;
     
-    public Map<String,String> robo;
+    public List<String> robo;
     public List<String> eventsUntil;
     public HashMap<String, String> untilList;
 
@@ -124,7 +124,7 @@ public class ADParser {
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
         
-        this.robo = new HashMap<String, String>();
+        this.robo = new ArrayList<String>();
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
     }
@@ -296,9 +296,24 @@ public class ADParser {
 		}
     	   
     	check_props += ""
-				+ adUtils.printControlProcesses()
-				+ "\n\n\n\n"
-				+ adUtils.mapEvents();
+				+ adUtils.printControlProcesses();
+//				+ "\n\n\n\n";
+//				+ adUtils.mapEvents();
+    	
+    	
+    	String check_prop_nodes = "\n\n";
+    	check_prop_nodes += "Node_" + ad.getName() + "(id) = composeNodes(id)\r\n"
+    			+ "\r\n"
+    			+ "composeNodes(id) = \r\n"
+    			+ "	let\r\n"
+    			+ "	    alphabet_" + ad.getName() + "_s = seq(alphabet_" + ad.getName() + ")\r\n"
+    			+ "		composeNodes_(id,<ev>,_) = ProcessDiagram_" + ad.getName() + "(id,ev)\r\n"
+    			+ "		composeNodes_(id,<ev>^tail,past) = \r\n"
+    			+ "			ProcessDiagram_" + ad.getName() + "(id,ev) \r\n"
+    			+ "				[|union(diff(AlphabetDiagram_" + ad.getName() + "(id,ev),past),{endDiagram_" + ad.getName() + ".id})|] \r\n"
+    			+ "			( composeNodes_(id,tail,union(past,AlphabetDiagram_" + ad.getName() + "(id,ev))) )\r\n"
+    			+ "	within \r\n"
+    			+ "		composeNodes_(id,alphabet_" + ad.getName() + "_s,{})";
     		
         String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+
         		robochart +
@@ -314,7 +329,8 @@ public class ADParser {
                 // (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
                 callBehaviour +
                 check +
-                check_props;
+                check_props +
+                check_prop_nodes;
 
         //reseta os valores estaticos
         if (reset) {
