@@ -247,7 +247,7 @@ public class ADUtils {
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 
 		adParser.countUntil_ad++;
-		alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);//TODO olhar
+//		alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);//TODO olhar
 		action.append("begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
 		robo.add(partitionName + "::" + eventName);
 		untilEvents.add(partitionName + "::" + eventName);
@@ -377,9 +377,9 @@ public class ADUtils {
 		 * list.remove(i); list.add(pair); } }
 		 */
 
-		if (!signalChannelsLocal.contains(nameSignal)) {
-			signalChannelsLocal.add(nameSignal);
-		}
+//		if (!signalChannelsLocal.contains(nameSignal)) {
+//			signalChannelsLocal.add(nameSignal);
+//		}
 
 		int idSignal = 1;
 		int index = -1;
@@ -683,7 +683,7 @@ public class ADUtils {
 
 	public String alphabetRobo(String alphabet) {
 		StringBuilder channels = new StringBuilder();
-		channels.append("alphabet_robochart_" + ad.getName() + " = ");
+		channels.append("alphabet_robochart_" + ADUtils.nameResolver(ad.getName()) + " = ");
 		channels.append(alphabet);
 		return channels.toString();
 	}
@@ -709,7 +709,7 @@ public class ADUtils {
 		StringBuilder channels = new StringBuilder();
 
 		channels.append(
-				"Wait_" + ad.getName() + " = WAIT(alphabet_robochart_" + ad.getName() + ", ");
+				"Wait_" + ad.getName() + " = WAIT(alphabet_robochart_" + ADUtils.nameResolver(ad.getName()) + ", ");
 		for (int i = 0; i < untilEvents.size(); i++) {
 			channels.append(untilEvents.get(i));
 
@@ -726,10 +726,10 @@ public class ADUtils {
 	public String printUntils() {
 		StringBuilder channels = new StringBuilder();
 		for (String i : untilList.keySet()) {
-			channels.append("Wait_" + ad.getName() + "_" + i + " = WAIT(alphabet_robochart_"
-					+ ad.getName() + ", " + untilList.get(i) + ")\n\n");
-			channels.append("Wait_" + ad.getName() + "_control_" + i + " = begin." + i + " -> Wait_"
-					+ ad.getName() + "_" + i + "; end." + i + " -> Wait_" + ad.getName()
+			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_" + i + " = WAIT(alphabet_robochart_"
+					 + ADUtils.nameResolver(ad.getName()) + ", " + untilList.get(i) + ")\n\n");
+			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i + " = begin." + i + " -> Wait_"
+					 + ADUtils.nameResolver(ad.getName()) +  "_" + i + "; end." + i + " -> Wait_" + ADUtils.nameResolver(ad.getName())
 					+ "_control_" + i + "\n\n");
 		}
 		return channels.toString();
@@ -738,7 +738,7 @@ public class ADUtils {
 	public String printAny() {
 		StringBuilder channels = new StringBuilder();
 		for (int i = 1; i <= adParser.countAny_ad; i++) {
-			channels.append("Wait_" + ad.getName() + "_chaos_" + i + " = chaos." + i
+			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i + " = chaos." + i
 					+ " -> CHAOS(alphabet_robochart_" + ad.getName() + ")\n\n");
 		}
 		return channels.toString();
@@ -752,7 +752,7 @@ public class ADUtils {
 		int c = 0;
 
 		for (String i : untilList.keySet()) {
-			channels.append("Wait_" + ad.getName() + "_control_" + i);
+			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i);
 
 			if ((c + 1) < untilList.size()) {
 				channels.append(", ");
@@ -769,7 +769,7 @@ public class ADUtils {
 
 		c = 0;
 		for (int i = 1; i <= adParser.countAny_ad; i++) {
-			channels.append("Wait_" + ad.getName() + "_chaos_" + i);
+			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i);
 			if ((c + 1) < adParser.countAny_ad) {
 				channels.append(", ");
 			}

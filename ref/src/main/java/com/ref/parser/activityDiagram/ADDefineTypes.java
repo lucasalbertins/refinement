@@ -63,28 +63,61 @@ public class ADDefineTypes {
             
             boolean flag = false;
             
+//            texto.toLowerCase().contains(procurarPor.toLowerCase())
+            
+            
             for (Pair<String, Integer> signal : countSignal) {
-                types.append("countSignal_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+            	String newSignal = "";
+            	if (signal.getKey().contains(".in")) {
+            		newSignal = signal.getKey().replace(".in", "");
+            	} else if(signal.getKey().contains(".out")) {
+            		newSignal = signal.getKey().replace(".out", "");
+            	}
+            	if (newSignal.contains(".")) {
+					newSignal = newSignal.replace(".", "_");
+				}
+//            	types.append("countSignal_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+//                types.append("countSignal_" + newSignal + " = {1.." + (signal.getValue() - 1) + "}\n");
+            	types.append("countSignal_" + newSignal + " = {1.." + (signal.getValue() - 1) + "}\n");
                 for(Pair<String, Integer> signal2 :countAccept) {
                 	if(signal2.getKey().equals(signal.getKey())) {
                 		flag = true;break;
                 	}
                 }
                 if(!flag) {
-                	types.append("countAccept_" + signal.getKey() + " = {1..1}\n");
+//                	types.append("countAccept_" + signal.getKey() + " = {1..1}\n");
+//                	types.append("countAccept_" + newSignal + " = {1..1}\n");
+                	types.append("countAccept_" + newSignal + " = {1..1}\n");
                 }
                 flag = false;
             }
             
             for (Pair<String, Integer> signal : countAccept) {
-                types.append("countAccept_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+            	String newSignal = "";
+            	if (signal.getKey().contains(".in")) {
+            		newSignal = signal.getKey().replace(".in", "");
+            	} else if(signal.getKey().contains(".out")) {
+            		newSignal = signal.getKey().replace(".out", "");
+            	}
+            	if (newSignal.contains(".")) {
+					newSignal = newSignal.replace(".", "_");
+				}
+            	
+//            	countSignal_turn.Direction_right = {1..1}
+//            	countAccept_turn.Direction_right = {1..1}
+            	
+//            	types.append("countAccept_" + signal.getKey() + " = {1.." + (signal.getValue() - 1) + "}\n");
+//            	types.append("countAccept_" + newSignal + " = {1.." + (signal.getValue() - 1) + "}\n");
+                types.append("countAccept_" + newSignal + " = {1.." + (signal.getValue() - 1) + "}\n");
                 for(Pair<String, Integer> signal2 :countSignal) {
                 	if(signal2.getKey().equals(signal.getKey())) {
                 		flag = true;break;
                 	}
                 }
                 if(!flag) {
-                	types.append("countSignal_" + signal.getKey() + " = {1..1}\n");
+//                	types.append("countSignal_" + signal.getKey() + " = {1..1}\n");
+//                	types.append("countSignal_" + newSignal + " = {1..1}\n");
+                	types.append("countSignal_" + newSignal + " = {1..1}\n");
                 }
                 flag = false;
             }
