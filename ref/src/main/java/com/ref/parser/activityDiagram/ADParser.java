@@ -60,6 +60,7 @@ public class ADParser {
     private HashMap<String, String> typeUnionList;
     private static HashMap<String, List<String>> callBehaviourInputs = new HashMap<>(); //name; List inputs
     private static HashMap<String, List<String>> callBehaviourOutputs = new HashMap<>(); //name; List outputs
+    private static List<Pair<String, Integer>> countAction = new ArrayList<>();
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
     private static HashMap<String,List<IActivity>> signalChannels = new HashMap<>();
@@ -192,6 +193,7 @@ public class ADParser {
         callBehaviourInputs = new HashMap<>();
         callBehaviourOutputs = new HashMap<>();
         callBehaviourListCreated = new ArrayList<>();
+        countAction = new ArrayList<>();
         countSignal = new ArrayList<>();
         countAccept = new ArrayList<>();
         signalChannels = new HashMap<>();
@@ -517,7 +519,7 @@ public class ADParser {
                 syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode, queueRecreateNode, callBehaviourList, eventChannel,
                 lockChannel, allInitial, alphabetAllInitialAndParameter, parameterNodesInput, parameterNodesOutput, parameterNodesOutputObject,
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
-                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this);
+                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this, countAction);
 
         return dNodesActionAndControl.defineNodesActionAndControl();
     }

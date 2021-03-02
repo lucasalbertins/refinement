@@ -77,7 +77,7 @@ public class ADDefineNodesActionAndControl {
                                          Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
                                          List<Pair<String, Integer>> countAccept, HashMap<String,List<IActivity>> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
-                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser) {
+                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser, List<Pair<String, Integer>> countAction) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.countCall = countCall;
@@ -103,6 +103,7 @@ public class ADDefineNodesActionAndControl {
         this.typeUnionList = typeUnionList;
         this.callBehaviourInputs = callBehaviourInputs;
         this.callBehaviourOutputs = callBehaviourOutputs;
+        this.countSignal = countAction;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
         this.signalChannels = signalChannels;
@@ -142,7 +143,7 @@ public class ADDefineNodesActionAndControl {
 
         for (IActivityNode activityNode : ad.getActivityNodes()) {
             if (((activityNode instanceof IControlNode && ((IControlNode) activityNode).isInitialNode()) ||
-                    (activityNode instanceof IAction && (((IAction) activityNode).isSendSignalAction() || ((IAction) activityNode).isAcceptEventAction())) ||
+                    (activityNode instanceof IAction && (((IAction) activityNode).isSendSignalAction() || ((IAction) activityNode).isAcceptEventAction()) || !((IAction)activityNode).isCallBehaviorAction()) ||
                     (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length == 0)) &&
                     !queueNode.contains(activityNode)) {
 
@@ -452,7 +453,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = defineADUtils();
 
         dAction = new ADDefineAction(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                parameterNodesInput, unionList, typeUnionList, adUtils, adParser);
+                parameterNodesInput, unionList, typeUnionList, adUtils, adParser, countAction);
 
         return dAction.defineAction(activityNode, nodes, code);
     }
