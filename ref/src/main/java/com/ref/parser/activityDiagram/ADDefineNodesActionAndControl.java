@@ -43,6 +43,7 @@ public class ADDefineNodesActionAndControl {
     private HashMap<String, String> typeUnionList;
     private HashMap<String, List<String>> callBehaviourInputs;
     private HashMap<String, List<String>> callBehaviourOutputs;
+    private List<Pair<String, Integer>> countAction;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private HashMap<String, List<IActivity>> signalChannels;
