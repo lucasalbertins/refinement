@@ -45,8 +45,7 @@ public class ADDefineSignal {
 
         int idSignal = 1;
         for (int i = 0; i < countSignal.size(); i++) {
-        	String nSignal = adUtils.nameRobochartResolver(activityNode.getName(), ".out");
-            if (countSignal.get(i).getKey().equals(nSignal)) {
+            if (countSignal.get(i).getKey().equals(adUtils.nameDiagramResolver(activityNode.getName()))) {
                 idSignal = countSignal.get(i).getValue();
                 break;
             }
