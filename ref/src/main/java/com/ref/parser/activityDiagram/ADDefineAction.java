@@ -16,7 +16,6 @@ public class ADDefineAction {
     private HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
-    private List<Pair<String, Integer>> countAction;
     //private HashMap<String, String> parameterNodesInput;
     //private List<ArrayList<String>> unionList;
     //private HashMap<String, String> typeUnionList;
@@ -26,14 +25,13 @@ public class ADDefineAction {
     public ADDefineAction(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                           HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
                           HashMap<String, String> parameterNodesInput, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
-                          ADUtils adUtils, ADParser adParser, List<Pair<String, Integer>> countAction) {
+                          ADUtils adUtils, ADParser adParser) {
         this.ad = ad;
         this.alphabetNode = alphabetNode2;
         this.syncChannelsEdge = syncChannelsEdge2;
         this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
-        this.countAction = countAction;
         //this.parameterNodesInput = parameterNodesInput;
         //this.unionList = unionList;
         //this.typeUnionList = typeUnionList;
@@ -44,22 +42,14 @@ public class ADDefineAction {
     public IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException { 	
         StringBuilder action = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
+        
+//        String actionNameEvent = adUtils.nameRobochartResolver(activityNode.getName());
+        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
+        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";      
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
+        
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
-        
-        int idAction = 1;
-//        for (int i = 0; i < countAction.size(); i++) {
-//        	String nAction = adUtils.nameRobochartResolver(activityNode.getName());
-//            if (countAction.get(i).getKey().equals(nAction)) {
-//            	idAction = countAction.get(i).getValue();
-//                break;
-//            }
-//        }
-
-        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName());
-        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";      
-        
         IOutputPin[] outPins = ((IAction) activityNode).getOutputs();
         IInputPin[] inPins = ((IAction) activityNode).getInputs();
         List<String> namesMemoryLocal = new ArrayList<>();

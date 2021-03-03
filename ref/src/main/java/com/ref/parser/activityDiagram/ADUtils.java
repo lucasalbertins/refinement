@@ -29,7 +29,6 @@ public class ADUtils {
 	private List<Pair<String, String>> memoryLocalChannel;
 	private HashMap<String, List<String>> callBehaviourInputs;
 	private HashMap<String, List<String>> callBehaviourOutputs;
-	private List<Pair<String, Integer>> countAction;
 	private List<Pair<String, Integer>> countSignal;
 	private List<Pair<String, Integer>> countAccept;
 	private HashMap<String, List<IActivity>> signalChannels;
@@ -69,7 +68,6 @@ public class ADUtils {
 		this.memoryLocalChannel = memoryLocalChannel;
 		this.callBehaviourInputs = callBehaviourInputs;
 		this.callBehaviourOutputs = callBehaviourOutputs;
-		this.countAction = countAction;
 		this.countSignal = countSignal;
 		this.countAccept = countAccept;
 		this.signalChannels = signalChannels2;
@@ -224,23 +222,6 @@ public class ADUtils {
 		eventChannel.add(partitionName + "::" + nameAction);
 		action.append(partitionName + "::" + nameAction + " -> "); 
 		robo.add(partitionName + "::" + nameAction );
-		
-//		int idAction = 1;
-//		int index = -1;
-//
-//		for (int i = 0; i < countAction.size(); i++) {
-//			if (countAction.get(i).getKey().equals(nameAction)) {
-//				idAction = countAction.get(i).getValue();
-//				index = i;
-//				break;
-//			}
-//		}
-//
-//		if (index >= 0) {
-//			countAction.set(index, new Pair<String, Integer>(nameAction, idAction + 1));
-//		} else {
-//			countAction.add(new Pair<String, Integer>(nameAction, idAction + 1));
-//		}
 	}
 
 	//    public void event(ArrayList<String> alphabet, String nameAction, StringBuilder action) {
