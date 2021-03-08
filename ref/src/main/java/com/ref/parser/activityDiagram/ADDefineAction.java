@@ -138,7 +138,7 @@ public class ADDefineAction {
             }
 
             action.append("); ");
-            
+////////////////////////////////////////////////////////////////////////////////////////            
             if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
 //            	adUtils.until(alphabet, action, nameEvent, " -> SKIP; ");
     			adUtils.until(alphabet, action, adUtils.nameRobochartResolver(activityNode.getName()), " -> SKIP; ");
@@ -146,7 +146,7 @@ public class ADDefineAction {
 //            	adUtils.event(alphabet, nameEvent, action);//TODO
             	adUtils.event(alphabet, adUtils.nameRobochartResolver(activityNode.getName()), action);
             }
-
+////////////////////////////////////////////////////////////////////////////////////////
             //adUtils.lock(alphabet, action, 0, nameAction);
 //            adUtils.event(alphabet, nameEvent, action);//TODO
 //            adUtils.event(alphabet, nameAction, action);//TODO
@@ -638,12 +638,12 @@ public class ADDefineAction {
             }
 
             action.append("); ");
-
+////////////////////////////////////////////////////////////////////////////////////////
             //adUtils.lock(alphabet, action, 0, nameAction);
 //            adUtils.event(alphabet, nameEvent, action);
             adUtils.event(alphabet, adUtils.nameRobochartResolver(activityNode.getName()), action);
 //            adUtils.event(alphabet, nameAction, action);
-
+////////////////////////////////////////////////////////////////////////////////////////
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
                 for (int j = 0; j < definitionFinal.length; j++) {
                     String[] expression = definitionFinal[j].split("=");

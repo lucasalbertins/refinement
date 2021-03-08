@@ -42,7 +42,7 @@ public class ADDefineSignal {
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
         
-
+////////////////////////////////////////////////////////////////////////////////////////
         int idSignal = 1;
         for (int i = 0; i < countSignal.size(); i++) {
         	String nSignal = adUtils.nameRobochartResolver(activityNode.getName(), ".out");
@@ -54,7 +54,7 @@ public class ADDefineSignal {
      
         String nameSignal = adUtils.nameDiagramResolver("signal_" + activityNode.getName()) + "_" + idSignal + "_" + adUtils.nameDiagramResolver(ad.getName());
         String nameSignalTermination = adUtils.nameDiagramResolver("signal_" + activityNode.getName()) + "_" + idSignal + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
-
+////////////////////////////////////////////////////////////////////////////////////////
         if (code == 0) {
             signal.append(nameSignal + "(id) = ");
 
@@ -74,7 +74,7 @@ public class ADDefineSignal {
             }
 
             signal.append("); ");
-            
+////////////////////////////////////////////////////////////////////////////////////////            
             if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
 //            	adUtils.until(alphabet, signal, adUtils.nameDiagramResolver(activityNode.getName()) + ".out", " -> SKIP; ");
     			adUtils.until(alphabet, signal, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), " -> SKIP; ");
@@ -82,7 +82,7 @@ public class ADDefineSignal {
 //            	adUtils.signal(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), signal);
             	adUtils.signal(alphabet ,adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal);
             }
-            
+////////////////////////////////////////////////////////////////////////////////////////            
 //            if (inFlows.length > 0) {
 //                for (int i = 0; i < inFlows.length; i++) {
 //                	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inFlows[i].getId());
@@ -197,10 +197,10 @@ public class ADDefineSignal {
             }
 
             signal.append("); ");
-
+////////////////////////////////////////////////////////////////////////////////////////
 //            adUtils.signal(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), signal);
             adUtils.signal(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal);
-
+////////////////////////////////////////////////////////////////////////////////////////
             adUtils.update(alphabet, signal, inFlows.length, outFlows.length, false);
 
             if (outFlows.length > 0) {

@@ -40,7 +40,7 @@ public class ADDefineAccept {
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
-
+////////////////////////////////////////////////////////////////////////////////////////
         int idAccept = 1;
         for (int i = 0; i < countAccept.size(); i++) {
 //        	String nAccept = adUtils.nameDiagramResolver(activityNode.getName());
@@ -50,9 +50,9 @@ public class ADDefineAccept {
                 break;
             }
         }
-
         String nameAccept = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName());
         String nameAcceptTermination = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+////////////////////////////////////////////////////////////////////////////////////////
 
         if (code == 0) {
             accept.append(nameAccept + "(id) = ");
@@ -77,7 +77,7 @@ public class ADDefineAccept {
 
                 accept.append("); ");
             }
-            
+////////////////////////////////////////////////////////////////////////////////////////
             if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0 && inFlows[0].getStereotypes()[0].equals("UNTIL")) {
 //    			adUtils.until(alphabet, accept, adUtils.nameDiagramResolver(activityNode.getName()) + ".in", " -> SKIP; "); 
     			adUtils.until(alphabet, accept, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), " -> SKIP; ");
@@ -85,7 +85,7 @@ public class ADDefineAccept {
 //            	adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept);
             	adUtils.accept(alphabet ,adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept);
             }
-            
+////////////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------            
 //            String untilIn = inFlows[i].getStereotypes()[0];							
 //        	if (untilIn.equals("UNTIL")) {
@@ -222,10 +222,10 @@ public class ADDefineAccept {
 
                 accept.append("); ");
             }
-
+////////////////////////////////////////////////////////////////////////////////////////
 //            adUtils.accept(alphabet, adUtils.nameDiagramResolver(activityNode.getName()), accept);
             adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept);
-
+////////////////////////////////////////////////////////////////////////////////////////
             if (inFlows.length == 0) {
                 adUtils.update(alphabet, accept, 1, outFlows.length, false); // outFlows - 1
             } else {

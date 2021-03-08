@@ -41,7 +41,7 @@ public class ADDefineMainNodes {
         StringBuilder mainNode = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
         ArrayList<String> alphabet = new ArrayList<>();
-
+////////////////////////////////////////////////////////////////////////////////////////
         if (firstDiagram.equals(ad.getId())) {
             mainNode.append("MAIN = normal(" + nameDiagram + "(1))\n");
         }
@@ -50,7 +50,7 @@ public class ADDefineMainNodes {
 //            mainNode.append("MAIN = normal(" + nameDiagram + "(1)); LOOP\n");
 //            mainNode.append("LOOP = loop -> LOOP\n");
 //        }
-
+////////////////////////////////////////////////////////////////////////////////////////
         mainNode.append("END_DIAGRAM_" + nameDiagram + "(id) = endDiagram_" + nameDiagram + ".id -> SKIP\n");
         mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
 

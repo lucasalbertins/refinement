@@ -79,11 +79,11 @@ public class ADParser {
     public ADDefineTokenManager dTokenManager;
     public ADDefineProcessSync dProcessSync;
     public ADDefinePool dPool;
-    
+////////////////////////////////////////////////////////////////////////////////////////    
     public List<String> robo;
     public List<String> eventsUntil;
     public HashMap<String, String> untilList;
-
+////////////////////////////////////////////////////////////////////////////////////////
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -123,10 +123,11 @@ public class ADParser {
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
-        
+////////////////////////////////////////////////////////////////////////////////////////        
         this.robo = new ArrayList<String>();
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
+////////////////////////////////////////////////////////////////////////////////////////        
     }
 
     private void setFirstDiagram() {
@@ -241,7 +242,7 @@ public class ADParser {
                 this.alphabetAD.add(adParser.getAlphabetAD());
             }
         }
-
+////////////////////////////////////////////////////////////////////////////////////////
         //String lock = defineLock();
         String channel = defineChannels();
         String main = defineMainNodes();
@@ -331,7 +332,8 @@ public class ADParser {
                 check +
                 check_props +
                 check_prop_nodes;
-
+////////////////////////////////////////////////////////////////////////////////////////
+        
         //reseta os valores estaticos
         if (reset) {
         	DeadlockCounterExample.callBehaviourList = callBehaviourList;
@@ -383,7 +385,7 @@ public class ADParser {
             countcallBehavior.put(idKey, aux1);
         }
     }
-
+////////////////////////////////////////////////////////////////////////////////////////
     private void defineCallBehaviourList() throws ParsingException {
     	if(countCall.size() == 0) {//pega os CBA do 1 diagrama
         	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
@@ -400,6 +402,7 @@ public class ADParser {
                     }
         		}
         	}
+////////////////////////////////////////////////////////////////////////////////////////        	
         	boolean mudou =true;
         	List<IActivity> aux1 = new ArrayList<>();
         	List<IActivity> aux3 = new ArrayList<>();

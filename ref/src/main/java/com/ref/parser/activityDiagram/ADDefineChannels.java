@@ -26,9 +26,9 @@ public class ADDefineChannels {
     private HashMap<String, List<IActivity>> signalChannels;
     private ADUtils adUtils;
     private ADParser adParser;
-    
+////////////////////////////////////////////////////////////////////////////////////////    
     private List<String> alphabetAstah = new ArrayList<String>();
-
+////////////////////////////////////////////////////////////////////////////////////////
     public ADDefineChannels(HashMap<String, Integer> allGuards, IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                             Map<Pair<String, String>, String> memoryLocal, HashMap<String, String> parameterNodesOutputObject, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
                             HashMap<String, String> objectEdges, List<String> eventChannel, List<?> lockChannel, String firstDiagram, HashMap<String, List<IActivity>> signalChannels2,
@@ -80,9 +80,9 @@ public class ADDefineChannels {
 //        	channels.append("channel startActivity: ID\n");
           channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
         }
-        
+////////////////////////////////////////////////////////////////////////////////////////        
         alphabetAstah.add("startActivity_" + nameDiagram);
-
+////////////////////////////////////////////////////////////////////////////////////////
         if (parameterNodesOutput.size() > 0) {
 //            channels.append("channel endActivity: ID\n");
           channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
@@ -97,9 +97,9 @@ public class ADDefineChannels {
 //            channels.append("channel endActivity: ID\n");
           channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
         }
-        
+////////////////////////////////////////////////////////////////////////////////////////        
         alphabetAstah.add("endActivity_" + nameDiagram);
-
+////////////////////////////////////////////////////////////////////////////////////////
         if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || memoryLocal.size() > 0) {
 
             for (String in : parameterNodesInput.keySet()) {
@@ -137,9 +137,9 @@ public class ADDefineChannels {
 //            channels.append("channel ce: ID.countCe\n"); // + nameDiagram + ": ID_"+nameDiagram +".countCe_" + nameDiagram + "\n");
 //            channels.append("channel ce: ID.countCe\n"); // + nameDiagram + ": ID_"+nameDiagram +".countCe_" + nameDiagram + "\n");
         }
-        
+////////////////////////////////////////////////////////////////////////////////////////        
         alphabetAstah.add("ce_" + nameDiagram);
-
+////////////////////////////////////////////////////////////////////////////////////////
         if (syncObjectsEdge.size() > 0) {
             ArrayList<String> allObjectEdges = new ArrayList<>();
             for (String objectEdge : syncObjectsEdge.values()) {    //get sync channel
@@ -166,9 +166,11 @@ public class ADDefineChannels {
 //
 //        channels.append("channel endDiagram_" + nameDiagram + ": ID\n"); // ": ID_"+nameDiagram +"\n");
         
+////////////////////////////////////////////////////////////////////////////////////////        
         alphabetAstah.add("clear_" + nameDiagram);
         alphabetAstah.add("update_" + nameDiagram);
         alphabetAstah.add("endDiagram_" + nameDiagram);  
+////////////////////////////////////////////////////////////////////////////////////////        
 //-----------------------------------------------------------------        
 //        if (eventChannel.size() > 0) {
 //            channels.append("--channel ");
@@ -220,7 +222,7 @@ public class ADDefineChannels {
         			}
         		}*/
         	}
-            
+////////////////////////////////////////////////////////////////////////////////////////            
         	String partitionName;            
         	try {
         		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();				
@@ -232,11 +234,11 @@ public class ADDefineChannels {
 //        		channels.append("--channel " + partitionName + "::" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
 //                channels.append("--channel " + partitionName + "::" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
 //        	}
-        	
+
         	channels.append("channel dc\n");
         	
         	alphabetAstah.add("dc");  
-        	
+
         	if (adParser.countUntil_ad > 0) {
         		channels.append("channel begin, end:  {1.." + adParser.countUntil_ad + "}\n");				
         	}
@@ -245,8 +247,8 @@ public class ADDefineChannels {
         		channels.append("channel chaos:  {1.." + adParser.countAny_ad + "}\n");				
 			}
         	//----------------------------------------------
-        	
-//            for (String signalChannel : keySignalChannels) {
+
+        	//            for (String signalChannel : keySignalChannels) {
 //                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
 //                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
 //            }
@@ -268,6 +270,6 @@ public class ADDefineChannels {
         
         return channels.toString();
     }
-    
+////////////////////////////////////////////////////////////////////////////////////////    
     
 }
