@@ -6,9 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+
 
 public class ADDefineMemories {
 
@@ -19,7 +20,6 @@ public class ADDefineMemories {
     private Map<Pair<String, String>,String> memoryLocal;
     private ADUtils adUtils;
     public static HashMap<IActivityNode,IActivity> CBAMemAlphabet = new HashMap<>();
-    //private static List<IActivity> CBAMemAlphabetDone = new ArrayList<>();
     
     public ADDefineMemories(IActivity ad, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                             Map<Pair<String, String>,String> memoryLocal, ADUtils adUtils) {
@@ -33,7 +33,6 @@ public class ADDefineMemories {
     public String defineMemories() {
         StringBuilder memory = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
-        //IActivityNode[] nodes = ad.getActivityNodes();
         StringBuilder alphabetMemory = new StringBuilder();
         
         defineMemoryLocal(memory, nameDiagram,alphabetMemory);
@@ -83,24 +82,12 @@ public class ADDefineMemories {
                 i++;
             }
 
-        }
-        
-        /*for(IActivityNode node: nodes) {//TODO ver se ta certo mesmo
-        	if(CBAMemAlphabet.containsKey(node) && !CBAMemAlphabetDone.contains(((IAction)node).getCallingActivity())) {
-        		memory.append("\nAlphabetMem"+adUtils.nameDiagramResolver(node.getName())+"(id) = {|");
-        		memory.append(alphabetMemory);
-        		memory.append("endDiagram_"+nameDiagram+".id|}\n");
-        		CBAMemAlphabetDone.add(((IAction)node).getCallingActivity());
-    		}
-        }*/
-        
+        }        
         memory.append("\n");
         return memory.toString();
     }
 
     private void defineMemoryLocal(StringBuilder memory, String nameDiagram, StringBuilder alphabetMemory) {
-        //StringBuilder aux = new StringBuilder();
-        //StringBuilder name = new StringBuilder();
         HashMap<String,List<Pair<String,String>>> callBehaviors = new HashMap<String, List<Pair<String,String>>>();
         IActivityNode[] nodes = ad.getActivityNodes();
         for(IActivityNode node:nodes) {
@@ -157,7 +144,7 @@ public class ADDefineMemories {
             memory.append("Mem_" + nameDiagram + "_" + value + "_t" + "(id," + value + ") = ");
             
             memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") /\\ (endActivity_" + nameDiagram + ".id"+(outputParam?"?" + value:"") + " -> SKIP)\n");
-            //TODO verificar os endActivity
+            //TODO verify the endActivity
         }
     }
 }

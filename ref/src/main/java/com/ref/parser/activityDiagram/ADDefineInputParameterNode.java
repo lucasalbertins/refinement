@@ -1,10 +1,15 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IActivityParameterNode;
+import com.ref.interfaces.activityDiagram.IFlow;
 
 public class ADDefineInputParameterNode {
 
@@ -13,46 +18,64 @@ public class ADDefineInputParameterNode {
     private HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode;
     private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
-    private List<IActivityNode> queueNode;
     private List<String> allInitial;
     private ArrayList<String> alphabetAllInitialAndParameter;
     private ADUtils adUtils;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
+	private HashMap<String,String> parameterNodesInput;
 
-    public ADDefineInputParameterNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncObjectsEdge2,
-                                      HashMap<String, String> objectEdges, List<IActivityNode> queueNode, List<String> allInitial,
-                                      ArrayList<String> alphabetAllInitialAndParameter, ADUtils adUtils) {
+
+    public ADDefineInputParameterNode(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, 
+    		HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, 
+    		List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter, ADUtils adUtils,
+    		HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,HashMap<String,String> parameterNodesInput) {
         this.ad = ad;
         this.parameterAlphabetNode = parameterAlphabetNode2;
         this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
-        this.queueNode = queueNode;
         this.allInitial = allInitial;
         this.alphabetAllInitialAndParameter = alphabetAllInitialAndParameter;
         this.adUtils = adUtils;
+        this.alphabetNode = alphabetNode2;
+        this.parameterNodesInput = parameterNodesInput;
     }
 
-    public IActivityNode defineInputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
+    public String defineInputParameterNode(IActivityNode activityNode) throws ParsingException {
         StringBuilder parameterNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
         String nameParameterNode = "parameter_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
 
+        try {
+			parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
+		} catch (Exception e) {
+			throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
+		}
+        
         parameterNode.append(nameParameterNode + "(id) = ");
-
+        
         adUtils.update(alphabet, parameterNode, inFlows.length, outFlows.length, false);
         adUtils.get(alphabet, parameterNode, adUtils.nameDiagramResolver(activityNode.getName()));
 
         parameterNode.append("(");
 
         for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-            //String oe = adUtils.createOE(adUtils.nameDiagramResolver(activityNode.getName()));
         	String typeObject = ((IActivityParameterNode)activityNode).getBase().getName();
-        	String oe = adUtils.createOE(typeObject);
         	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,outFlows[i].getId());
-            syncObjectsEdge.put(key, oe);
-            objectEdges.put(oe, typeObject);
-
+        	
+        	String oe; // creates output channels
+			if (syncObjectsEdge.containsKey(key)) {
+				oe = syncObjectsEdge.get(key);
+				if (!objectEdges.containsKey(oe)) {
+					objectEdges.put(oe, typeObject);
+				}
+			} else {
+				oe = adUtils.createOE();
+				syncObjectsEdge.put(key, oe);
+				objectEdges.put(oe, typeObject);
+			}
+        	        	
             parameterNode.append("(");
 
             if (i >= 0 && i < outFlows.length - 1) {
@@ -63,55 +86,17 @@ public class ADDefineInputParameterNode {
         }
 
         parameterNode.append(")\n");
-        Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        Pair<IActivity,String> key = new Pair<IActivity, String>(ad,"parameter_"+adUtils.nameDiagramResolver(activityNode.getName()));
         parameterAlphabetNode.put(key, alphabet);
+        alphabetNode.put(key, alphabet);
         allInitial.add(nameParameterNode);
         for (String channel : alphabet) {
             if (!alphabetAllInitialAndParameter.contains(channel)) {
                 alphabetAllInitialAndParameter.add(channel);
             }
         }
-
-        if (outFlows[0].getTarget() instanceof IInputPin) {
-            for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
-                if (activityNodeSearch instanceof IAction) {
-                    IInputPin[] inFlowPin = ((IAction) activityNodeSearch).getInputs();
-                    for (int y = 0; y < inFlowPin.length; y++) {
-                        if (inFlowPin[y].getId().equals(outFlows[0].getTarget().getId())) {
-                            activityNode = activityNodeSearch;
-                        }
-                    }
-                }
-            }
-        } else {
-            activityNode = outFlows[0].getTarget();
-        }
-
-
-        for (int i = 1; i < outFlows.length; i++) {    //creates the parallel output channels
-            if (outFlows[i].getTarget() instanceof IInputPin) {
-                for (IActivityNode activityNodeSearch : ad.getActivityNodes()) {
-                    if (activityNodeSearch instanceof IAction) {
-                        IInputPin[] inFlowPin = ((IAction) activityNodeSearch).getInputs();
-                        for (int y = 0; y < inFlowPin.length; y++) {
-                            if (inFlowPin[y].getId().equals(outFlows[i].getTarget().getId())) {
-                                if (!queueNode.contains(activityNodeSearch)) {
-                                    queueNode.add(activityNodeSearch);
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                if (!queueNode.contains(outFlows[i].getTarget())) {
-                    queueNode.add(outFlows[i].getTarget());
-                }
-            }
-        }
-
-
-        nodes.append(parameterNode.toString());
-
-        return activityNode;
+        
+        return parameterNode.toString();
     }
+    
 }

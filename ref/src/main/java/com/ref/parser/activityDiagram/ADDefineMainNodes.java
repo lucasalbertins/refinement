@@ -1,10 +1,11 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.ref.interfaces.activityDiagram.IActivity;
 
 public class ADDefineMainNodes {
 
@@ -14,10 +15,7 @@ public class ADDefineMainNodes {
     private List<String> lockChannel;
     private HashMap<String, String> parameterNodesInput;
     private HashMap<String, String> parameterNodesOutput;
-    //private List<Pair<String, Integer>> callBehaviourNumber;
     private HashMap<String, List<String>> callBehaviourInputs;
-    //private List<String> localSignalChannelsSync;
-    //private List<String> signalChannelsLocal;
     private ADUtils adUtils;
     private ADParser adParser;
 
@@ -29,10 +27,7 @@ public class ADDefineMainNodes {
         this.lockChannel = lockChannel;
         this.parameterNodesInput = parameterNodesInput;
         this.parameterNodesOutput = parameterNodesOutput;
-        //this.callBehaviourNumber = callBehaviourNumber;
         this.callBehaviourInputs = callBehaviourInputs;
-        //this.localSignalChannelsSync = localSignalChannelsSync;
-        //this.signalChannelsLocal = signalChannelsLocal;
         this.adUtils = adUtils;
         this.adParser = adParser;
     }
@@ -41,16 +36,15 @@ public class ADDefineMainNodes {
         StringBuilder mainNode = new StringBuilder();
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
         ArrayList<String> alphabet = new ArrayList<>();
-////////////////////////////////////////////////////////////////////////////////////////
+
         if (firstDiagram.equals(ad.getId())) {
-            mainNode.append("MAIN = normal(" + nameDiagram + "(1))\n");
-        }
-        
-//        if (firstDiagram.equals(ad.getId())) {
+////////////////////////////////////////////////////////////////////////////////////////        	
+        	mainNode.append("MAIN = normal(" + nameDiagram + "(1))\n");
+////////////////////////////////////////////////////////////////////////////////////////        	
 //            mainNode.append("MAIN = normal(" + nameDiagram + "(1)); LOOP\n");
 //            mainNode.append("LOOP = loop -> LOOP\n");
-//        }
-////////////////////////////////////////////////////////////////////////////////////////
+        }
+
         mainNode.append("END_DIAGRAM_" + nameDiagram + "(id) = endDiagram_" + nameDiagram + ".id -> SKIP\n");
         mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
 
@@ -66,59 +60,17 @@ public class ADDefineMainNodes {
             mainNode.append("(");
         }
 
-        /*for (int i = 0; i < callBehaviourNumber.size(); i++) {
-            mainNode.append("(");
-        }*/
 
-        //for (int i = 0; i < signalChannelsLocal.size(); i++) {
-//            if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {
-//            	mainNode.append("(");
-//            }
-        //}
+//        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) mainNode.append("(");
 
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ")");
-
-        /*for (Pair<String, Integer> callBehaviourAD : callBehaviourNumber) {
-            mainNode.append(" [|{|startActivity_" + callBehaviourAD.getKey() + "." + callBehaviourAD.getValue() +
-                    ",endActivity_" + callBehaviourAD.getKey() + "." + callBehaviourAD.getValue());
-
-            mainNode.append("|}|] ");
-
-            mainNode.append(callBehaviourAD.getKey() + "(" + callBehaviourAD.getValue() + "))");
-        }*/
 
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
         mainNode.append("TokenManager_" + nameDiagram + "_t(ID_"+nameDiagram+",0,0))");
         
-//        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//se for o 1 diagrama
+//        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//If is the first diagram
 //        	mainNode.append("[|AlphabetPool|]pools(ID_"+nameDiagram+"))");
-//        }
-        
-        /*if(signalChannelsLocal.size()> 0) {
-	        StringBuilder alfabetoPools = new StringBuilder();
-	        for(String signal: signalChannelsLocal) {
-	        	alfabetoPools.append("signal_"+signal+",accept_"+signal+",");
-	        }
-	        alfabetoPools.append("endDiagram_"+nameDiagram);
-	        mainNode.append(" [|{|"+alfabetoPools+"|}|]pools)");
-	        
-        	
-	        for(String signal: signalChannelsLocal) {
-		        if (!ADParser.alphabetPool.contains(signal)) {
-					ADParser.alphabetPool.add("signal_"+signal+",accept_"+signal+",");
-					
-				}
-	        }
-	        if(!ADParser.alphabetPool.contains("endDiagram_"+nameDiagram)) {
-	        	ADParser.alphabetPool.add("endDiagram_"+nameDiagram);
-	        }
-        }*/
-        
-        /*for (String signal: signalChannelsLocal) {
-            mainNode.append(" [|{|");
-            mainNode.append("signal_" + signal + "," + "accept_" + signal + "," + "endDiagram_" + nameDiagram);
-            mainNode.append("|}|] pool_" + signal + "_t(<>))");
-        }*//////
+//        }       
 
         if (lockChannel.size() > 0) {
             mainNode.append(" [|{|");

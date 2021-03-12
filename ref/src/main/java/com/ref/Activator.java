@@ -37,7 +37,6 @@ public class Activator implements BundleActivator {
 		try {
 			delete(directory);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

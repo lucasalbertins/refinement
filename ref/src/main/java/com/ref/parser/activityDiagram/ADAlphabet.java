@@ -3,10 +3,10 @@ package com.ref.parser.activityDiagram;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.change_vision.jude.api.inf.model.IActivity;
+import com.ref.interfaces.activityDiagram.IActivity;
 
 public abstract class ADAlphabet {
-	protected HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetAD;//TODO alterar todas as chaves pra Pair<IActivity,String>
+	protected HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetAD;
 	protected HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
 	protected HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
 	protected HashMap<Pair<IActivity,String>, ArrayList<String>> parameterAlphabetNode;
@@ -52,9 +52,7 @@ public abstract class ADAlphabet {
 		this.parameterAlphabetNode = parameterAlphabetNode;
 	}
 
-	public void add(ADAlphabet adAlphabet) {
-		// TODO Auto-generated method stub
-		
+	public void add(ADAlphabet adAlphabet) {		
 	}
 	
 	public IActivity getAd() {

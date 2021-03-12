@@ -7,14 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.change_vision.jude.api.inf.exception.InvalidEditingException;
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IActivityNode;
 import com.ref.exceptions.ParsingException;
-import com.ref.refinement.activityDiagram.DeadlockCounterExample;
-import com.ref.refinement.activityDiagram.DeterminismCounterExample;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+
 
 public class ADParser {
 
@@ -25,13 +23,15 @@ public class ADParser {
     public int countSet_ad;
     public int countCe_ad;
     public int countOe_ad;
-    public int countUntil_ad;
-    public int countAny_ad;
     public int countUpdate_ad;
     public int countClear_ad;
     public int limiteInf;
     public int limiteSup;
-
+////////////////////////////////////////////////////////////////////////////////////////    
+    public int countUntil_ad;
+    public int countAny_ad;
+////////////////////////////////////////////////////////////////////////////////////////
+    
     private static String firstDiagram = null;
     public static boolean containsCallBehavior = false;
     public static HashMap<String, Integer> countCall = new HashMap<>();
@@ -68,22 +68,24 @@ public class ADParser {
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
-
+    public static HashMap<String,Integer> IdSignals = new HashMap<>();
+    
     private ADAlphabet alphabetAD;
     public ADDefineChannels dChannels;
     public ADDefineTypes dTypes;
     public ADDefineMemories dMemories;
     public ADDefineMainNodes dMainNodes;
     public ADDefineNodesActionAndControl dNodesActionAndControl;
-    public ADDefineLocks dLocks;
     public ADDefineTokenManager dTokenManager;
     public ADDefineProcessSync dProcessSync;
     public ADDefinePool dPool;
-////////////////////////////////////////////////////////////////////////////////////////    
-    public List<String> robo;
-    public List<String> eventsUntil;
-    public HashMap<String, String> untilList;
-////////////////////////////////////////////////////////////////////////////////////////
+    
+	////////////////////////////////////////////////////////////////////////////////////////
+	public List<String> robo;
+	public List<String> eventsUntil;
+	public HashMap<String, String> untilList;
+	////////////////////////////////////////////////////////////////////////////////////////
+
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -93,8 +95,6 @@ public class ADParser {
         this.countSet_ad = 1;
         this.countCe_ad = 1;
         this.countOe_ad = 1;
-        this.countUntil_ad = 0;
-        this.countAny_ad = 0;
         this.countUpdate_ad = 1;
         this.countClear_ad = 1;
         this.limiteInf = 99;
@@ -124,10 +124,15 @@ public class ADParser {
         createdAccept = new ArrayList<>();
         allGuards = new HashMap<>();
 ////////////////////////////////////////////////////////////////////////////////////////        
+        this.countUntil_ad = 0;
+        this.countAny_ad = 0;
+        
         this.robo = new ArrayList<String>();
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
-////////////////////////////////////////////////////////////////////////////////////////        
+////////////////////////////////////////////////////////////////////////////////////////
+        
+        
     }
 
     private void setFirstDiagram() {
@@ -149,8 +154,6 @@ public class ADParser {
         this.countSet_ad = 1;
         this.countCe_ad = 1;
         this.countOe_ad = 1;
-        this.countUntil_ad = 1;
-        this.countAny_ad = 1;
         this.countUpdate_ad = 1;
         this.countClear_ad = 1;
         this.limiteInf = 99;
@@ -182,6 +185,10 @@ public class ADParser {
         resetStatic();
         allGuards = new HashMap<>();
         firstDiagram = ad.getId(); //set first diagram
+////////////////////////////////////////////////////////////////////////////////////////        
+        this.countUntil_ad = 1;
+        this.countAny_ad = 1;
+////////////////////////////////////////////////////////////////////////////////////////        
     }
 
     public void resetStatic() {
@@ -200,11 +207,7 @@ public class ADParser {
     }
 
     private void setName(String nameAD) {
-        try {
-            this.ad.setName(nameAD);
-        } catch (InvalidEditingException e) {
-            e.printStackTrace();
-        }
+        this.ad.setName(nameAD);
     }
 
     /*
@@ -212,27 +215,27 @@ public class ADParser {
      * */
 
     public String parserDiagram() throws ParsingException {
-
+    	
         boolean reset = false;
         String check = "";
         String callBehaviour = "";
 
-        if (countCall.size() == 0) { // igual a primeira ocorrencia
+        if (countCall.size() == 0) { //If first occurrence
             check = "\nassert MAIN :[deadlock free]" +
                     "\nassert MAIN :[divergence free]" +
                     "\nassert MAIN :[deterministic]";
             reset = true;
         }
-
+        
         defineCallBehaviourList();
-
+        
         checkCountCallInitial();
-
+        
         definePoolAlphabet();
 
         String nodes = defineNodesActionAndControl();
 
-
+        
         for (IActivity adCalling: callBehaviourList) {
             if (!callBehaviourListCreated.contains(adCalling)) {
                 callBehaviourListCreated.add(adCalling);
@@ -242,17 +245,15 @@ public class ADParser {
                 this.alphabetAD.add(adParser.getAlphabetAD());
             }
         }
-////////////////////////////////////////////////////////////////////////////////////////
-        //String lock = defineLock();
+
         String channel = defineChannels();
         String main = defineMainNodes();
         String type = defineTypes();
         String tokenManager = defineTokenManager();
         String memory = defineMemories();
         String processSync = defineProcessSync();
-        String pool = "";
 //        String pool = definePool();
-        // ----------------------------------------------
+////////////////////////////////////////////////////////////////////////////////////////        
         ADUtils adUtils = defineADUtils();
         HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
         String robochart = parameterValueDiagram.get("robochart");
@@ -263,7 +264,6 @@ public class ADParser {
 			throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
 		}
         
-        // ----------------------------------------------
     	String check_props = "\n\n";
     	check_props += 
     			"NRecurse(S, P) = |~| ev : S @ ev -> P\n"
@@ -314,10 +314,13 @@ public class ADParser {
     			+ "				[|union(diff(AlphabetDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev),past),{endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id})|] \r\n"
     			+ "			( composeNodes_(id,tail,union(past,AlphabetDiagram_" + ad.getName() + "(id,ev))) )\r\n"
     			+ "	within \r\n"
-    			+ "		composeNodes_(id,alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s,{})";
-    		
+    			+ "		composeNodes_(id,alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s,{})";       
+////////////////////////////////////////////////////////////////////////////////////////
+    	
         String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+
+////////////////////////////////////////////////////////////////////////////////////////                
         		robochart +
+////////////////////////////////////////////////////////////////////////////////////////                
         		type +
                 channel +
                 main +
@@ -326,22 +329,21 @@ public class ADParser {
                 memory +
                 tokenManager +
                 /*lock +*/
-                // pool +
-                // (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
+//                pool +            
+//                (firstDiagram.equals(ad.getId())?"\nAlphabetPool = {|endDiagram_"+ADUtils.nameResolver(ad.getName())+(!alphabetPool.isEmpty()?","+alphabetPoolToString():"")+"|}\n":"")+
                 callBehaviour +
                 check +
+////////////////////////////////////////////////////////////////////////////////////////                
                 check_props +
                 check_prop_nodes;
-////////////////////////////////////////////////////////////////////////////////////////
-        
-        //reseta os valores estaticos
+////////////////////////////////////////////////////////////////////////////////////////                
+
+        //reset the static values
         if (reset) {
-        	DeadlockCounterExample.callBehaviourList = callBehaviourList;
-        	DeterminismCounterExample.callBehaviourList = callBehaviourList;
             resetStatic();
         }
 
-        //alphabet usado na geração dos contraexemplos
+        //alphabet used on the counterexample
         if(alphabetAD == null) {
         	this.alphabetAD = new ADLeafAlphabet(ad);
         }
@@ -349,7 +351,7 @@ public class ADParser {
         alphabetAD.setSyncChannelsEdge(syncChannelsEdge);
         alphabetAD.setSyncObjectsEdge(syncObjectsEdge);
         alphabetAD.setParameterAlphabetNode(parameterAlphabetNode);
-
+        
         return parser;
     }
 
@@ -361,37 +363,39 @@ public class ADParser {
 	public static void addCountCallBehavior(String idKey,String idCalling,String nameCalling) {
         int i = 1;
         List<Pair<String,String>> aux1;
-        if (countcallBehavior.containsKey(idKey)) {//se ja tiver o CBA
+        if (countcallBehavior.containsKey(idKey)) {//If already has the CBA
             aux1 = countcallBehavior.get(idKey);
             List<String>aux2 = new ArrayList<String>();
-            for(Pair<String,String> a:aux1) {//pegar os ids
+            for(Pair<String,String> a:aux1) {//get the ids
             	aux2.add(a.getKey());
             }
-            for(String diagram:aux2) {//varrer atras do diagrama que chamou
+            for(String diagram:aux2) {//sweeps throught the calling diagram 
             	if(diagram.equals(idCalling)){
             		break;
             	}
             	i++;
             }
-            if(i > aux1.size()) {//se ele n estiver la, add
+            if(i > aux1.size()) {//If it isn't there, add it
             	Pair<String,String> pair = new Pair<String, String>(idCalling, nameCalling);
             	aux1.add(pair);
-            	countcallBehavior.replace(idKey,aux1);
+            	countcallBehavior.replace(idKey,aux1);	
             }
-        } else {//se nao existir o CBA
+        } else {//IF the CBA doesn't exist
         	aux1 = new ArrayList<Pair<String,String>>();
         	Pair<String,String> pair = new Pair<String, String>(idCalling, nameCalling);
         	aux1.add(pair);
             countcallBehavior.put(idKey, aux1);
         }
     }
-////////////////////////////////////////////////////////////////////////////////////////
+    
     private void defineCallBehaviourList() throws ParsingException {
-    	if(countCall.size() == 0) {//pega os CBA do 1 diagrama
-        	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
+    	if(countCall.size() == 0) {//Gets the CBAs of the first diagram
+        	for (IActivityNode activityNode : ad.getActivityNodes()) {//Get all nodes
+////////////////////////////////////////////////////////////////////////////////////////        		
         		if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
-                    	if (!activityNode.hasStereotype("ANY")) {
+//                    	if (!activityNode.hasStereotype("ANY")) {
+                    	if (!activityNode.getStereotypes().equals("ANY")) {
                     		if(((IAction) activityNode).getCallingActivity() == null) {
                         		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
                         	}else {
@@ -401,16 +405,32 @@ public class ADParser {
                     	}
                     }
         		}
+////////////////////////////////////////////////////////////////////////////////////////     
+        		
+//        		if (activityNode instanceof IAction) {
+//                    if (((IAction) activityNode).isCallBehaviorAction()) {
+//                    	if(((IAction) activityNode).getCallingActivity() == null) {
+//                    		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
+//                    	}else {
+//                    		if(!containsCBA(((IAction) activityNode).getCallingActivity())) {
+//		                		callBehaviourList.add(((IAction) activityNode).getCallingActivity());
+//                    		}
+//                    		addCountCallBehavior(((IAction) activityNode).getCallingActivity().getId(), activityNode.getId(),activityNode.getName());
+//	                		
+//                    	}
+//                    }
+//        		}
         	}
-////////////////////////////////////////////////////////////////////////////////////////        	
+        	
         	boolean mudou =true;
         	List<IActivity> aux1 = new ArrayList<>();
         	List<IActivity> aux3 = new ArrayList<>();
         	aux3.addAll(callBehaviourList);
+        	
         	while(mudou) {
-	        	if(callBehaviourList.size() != 0) {//pega os CBA dentro de CBA
-	        		for(IActivity CBAs: callBehaviourList) {//para cada CBA
-	        			for(IActivityNode adCBAs: CBAs.getActivityNodes()) {//para cada nó
+	        	if(callBehaviourList.size() != 0) {//Gets the CBA that is inside a CBA
+	        		for(IActivity CBAs: callBehaviourList) {//For each CBA
+	        			for(IActivityNode adCBAs: CBAs.getActivityNodes()) {//For each node
 	        				if(adCBAs instanceof IAction) {
 	        					if(((IAction) adCBAs).isCallBehaviorAction() && !aux1.contains(((IAction) adCBAs).getCallingActivity())) {//se for CBA e n tiver sido add
 	        						aux1.add(((IAction) adCBAs).getCallingActivity());
@@ -422,9 +442,9 @@ public class ADParser {
 	        			}
 	        		}
 	        	}
-
-	        	for(IActivity CBA:aux1) {//faz a união dos conjuntos
-	        		if(!callBehaviourList.contains(CBA)) {
+	        	
+	        	for(IActivity CBA:aux1) {//Joins the sets
+	        		if(!containsCBA(CBA)) {
 	        			callBehaviourList.add(CBA);
 	        		}
 	        	}
@@ -437,11 +457,20 @@ public class ADParser {
         }
 	}
 
+	private boolean containsCBA(IActivity callingActivity) {
+		for(IActivity activity: callBehaviourList) {
+			if(callingActivity.getId().equals(activity.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private void definePoolAlphabet() {
-		if(firstDiagram.equals(ad.getId())) {//pega do 1 diagrama
-        	for (IActivityNode activityNode : ad.getActivityNodes()) {//pega todos os nós
+		if(firstDiagram.equals(ad.getId())) {//Gets from the first diagram
+        	for (IActivityNode activityNode : ad.getActivityNodes()) {//Gets all nodes
         		if (activityNode instanceof IAction) {
-                    if (((IAction) activityNode).isAcceptEventAction()||((IAction) activityNode).isSendSignalAction()) {//se for accept ou send
+                    if (((IAction) activityNode).isAcceptEventAction()||((IAction) activityNode).isSendSignalAction()) {//If is accept or send
                     	alphabetPool.add("signal_"+((IAction) activityNode).getName());
     					alphabetPool.add("accept_"+((IAction) activityNode).getName());
                     }
@@ -459,7 +488,7 @@ public class ADParser {
         	}
 		}
 	}
-
+	
 	private String alphabetPoolToString() {
 		StringBuilder toString = new StringBuilder();
 		String aux = "";
@@ -477,11 +506,11 @@ public class ADParser {
                 .replace("}", "_").replace("|", "_").replace("\\", "_")
                 .replace("\n", "_");
 	}
-
+    
     private ADUtils defineADUtils() {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
-                signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge,
+                signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
                 signalChannelsLocal, this, robo, eventsUntil, untilList);
         return adUtils;
     }
@@ -522,15 +551,7 @@ public class ADParser {
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
                 countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this);
 
-        return dNodesActionAndControl.defineNodesActionAndControl();
-    }
-
-    public String defineLock() {
-        ADUtils adUtils = defineADUtils();
-
-        dLocks = new ADDefineLocks(ad, lockChannel, adUtils);
-
-        return dLocks.defineLock();
+        return dNodesActionAndControl.defineNodes();
     }
 
     public String defineTokenManager() {
@@ -565,5 +586,4 @@ public class ADParser {
 
         return dMainNodes.defineMainNodes();
     }
-    
 }

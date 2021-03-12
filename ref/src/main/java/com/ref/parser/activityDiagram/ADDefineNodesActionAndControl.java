@@ -5,15 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IActivityParameterNode;
-import com.change_vision.jude.api.inf.model.IControlNode;
-import com.change_vision.jude.api.inf.model.IFlow;
-import com.change_vision.jude.api.inf.model.IObjectNode;
 import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IActivityParameterNode;
+import com.ref.interfaces.activityDiagram.IControlNode;
+import com.ref.interfaces.activityDiagram.IObjectNode;
+import com.ref.interfaces.activityDiagram.IPin;
 
 public class ADDefineNodesActionAndControl {
 
@@ -27,8 +27,6 @@ public class ADDefineNodesActionAndControl {
     private HashMap<Pair<IActivity, String>, String> syncObjectsEdge;
     private HashMap<String, String> objectEdges;
     private List<IActivityNode> queueNode;
-    private List<IActivityNode> queueRecreateNode;
-    private List<IActivity> callBehaviourList;
     private List<String> eventChannel;
     private List<String> lockChannel;
     private List<String> allInitial;
@@ -43,7 +41,6 @@ public class ADDefineNodesActionAndControl {
     private HashMap<String, String> typeUnionList;
     private HashMap<String, List<String>> callBehaviourInputs;
     private HashMap<String, List<String>> callBehaviourOutputs;
-    private List<Pair<String, Integer>> countAction;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
     private HashMap<String, List<IActivity>> signalChannels;
@@ -52,7 +49,6 @@ public class ADDefineNodesActionAndControl {
     private List<String> createdSignal;
     private List<String> createdAccept;
     private HashMap<String,Integer> allGuards;
-    private ADUtils adUtils;
     private ADParser adParser;
     private ADDefineAction dAction;
     private ADDefineFinalNode dFinalNode;
@@ -88,8 +84,6 @@ public class ADDefineNodesActionAndControl {
         this.syncObjectsEdge = syncObjectsEdge2;
         this.objectEdges = objectEdges;
         this.queueNode = queueNode;
-        this.queueRecreateNode = queueRecreateNode;
-        this.callBehaviourList = callBehaviourList;
         this.eventChannel = eventChannel;
         this.lockChannel = lockChannel;
         this.allInitial = allInitial;
@@ -112,468 +106,181 @@ public class ADDefineNodesActionAndControl {
         this.createdAccept = createdAccept;
         this.allGuards = allGuards;
         this.signalChannelsLocal = signalChannelsLocal;
-        this.adUtils = adUtils;
         this.adParser = adParser;
     }
+    
+    
+    
+    public String defineNodes() throws ParsingException {
+    	StringBuilder nodes = new StringBuilder();
+    	
+    	for (IActivityNode activityNode : ad.getActivityNodes()) {
+    		 if (activityNode instanceof IAction) {
+                 if (((IAction) activityNode).isCallBehaviorAction()) {
+                     nodes.append(defineCallBehaviour(activityNode));
+                 } else if (((IAction) activityNode).isSendSignalAction()) {
+                     nodes.append(defineSignal(activityNode));
+                 } else if (((IAction) activityNode).isAcceptEventAction()) {
+                     nodes.append(defineAccept(activityNode));
+                 } else {//TODO else if value specification(new class)
+                     nodes.append(defineAction(activityNode));    // create action node and set next action node
+                 }
+             } else if (activityNode instanceof IControlNode) {
+                 if (((IControlNode) activityNode).isFinalNode()) {
+                     nodes.append(defineFinalNode(activityNode)); // create final node and set next action node
+                 } else if (((IControlNode) activityNode).isFlowFinalNode()) {
+                     nodes.append(defineFlowFinal(activityNode)); // create flow final and set next action node
+                 } else if (((IControlNode) activityNode).isInitialNode()) {
+                     nodes.append(defineInitialNode(activityNode)); // create initial node and set next action node
+                 } else if (((IControlNode) activityNode).isForkNode()) {
+                	 nodes.append(defineFork(activityNode)); // create fork node and set next action node
+                 } else if (((IControlNode) activityNode).isJoinNode()) {
+                	 nodes.append(defineJoin(activityNode)); // create join node and set next action node
+                 } else if (((IControlNode) activityNode).isDecisionNode()) {
+                	 nodes.append(defineDecision(activityNode)); // create decision node and set next action node                          
+                 }else if(((IControlNode) activityNode).isMergeNode()){
+                 	nodes.append(defineMerge(activityNode)); // create merge node and set next action node
+                 }
+             } else if (activityNode instanceof IActivityParameterNode) {
+                 if (activityNode.getOutgoings().length > 0) {
+                	 nodes.append(defineInputParameterNode(activityNode));
+                 } else if (activityNode.getIncomings().length > 0) {
+                	 nodes.append(defineOutputParameterNode(activityNode));
+                 } else {
+                     activityNode = null;
+                 }
 
-    public String defineNodesActionAndControl() throws ParsingException {
-        for (IActivityNode activityNode : ad.getActivityNodes()) {
-            if (activityNode instanceof IActivityParameterNode && activityNode.getOutgoings().length > 0) {
-                try {
-					parameterNodesInput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
-				} catch (Exception e) {
-					throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
-				}
-            }
-
-            if (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length > 0) {
-                try {
-					parameterNodesOutput.put(adUtils.nameDiagramResolver(activityNode.getName()), ((IActivityParameterNode) activityNode).getBase().getName());
-				} catch (Exception e) {
-					throw new ParsingException("Parameter node "+activityNode.getName()+" without base type\n");
-				}
-            }
-
-            if (!ADParser.containsCallBehavior &&  activityNode instanceof IAction && ((IAction) activityNode).isCallBehaviorAction()) {
-                ADParser.containsCallBehavior = true;
-            }
-        }
-
-        StringBuilder nodes = new StringBuilder();
-
-        for (IActivityNode activityNode : ad.getActivityNodes()) {
-            if (((activityNode instanceof IControlNode && ((IControlNode) activityNode).isInitialNode()) ||
-                    (activityNode instanceof IAction && (((IAction) activityNode).isSendSignalAction() || ((IAction) activityNode).isAcceptEventAction())) ||
-                    (activityNode instanceof IActivityParameterNode && activityNode.getIncomings().length == 0)) &&
-                    !queueNode.contains(activityNode)) {
-
-                queueNode.add(activityNode);
-            }
-        }
-
-        int input = 0;
-        int expectedInput = 0;
-
-        while (queueNode.size() != 0) {
-            IActivityNode activityNode = queueNode.get(0);
-            queueNode.remove(0);
-
-            input = adUtils.countAmount(activityNode);
-            if (activityNode != null) {
-                if (activityNode instanceof IAction) {
-                    expectedInput = activityNode.getIncomings().length + ((IAction) activityNode).getInputs().length;
-                } else {
-                    expectedInput = activityNode.getIncomings().length;
-                }
-            }
-
-            String name = activityNode.getName();
-            if (activityNode instanceof IActivityParameterNode) {
-                name = "parameter_" + activityNode.getName();
-            }
-            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
-            while (activityNode != null && !(alphabetNode.containsKey(key) || isSignal(activityNode))
-                    && !queueRecreateNode.contains(activityNode)) {
-
-                if (input == expectedInput) {
-                    if (activityNode instanceof IAction) {
-                        if (((IAction) activityNode).isCallBehaviorAction()) {
-                            activityNode = defineCallBehaviour(activityNode, nodes, 0);
-                        } else if (((IAction) activityNode).isSendSignalAction()) {
-                            activityNode = defineSignal(activityNode, nodes, 0);
-                        } else if (((IAction) activityNode).isAcceptEventAction()) {
-                            activityNode = defineAccept(activityNode, nodes, 0);
-                        } else {//TODO else if value specification(classe nova)
-                            activityNode = defineAction(activityNode, nodes, 0);    // create action node and set next action node
-                        }
-                    } else if (activityNode instanceof IControlNode) {
-                        if (((IControlNode) activityNode).isFinalNode()) {
-                            activityNode = defineFinalNode(activityNode, nodes); // create final node and set next action node
-                        } else if (((IControlNode) activityNode).isFlowFinalNode()) {
-                            activityNode = defineFlowFinal(activityNode, nodes); // create flow final and set next action node
-                        } else if (((IControlNode) activityNode).isInitialNode()) {
-                            activityNode = defineInitialNode(activityNode, nodes); // create initial node and set next action node
-                        } else if (((IControlNode) activityNode).isForkNode()) {
-                            activityNode = defineFork(activityNode, nodes, 0); // create fork node and set next action node
-                        } else if (((IControlNode) activityNode).isJoinNode()) {
-                            activityNode = defineJoin(activityNode, nodes, 0); // create join node and set next action node
-                        } else if (((IControlNode) activityNode).isDecisionMergeNode()) {
-
-                            if (activityNode.getOutgoings().length > 1) {
-                                activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node
-                            } else {
-                                IFlow[] flows = activityNode.getIncomings();///
-                                boolean decision = false;
-                                for (int i = 0; i < flows.length; i++) {
-
-                                    String[] stereotype = flows[i].getStereotypes();
-
-                                    for (int j = 0; j < stereotype.length; j++) {
-                                        if (stereotype[j].equals("decisionInputFlow")) {
-                                            decision = true;
-                                        }
-                                    }
-
-
-                                }
-
-                                if (decision) {
-                                    activityNode = defineDecision(activityNode, nodes, 0); // create decision node and set next action node
-                                } else {
-                                    activityNode = defineMerge(activityNode, nodes, 0); // create merge node and set next action node
-                                }
-                            }
-                        }
-                    } else if (activityNode instanceof IActivityParameterNode) {
-                        if (activityNode.getOutgoings().length > 0) {
-                            activityNode = defineInputParameterNode(activityNode, nodes);
-                        } else if (activityNode.getIncomings().length > 0) {
-                            activityNode = defineOutputParameterNode(activityNode, nodes);
-                        } else {
-                            activityNode = null;
-                        }
-
-                    } else if (activityNode instanceof IObjectNode) {
-                        activityNode = defineObjectNode(activityNode, nodes, 0);
-                    }
-                    input = adUtils.countAmount(activityNode);
-
-                    if (activityNode != null) {
-                        if (activityNode instanceof IAction) {
-                            expectedInput = activityNode.getIncomings().length + ((IAction) activityNode).getInputs().length;
-                        } else {
-                            expectedInput = activityNode.getIncomings().length;
-                        }
-
-                        name = activityNode.getName();
-                        key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
-                        if (activityNode instanceof IActivityParameterNode) {
-                            name = "parameter_" + activityNode.getName();
-                        }
-                    }
-                } else {
-                    if (activityNode instanceof IAction) {
-                        if (((IAction) activityNode).isCallBehaviorAction()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = defineCallBehaviour(activityNode, nodes, 1);
-                        } else if (((IAction) activityNode).isSendSignalAction()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = defineSignal(activityNode, nodes, 1);
-                        } else if (((IAction) activityNode).isAcceptEventAction()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = defineAccept(activityNode, nodes, 1);
-                        } else {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = defineAction(activityNode, nodes, 1);    // create action node and set next action node
-                        }
-                    } else if (activityNode instanceof IControlNode) {
-                        if (((IControlNode) activityNode).isFinalNode()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = null;
-                        } else if (((IControlNode) activityNode).isFlowFinalNode()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = null;
-                        } else if (((IControlNode) activityNode).isForkNode()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = defineFork(activityNode, nodes, 1); // create fork node and set next action node
-                        } else if (((IControlNode) activityNode).isJoinNode()) {
-                            queueRecreateNode.add(activityNode);
-                            activityNode = defineJoin(activityNode, nodes, 1); // create join node and set next action node
-                        } else if (((IControlNode) activityNode).isDecisionMergeNode()) {
-                            queueRecreateNode.add(activityNode);
-                            if (activityNode.getOutgoings().length > 1) {
-                                activityNode = defineDecision(activityNode, nodes, 1); // create decision node and set next action node
-                            } else {
-                                IFlow[] flows = activityNode.getIncomings();
-                                boolean decision = false;
-                                for (int i = 0; i < flows.length; i++) {
-
-                                    String[] stereotype = flows[i].getStereotypes();
-
-                                    for (int j = 0; j < stereotype.length; j++) {
-                                        if (stereotype[j].equals("decisionInputFlow")) {
-                                            decision = true;
-                                        }
-                                    }
-                                }
-
-                                if (decision) {
-                                    activityNode = defineDecision(activityNode, nodes, 1); // create decision node and set next action node
-                                } else {
-                                    activityNode = defineMerge(activityNode, nodes, 1); // create merge node and set next action node
-                                }
-                            }
-                        }
-                    } else if (activityNode instanceof IObjectNode) {
-                        queueRecreateNode.add(activityNode);
-                        activityNode = defineObjectNode(activityNode, nodes, 1);
-                    }
-
-                    input = adUtils.countAmount(activityNode);
-
-                    if (activityNode != null) {
-                        if (activityNode instanceof IAction) {
-                            expectedInput = activityNode.getIncomings().length + ((IAction) activityNode).getInputs().length;
-                        } else {
-                            expectedInput = activityNode.getIncomings().length;
-                        }
-
-                        name = activityNode.getName();
-                        key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
-                        if (activityNode instanceof IActivityParameterNode) {
-                            name = "parameter_" + activityNode.getName();
-                        }
-                    }
-                }
-            }
-        }
-
-         while (queueRecreateNode.size() != 0) {
-            IActivityNode activityNode = queueRecreateNode.get(0);
-            queueRecreateNode.remove(0);
-
-            input = adUtils.countAmount(activityNode);
-            if (activityNode != null) {
-                if (activityNode instanceof IAction) {
-                    expectedInput = activityNode.getIncomings().length + ((IAction) activityNode).getInputs().length;
-                } else {
-                    expectedInput = activityNode.getIncomings().length;
-                }
-            }
-
-            String name = activityNode.getName();
-            
-            if (activityNode instanceof IActivityParameterNode) {
-                name = "parameter_" + activityNode.getName();
-            }
-            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
-            while (activityNode != null && !(alphabetNode.containsKey(key) || isSignal(activityNode))) {    // Verifica se nó é nulo, se nó já foi criado e se todos os nós de entrada dele já foram criados
-                if (activityNode instanceof IAction) {
-                    if (((IAction) activityNode).isCallBehaviorAction()) {
-                        activityNode = defineCallBehaviour(activityNode, nodes, 2);
-                    } else if (((IAction) activityNode).isSendSignalAction()) {
-                        activityNode = defineSignal(activityNode, nodes, 2);
-                    } else if (((IAction) activityNode).isAcceptEventAction()) {
-                        activityNode = defineAccept(activityNode, nodes, 2);
-                    } else {
-                        activityNode = defineAction(activityNode, nodes, 2);    // create action node and set next action node
-                    }
-                } else if (activityNode instanceof IControlNode) {
-                    if (((IControlNode) activityNode).isFinalNode()) {
-                        activityNode = defineFinalNode(activityNode, nodes); // create final node and set next action node
-                    } else if (((IControlNode) activityNode).isFlowFinalNode()) {
-                        activityNode = defineFlowFinal(activityNode, nodes); // create flow final and set next action node
-                    } else if (((IControlNode) activityNode).isForkNode()) {
-                        activityNode = defineFork(activityNode, nodes, 2); // create fork node and set next action node
-                    } else if (((IControlNode) activityNode).isJoinNode()) {
-                        activityNode = defineJoin(activityNode, nodes, 2); // create join node and set next action node
-                    } else if (((IControlNode) activityNode).isDecisionMergeNode()) {
-
-                        if (activityNode.getOutgoings().length > 1) {
-                            activityNode = defineDecision(activityNode, nodes, 2); // create decision node and set next action node
-                        } else {
-                            IFlow[] flows = activityNode.getIncomings();
-                            boolean decision = false;
-                            for (int i = 0; i < flows.length; i++) {
-
-                                String[] stereotype = flows[i].getStereotypes();
-
-                                for (int j = 0; j < stereotype.length; j++) {
-                                    if (stereotype[j].equals("decisionInputFlow")) {
-                                        decision = true;
-                                    }
-                                }
-                            }
-
-                            if (decision) {
-                                activityNode = defineDecision(activityNode, nodes, 2); // create decision node and set next action node
-                            } else {
-                                activityNode = defineMerge(activityNode, nodes, 2); // create merge node and set next action node
-                            }
-                        }
-                    }
-                } else if (activityNode instanceof IActivityParameterNode) {
-                    if (activityNode.getOutgoings().length > 0) {
-                        activityNode = defineInputParameterNode(activityNode, nodes);
-                    } else if (activityNode.getIncomings().length > 0) {
-                        activityNode = defineOutputParameterNode(activityNode, nodes);
-                    } else {
-                        activityNode = null;
-                    }
-
-                    
-                } else if (activityNode instanceof IObjectNode) {
-                    activityNode = defineObjectNode(activityNode, nodes, 2);
-                }
-
-                input = adUtils.countAmount(activityNode);
-
-                if (activityNode != null) {
-                    if (activityNode instanceof IAction) {
-                        expectedInput = activityNode.getIncomings().length + ((IAction) activityNode).getInputs().length;
-                    } else {
-                        expectedInput = activityNode.getIncomings().length;
-                    }                    
-                    name = activityNode.getName();
-                    key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(name));
-                    if (activityNode instanceof IActivityParameterNode) {
-                        name = "parameter_" + activityNode.getName();
-                    }
-                }
-            }
-        }
-
-        //add initial central
-        if (allInitial.size() > 0) {//provavel local de alteração
-            nodes.append("init_" + adUtils.nameDiagramResolver(ad.getName()) + "_t(id) = (" + allInitial.get(0));
-            for (int i = 1; i < allInitial.size(); i++) {
-                nodes.append("(id) ||| " + allInitial.get(i));
-            }
-
-            nodes.append("(id)) /\\ END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName())+"(id)");
-
-            alphabetAllInitialAndParameter.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-            
-            Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,"init");
-            alphabetNode.put(pair, alphabetAllInitialAndParameter);
-        }
-
-        nodes.append("\n");
-
-        return nodes.toString();
+             } else if (activityNode instanceof IObjectNode && !(activityNode instanceof IPin)) {
+            	 nodes.append(defineObjectNode(activityNode));
+             }
+		}
+    	
+    	
+    	
+    	
+    	
+    	return nodes.toString();
     }
 
-    private boolean isSignal(IActivityNode activityNode) {
-        return (activityNode instanceof IAction &&
-                ((((IAction) activityNode).isSendSignalAction() && createdSignal.contains(activityNode.getId())) ||
-                        (((IAction) activityNode).isAcceptEventAction() && createdAccept.contains(activityNode.getId()))));
-    }
-
-    private IActivityNode defineAction(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
+    private String defineAction(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dAction = new ADDefineAction(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                parameterNodesInput, unionList, typeUnionList, adUtils, adParser);
+        dAction = new ADDefineAction(ad, alphabetNode, adUtils);
 
-        return dAction.defineAction(activityNode, nodes, code);
+        return dAction.defineAction(activityNode);
     }
 
-    private IActivityNode defineFinalNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineFinalNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dFinalNode = new ADDefineFinalNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dFinalNode.defineFinalNode(activityNode, nodes);
+        return dFinalNode.defineFinalNode(activityNode);
     }
 
-    private IActivityNode defineInitialNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineInitialNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dInitialNode = new ADDefineInitialNode(ad, allInitial, alphabetAllInitialAndParameter, queueNode, syncChannelsEdge, adUtils);
+        dInitialNode = new ADDefineInitialNode(ad, allInitial, alphabetAllInitialAndParameter, queueNode, syncChannelsEdge, adUtils,alphabetNode);
 
-        return dInitialNode.defineInitialNode(activityNode, nodes);
+        return dInitialNode.defineInitialNode(activityNode);
     }
 
-    private IActivityNode defineCallBehaviour(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
+    private String defineCallBehaviour(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dCallBehavior = new ADDefineCallBehavior(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                callBehaviourList,  parameterNodesInput, unionList, typeUnionList, adUtils);
+        dCallBehavior = new ADDefineCallBehavior(ad, alphabetNode, adUtils);
 
-        return dCallBehavior.defineCallBehaviour(activityNode, nodes, code);
+        return dCallBehavior.defineCallBehaviour(activityNode);
     }
 
-    private IActivityNode defineFork(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineFork(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dFork = new  ADDefineFork(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges,queueNode, adUtils);
+        dFork = new  ADDefineFork(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dFork.defineFork(activityNode, nodes, code);
+        return dFork.defineFork(activityNode);
     }
 
-    private IActivityNode defineJoin(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineJoin(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dJoin = new ADDefineJoin(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,  objectEdges, parameterNodesInput,
-                unionList, typeUnionList, adUtils, adParser);
+        dJoin = new ADDefineJoin(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,  objectEdges, adUtils);
 
-        return dJoin.defineJoin(activityNode, nodes, code);
+        return dJoin.defineJoin(activityNode);
     }
 
-    private IActivityNode defineMerge(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineMerge(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dMerge = new ADDefineMerge(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, parameterNodesInput,
                 unionList, typeUnionList, adUtils);
 
-        return dMerge.defineMerge(activityNode, nodes, code);
+        return dMerge.defineMerge(activityNode);
     }
 
-    private IActivityNode defineDecision(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineDecision(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dDecision = new ADDefineDecision(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                parameterNodesInput, adUtils);
+        dDecision = new ADDefineDecision(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dDecision.defineDecision(activityNode, nodes, code);
+        return dDecision.defineDecision(activityNode);
     }
 
-    private IActivityNode defineFlowFinal(IActivityNode activityNode, StringBuilder nodes) throws ParsingException {
+    private String defineFlowFinal(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dFlowFinal = new ADDefineFlowFinal(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dFlowFinal.defineFlowFinal(activityNode, nodes);
+        return dFlowFinal.defineFlowFinal(activityNode);
     }
 
-    private IActivityNode defineInputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineInputParameterNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dInputParameterNode = new ADDefineInputParameterNode(ad, parameterAlphabetNode, syncObjectsEdge, objectEdges,
-                queueNode, allInitial, alphabetAllInitialAndParameter, adUtils);
+                allInitial, alphabetAllInitialAndParameter, adUtils,alphabetNode, parameterNodesInput);
 
-        return dInputParameterNode.defineInputParameterNode(activityNode, nodes);
+        return dInputParameterNode.defineInputParameterNode(activityNode);
     }
 
-    private IActivityNode defineOutputParameterNode(IActivityNode activityNode, StringBuilder nodes) {
+    private String defineOutputParameterNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dOutputParameterNode = new ADDefineOutputParameterNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge,
-                objectEdges,  parameterNodesInput, typeUnionList, adUtils);
+                objectEdges,  adUtils, parameterNodesOutput);
 
-        return dOutputParameterNode.defineOutputParameterNode(activityNode, nodes);
+        return dOutputParameterNode.defineOutputParameterNode(activityNode);
     }
 
-    private IActivityNode defineObjectNode(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineObjectNode(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dObjectNode = new ADDefineObjectNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode,
-                parameterNodesInput, unionList, typeUnionList, adUtils);
+        dObjectNode = new ADDefineObjectNode(ad, alphabetNode, syncChannelsEdge, syncObjectsEdge, objectEdges, adUtils);
 
-        return dObjectNode.defineObjectNode(activityNode, nodes, code);
+        return dObjectNode.defineObjectNode(activityNode);
     }
 
-    private IActivityNode defineSignal(IActivityNode activityNode, StringBuilder nodes, int code) {
+    private String defineSignal(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dSignal = new ADDefineSignal(ad, alphabetNode, syncChannelsEdge, queueNode, countSignal, countAccept, createdSignal,
-                createdAccept, adUtils);
+        dSignal = new ADDefineSignal(ad, alphabetNode, countSignal, createdSignal,adUtils);
 
-        return dSignal.defineSignal(activityNode, nodes, code);
+        return dSignal.defineSignal(activityNode);
     }
 
-    private IActivityNode defineAccept(IActivityNode activityNode, StringBuilder nodes, int code) throws ParsingException {
+    private String defineAccept(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dAccept = new ADDefineAccept(ad, alphabetNode, syncChannelsEdge, queueNode, countAccept, createdAccept, adUtils);
+        dAccept = new ADDefineAccept(ad, alphabetNode, countAccept, createdAccept, adUtils);
 
-        return dAccept.defineAccept(activityNode, nodes, code);
+        return dAccept.defineAccept(activityNode);
     }
 
     private ADUtils defineADUtils() {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
-                signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge,
+                signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
                 signalChannelsLocal, adParser, adParser.robo, adParser.eventsUntil, adParser.untilList);
         return adUtils;
     }

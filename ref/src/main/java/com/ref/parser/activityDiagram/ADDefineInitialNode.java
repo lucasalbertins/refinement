@@ -1,36 +1,44 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-import com.change_vision.jude.api.inf.model.IFlow;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import com.ref.exceptions.ParsingException;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.IObjectFlow;
+
 public class ADDefineInitialNode {
 
     private IActivity ad;
     private List<String> allInitial;
-    private ArrayList<String> alphabetAllInitialAndParameter;
+    private ArrayList<String> alphabetInitial;
     private List<IActivityNode> queueNode;
     private HashMap<Pair<IActivity,String>, String> syncChannelsEdge;
     private ADUtils adUtils;
+    private HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode;
 
     public ADDefineInitialNode(IActivity ad, List<String> allInitial, ArrayList<String> alphabetAllInitialAndParameter,
-                               List<IActivityNode> queueNode, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2, ADUtils adUtils) {
+                               List<IActivityNode> queueNode, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2, ADUtils adUtils,
+                               HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2) {
         this.ad = ad;
         this.allInitial = allInitial;
-        this.alphabetAllInitialAndParameter = alphabetAllInitialAndParameter;
+        this.alphabetInitial = alphabetAllInitialAndParameter;
         this.queueNode = queueNode;
         this.syncChannelsEdge = syncChannelsEdge2;
         this.adUtils = adUtils;
+        this.alphabetNode = alphabetNode2;
     }
 
-    public IActivityNode defineInitialNode(IActivityNode activityNode, StringBuilder nodes) {
+    public String defineInitialNode(IActivityNode activityNode) throws ParsingException {
         StringBuilder initialNode = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameInitialNode = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        String diagram = adUtils.nameDiagramResolver(ad.getName());
+        String nameInitialNode = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
+        String nameInitialNodeTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
 
@@ -39,26 +47,42 @@ public class ADDefineInitialNode {
         adUtils.update(alphabet, initialNode, inFlows.length, outFlows.length, false);
 
         initialNode.append("(");
-
-        for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-            String ce = adUtils.createCE();
+        for (int i = 0; i < outFlows.length; i++) { // creates the parallel output channels
+			if (outFlows[i] instanceof IObjectFlow) {
+				throw new ParsingException("If the incoming edge of fork node "+activityNode.getName()+" is a ControlFlow, then\r\n" + 
+						"all outgoing edges shall be ControlFlows");
+			}
+			String ce;
             Pair<IActivity,String> key = new Pair<IActivity, String>(ad, outFlows[i].getId());
-            syncChannelsEdge.put(key, ce);
-            initialNode.append("(");
 
-            if (i >= 0 && i < outFlows.length - 1) {
-                adUtils.ce(alphabet, initialNode, ce, " -> SKIP) ||| ");
-            } else {
-                adUtils.ce(alphabet, initialNode, ce, " -> SKIP)");
-            }
-        }
+			if (syncChannelsEdge.containsKey(key)) {
+				ce = syncChannelsEdge.get(key);
+			} else {
+				ce = adUtils.createCE();
+				syncChannelsEdge.put(key, ce);
+			}
+
+			initialNode.append("(");
+
+			if (i >= 0 && i < outFlows.length - 1) {
+				adUtils.ce(alphabet, initialNode, ce, " -> SKIP) ||| ");
+			} else {
+				adUtils.ce(alphabet, initialNode, ce, " -> SKIP)");
+			}
+		}
 
         initialNode.append(")\n");
+        
+        initialNode.append(nameInitialNodeTermination + "(id) = ");
+        initialNode.append(nameInitialNode + "(id) /\\ END_DIAGRAM_"+ diagram +"(id)\n");
+        alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
+        Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        alphabetNode.put(pair, alphabet);
 
-        allInitial.add(nameInitialNode);
+        allInitial.add(nameInitialNodeTermination);
         for (String channel : alphabet) {
-            if (!alphabetAllInitialAndParameter.contains(channel)) {
-                alphabetAllInitialAndParameter.add(channel);
+            if (!alphabetInitial.contains(channel)) {
+                alphabetInitial.add(channel);
             }
         }
 
@@ -70,8 +94,6 @@ public class ADDefineInitialNode {
             }
         }
 
-        nodes.append(initialNode.toString());
-
-        return activityNode;
+        return initialNode.toString();
     }
 }

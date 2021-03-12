@@ -1,10 +1,11 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import com.ref.interfaces.activityDiagram.IActivity;
 
 public class ADDefinePool {
 

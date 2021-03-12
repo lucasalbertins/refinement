@@ -1,13 +1,14 @@
 package com.ref.parser.activityDiagram;
 
-import com.change_vision.jude.api.inf.model.IAction;
-import com.change_vision.jude.api.inf.model.IActivity;
-import com.change_vision.jude.api.inf.model.IActivityNode;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
+import com.ref.astah.adapter.ActivityNode;
+import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.interfaces.activityDiagram.IActivityNode;
 
 
 public class ADDefineProcessSync {
@@ -41,9 +42,9 @@ public class ADDefineProcessSync {
                         processSync.append(",");
                     }
                 }
-                List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//pega a list com todos os nos que chamam esse cba
+                List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//Gets the List with every node the invokes the CBA
             	int index = 1;
-            	for(int i=0;i<CBAList.size();i++) {//varre a lista atrás do indice desse nó
+            	for(int i=0;i<CBAList.size();i++) {//sweeps the List searching for the index of the node
             		if(Activitynode.getId().equals(CBAList.get(i).getKey())) {
             			index = i+1;
             		}
@@ -77,24 +78,24 @@ public class ADDefineProcessSync {
             processSync.append("ProcessDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = normal(");
             processSync.append(node.getValue() + termination + "(id))\n");
         }
-////////////////////////////////////////////////////////////////////////////////////////
-        processSync.append("-- Node_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n");
+//        processSync.append("Node_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n");
 
         return processSync.toString();
     }
     
     public IActivityNode findCBANode(String nodeName) {
-    	IActivityNode[] nodes = ad.getActivityNodes();//pega todos os nós do diagrama
+    	IActivityNode[] nodes = ad.getActivityNodes();//Gets all nodes
     	IAction nodeFound;
-		for(int i=0; i<nodes.length;i++) {//varre os nós
+		for(int i=0; i<nodes.length;i++) {//sweeps the nodes
 			if(ADUtils.nameResolver(nodes[i].getName()).equals(nodeName) && nodes[i] instanceof IAction) {
 				nodeFound = (IAction) nodes[i];
-				if(nodeFound.isCallBehaviorAction() && !nodeFound.hasStereotype("ANY")) {
+				if (nodeFound.isCallBehaviorAction() && !nodeFound.getStereotypes().equals("ANY")) {
+//				if(nodeFound.isCallBehaviorAction() && !nodeFound.hasStereotype("ANY")) {
+//				if(nodeFound.isCallBehaviorAction()) {
 					return nodeFound;
 				}
 			}
 		}
 		return null;
 	}
-////////////////////////////////////////////////////////////////////////////////////////    
 }
