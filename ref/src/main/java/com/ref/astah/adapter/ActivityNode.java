@@ -59,4 +59,8 @@ public abstract class ActivityNode implements IActivityNode{
 		return this.outgoings;
 	}
 	
+	public boolean hasStereotype(String stereotype) {
+		return activityNode.hasStereotype(stereotype);
+	}
+	
 }

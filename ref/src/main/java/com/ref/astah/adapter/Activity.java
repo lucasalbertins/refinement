@@ -132,5 +132,9 @@ public class Activity implements IActivity{
 		return partitions;
 	}
 	
+	public boolean hasStereotype(String stereotype) {
+		return activity.hasStereotype(stereotype);
+	}
+	
 
 }

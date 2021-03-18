@@ -33,7 +33,7 @@ public class ADDefineProcessSync {
         for(Pair<IActivity, String> node :keys) {
             ArrayList<String> alphabet = alphabetNode.get(node);
             IActivityNode Activitynode = findCBANode(node.getValue());
-            if(Activitynode != null) {
+            if(Activitynode != null && !((IAction) Activitynode).hasStereotype("ANY")) {
         		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = union({|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
                 for (int i = 0; i < alphabet.size(); i++) {
@@ -43,6 +43,8 @@ public class ADDefineProcessSync {
                     }
                 }
                 List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//Gets the List with every node the invokes the CBA
+				
+                
             	int index = 1;
             	for(int i=0;i<CBAList.size();i++) {//sweeps the List searching for the index of the node
             		if(Activitynode.getId().equals(CBAList.get(i).getKey())) {

@@ -186,10 +186,10 @@ public class ADDefineChannels {
         		}        		
         	}
         	
-            for (String signalChannel : keySignalChannels) {
-                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
-                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
-            }
+//            for (String signalChannel : keySignalChannels) {
+//                channels.append("channel signal_" + signalChannel + ": ID_"+nameMax +". countSignal_" + signalChannel + "\n");
+//                channels.append("channel accept_" + signalChannel + ": ID_"+nameMax +". countAccept_" + signalChannel + ".countSignal_" + signalChannel +"\n");
+//            }
 
 //            channels.append("channel loop\n");
             channels.append("channel dc\n");

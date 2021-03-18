@@ -29,6 +29,10 @@ public class Class implements IClass {
 	public String[] getStereotypes() {
 		return classe.getStereotypes();
 	}
+	
+	public boolean hasStereotype(String stereotype) {
+		return classe.hasStereotype(stereotype);
+	}
 
 
 }

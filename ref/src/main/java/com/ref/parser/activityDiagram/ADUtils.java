@@ -233,8 +233,7 @@ public class ADUtils {
 		adParser.countUntil_ad++;
 		// alphabetNode.add("begin." + adParser.countUntil_ad + ",end." +
 		// adParser.countUntil_ad);//TODO olhar
-		action.append(
-				"begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
+		action.append("begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
 		robo.add(partitionName + "::" + eventName);
 		untilEvents.add(partitionName + "::" + eventName);
 		untilList.put("" + adParser.countUntil_ad, partitionName + "::" + eventName);
@@ -246,7 +245,7 @@ public class ADUtils {
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 
 		adParser.countUntil_ad++;
-		alphabetNode.add("chaos." + adParser.callBehaviourList);// TODO olhar
+//		alphabetNode.add("chaos." + adParser.callBehaviourList);// TODO olhar
 		action.append("chaos." + adParser.callBehaviourList + " -> CHAOS(Events)");
 		// robo.add(partitionName + "::" + eventName);
 		// untilEvents.add(partitionName + "::" + eventName);
@@ -1027,7 +1026,7 @@ public class ADUtils {
 
 	public void createAny(ArrayList<String> alphabet, StringBuilder callBehaviour) {
 		int index = ++adParser.countAny_ad;
-		alphabet.add("chaos." + index);
+//		alphabet.add("chaos." + index);
 		callBehaviour.append("chaos." + index + " -> SKIP;");
 
 	}

@@ -43,4 +43,8 @@ public class Partition implements IPartition{
 	public IPartition[] getSubPartitions() {
 		return subpartitions;
 	}
+	
+	public boolean hasStereotype(String stereotype) {
+		return partition.hasStereotype(stereotype);
+	}
 }

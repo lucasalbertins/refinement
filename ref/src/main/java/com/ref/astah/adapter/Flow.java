@@ -55,4 +55,8 @@ public abstract class Flow implements IFlow{
 		this.source = source;
 	}
 	
+	public boolean hasStereotype(String stereotype) {
+		return flow.hasStereotype(stereotype);
+	}
+	
 }

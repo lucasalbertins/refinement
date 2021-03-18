@@ -9,4 +9,6 @@ public interface INamedElement {
 	String getDefinition();
 	
 	String[] getStereotypes();
+	
+	boolean hasStereotype(String stereotype);
 }

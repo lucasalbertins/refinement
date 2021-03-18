@@ -36,5 +36,9 @@ public class ActivityDiagram implements IActivityDiagram{
 	public IActivity getActivity() {
 		return activity;
 	}
+	
+	public boolean hasStereotype(String stereotype) {
+		return activityDiagram.hasStereotype(stereotype);
+	}
 
 }

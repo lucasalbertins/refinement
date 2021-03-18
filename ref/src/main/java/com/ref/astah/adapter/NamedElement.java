@@ -39,4 +39,8 @@ public class NamedElement implements INamedElement{
 		return this.getName();
 	}
 	
+	public boolean hasStereotype(String stereotype) {
+		return namedElement.hasStereotype(stereotype);
+	}
+	
 }

@@ -56,13 +56,15 @@ public class ADDefineCallBehavior {
             adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj, typeMemoryLocal.get(nameObj));
         }
        
-        try {
-            	((IAction) activityNode).getCallingActivity().getActivityDiagram().getName();
-			} 
-        catch (Exception e) {
-				throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
+		try {
+			if (!((IAction) activityNode).hasStereotype("ANY")) {
+				((IAction) activityNode).getCallingActivity().getActivityDiagram().getName();
+			}
+
+		} catch (Exception e) {
+			throw new ParsingException("The Call Behavior Action " + activityNode.getName()
+					+ " is unlinked with other diagram\n");
 		}
-        callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
        
         
         //count outFlowsPin
@@ -74,11 +76,15 @@ public class ADDefineCallBehavior {
             countOutFlowPin += outPins[i].getOutgoings().length;
         }
 ////////////////////////////////////////////////////////////////////////////////////////        
+//        for (String nameObj : namesMemoryLocal) {
+//            adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj, typeMemoryLocal.get(nameObj));
+//        }
+        
         try {
         	((IAction) activityNode).getCallingActivity().getActivityDiagram().getName();
 		} catch (Exception e) {
-			if (!activityNode.getStereotypes().equals("ANY")) {
-//			if (!activityNode.hasStereotype("ANY")) {
+			//if (!activityNode.getStereotypes().equals("ANY")) {
+			if (!activityNode.hasStereotype("ANY")) {
 				throw new ParsingException("The Call Behavior Action "+activityNode.getName()+" is unlinked with other diagram\n");
 			}
 			
@@ -98,13 +104,14 @@ public class ADDefineCallBehavior {
 		            alphabetNode.put(key, alphabet);
 //		            nodes.append(callBehaviour.toString());
 		        	
-	    			return null;
+	    			return callBehaviour.toString();
 	    		} 
 				
 			}
 			
 		}
 ////////////////////////////////////////////////////////////////////////////////////////        
+	    callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
         adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
         
         adUtils.outgoingEdges(callBehaviour, alphabet, outFlows, outPins, null);

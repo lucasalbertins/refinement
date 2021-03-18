@@ -394,8 +394,7 @@ public class ADParser {
 ////////////////////////////////////////////////////////////////////////////////////////        		
         		if (activityNode instanceof IAction) {
                     if (((IAction) activityNode).isCallBehaviorAction()) {
-//                    	if (!activityNode.hasStereotype("ANY")) {
-                    	if (!activityNode.getStereotypes().equals("ANY")) {
+                    	if (!activityNode.hasStereotype("ANY")) {
                     		if(((IAction) activityNode).getCallingActivity() == null) {
                         		throw new ParsingException("Call Behavior Action "+activityNode.getName() +" not linked\n");
                         	}else {

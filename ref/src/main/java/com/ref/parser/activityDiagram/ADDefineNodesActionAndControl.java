@@ -186,7 +186,7 @@ public class ADDefineNodesActionAndControl {
         return dInitialNode.defineInitialNode(activityNode);
     }
 
-    private String defineCallBehaviour(IActivityNode activityNode) throws ParsingException {
+	private String defineCallBehaviour(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
         dCallBehavior = new ADDefineCallBehavior(ad, alphabetNode, adUtils);
