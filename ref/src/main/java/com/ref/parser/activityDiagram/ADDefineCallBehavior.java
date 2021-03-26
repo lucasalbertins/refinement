@@ -114,7 +114,7 @@ public class ADDefineCallBehavior {
 	    callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
         adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
         
-        adUtils.outgoingEdges(callBehaviour, alphabet, outFlows, outPins, null);
+        adUtils.outgoingEdges(callBehaviour, alphabet, outFlows, outPins, null,false);
         
         callBehaviour.append(nameCallBehaviour+"(id)\n");
 

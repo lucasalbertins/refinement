@@ -129,7 +129,7 @@ public class ADDefineSignal {
             adUtils.getLocal(alphabet, signal, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal);
+        adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal,false);
         
         signal.append(nameSignal + "(id)\n");
 

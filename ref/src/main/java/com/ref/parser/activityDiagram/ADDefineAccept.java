@@ -84,7 +84,7 @@ public class ADDefineAccept {
 			adUtils.until(alphabet, accept, adUtils.nameRobochartResolver(activityNode.getName(), ".in"),
 					" -> SKIP; ");
 		} else {
-			adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept);
+			adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept,outPins);
 		}
 ////////////////////////////////////////////////////////////////////////////////////////
 //        adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept,activityNode);
@@ -127,7 +127,7 @@ public class ADDefineAccept {
             adUtils.getLocal(alphabet, accept, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.outgoingEdges(accept, alphabet, outFlows, outPins, definitionFinal);
+        adUtils.outgoingEdges(accept, alphabet, outFlows, outPins, definitionFinal,true);
 
         accept.append(nameAccept + "(id)\n");
 

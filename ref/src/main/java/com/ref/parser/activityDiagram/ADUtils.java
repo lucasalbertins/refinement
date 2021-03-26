@@ -136,20 +136,20 @@ public class ADUtils {
 
     public void get(ArrayList<String> alphabetNode, StringBuilder action, String nameObject) {
         String get = "get_" + nameObject + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countGet_ad++;
-        alphabetNode.add(get);
+//        alphabetNode.add(get);
         action.append(get + "?" + nameObject + " -> ");
     }
 
     public void set(ArrayList<String> alphabetNode, StringBuilder action, String nameMemory, String nameObject) {
         String set = "set_" + nameMemory + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
-        alphabetNode.add(set);
+//        alphabetNode.add(set);
         action.append(set +"!" + nameObject + " -> ");
         parameterNodesOutputObject.put(nameMemory, nameObject);
     }
 
     public void setLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String datatype) {
         String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
-        alphabetNode.add(set);
+//        alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         if (!memoryLocal.keySet().contains(memoryLocalPair)) {
@@ -159,7 +159,7 @@ public class ADUtils {
 
     public void getLocal(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String datatype) {
         String get = "get_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countGet_ad++;
-        alphabetNode.add(get);
+//        alphabetNode.add(get);
         action.append(get + "?" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         if (!memoryLocal.keySet().contains(memoryLocalPair)) {
@@ -169,7 +169,7 @@ public class ADUtils {
 
     public void setLocalInput(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String oeIn, String datatype) {
         String set = "set_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
-        alphabetNode.add(set);
+//        alphabetNode.add(set);
         action.append(set + "!" + data + " -> ");
         Pair<String, String> memoryLocalPair = new Pair<String, String>(nameNode, nameObject);
         memoryLocalChannel.add(new Pair<String, String>(oeIn, nameObject));
@@ -419,7 +419,7 @@ public class ADUtils {
 //    }
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept) {
+	public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept, IOutputPin[] outPins) {
 		String partitionName;
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 	
@@ -444,7 +444,12 @@ public class ADUtils {
 			}
 		}
 	
-		accept.append(partitionName + "::" + nameAccept + " -> ");
+		accept.append(partitionName + "::" + nameAccept);
+		for (int i = 0; i < outPins.length; i++) {
+			accept.append("?"+outPins[i].getName());
+		}
+		accept.append(" -> ");
+		
 		robo.add(partitionName + "::" + nameAccept);
 	
 		if (index >= 0) {
@@ -821,7 +826,7 @@ public class ADUtils {
 	}
 	
 	public void outgoingEdges(StringBuilder action, ArrayList<String> alphabet, IFlow[] outFlows,
-			IOutputPin[] outPins, String[] definitionFinal) throws ParsingException {
+			IOutputPin[] outPins, String[] definitionFinal, boolean isAccept) throws ParsingException {
 		// defining outgoing edges
         if (outFlows.length > 0 || outPins.length > 0) {
             action.append("(");
@@ -883,7 +888,14 @@ public class ADUtils {
 				}
             	
             	
-            	if (definitionFinal != null) {//not call behavior
+            	if (isAccept) {
+            		action.append("(");
+            		if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+            			oe(alphabet, action, oe, "!"+outPins[i].getName(), " -> SKIP) ||| ");
+	                } else {
+	                    oe(alphabet, action, oe, "!"+outPins[i].getName(), " -> SKIP)");
+	                }
+            	} else if (definitionFinal != null) {//not call behavior
             		String value = "";
                     for (int j = 0; j < definitionFinal.length; j++) {
                         String[] expression = definitionFinal[j].split("=");

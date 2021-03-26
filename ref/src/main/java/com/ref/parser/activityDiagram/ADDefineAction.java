@@ -18,12 +18,14 @@ public class ADDefineAction {
 
     private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
     private ADUtils adUtils;
+//    private List<Pair<String, Integer>> countAction;
 
     public ADDefineAction(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, 
     		ADUtils adUtils) {
         this.ad = ad;
         this.alphabetNode = alphabetNode2;
         this.adUtils = adUtils;
+//        this.countAction = countAction;
     }
     
     
@@ -32,6 +34,18 @@ public class ADDefineAction {
         ArrayList<String> alphabet = new ArrayList<>();
         String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
         String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        ////////////////////////////////////////////////////////////////////////////////////////
+//        int idAction = 1;
+//        for (int i = 0; i < countAction.size(); i++) {
+//        	String nAccept = adUtils.nameRobochartResolver(activityNode.getName());
+//        	if (countAction.get(i).getKey().equals(nAccept)) {
+//        		idAction = countAction.get(i).getValue();
+//        		break;
+//        	}
+//        }
+//        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName());
+//        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        ////////////////////////////////////////////////////////////////////////////////////////
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
@@ -43,8 +57,7 @@ public class ADDefineAction {
         int countOutFlowPin = 0;
         if(Character.isDigit(nameAction.charAt(0))) {
         	throw new ParsingException("The node name "+adUtils.nameDiagramResolver(activityNode.getName())+" cannot start with a number\n");
-        }
-        
+        }     
         
         //if node has opaque expressions
         String definition = activityNode.getDefinition();
@@ -65,7 +78,7 @@ public class ADDefineAction {
         		&& inFlows[0].getStereotypes()[0].equals("UNTIL")) {
         	adUtils.until(alphabet, action, adUtils.nameRobochartResolver(activityNode.getName()),
         			" -> SKIP; ");
-        } else {
+        } else if (!activityNode.hasStereotype("CONVERTER"))  {
         	adUtils.event(alphabet, adUtils.nameRobochartResolver(activityNode.getName()), action);
         }
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -109,7 +122,7 @@ public class ADDefineAction {
         }
 
         
-        adUtils.outgoingEdges(action, alphabet, outFlows, outPins, definitionFinal);
+        adUtils.outgoingEdges(action, alphabet, outFlows, outPins, definitionFinal,false);
 
         // defining the recursion
         action.append(nameAction + "(id)\n");
