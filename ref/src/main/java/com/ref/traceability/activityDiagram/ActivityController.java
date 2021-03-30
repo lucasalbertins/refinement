@@ -28,22 +28,20 @@ import com.ref.parser.activityDiagram.ADUtils;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.wellformedness.WellFormedness;
 
+
 public class ActivityController {
-	public static enum VerificationType {
-		DEADLOCK, DETERMINISM
-	};
-
+	public static enum VerificationType { DEADLOCK, DETERMINISM};
 	private static Properties prop;
-
+	
 	public static boolean firstInteration = true;
-
-	public static final String FDR3_PROPERTY_FILE = System.getProperty("user.home")
-			+ System.getProperty("file.separator") + "ref.properties";
+	
+	public static final String FDR3_PROPERTY_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "ref.properties";
 	public static final String FDR3_LOCATION_PROPERTY = "fdr3_location";
 	public static final String FDR3_JAR_LOCATION_PROPERTY = "fdr3_jar_location";
-
+	
 	private static ActivityController controller;
-
+	
+	
 	private ActivityController() throws IOException {
 		File propertyFile = new File(FDR3_PROPERTY_FILE);
 		if (!propertyFile.exists()) {
@@ -57,36 +55,33 @@ public class ActivityController {
 			prop = new Properties();
 			prop.load(new FileInputStream(propertyFile));
 		}
-
+	
 	}
-
+	
 	public static ActivityController getInstance() throws IOException {
 		if (controller == null) {
 			controller = new ActivityController();
-		}
+		} 
 		return controller;
 	}
+	
+	
+	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
 
-	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar)
-			throws FDRException, ParsingException, FileNotFoundException, UnsupportedEncodingException,
-			WellFormedException {
 		Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
-		ActivityDiagram activityDiagram = new ActivityDiagram((IActivityDiagram) diagram);
-		activity.setActivityDiagram(activityDiagram);
-
-		HashMap<IActivity, List<String>> counterExample = checkProperty(activity, activityDiagram, type, progressBar);
-		if (counterExample != null) {
-			CounterExampleAstah.createCounterExample(counterExample, diagram, type);// "our copy", astah original,
-																					// counter example type
-		}
+			ActivityDiagram activityDiagram = new ActivityDiagram( (IActivityDiagram) diagram);
+			activity.setActivityDiagram(activityDiagram);
+			
+			HashMap<IActivity, List<String>> counterExample = checkProperty(activity,activityDiagram,type,progressBar);
+			if(counterExample != null) {
+				CounterExampleAstah.createCounterExample(counterExample, diagram, type);//"our copy", astah original, counter example type
+			}
 	}
+	
+	public HashMap<IActivity, List<String>> checkProperty(Activity activity,
+			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
+		WellFormedness.WellFormed();	
 
-	public HashMap<IActivity, List<String>> checkProperty(Activity activity, ActivityDiagram activityDiagram,
-			VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException,
-			UnsupportedEncodingException, ParsingException, FDRException, WellFormedException {
-
-		WellFormedness.wellFormed(activityDiagram);
-		System.out.println("passou pelo wellformed");
 		settingFDR();
 
 		ADParser parser = new ADParser(activity, activityDiagram.getName(), activityDiagram);
@@ -141,6 +136,7 @@ public class ActivityController {
 			 */
 		}
 		return null;
+
 	}
 
 	private void settingFDR() throws FDRException {
@@ -172,18 +168,17 @@ public class ActivityController {
 						firstInteration = false;
 					}
 				} else {
-					throw new FDRException(
-							"FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
+					throw new FDRException("FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
 				}
 			} else {
-				throw new FDRException(
-						"FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
+				throw new FDRException("FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
 			}
 		} else {
-			throw new FDRException(
-					"FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
+			throw new FDRException("FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
 		}
-
+			
+				
+		
 	}
 
 	public void setFDRLocation(String location) throws FDRException {
@@ -193,13 +188,13 @@ public class ActivityController {
 
 		} else if (System.getProperty("os.name").contains("Win")) {
 			filename = location + "\\bin\\fdr.jar";
-		} else {
+		}else {
 			filename = location + "/lib/fdr.jar";
 		}
 		File fdrlib = new File(filename);
 		if (!fdrlib.exists()) {
 			throw new FDRException("Library fdr.jar not found!");
-
+			
 		} else {
 			try {
 				prop.setProperty(FDR3_LOCATION_PROPERTY, location);
@@ -215,9 +210,10 @@ public class ActivityController {
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}
+			
 
 		}
-
+		
 	}
 
 	public String getFDRLocation() {
