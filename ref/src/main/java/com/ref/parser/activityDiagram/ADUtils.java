@@ -335,7 +335,7 @@ public class ADUtils {
     }
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal) {
+	public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IInputPin[] inPins) {
 		String partitionName;
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 
@@ -343,7 +343,7 @@ public class ADUtils {
 			localSignalChannelsSync.add(partitionName + "::" + nameSignal);
 		}
 
-		if (!signalChannels.containsKey(nameSignal)) {// TODO local onde modifica o signalchannels
+		if (!signalChannels.containsKey(nameSignal)) {// TODO local onde modifica o signal channels
 			List<IActivity> list = new ArrayList<>();
 			list.add(ad);
 			signalChannels.put(nameSignal, list);
@@ -364,7 +364,13 @@ public class ADUtils {
 			}
 		}
 
-		signal.append(partitionName + "::" + nameSignal + " -> ");
+//		signal.append(partitionName + "::" + nameSignal + " -> ");		
+		signal.append(partitionName + "::" + nameSignal);
+		for (int i = 0; i < inPins.length; i++) {
+			signal.append("?"+inPins[i].getName());
+		}
+		signal.append(" -> ");
+		
 		robo.add(partitionName + "::" + nameSignal);
 
 		if (index >= 0) {
@@ -443,7 +449,7 @@ public class ADUtils {
 				break;
 			}
 		}
-	
+//		accept.append(partitionName + "::" + nameAccept + " -> ");
 		accept.append(partitionName + "::" + nameAccept);
 		for (int i = 0; i < outPins.length; i++) {
 			accept.append("?"+outPins[i].getName());

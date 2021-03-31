@@ -84,7 +84,7 @@ public class ADDefineAccept {
 			adUtils.until(alphabet, accept, adUtils.nameRobochartResolver(activityNode.getName(), ".in"),
 					" -> SKIP; ");
 		} else {
-			adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept,outPins);
+			adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept, outPins);
 		}
 ////////////////////////////////////////////////////////////////////////////////////////
 //        adUtils.accept(alphabet ,adUtils.nameDiagramResolver(activityNode.getName()), accept,activityNode);

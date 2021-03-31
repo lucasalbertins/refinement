@@ -89,7 +89,7 @@ public class ADDefineSignal {
 			adUtils.until(alphabet, signal, adUtils.nameRobochartResolver(activityNode.getName(), ".out"),
 					" -> SKIP; ");
 		} else {
-			adUtils.signal(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal);
+			adUtils.signal(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal, inPins);
 		}
 ////////////////////////////////////////////////////////////////////////////////////////
         
@@ -129,7 +129,7 @@ public class ADDefineSignal {
             adUtils.getLocal(alphabet, signal, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal,false);
+        adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal, false);
         
         signal.append(nameSignal + "(id)\n");
 
