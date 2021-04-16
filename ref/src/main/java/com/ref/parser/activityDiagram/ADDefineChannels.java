@@ -139,6 +139,7 @@ public class ADDefineChannels {
                     allObjectEdges.add(type);
                 }
                 channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "_" + nameDiagram + "\n");
+                alphabetAstah.add(objectEdge);
             }
 
         }

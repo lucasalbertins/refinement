@@ -43,11 +43,13 @@ public class ADDefineNodesActionAndControl {
     private HashMap<String, List<String>> callBehaviourOutputs;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
+    private List<Pair<String, Integer>> countAction;
     private HashMap<String, List<IActivity>> signalChannels;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
+    private List<String> createdAction;
     private HashMap<String,Integer> allGuards;
     private ADParser adParser;
     private ADDefineAction dAction;
@@ -74,7 +76,7 @@ public class ADDefineNodesActionAndControl {
                                          Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
                                          List<Pair<String, Integer>> countAccept, HashMap<String,List<IActivity>> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
-                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser) {
+                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser, List<Pair<String, Integer>> countAction, List<String> createdAction) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.countCall = countCall;
@@ -100,10 +102,12 @@ public class ADDefineNodesActionAndControl {
         this.callBehaviourOutputs = callBehaviourOutputs;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
+        this.countAction = countAction;
         this.signalChannels = signalChannels;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.createdSignal = createdSignal;
         this.createdAccept = createdAccept;
+        this.createdAction = createdAction;
         this.allGuards = allGuards;
         this.signalChannelsLocal = signalChannelsLocal;
         this.adParser = adParser;
@@ -165,7 +169,7 @@ public class ADDefineNodesActionAndControl {
     private String defineAction(IActivityNode activityNode) throws ParsingException {
         ADUtils adUtils = defineADUtils();
 
-        dAction = new ADDefineAction(ad, alphabetNode, adUtils);
+        dAction = new ADDefineAction(ad, alphabetNode, adUtils, countAction, createdAction);
 
         return dAction.defineAction(activityNode);
     }
@@ -281,7 +285,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
-                signalChannelsLocal, adParser, adParser.robo, adParser.eventsUntil, adParser.untilList);
+                signalChannelsLocal, adParser, adParser.robo, adParser.eventsUntil, adParser.untilList, countAction, createdAction);
         return adUtils;
     }
 }

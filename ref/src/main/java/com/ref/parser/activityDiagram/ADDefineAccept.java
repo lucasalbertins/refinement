@@ -81,8 +81,12 @@ public class ADDefineAccept {
 ////////////////////////////////////////////////////////////////////////////////////////
 		if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0
 				&& inFlows[0].getStereotypes()[0].equals("UNTIL")) {
-			adUtils.until(alphabet, accept, adUtils.nameRobochartResolver(activityNode.getName(), ".in"),
-					" -> SKIP; ");
+			if (outPins.length > 0) {
+				adUtils.untilWithPins(alphabet, accept, activityNode, outPins);
+			} else {
+				adUtils.until(alphabet, accept, adUtils.nameRobochartResolver(activityNode.getName(), ".in"),
+						" -> SKIP; ");
+			}
 		} else {
 			adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept, outPins);
 		}
@@ -107,6 +111,8 @@ public class ADDefineAccept {
                 }
             }
         }
+        
+        // adicionar neste ponto na variavel namesMemoryLocal nomes dos pinos de saida caso este accept tem um until chegando
         
         //count outFlowsPin
         for (int i = 0; i < inPins.length; i++) {

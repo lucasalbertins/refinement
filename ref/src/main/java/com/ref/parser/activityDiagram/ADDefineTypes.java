@@ -23,13 +23,14 @@ public class ADDefineTypes {
     private List<ArrayList<String>> unionList;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
+    private List<Pair<String, Integer>> countAction;
     private ADUtils adUtils;
     private ADParser adParser;
 
     public ADDefineTypes(IActivity ad, IActivityDiagram adDiagram, String firstDiagram, HashMap<String, Integer> countCall, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
                          HashMap<String, String> objectEdges, HashMap<String, String> parameterNodesInput, HashMap<String, String> parameterNodesOutput,
                          List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
-                         List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept, ADUtils adUtils, ADParser adParser) {
+                         List<Pair<String, Integer>> countSignal, List<Pair<String, Integer>> countAccept, ADUtils adUtils, ADParser adParser, List<Pair<String, Integer>> countAction) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.firstDiagram = firstDiagram;
@@ -40,6 +41,7 @@ public class ADDefineTypes {
         this.unionList = unionList;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
+        this.countAction = countAction;
         this.adUtils = adUtils;
         this.adParser = adParser;
     }

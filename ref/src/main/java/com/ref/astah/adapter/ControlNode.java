@@ -15,7 +15,7 @@ public class ControlNode extends ActivityNode implements IControlNode{
 			IFlow edge = incomings[0];
 			for(IFlow flow : incomings) {
 				if(!flow.getClass().equals(edge.getClass()) ) {
-					//throw new WellFormedException("There is Control and Object flows on the incoming flows.\n");
+					throw new WellFormedException("There is Control and Object flows on the incoming flows.\n");
 				}
 			}
 		}

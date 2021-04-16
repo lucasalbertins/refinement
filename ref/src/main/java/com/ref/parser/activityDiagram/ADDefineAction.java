@@ -18,34 +18,24 @@ public class ADDefineAction {
 
     private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
     private ADUtils adUtils;
-//    private List<Pair<String, Integer>> countAction;
+    private List<Pair<String, Integer>> countAction;
+    private List<String> createdAction;
 
     public ADDefineAction(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, 
-    		ADUtils adUtils) {
+    		ADUtils adUtils, List<Pair<String, Integer>> countAction, List<String> createdAction) {
         this.ad = ad;
         this.alphabetNode = alphabetNode2;
         this.adUtils = adUtils;
-//        this.countAction = countAction;
+        this.countAction = countAction;
+        this.createdAction = createdAction;
     }
     
     
     public String defineAction(IActivityNode activityNode) throws ParsingException {
     	StringBuilder action = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
-        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
-        ////////////////////////////////////////////////////////////////////////////////////////
-//        int idAction = 1;
-//        for (int i = 0; i < countAction.size(); i++) {
-//        	String nAccept = adUtils.nameRobochartResolver(activityNode.getName());
-//        	if (countAction.get(i).getKey().equals(nAccept)) {
-//        		idAction = countAction.get(i).getValue();
-//        		break;
-//        	}
-//        }
-//        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName());
-//        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
-        ////////////////////////////////////////////////////////////////////////////////////////
+//        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
+//        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
@@ -55,6 +45,18 @@ public class ADDefineAction {
         HashMap<String, String> typeMemoryLocal = new HashMap<>();
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
+        ////////////////////////////////////////////////////////////////////////////////////////
+        int idAction = 1;
+        for (int i = 0; i < countAction.size(); i++) {
+        	String nAction = adUtils.nameRobochartResolver(activityNode.getName());
+        	if (countAction.get(i).getKey().equals(nAction)) {
+        		idAction = countAction.get(i).getValue();
+        		break;
+        	}
+        }
+        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName());
+        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        ////////////////////////////////////////////////////////////////////////////////////////
         if(Character.isDigit(nameAction.charAt(0))) {
         	throw new ParsingException("The node name "+adUtils.nameDiagramResolver(activityNode.getName())+" cannot start with a number\n");
         }     
@@ -170,6 +172,7 @@ public class ADDefineAction {
         alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()+".id"));
         Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
         alphabetNode.put(pair, alphabet);
+        createdAction.add(activityNode.getId());
 
         return action.toString();
     }	

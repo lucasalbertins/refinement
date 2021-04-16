@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ref.astah.adapter.ActivityNode;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
@@ -16,6 +17,7 @@ import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
 import com.ref.interfaces.activityDiagram.IOutputPin;
+import com.sun.tools.doclets.internal.toolkit.util.DocFinder.Output;
 
 public class ADUtils {
 
@@ -33,6 +35,7 @@ public class ADUtils {
     private HashMap<String, List<String>> callBehaviourOutputs;
     private List<Pair<String, Integer>> countSignal;
     private List<Pair<String, Integer>> countAccept;
+    private List<Pair<String, Integer>> countAction;
     private HashMap<String, List<IActivity>> signalChannels;
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
@@ -46,6 +49,7 @@ public class ADUtils {
 	public List<String> untilEvents;
 	public HashMap<String, String> untilList;
 ////////////////////////////////////////////////////////////////////////////////////////
+	//private HashMap<Pair<String,String>, String> memoryPinLocal;
 	
     public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
                    List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
@@ -54,7 +58,7 @@ public class ADUtils {
                    HashMap<String, List<IActivity>> signalChannels2, List<String> localSignalChannelsSync, HashMap<String, Integer> allGuards,
                    List<String> createdSignal, List<String> createdAccept, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                    HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges2, List<String> signalChannelsLocal, ADParser adParser,
-                   List<String> robo, List<String> untilEvents, HashMap<String, String> untilList) {
+                   List<String> robo, List<String> untilEvents, HashMap<String, String> untilList, List<Pair<String, Integer>> countAction, List<String> createdAction) {
 
         this.ad = ad;
         this.adDiagram = adDiagram;
@@ -69,6 +73,7 @@ public class ADUtils {
         this.callBehaviourOutputs = callBehaviourOutputs;
         this.countSignal = countSignal;
         this.countAccept = countAccept;
+        this.countAction = countAction;
         this.signalChannels = signalChannels2;
         this.localSignalChannelsSync = localSignalChannelsSync;
         this.allGuards = allGuards;
@@ -82,6 +87,7 @@ public class ADUtils {
 		this.robo = robo;
 		this.untilEvents = untilEvents;
 		this.untilList = untilList;
+		//this.memoryPinLocal = memoryPinLocal;
 ////////////////////////////////////////////////////////////////////////////////////////
     }
 
@@ -238,6 +244,59 @@ public class ADUtils {
 		untilEvents.add(partitionName + "::" + eventName);
 		untilList.put("" + adParser.countUntil_ad, partitionName + "::" + eventName);
 	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////
+	public void untilWithPins(ArrayList<String> alphabet, StringBuilder accept,
+			IActivityNode activityNode, IOutputPin[] outPins) {
+		String partitionName;
+		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
+		
+		
+		int idAccept = 1;
+		for (int i = 0; i < countAccept.size(); i++) {
+			String nAccept = nameRobochartResolver(activityNode.getName(), ".in");
+			if (countAccept.get(i).getKey().equals(nAccept)) {
+				idAccept = countAccept.get(i).getValue();
+				break;
+			}
+		}
+		// (WAIT_accept_ultrasonic_1(alphabet_robochart_P_Teste) [| {|set_accept_ultrasonic_u_P_Teste|} |> get_accept_ultrasonic_u_P_Teste?u ->
+		
+		accept.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName())+"_" + idAccept+"(alphabet_robochart_"+ 
+				nameDiagramResolver(ad.getName()) + ") [| {|");
+		
+		for (int i = 0; i < outPins.length; i++) {
+			//set_u_ultrasonic_P_Teste.id
+			accept.append("set_"+nameDiagramResolver(outPins[i].getName())+"_"+nameDiagramResolver(activityNode.getName())+
+					"_"+nameDiagramResolver(ad.getName())+".id"+",");
+		}
+		accept.substring(0, accept.length()-2);
+		accept.append("|} |> ");
+		
+		for (int i = 0; i < outPins.length; i++) {
+//			getMemoryPin(alphabet, accept, "accept", nameDiagramResolver(activityNode.getName()), 
+//					nameDiagramResolver(outPins[i].getName()),nameDiagramResolver(outPins[i].getBase().getName()));
+			
+			getLocal(alphabet, accept, nameDiagramResolver(outPins[i].getName()), nameDiagramResolver(activityNode.getName()), 
+					nameDiagramResolver(outPins[i].getName()),nameDiagramResolver(outPins[i].getBase().getName()));
+		}
+		
+	}
+	
+    public void getMemoryPin(ArrayList<String> alphabetNode, StringBuilder action, String nameObject, String nameNode, String data, String datatype) {
+        //get_accept_ultrasonic_u_P_Teste?u
+    	String get = "get_" + nameObject + "_" + nameNode + "_" + nameDiagramResolver(ad.getName())+"_" + data+ "_" +
+    			nameDiagramResolver(ad.getName());
+//        alphabetNode.add(get);
+        action.append(get + "?" + data + " -> ");
+        Pair<String, String> memoryLocalPair = new Pair<String, String>(nameObject+"_"+nameNode, data);
+//        if (!memoryPinLocal.keySet().contains(memoryLocalPair)) {
+//        	memoryPinLocal.put(memoryLocalPair,datatype);
+//        }
+       
+    }
+
+	////////////////////////////////////////////////////////////////////////////////////////
 
 	public void chaos(ArrayList<String> alphabetNode, StringBuilder action, String eventName,
 			String posChaos) {
@@ -1013,23 +1072,23 @@ public class ADUtils {
 		channels.append("Wait_control_processes = {");
 		int c = 0;
 
-		for (String i : untilList.keySet()) {
-			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i);
-
-			if ((c + 1) < untilList.size()) {
-				channels.append(", ");
-			}
-			// else {
-			// channels.append("}\n");
-			// }
-			c++;
-		}
-
-		if (adParser.countAny_ad > 0 && untilList.size() > 0) {
-			channels.append(", ");
-		}
-
-		c = 0;
+//		for (String i : untilList.keySet()) {
+//			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i);
+//
+//			if ((c + 1) < untilList.size()) {
+//				channels.append(", ");
+//			}
+//			// else {
+//			// channels.append("}\n");
+//			// }
+//			c++;
+//		}
+//
+//		if (adParser.countAny_ad > 0 && untilList.size() > 0) {
+//			channels.append(", ");
+//		}
+//
+//		c = 0;
 		for (int i = 1; i <= adParser.countAny_ad; i++) {
 			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i);
 			if ((c + 1) < adParser.countAny_ad) {
@@ -1049,5 +1108,7 @@ public class ADUtils {
 
 	}
 	////////////////////////////////////////////////////////////////////////////////////////
+
+	
 
 }

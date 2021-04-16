@@ -80,7 +80,7 @@ public class ActivityController {
 	
 	public HashMap<IActivity, List<String>> checkProperty(Activity activity,
 			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
-		//WellFormedness.WellFormed();	
+		WellFormedness.WellFormed();	
 
 		settingFDR();
 

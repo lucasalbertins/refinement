@@ -95,10 +95,10 @@ public class ADDefineMerge {
 		} else {
 			for (int i = 0; i < inFlows.length; i++) {
 				Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
-//				if (inFlows[i] instanceof IObjectFlow) {
-//					throw new ParsingException("Merge Node " + activityNode.getName()
-//							+ ": if the outgoing edge is a ControlFlow, all incoming edges must be ControlFlows.");
-//				} else {
+				if (inFlows[i] instanceof IObjectFlow) {
+					throw new ParsingException("Merge Node " + activityNode.getName()
+							+ ": if the outgoing edge is a ControlFlow, all incoming edges must be ControlFlows.");
+				} else {
 
 					String ceIn;
 
@@ -115,7 +115,7 @@ public class ADDefineMerge {
 					} else {
 						adUtils.ce(alphabet, merge, ceIn, " -> SKIP)");
 					}
-//				}
+				}
 			}
 		}
 		

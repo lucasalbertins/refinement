@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.ref.astah.adapter.ActivityNode;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
@@ -62,11 +63,13 @@ public class ADParser {
     private static HashMap<String, List<String>> callBehaviourOutputs = new HashMap<>(); //name; List outputs
     private static List<Pair<String, Integer>> countSignal = new ArrayList<>();
     private static List<Pair<String, Integer>> countAccept = new ArrayList<>();
+    private static List<Pair<String, Integer>> countAction = new ArrayList<>();
     private static HashMap<String,List<IActivity>> signalChannels = new HashMap<>();
     private List<String> signalChannelsLocal;
     private List<String> localSignalChannelsSync;
     private List<String> createdSignal;
     private List<String> createdAccept;
+    private List<String> createdAction;
     private HashMap<String,Integer> allGuards;
     public static HashMap<String,Integer> IdSignals = new HashMap<>();
     
@@ -122,6 +125,7 @@ public class ADParser {
         signalChannelsLocal = new ArrayList<>();
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
+        createdAction = new ArrayList<>();
         allGuards = new HashMap<>();
 ////////////////////////////////////////////////////////////////////////////////////////        
         this.countUntil_ad = 0;
@@ -182,6 +186,7 @@ public class ADParser {
         signalChannelsLocal = new ArrayList<>();
         createdSignal = new ArrayList<>();
         createdAccept = new ArrayList<>();
+        createdAction = new ArrayList<>();
         resetStatic();
         allGuards = new HashMap<>();
         firstDiagram = ad.getId(); //set first diagram
@@ -202,6 +207,7 @@ public class ADParser {
         callBehaviourListCreated = new ArrayList<>();
         countSignal = new ArrayList<>();
         countAccept = new ArrayList<>();
+        countAction = new ArrayList<>();
         signalChannels = new HashMap<>();
         alphabetPool = new HashSet<String>();
     }
@@ -263,6 +269,20 @@ public class ADParser {
 		} else {
 			throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
 		}
+//--------------------------------------------------------------    
+//        String accept_ = adUtils.nameDiagramResolver(activityNode.getName());
+        
+        String novo = "\n\n";
+        novo += 
+        		"Mem_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "(u) = \n"
+        		+ "get_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "!u -> Mem_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "(u) \n"
+        		+ "[] set_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "?u_ -> Mem_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "(u_) \n\n"
+        		//-----------------------------------------------------
+		        + "WAIT_accept_ultrasonic_1(alphabet) = \n"
+		        + "NRecurse(diff(alphabet, {|PathPlanningSM::ultrasonic.in|}), WAIT_accept_ultrasonic_1(alphabet)) \n"
+		        + "|~| \n"
+		        + "PathPlanningSM::ultrasonic.in?u -> set_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + ".u -> SKIP";
+//--------------------------------------------------------------    
         
     	String check_props = "\n\n";
     	check_props += 
@@ -281,12 +301,12 @@ public class ADParser {
     	if (countAny_ad > 0 && countUntil_ad > 0) {
 			check_props +=
 					"PROP(processes) = (MAIN [|{|begin, end, chaos, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end, chaos|}\n\n"
-					+ adUtils.printUntils()
+//					+ adUtils.printUntils()
 					+ adUtils.printAny();
 		} else if (countUntil_ad > 0) {
 			check_props +=
-					"PROP(processes) = (MAIN [|{|begin, end, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n\n"
-					+ adUtils.printUntils();
+					"PROP(processes) = (MAIN [|{|begin, end, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES(processes) ) \\ {|begin, end|}\n\n";
+//					+ adUtils.printUntils();
 		} else if (countAny_ad > 0) {
 			check_props +=
 					"PROP(processes) = (MAIN [|{|chaos, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES(processes) ) \\ {|chaos|}\n\n"
@@ -335,8 +355,8 @@ public class ADParser {
                 check +
 ////////////////////////////////////////////////////////////////////////////////////////                
                 check_props +
-                check_prop_nodes;
-////////////////////////////////////////////////////////////////////////////////////////                
+                check_prop_nodes + novo;
+////////////////////////////////////////////////////////////////////////////////////////    
 
         //reset the static values
         if (reset) {
@@ -510,7 +530,7 @@ public class ADParser {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
-                signalChannelsLocal, this, robo, eventsUntil, untilList);
+                signalChannelsLocal, this, robo, eventsUntil, untilList, countAction, createdAction);
         return adUtils;
     }
 
@@ -528,7 +548,7 @@ public class ADParser {
         ADUtils adUtils = defineADUtils();
 
         dTypes = new ADDefineTypes(ad, adDiagram, firstDiagram, countCall, alphabetNode, objectEdges, parameterNodesInput,
-                parameterNodesOutput, memoryLocalChannel, unionList, typeUnionList, countSignal, countAccept, adUtils, this);
+                parameterNodesOutput, memoryLocalChannel, unionList, typeUnionList, countSignal, countAccept, adUtils, this, countAction);
 
         return dTypes.defineTypes();
     }
@@ -548,7 +568,7 @@ public class ADParser {
                 syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode, queueRecreateNode, callBehaviourList, eventChannel,
                 lockChannel, allInitial, alphabetAllInitialAndParameter, parameterNodesInput, parameterNodesOutput, parameterNodesOutputObject,
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
-                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this);
+                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this, countAction, createdAction);
 
         return dNodesActionAndControl.defineNodes();
     }
