@@ -170,7 +170,7 @@ public class ADDefineAction {
         }
 
         alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()+".id"));
-        Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+        Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()) + "_" + idAction);
         alphabetNode.put(pair, alphabet);
         createdAction.add(activityNode.getId());
 

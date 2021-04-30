@@ -34,6 +34,7 @@ public class ADDefineAccept {
 
 	public String defineAccept(IActivityNode activityNode) throws ParsingException {
 		StringBuilder accept = new StringBuilder();
+		
 		ArrayList<String> alphabet = new ArrayList<>();
 		String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
 		IFlow[] outFlows = activityNode.getOutgoings();
@@ -57,16 +58,6 @@ public class ADDefineAccept {
 		String nameAccept = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName());
 		String nameAcceptTermination = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
 ////////////////////////////////////////////////////////////////////////////////////////	
-//		int idAccept = 1;
-//        for (int i = 0; i < countAccept.size(); i++) {
-//            if (countAccept.get(i).getKey().equals(adUtils.nameDiagramResolver(activityNode.getName()))) {
-//                idAccept = countAccept.get(i).getValue();
-//                break;
-//            }
-//        }
-//        
-//        String nameAccept = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName());
-//        String nameAcceptTermination = adUtils.nameDiagramResolver("accept_" + activityNode.getName()) + "_" + idAccept + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
 
         String definition = activityNode.getDefinition();
         String[] definitionFinal = new String[0];
@@ -113,6 +104,13 @@ public class ADDefineAccept {
         }
         
         // adicionar neste ponto na variavel namesMemoryLocal nomes dos pinos de saida caso este accept tem um until chegando
+        if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0
+				&& inFlows[0].getStereotypes()[0].equals("UNTIL") && outPins.length > 0) {
+        	for (int i = 0; i < outPins.length; i++) {
+        		namesMemoryLocal.add(outPins[i].getName());
+        		typeMemoryLocal.put(outPins[i].getName(), outPins[i].getBase().getName());
+            }
+        }
         
         //count outFlowsPin
         for (int i = 0; i < inPins.length; i++) {
@@ -133,7 +131,7 @@ public class ADDefineAccept {
             adUtils.getLocal(alphabet, accept, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj,typeMemoryLocal.get(nameObj));
         }
         
-        adUtils.outgoingEdges(accept, alphabet, outFlows, outPins, definitionFinal,true);
+        adUtils.outgoingEdges(accept, alphabet, outFlows, outPins, definitionFinal, true);
 
         accept.append(nameAccept + "(id)\n");
 

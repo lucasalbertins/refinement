@@ -40,7 +40,7 @@ public class ADDefineMemories {
         StringBuilder alphabetMemory = new StringBuilder();
         
         
-        defineMemoryPins(memory, nameDiagram, alphabetMemory);
+//        defineMemoryPins(memory, nameDiagram, alphabetMemory);
         
         defineMemoryLocal(memory, nameDiagram,alphabetMemory);
   
@@ -94,39 +94,33 @@ public class ADDefineMemories {
         return memory.toString();
     }
 
-    private void defineMemoryPins(StringBuilder memory, String nameDiagram,
-			StringBuilder alphabetMemory) {
-    	
-    	//Mem_accept_ultrasonic_u_P_Teste(u) = 
-    	//		get_accept_ultrasonic_u_P_Teste!u -> Mem_accept_ultrasonic_u_P_Teste(u) 
-    	//		[] set_accept_ultrasonic_u_P_Teste?u_ -> Mem_accept_ultrasonic_u_P_Teste(u_)
-    	
-    	
-    	
-    	
-     	for (Pair<String, String> pair : memoryLocal.keySet()) {
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
-            memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c!" + pair.getValue() + " -> ");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");
-            memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c?" + pair.getValue() + " -> ");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ")\n");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(id," + pair.getValue() + ") = ");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") /\\ END_DIAGRAM_" + nameDiagram + "(id)\n");
-            
-//            if(callBehaviors.containsKey(pair.getKey())) {
-//            	List<Pair<String,String>> memories = new ArrayList<>();
-//            	memories = callBehaviors.get(pair.getKey());
-//            	memories.add(pair);
-//            	callBehaviors.put(pair.getKey(), memories);
-//	            alphabetMemory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id,");
-//	            alphabetMemory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id,");
-//            }
-            
-        }
-        
-    	
-		
-	}
+//    private void defineMemoryPins(StringBuilder memory, String nameDiagram,
+//			StringBuilder alphabetMemory) {
+//    	
+//    	//Mem_accept_ultrasonic_u_P_Teste(u) = 
+//    	//		get_accept_ultrasonic_u_P_Teste!u -> Mem_accept_ultrasonic_u_P_Teste(u) 
+//    	//		[] set_accept_ultrasonic_u_P_Teste?u_ -> Mem_accept_ultrasonic_u_P_Teste(u_)
+//    	
+//     	for (Pair<String, String> pair : memoryLocal.keySet()) {
+//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
+//            memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c!" + pair.getValue() + " -> ");
+//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");
+//            memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c?" + pair.getValue() + " -> ");
+//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ")\n");
+//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(id," + pair.getValue() + ") = ");
+//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") /\\ END_DIAGRAM_" + nameDiagram + "(id)\n");
+//            
+////            if(callBehaviors.containsKey(pair.getKey())) {
+////            	List<Pair<String,String>> memories = new ArrayList<>();
+////            	memories = callBehaviors.get(pair.getKey());
+////            	memories.add(pair);
+////            	callBehaviors.put(pair.getKey(), memories);
+////	            alphabetMemory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id,");
+////	            alphabetMemory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id,");
+////            }
+//            
+//        }
+//	}
 
 	private void defineMemoryLocal(StringBuilder memory, String nameDiagram, StringBuilder alphabetMemory) {
         HashMap<String,List<Pair<String,String>>> callBehaviors = new HashMap<String, List<Pair<String,String>>>();

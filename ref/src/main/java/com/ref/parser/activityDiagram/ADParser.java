@@ -87,6 +87,7 @@ public class ADParser {
 	public List<String> robo;
 	public List<String> eventsUntil;
 	public HashMap<String, String> untilList;
+	public List<String> waitAccept;
 	////////////////////////////////////////////////////////////////////////////////////////
 
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
@@ -134,6 +135,7 @@ public class ADParser {
         this.robo = new ArrayList<String>();
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
+        this.waitAccept = new ArrayList<>();
 ////////////////////////////////////////////////////////////////////////////////////////
         
         
@@ -269,17 +271,11 @@ public class ADParser {
 		} else {
 			throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
 		}
-//--------------------------------------------------------------    
-//        String accept_ = adUtils.nameDiagramResolver(activityNode.getName());
-        
-        String novo = "\n\n";
+//--------------------------------------------------------------            
+        String novo = "";
         novo += 
-        		"Mem_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "(u) = \n"
-        		+ "get_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "!u -> Mem_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "(u) \n"
-        		+ "[] set_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "?u_ -> Mem_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + "(u_) \n\n"
-        		//-----------------------------------------------------
-		        + "WAIT_accept_ultrasonic_1(alphabet) = \n"
-		        + "NRecurse(diff(alphabet, {|PathPlanningSM::ultrasonic.in|}), WAIT_accept_ultrasonic_1(alphabet)) \n"
+		         "WAIT_accept_ultrasonic_1(alphabet) = \n"
+		        + "NRecurse(diff(alphabet, {|" + adUtils.printUntilWithPins() + "|}), WAIT_accept_ultrasonic_1(alphabet)) \n"
 		        + "|~| \n"
 		        + "PathPlanningSM::ultrasonic.in?u -> set_accept_ultrasonic_u_" + adUtils.nameDiagramResolver(ad.getName()) + ".u -> SKIP";
 //--------------------------------------------------------------    
@@ -287,11 +283,13 @@ public class ADParser {
     	String check_props = "\n\n";
     	check_props += 
     			"NRecurse(S, P) = |~| ev : S @ ev -> P\n"
-    			+ "\n"
-    			+ "WAIT(alphabet,event) = \n"
-    			+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
-    			+ "	|~|\n"
-    			+ "	event -> SKIP\n"
+    			+ "\n" 
+    			+ adUtils.printUntilWithPins2() + "\n"
+//    			+ "\n"
+//    			+ "WAIT(alphabet,event) = \n"
+//    			+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
+//    			+ "	|~|\n"
+//    			+ "	event -> SKIP\n"
     			+ "\n"
     			+ "WAIT_PROCCESSES(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
     			+ "Prop = PROP(Wait_control_processes) \\ alphabet_Astah \n\n"
@@ -355,7 +353,7 @@ public class ADParser {
                 check +
 ////////////////////////////////////////////////////////////////////////////////////////                
                 check_props +
-                check_prop_nodes + novo;
+                check_prop_nodes;
 ////////////////////////////////////////////////////////////////////////////////////////    
 
         //reset the static values
@@ -530,7 +528,7 @@ public class ADParser {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
-                signalChannelsLocal, this, robo, eventsUntil, untilList, countAction, createdAction);
+                signalChannelsLocal, this, robo, eventsUntil, untilList, countAction, createdAction, waitAccept);
         return adUtils;
     }
 
@@ -568,7 +566,8 @@ public class ADParser {
                 syncChannelsEdge, syncObjectsEdge, objectEdges, queueNode, queueRecreateNode, callBehaviourList, eventChannel,
                 lockChannel, allInitial, alphabetAllInitialAndParameter, parameterNodesInput, parameterNodesOutput, parameterNodesOutputObject,
                 callBehaviourNumber, memoryLocal, memoryLocalChannel, unionList, typeUnionList, callBehaviourInputs, callBehaviourOutputs,
-                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, adUtils, this, countAction, createdAction);
+                countSignal, countAccept, signalChannels, localSignalChannelsSync, createdSignal, createdAccept, allGuards, signalChannelsLocal, 
+                adUtils, this, countAction, createdAction, waitAccept);
 
         return dNodesActionAndControl.defineNodes();
     }

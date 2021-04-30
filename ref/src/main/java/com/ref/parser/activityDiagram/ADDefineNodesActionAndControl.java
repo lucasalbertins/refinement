@@ -67,6 +67,8 @@ public class ADDefineNodesActionAndControl {
     private ADDefineSignal dSignal;
     private ADDefineAccept dAccept;
 
+    private List<String> waitAccept;
+
     public ADDefineNodesActionAndControl(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
                                          HashMap<Pair<IActivity, String>, ArrayList<String>> parameterAlphabetNode2, HashMap<Pair<IActivity, String>, String> syncChannelsEdge2,
                                          HashMap<Pair<IActivity, String>, String> syncObjectsEdge2, HashMap<String, String> objectEdges, List<IActivityNode> queueNode,
@@ -76,7 +78,8 @@ public class ADDefineNodesActionAndControl {
                                          Map<Pair<String, String>,String> memoryLocal, List<Pair<String, String>> memoryLocalChannel, List<ArrayList<String>> unionList, HashMap<String, String> typeUnionList,
                                          HashMap<String, List<String>> callBehaviourInputs, HashMap<String, List<String>> callBehaviourOutputs, List<Pair<String, Integer>> countSignal,
                                          List<Pair<String, Integer>> countAccept, HashMap<String,List<IActivity>> signalChannels, List<String> localSignalChannelsSync, List<String> createdSignal, List<String> createdAccept,
-                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser, List<Pair<String, Integer>> countAction, List<String> createdAction) {
+                                         HashMap<String, Integer> allGuards, List<String> signalChannelsLocal, ADUtils adUtils, ADParser adParser, List<Pair<String, Integer>> countAction, List<String> createdAction,
+                                         List<String> waitAccept) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         this.countCall = countCall;
@@ -111,6 +114,8 @@ public class ADDefineNodesActionAndControl {
         this.allGuards = allGuards;
         this.signalChannelsLocal = signalChannelsLocal;
         this.adParser = adParser;
+        
+        this.waitAccept = waitAccept;
     }
     
     
@@ -285,7 +290,7 @@ public class ADDefineNodesActionAndControl {
         ADUtils adUtils = new ADUtils(ad, adDiagram, countCall, eventChannel, lockChannel, parameterNodesOutputObject, callBehaviourNumber,
                 memoryLocal,  memoryLocalChannel, callBehaviourInputs, callBehaviourOutputs, countSignal, countAccept,
                 signalChannels, localSignalChannelsSync, allGuards, createdSignal, createdAccept, syncChannelsEdge, syncObjectsEdge, objectEdges,
-                signalChannelsLocal, adParser, adParser.robo, adParser.eventsUntil, adParser.untilList, countAction, createdAction);
+                signalChannelsLocal, adParser, adParser.robo, adParser.eventsUntil, adParser.untilList, countAction, createdAction, waitAccept);
         return adUtils;
     }
 }
