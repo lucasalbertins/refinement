@@ -9,7 +9,5 @@ public interface IActivity extends INamedElement{
 	IActivityNode[] getActivityNodes();
 
 	void setName(String nameAD);
-	
-	IPartition [] getPartitions();
 
 }

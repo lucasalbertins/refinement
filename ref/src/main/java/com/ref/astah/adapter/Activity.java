@@ -10,7 +10,6 @@ import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
-import com.ref.interfaces.activityDiagram.IPartition;
 import com.ref.interfaces.activityDiagram.IPin;
 
 public class Activity implements IActivity{
@@ -18,22 +17,11 @@ public class Activity implements IActivity{
 	private IActivityDiagram activityDiagram;
 	private IActivityNode[] activityNodes;
 	private HashMap<String,String> owners;
-	private IPartition[] partitions;
-	
 	
 	public Activity(com.change_vision.jude.api.inf.model.IActivity activity) throws WellFormedException {
 		super();
 		this.activity = activity;
 		owners = new HashMap<>();
-		
-
-		if (activity.getPartitions() != null && activity.getPartitions().length > 0) {
-			this.partitions = new IPartition[activity.getPartitions().length];
-			for (int i=0; i < activity.getPartitions().length; i++)  {
-				partitions[i] = new Partition(activity.getPartitions()[i]);
-			}
-		}
-		
 		this.activityNodes = new IActivityNode[activity.getActivityNodes().length];
 		for (int i = 0; i < activityNodes.length; i++) {
 			com.change_vision.jude.api.inf.model.IActivityNode node = activity.getActivityNodes()[i];
@@ -125,11 +113,6 @@ public class Activity implements IActivity{
 			// TODO not sure if is 100% right
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public IPartition[] getPartitions() {
-		return partitions;
 	}
 	
 

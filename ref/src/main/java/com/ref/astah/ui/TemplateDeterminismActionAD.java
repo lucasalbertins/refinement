@@ -33,23 +33,15 @@ public class TemplateDeterminismActionAD implements IPluginActionDelegate {
 						try {
 							ActivityController.getInstance().AstahInvocation(diagram, VerificationType.DETERMINISM,progressBar);
 						}catch(ParsingException e) {
-							progressBar.setVisible(false);
-							progressBar.repaint();
 							JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"File Error", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						} catch(FDRException e) {
-							progressBar.setVisible(false);
-							progressBar.repaint();
 							JOptionPane.showMessageDialog(window.getParent(), e.getMessage(),"Verification Error", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						} catch (WellFormedException e) {
-							progressBar.setVisible(false);
-							progressBar.repaint();
 							JOptionPane.showMessageDialog( window.getParent(), e.getMessage(),"Well-formedness Error", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						} catch (Exception e) {
-							progressBar.setVisible(false);
-							progressBar.repaint();
 							JOptionPane.showMessageDialog( window.getParent(), "An error occurred during checking determinism.","Checking Deadlock Error", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						}
