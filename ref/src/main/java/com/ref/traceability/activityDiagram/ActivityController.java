@@ -67,7 +67,8 @@ public class ActivityController {
 	
 	
 	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{		
-			Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
+
+		Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
 			ActivityDiagram activityDiagram = new ActivityDiagram( (IActivityDiagram) diagram);
 			activity.setActivityDiagram(activityDiagram);
 			
@@ -79,58 +80,63 @@ public class ActivityController {
 	
 	public HashMap<IActivity, List<String>> checkProperty(Activity activity,
 			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
-		boolean wellformed = WellFormedness.WellFormed();
+		WellFormedness.wellFormed(activityDiagram);	
 
 		settingFDR();
-		
-		if (wellformed) {
-			ADParser parser = new ADParser(activity, activityDiagram.getName(),activityDiagram);
-			String diagramCSP = parser.parserDiagram();
-			
-			String fs = System.getProperty("file.separator");
-			String uh = System.getProperty("user.home");
-			File directory = new File(uh+fs+"TempAstah");
-			directory.mkdirs();
-			PrintWriter writer;
-			
-			writer = new PrintWriter(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "UTF-8");
-			writer.print(diagramCSP);
-			writer.flush();
-			writer.close();
-			
-			List<String> traceCounterExample = null;
-			if (type == VerificationType.DEADLOCK) {
+
+		ADParser parser = new ADParser(activity, activityDiagram.getName(), activityDiagram);
+		String diagramCSP = parser.parserDiagram();
+
+		String fs = System.getProperty("file.separator");
+		String uh = System.getProperty("user.home");
+		File directory = new File(uh + fs + "TempAstah");
+		directory.mkdirs();
+		PrintWriter writer;
+
+		writer = new PrintWriter(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activity.getName()) + ".csp",
+				"UTF-8");
+		writer.print(diagramCSP);
+		writer.flush();
+		writer.close();
+
+		List<String> traceCounterExample = null;
+		if (type == VerificationType.DEADLOCK) {
+			AdapterUtils.resetStatics();
+			try {
+				traceCounterExample = FdrWrapper.getInstance().checkDeadlock(
+						uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser,
+						activityDiagram.getName(), progressBar);
+			} catch (Exception e) {
 				AdapterUtils.resetStatics();
-				try {
-					traceCounterExample = FdrWrapper.getInstance().checkDeadlock(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser, activityDiagram.getName(), progressBar);
-				} catch (Exception e) {
-					AdapterUtils.resetStatics();
-					throw new FDRException("An error occurred during checking deadlock.");
-				}
-			} else {
-				AdapterUtils.resetStatics();
-				try {
-					traceCounterExample = FdrWrapper.getInstance().checkDeterminism(uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser, activityDiagram.getName(), progressBar);
-				} catch (Exception e) {
-					AdapterUtils.resetStatics();
-					throw new FDRException("An error occurred during checking non-determinism.");
-				}
-			} 
-			
-			
-			if (traceCounterExample!=null && !traceCounterExample.isEmpty()) {//If there is a trace
-				CounterExampleBuilder cb = new CounterExampleBuilder(traceCounterExample, activity,parser.getAlphabetAD(),ADParser.IdSignals);
-				/* responsible for link the CSP counter example events to the ID of the diagram element of each diagram  
-				 * */
-				return cb.createCounterExample(activity);//who should be painted in each diagram
-				/* creates a copy of the diagrams and paints the elements that is on the counter example 
-				 * */
+				throw new FDRException("An error occurred during checking deadlock.");
 			}
-			return null;
-		}else {
-			//send not wellformed message
-			throw new WellFormedException("not wellFormed");
+		} else {
+			AdapterUtils.resetStatics();
+			try {
+				traceCounterExample = FdrWrapper.getInstance().checkDeterminism(
+						uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser,
+						activityDiagram.getName(), progressBar);
+			} catch (Exception e) {
+				AdapterUtils.resetStatics();
+				throw new FDRException("An error occurred during checking non-determinism.");
+			}
 		}
+
+		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
+			CounterExampleBuilder cb = new CounterExampleBuilder(traceCounterExample, activity, parser.getAlphabetAD(),
+					ADParser.IdSignals);
+			/*
+			 * responsible for link the CSP counter example events to the ID of the diagram
+			 * element of each diagram
+			 */
+			return cb.createCounterExample(activity);// who should be painted in each diagram
+			/*
+			 * creates a copy of the diagrams and paints the elements that is on the counter
+			 * example
+			 */
+		}
+		return null;
+
 	}
 
 	private void settingFDR() throws FDRException {

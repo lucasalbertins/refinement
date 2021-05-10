@@ -26,7 +26,7 @@ public class Action extends ActivityNode implements IAction {
 			this.outputs[i] = new OutputPin(action.getOutputs()[i]);
 		}
 		
-		if (isCallBehaviorAction()) {
+		if (isCallBehaviorAction()&&action.getCallingActivity()!=null) {
 			this.activity = new Activity(action.getCallingActivity());
 			this.activity.setActivityDiagram(new ActivityDiagram(action.getCallingActivity().getActivityDiagram()));
 		}
