@@ -30,7 +30,7 @@ import com.ref.wellformedness.WellFormedness;
 
 
 public class ActivityController {
-	public static enum VerificationType { DEADLOCK, DETERMINISM};
+	public static enum VerificationType { DEADLOCK, DETERMINISM, ROBOCHART};
 	private static Properties prop;
 	
 	public static boolean firstInteration = true;
@@ -110,7 +110,7 @@ public class ActivityController {
 				AdapterUtils.resetStatics();
 				throw new FDRException("An error occurred during checking deadlock.");
 			}
-		} else {
+		} else if (type == VerificationType.DETERMINISM) {
 			AdapterUtils.resetStatics();
 			try {
 				traceCounterExample = FdrWrapper.getInstance().checkDeterminism(
@@ -119,6 +119,16 @@ public class ActivityController {
 			} catch (Exception e) {
 				AdapterUtils.resetStatics();
 				throw new FDRException("An error occurred during checking non-determinism.");
+			}
+		} else {
+			AdapterUtils.resetStatics();
+			try {
+				traceCounterExample = FdrWrapper.getInstance().checkRobochartProperty(
+						uh + fs + "TempAstah" + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser,
+						activityDiagram.getName(), progressBar);
+			} catch (Exception e) {
+				AdapterUtils.resetStatics();
+				throw new FDRException("An error occurred during checking robochart property.");
 			}
 		}
 

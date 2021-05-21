@@ -212,17 +212,18 @@ public class ADDefineChannels {
     		channels.append("channel chaos:  {1.." + adParser.countAny_ad + "}\n");				
 		}
     }
-
-    channels.append("\nalphabet_Astah = {| ");
-    for (int i = 0; i < alphabetAstah.size(); i++) {
-    	channels.append(alphabetAstah.get(i));
-    	
-    	if ((i + 1) < alphabetAstah.size()) {
-    		channels.append(", ");
-    	} else {
-    		channels.append(" |}\n\n");
-    	}
-    }
+//        if (firstDiagram.equals(ad.getId())) {
+        	channels.append("\nalphabet_Astah_" + ADUtils.nameResolver(ad.getName()) + " = {| ");
+        	for (int i = 0; i < alphabetAstah.size(); i++) {
+        		channels.append(alphabetAstah.get(i));
+        		
+        		if ((i + 1) < alphabetAstah.size()) {
+        			channels.append(", ");
+        		} else {
+        			channels.append(" |}\n\n");
+        		}
+        	}
+//        }
 
 ////////////////////////////////////////////////////////////////////////////////////////
         return channels.toString();

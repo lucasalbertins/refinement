@@ -159,8 +159,8 @@ public class ADDefineCallBehavior {
     		}
     	}
     	
-    	alphabetNode.add(startAct);
-    	alphabetNode.add(endAct);
+    	//alphabetNode.add(startAct);
+    	//alphabetNode.add(endAct);
     	adUtils.getCallBehaviourNumber().add(new Pair<>(adUtils.nameDiagramResolver(nameAD), count));
     	
     	List<String> outputPinsUsed = adUtils.getCallBehaviourOutputs().get(adUtils.nameDiagramResolver(nameAD));

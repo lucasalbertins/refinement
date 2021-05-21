@@ -265,13 +265,13 @@ public class ADUtils {
 			}
 		}
 
-//		waitAccept.add(partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in"));
-		
+		//		waitAccept.add(partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in"));
+
 		// WAIT_accept_ultrasonic_1(alphabet) = 
 		waitAccept.add("WAIT_accept_" + nameRobochartResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet) = \n");
 		// NRecurse(diff(alphabet, {| PathPlanningSM::ultrasonic.in |}), WAIT_accept_ultrasonic_1(alphabet)) 
 		waitAccept.add("NRecurse(diff(alphabet, {|" + partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in") + "|}), WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet))\n |~| \n");
-		
+
 
 		accept.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName())+"_" + idAccept+"(id, alphabet_robochart_"+ 
 				nameDiagramResolver(ad.getName()) + ") [| {|");
@@ -282,7 +282,7 @@ public class ADUtils {
 					"_"+nameDiagramResolver(ad.getName())+".id"+",");
 			// PathPlanningSM::ultrasonic.in?u -> set_u_ultrasonic_P_Teste.id?c!u -> SKIP
 			waitAccept.add(partitionName + "::" + nAccept + "?" + nameDiagramResolver(outPins[i].getName()) + " -> set_" + nameDiagramResolver(outPins[i].getName()) 
-					+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP");
+			+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP");
 		}
 		accept.setCharAt(accept.length()-1, ' ');
 		accept.append("|} |> ");
@@ -801,11 +801,22 @@ public class ADUtils {
 						syncChannelsEdge.put(pair, ceIn);
 					}
 					action.append("(");
-					if (i < inFlows.length - 1 || inPins.length > 0) {
+					// AJUSTE Signal para remover ||| CE
+					///////////////////////////////////////////////////////////////////////////
+					boolean pinswithedges = false;
+					for (IInputPin pin : inPins) {
+						if (pin.getIncomings().length > 0) {
+							pinswithedges = true;
+							break;
+						}
+					}
+
+					if (i < inFlows.length - 1 || pinswithedges) {
 						ce(alphabet, action, ceIn, " -> SKIP) ||| ");
 					} else {
 						ce(alphabet, action, ceIn, " -> SKIP)");
 					}
+					///////////////////////////////////////////////////////////////////////////
 				} else {// then object flows, which are discarded as they are not sent to pins
 					String oeIn; 
 					String typeObject;
@@ -828,13 +839,24 @@ public class ADUtils {
 					}
 
 					action.append("(");
-					if (i < inFlows.length - 1 || inPins.length > 0) {
+					// AJUSTE Signal para remover ||| CE
+					///////////////////////////////////////////////////////////////////////////
+					boolean pinswithedges = false;
+					for (IInputPin pin : inPins) {
+						if (pin.getIncomings().length > 0) {
+							pinswithedges = true;
+							break;
+						}
+					}
+
+					if (i < inFlows.length - 1 || pinswithedges) {
 						oe(alphabet, action, oeIn, "?x", " -> ");
 						action.append("SKIP) ||| ");
 					} else {
 						oe(alphabet, action, oeIn, "?x" , " -> ");
 						action.append("SKIP)");
 					}
+					///////////////////////////////////////////////////////////////////////////
 				}
 
 			}
@@ -892,8 +914,6 @@ public class ADUtils {
 			action.append("); ");
 		}
 
-
-
 	}
 
 	public void outgoingEdges(StringBuilder action, ArrayList<String> alphabet, IFlow[] outFlows,
@@ -918,11 +938,21 @@ public class ADUtils {
 
 			action.append("(");
 
-			if (i >= 0 && (i < outFlows.length - 1 || outPins.length > 0)) {
+			// AJUSTE Accept para remover ||| OE
+			///////////////////////////////////////////////////////////////////////////
+			boolean pinswithedges = false;
+			for (IOutputPin pin : outPins) {
+				if (pin.getOutgoings().length > 0) {
+					pinswithedges = true;
+					break;
+				}
+			}
+			if (i >= 0 && (i < outFlows.length - 1 || pinswithedges)) {
 				ce(alphabet, action, ceOut, " -> SKIP) ||| ");
 			} else {
 				ce(alphabet, action, ceOut, " -> SKIP)");
 			}
+			///////////////////////////////////////////////////////////////////////////
 		}
 
 
@@ -1003,16 +1033,25 @@ public class ADUtils {
 
 				} else {// node is a call behavior
 					action.append("(");
-					if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
+					// AJUSTE Accept para remover ||| OE
+					///////////////////////////////////////////////////////////////////////////
+					boolean pinswithedges = false;
+					for (IOutputPin pin : outPins) {
+						if (pin.getOutgoings().length > 0) {
+							pinswithedges = true;
+							break;
+						}
+					}
+					if (i >= 0 && (i < outFlows.length - 1 || pinswithedges)) {
+					//	if (i >= 0 && (i < outPins.length - 1 || x < outFlowPin.length - 1)) {
 						getLocal(alphabet, action, nameResolver(outPins[i].getName()), nameResolver(outPins[i].getOwner().getName()), nameResolver(outPins[i].getName()),type);
 						oe(alphabet, action, oe, "!(" + outPins[i].getName() + ")", " -> SKIP) ||| ");
 					} else {
 						getLocal(alphabet, action, nameResolver(outPins[i].getName()), nameResolver(outPins[i].getOwner().getName()), nameResolver(outPins[i].getName()),type);
 						oe(alphabet, action, oe, "!(" + outPins[i].getName() + ")", " -> SKIP)");
 					}
+					///////////////////////////////////////////////////////////////////////////
 				}
-
-
 
 			}
 		}
@@ -1072,7 +1111,7 @@ public class ADUtils {
 			}
 			c++;
 		}
-//		channels.substring(0, channels.length()-2);
+		//		channels.substring(0, channels.length()-2);
 
 		return channels.toString();
 	}
@@ -1081,9 +1120,9 @@ public class ADUtils {
 		for (String i : waitAccept) {
 			channels.append(i);
 		}
-//		channels.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + "idAccept" + "(alphabet) = \n");
-//		channels.append("NRecurse(diff(alphabet, " + printUntilWithPins() + ")," + "WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + "idAccept" + "(alphabet))\n |~| \n");
-//		channels.append(printUntilWithPins() + "?u -> set_accept_ultrasonic_u_P_Teste.u -> SKIP\n");		
+		//		channels.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + "idAccept" + "(alphabet) = \n");
+		//		channels.append("NRecurse(diff(alphabet, " + printUntilWithPins() + ")," + "WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + "idAccept" + "(alphabet))\n |~| \n");
+		//		channels.append(printUntilWithPins() + "?u -> set_accept_ultrasonic_u_P_Teste.u -> SKIP\n");		
 		return channels.toString();
 	}
 	//-----------------------------------------------
@@ -1100,7 +1139,7 @@ public class ADUtils {
 		StringBuilder channels = new StringBuilder();
 		// channels.append("Wait_control_processes = {Wait_" + ad.getName() + "_control_" + i +
 		// "}\n");
-		channels.append("Wait_control_processes = {");
+		channels.append("Wait_control_processes_" + ADUtils.nameResolver(ad.getName()) + " = {");
 		int c = 0;
 
 		for (int i = 1; i <= adParser.countAny_ad; i++) {

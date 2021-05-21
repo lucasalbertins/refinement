@@ -34,7 +34,8 @@ public class ADDefineProcessSync {
             ArrayList<String> alphabet = alphabetNode.get(node);
             IActivityNode Activitynode = findCBANode(node.getValue());
             if(Activitynode != null && !((IAction) Activitynode).hasStereotype("ANY")) {
-        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = union({|");
+        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
+//        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = union({|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
                 for (int i = 0; i < alphabet.size(); i++) {
                     processSync.append(alphabet.get(i));
@@ -42,6 +43,7 @@ public class ADDefineProcessSync {
                         processSync.append(",");
                     }
                 }
+                processSync.append("|}\n");
                 List<Pair<String,String>> CBAList = ADParser.countcallBehavior.get(((IAction) Activitynode).getCallingActivity().getId());//Gets the List with every node the invokes the CBA
 				
                 
@@ -51,7 +53,8 @@ public class ADDefineProcessSync {
             			index = i+1;
             		}
             	}
-                processSync.append("|},AlphabetDiagram_"+ADUtils.nameResolver(((IAction)Activitynode).getCallingActivity().getName())+"_t("+index+"))\n");
+            	// linha comentada
+                //processSync.append("|},AlphabetDiagram_"+ADUtils.nameResolver(((IAction)Activitynode).getCallingActivity().getName())+"_t("+index+"))\n");
         	}else {
         		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");

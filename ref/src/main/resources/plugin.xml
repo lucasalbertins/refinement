@@ -51,7 +51,15 @@
                  menubarPath="tool/AD/verification/"
                  id="verificationDeterminism">
          </action>
+         <action
+                 label="%AD_menu_label3"
+                 icon="icons/sample.gif"
+                 class="com.ref.astah.ui.TemplateRobochartActionAD"
+                 tooltip="%menu_tooltip"
+                 menubarPath="tool/AD/verification/"
+                 id="verificationRobochart">
+         </action>
      </actionSet>
    </extension>
-   
+
 </plugin>
