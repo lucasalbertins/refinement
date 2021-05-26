@@ -2,7 +2,7 @@ package com.ref.activityDiagram.parser;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
+//import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
@@ -10,6 +10,7 @@ import com.ref.astah.ui.FDR3LocationDialog;
 import com.ref.exceptions.ParsingException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.ui.CheckingProgressBar;
 
 import org.junit.AfterClass;
@@ -24,6 +25,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -173,7 +176,7 @@ public class ADParserTestCheckDeadlock {
 		writer.flush();
 		writer.close();
 
-        int actual = -1;
+        List<String> actual = new ArrayList<>();
         try {
 			CheckingProgressBar progressBar = new CheckingProgressBar();
 			progressBar.setNewTitle("Checking deadlock");
@@ -212,7 +215,7 @@ public class ADParserTestCheckDeadlock {
 		writer.flush();
 		writer.close();
 
-        int actual = -1;
+		List<String> actual = new ArrayList<>();
         try {
 			CheckingProgressBar progressBar = new CheckingProgressBar();
 			progressBar.setNewTitle("Checking deadlock");
@@ -251,7 +254,7 @@ public class ADParserTestCheckDeadlock {
 		writer.flush();
 		writer.close();
 
-        int actual = -1;
+		List<String> actual = new ArrayList<>();
         try {
 			CheckingProgressBar progressBar = new CheckingProgressBar();
 			progressBar.setNewTitle("Checking deadlock");
@@ -290,7 +293,7 @@ public class ADParserTestCheckDeadlock {
 		writer.flush();
 		writer.close();
 
-        int actual = -1;
+		List<String> actual = new ArrayList<>();
         try {
 			CheckingProgressBar progressBar = new CheckingProgressBar();
 			progressBar.setNewTitle("Checking deadlock");
@@ -329,7 +332,7 @@ public class ADParserTestCheckDeadlock {
 		writer.flush();
 		writer.close();
 
-        int actual = -1;
+		List<String> actual = new ArrayList<>();
         try {
 			CheckingProgressBar progressBar = new CheckingProgressBar();
 			progressBar.setNewTitle("Checking deadlock");
@@ -368,7 +371,7 @@ public class ADParserTestCheckDeadlock {
 		writer.flush();
 		writer.close();
 
-        int actual = -1;
+		List<String> actual = new ArrayList<>();
         try {
 			CheckingProgressBar progressBar = new CheckingProgressBar();
 			progressBar.setNewTitle("Checking deadlock");

@@ -7,15 +7,17 @@ import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
-import com.change_vision.jude.api.inf.model.IAction;
+//import com.change_vision.jude.api.inf.model.IAction;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IInputPin;
-import com.change_vision.jude.api.inf.model.INamedElement;
+//import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.model.IPin;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.astah.adapter.InputPin;
 import com.ref.exceptions.WellFormedException;
+import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IFlow;
+import com.ref.interfaces.activityDiagram.INamedElement;
 
 public class PinTest {
 	public static com.change_vision.jude.api.inf.model.IActivityDiagram ad;

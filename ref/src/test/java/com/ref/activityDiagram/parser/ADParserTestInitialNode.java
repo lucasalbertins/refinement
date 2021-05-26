@@ -9,12 +9,13 @@ import org.junit.Test;
 
 import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.exception.ProjectNotFoundException;
-import com.change_vision.jude.api.inf.model.IActivityDiagram;
+//import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ModelFinder;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.exceptions.ParsingException;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.interfaces.activityDiagram.IActivityDiagram;
 
 public class ADParserTestInitialNode {
 
