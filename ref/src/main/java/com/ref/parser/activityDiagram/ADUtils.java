@@ -44,13 +44,12 @@ public class ADUtils {
 	public HashMap<Pair<IActivity,String>, String> syncObjectsEdge;
 	private HashMap<String, String> objectEdges;
 	private ADParser adParser;
-	////////////////////////////////////////////////////////////////////////////////////////    
 	public List<String> robo;
 	public List<String> untilEvents;
 	public HashMap<String, String> untilList;
-	////////////////////////////////////////////////////////////////////////////////////////
 	//private HashMap<Pair<String,String>, String> memoryPinLocal;
 	private List<String> waitAccept;
+	private boolean hasPins = false;
 
 	public ADUtils(IActivity ad, IActivityDiagram adDiagram, HashMap<String, Integer> countCall, List<String> eventChannel,
 			List<String> lockChannel, HashMap<String, String> parameterNodesOutputObject, List<Pair<String, Integer>> callBehaviourNumber,
@@ -84,15 +83,11 @@ public class ADUtils {
 		this.signalChannelsLocal = signalChannelsLocal;
 		this.objectEdges = objectEdges2;
 		this.adParser = adParser;
-
-		////////////////////////////////////////////////////////////////////////////////////////
 		this.robo = robo;
 		this.untilEvents = untilEvents;
 		this.untilList = untilList;
 		//this.memoryPinLocal = memoryPinLocal;
 		this.waitAccept = waitAccept;
-
-		////////////////////////////////////////////////////////////////////////////////////////
 	}
 
 	public String createCE() {
@@ -102,8 +97,6 @@ public class ADUtils {
 	public String createOE() {
 		return "oe_" + adParser.countOe_ad++ + "_" + nameDiagramResolver(ad.getName()) + ".id" ;
 	}
-
-
 
 	public int startActivity(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins) {
 		int count = 0;
@@ -241,8 +234,9 @@ public class ADUtils {
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 
 		adParser.countUntil_ad++;
-		// alphabetNode.add("begin." + adParser.countUntil_ad + ",end." +
-		// adParser.countUntil_ad);//TODO olhar
+//		if (!hasPins) {
+//			 alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);//TODO olhar
+//		}
 		action.append("begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
 		robo.add(partitionName + "::" + eventName);
 		untilEvents.add(partitionName + "::" + eventName);
@@ -254,8 +248,8 @@ public class ADUtils {
 			IActivityNode activityNode, IOutputPin[] outPins) {
 		String partitionName;
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
-
-
+		hasPins = true;
+		
 		int idAccept = 1;
 		String nAccept = nameRobochartResolver(activityNode.getName(), ".in");
 		for (int i = 0; i < countAccept.size(); i++) {
@@ -399,7 +393,6 @@ public class ADUtils {
 		return objects;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////////////
 	public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IInputPin[] inPins) {
 		String partitionName;
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
@@ -447,49 +440,7 @@ public class ADUtils {
 		}
 
 	}
-	////////////////////////////////////////////////////////////////////////////////////////
 
-	//    public void signal(ArrayList<String> alphabet, String nameSignal, StringBuilder signal, IActivityNode activityNode) {
-	//        if (!localSignalChannelsSync.contains("signal_" + nameSignal)) {
-	//            localSignalChannelsSync.add("signal_" + nameSignal);
-	//        }
-	//
-	//        if (!signalChannels.containsKey(nameSignal)) {
-	//        	List<IActivity> list = new ArrayList<>();
-	//        	list.add(ad);
-	//            signalChannels.put(nameSignal,list );
-	//        }
-	//        
-	//        if (!signalChannelsLocal.contains(nameSignal)) {
-	//            signalChannelsLocal.add(nameSignal);
-	//        }
-	//
-	//        int idSignal = 1;
-	//        int index = -1;
-	//
-	//        for (int i = 0; i < countSignal.size(); i++) {
-	//            if (countSignal.get(i).getKey().equals(nameSignal)) {
-	//                idSignal = countSignal.get(i).getValue();
-	//                index = i;
-	//                break;
-	//            }
-	//        }
-	//
-	//        alphabet.add("signal_" + nameSignal + ".id." + idSignal);
-	//        signal.append("signal_" + nameSignal + ".id!" + idSignal + " -> ");
-	//
-	//        if (index >= 0) {
-	//            countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
-	//            ADParser.IdSignals.put(activityNode.getId(),idSignal);
-	//            
-	//        } else {
-	//            countSignal.add(new Pair<String, Integer>(nameSignal, idSignal + 1));
-	//            ADParser.IdSignals.put(activityNode.getId(),idSignal);
-	//        }
-	//
-	//    }
-
-	////////////////////////////////////////////////////////////////////////////////////////
 	public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept, IOutputPin[] outPins) {
 		String partitionName;
 		partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
@@ -531,41 +482,6 @@ public class ADUtils {
 			//			ADParser.IdSignals.put(activityNode.getId(),idAccept);
 		}
 	}
-	////////////////////////////////////////////////////////////////////////////////////////
-
-	//    public void accept(ArrayList<String> alphabet, String nameAccept, StringBuilder accept, IActivityNode activityNode) {
-	//        if (!localSignalChannelsSync.contains("signal_" + nameAccept)) {
-	//            localSignalChannelsSync.add("signal_" + nameAccept);
-	//        }
-	//
-	//        if (!signalChannels.containsKey(nameAccept)) {
-	//        	List<IActivity> list = new ArrayList<>();
-	//        	list.add(ad);
-	//            signalChannels.put(nameAccept,list );
-	//        }
-	//
-	//        int idAccept = 1;
-	//        int index = -1;
-	//
-	//        for (int i = 0; i < countAccept.size(); i++) {
-	//            if (countAccept.get(i).getKey().equals(nameAccept)) {
-	//                idAccept = countAccept.get(i).getValue();
-	//                index = i;
-	//                break;
-	//            }
-	//        }
-	//
-	//        alphabet.add("accept_" + nameAccept + ".id." + idAccept);
-	//        accept.append("accept_" + nameAccept + ".id." + idAccept + "?x -> ");
-	//
-	//        if (index >= 0) {
-	//            countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));
-	//            ADParser.IdSignals.put(activityNode.getId(),idAccept);
-	//        } else {
-	//            countAccept.add(new Pair<String, Integer>(nameAccept, idAccept + 1));
-	//            ADParser.IdSignals.put(activityNode.getId(),idAccept);
-	//        }
-	//    }
 
 	public String nameDiagramResolver(String name) {
 		return name.replace(" ", "").replace("!", "_").replace("@", "_")
@@ -1140,8 +1056,16 @@ public class ADUtils {
 		// channels.append("Wait_control_processes = {Wait_" + ad.getName() + "_control_" + i +
 		// "}\n");
 		channels.append("Wait_control_processes_" + ADUtils.nameResolver(ad.getName()) + " = {");
-		int c = 0;
+		int c = 0;		
+		for (int i = 1; i <= adParser.countUntil_ad; i++) {
+			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i);
+			if ((c + 1) < adParser.countUntil_ad) {
+				channels.append(", ");
+			}
+			c++;
+		}
 
+		c = 0;
 		for (int i = 1; i <= adParser.countAny_ad; i++) {
 			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i);
 			if ((c + 1) < adParser.countAny_ad) {
@@ -1158,10 +1082,10 @@ public class ADUtils {
 		int index = ++adParser.countAny_ad;
 		//		alphabet.add("chaos." + index);
 		callBehaviour.append("chaos." + index + " -> SKIP;");
-
 	}
-	////////////////////////////////////////////////////////////////////////////////////////
 
-
+	public boolean hasPins() {
+		return hasPins;
+	}
 
 }

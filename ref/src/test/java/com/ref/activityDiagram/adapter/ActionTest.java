@@ -18,6 +18,7 @@ import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IOutputPin;
+import com.ref.activityDiagram.adapter.TestUtils;
 
 public class ActionTest {
 	public static com.change_vision.jude.api.inf.model.IActivityDiagram ad;

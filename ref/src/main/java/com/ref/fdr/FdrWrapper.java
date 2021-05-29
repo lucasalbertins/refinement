@@ -71,20 +71,11 @@ public class FdrWrapper {
 	private Class<?> deadlockCounterexampleClass;
 
     private Class<?> determinismCounterexampleClass;
-    
-//----------------------------------------------------------------        
-    private Class<?> divergenceCounterexampleClass;
-    
-	private Class<?> irrelevantBehaviourClass;
 
-	private Class<?> compiledEventListClass;
-	
-	private Class<?> SemanticModel;
-	
-	private Class<?> MachineEvaluatorResult;
-//----------------------------------------------------------------        
+    private Class<?> robochartCounterexampleClass;
 
-	public boolean loadFDR(String path) {
+
+    public boolean loadFDR(String path) {
 
 		File file = new File(path);
 
@@ -134,10 +125,6 @@ public class FdrWrapper {
 
 		behaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Behaviour");
 
-		urlCl.loadClass("uk.ac.ox.cs.fdr.IrrelevantBehaviour");
-
-		urlCl.loadClass("uk.ac.ox.cs.fdr.CompiledEventList");
-
 		TraceBehaviour = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceBehaviour");
 
 		Node = urlCl.loadClass("uk.ac.ox.cs.fdr.Node");
@@ -153,17 +140,8 @@ public class FdrWrapper {
 		deadlockCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeadlockCounterexample");
 		
 		determinismCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeterminismCounterexample");
-//----------------------------------------------------------------        
-		divergenceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DivergenceCounterexample");
-		
-		irrelevantBehaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.IrrelevantBehaviour");
-		
-		compiledEventListClass = urlCl.loadClass("uk.ac.ox.cs.fdr.CompiledEventList");
-		
-		MachineEvaluatorResult = urlCl.loadClass("uk.ac.ox.cs.fdr.MachineEvaluatorResult");
 
-		SemanticModel = urlCl.loadClass("uk.ac.ox.cs.fdr.SemanticModel");
-//----------------------------------------------------------------        
+		robochartCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.RefinementDivergenceCounterexample");
 		
 		urlCl.loadClass("uk.ac.ox.cs.fdr.ProgressReporter");
 
@@ -193,19 +171,11 @@ public class FdrWrapper {
 
 		classes.add(Transition.getName());
 
-		classes.add(divergenceCounterexampleClass.getName());
-		
-//----------------------------------------------------------------   
-		classes.add(MachineEvaluatorResult.getName());
-
-		classes.add(SemanticModel.getName());
-//----------------------------------------------------------------   
-
 		// Classes extras que são usadas como parametro
 
 		Canceller = urlCl.loadClass("uk.ac.ox.cs.fdr.Canceller");
 
-		classes.add(Canceller.getName());		
+		classes.add(Canceller.getName());
 
 	}
 
@@ -368,7 +338,7 @@ public class FdrWrapper {
 			node = invokeProperty(Transition, evento, "destination", null, null);
 		}
 	}
-
+	
 	private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass,
 
 			Object paramValue) throws Exception {
@@ -400,7 +370,7 @@ public class FdrWrapper {
 	/*  Activity Diagram  */
 
 	public List<String> describeDeadlockCounterExample(Object session, Object counterExample) throws Exception {
-		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "behaviour", null, null);
+		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "specificationBehaviour", null, null);
 		List<String> trace = describeBehaviourDeadLock(session, behaviour);
 
 		return trace;
@@ -442,6 +412,29 @@ public class FdrWrapper {
 
         return trace;
     }
+    //------------------------------------------------------------------------------------
+    public List<String> describeRobochartCounterExample(Object session, Object counterExample) throws Exception {
+    	Object behaviour = invokeProperty(robochartCounterexampleClass, counterExample, "specificationBehaviour", null, null);
+    	List<String> trace = describeBehaviourDeterminism(session, behaviour);
+    	
+    	return trace;
+    }
+    
+    private List<String> describeBehaviourRobochart(Object session, Object behaviour) throws Exception {
+    	
+    	List<String> trace = new ArrayList<>();
+    	
+    	for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
+    		
+    		if (event != 1 && event != 0) {
+    			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
+    			trace.add(result.toString());
+    		}
+    	}
+    	
+    	return trace;
+    }
+    //------------------------------------------------------------------------------------
 
 	public String getErrorEvent(Object counterExample, Object session) {
         String errorEvent = "";
@@ -681,71 +674,72 @@ public class FdrWrapper {
 	public List<String> checkRobochartProperty(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
 		//returns the trace
 		/*
-	0 = error
-	1 = compilation failed
-	2 = invalid license
-		 */
-		
-		progressBar.setProgress(1, "", false);
-		
-		int hasError = 0;
-		List<String> trace = null;
-		
-		try {
+		0 = error
+		1 = deadlock free
+		2 = deadlock detected
+		3 = compilation failed
+		4 = invalid license
+		*/
+
+			progressBar.setProgress(1, "", false);
+
+			int hasError = 0;
+			List<String> trace = null;
 			
-			Object fdr = fdrClass.newInstance();
-			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
-			
-			if (!hasValidLicense) {
-				hasError = 4;
-			}
-//-----------------------------------------------------------------------------------			
-			if (hasError == 0) {
-				try {
-					session = sessionClass.newInstance();
-					
-					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-					
-					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-					Object assertion = assertions.get(2);
-					
-					progressBar.setProgress(2, "", false);
-					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-					
-//					for (Object DeterminismCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-//							"counterexamples", null, null)) {
-//						
-//						progressBar.setProgress(3, "", false);
-//						trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
-//						hasError = 2;
-//					}
-					
-					if (hasError == 0) {
-						hasError = 1;
+			try {
+
+				Object fdr = fdrClass.newInstance();
+				boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
+
+				if (!hasValidLicense) {
+					hasError = 4;
+				}
+
+				if (hasError == 0) {
+					try {
+						session = sessionClass.newInstance();
+
+						invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+						List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+						Object assertion = assertions.get(2);
+
+						progressBar.setProgress(2, "", false);
+						invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+
+						for (Object robochartCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+								"counterexamples", null, null)) {
+
+							progressBar.setProgress(3, "", false);
+							trace = describeRobochartCounterExample(session, robochartCounterexample);
+							hasError = 2;
+						}
+
+						if (hasError == 0) {
+							hasError = 1;
+						}
+
+						progressBar.setProgress(4, "", false);
+
+					} catch (InvalidEditingException e) {
+						TransactionManager.abortTransaction();
+					} catch (Exception e) {
+						TransactionManager.abortTransaction();
+						hasError = 3;
 					}
-					
-					progressBar.setProgress(4, "", false);
-					
-				} catch (InvalidEditingException e) {
-					TransactionManager.abortTransaction();
-				} catch (Exception e) {
-					TransactionManager.abortTransaction();
-					hasError = 3;
+				}
+
+			} catch (InstantiationException e) {
+				throw new Exception("Set your fdr path 1");
+			} catch (IllegalAccessException e) {
+				throw new Exception("Set your fdr path 2");
+			} catch (Exception e) {
+				Logador logger = Logador.getInstance();
+				logger.log("LOG FDRWRAPPER");
+				for(StackTraceElement element :e.getStackTrace()){
+					logger.log(element.toString());
 				}
 			}
-//-----------------------------------------------------------------------------------			
-			
-		} catch (InstantiationException e) {
-			throw new Exception("Set your fdr path 1");
-		} catch (IllegalAccessException e) {
-			throw new Exception("Set your fdr path 2");
-		} catch (Exception e) {
-			Logador logger = Logador.getInstance();
-			logger.log("LOG FDRWRAPPER");
-			for(StackTraceElement element :e.getStackTrace()){
-				logger.log(element.toString());
-			}
-		}
 		
 		if (hasError == 1) {
 			progressBar.setProgress(5, handleLogRobochartProperty(hasError, nameDiagram), true);
@@ -790,13 +784,17 @@ public class FdrWrapper {
 	
 	private String handleLogRobochartProperty(int hasError, String nameDiagram) {
 		String log = "";
-		if (hasError == 3 || hasError == 0) {
+		if (hasError == 1) {
+			log = nameDiagram + " is a divergence!";
+		} else if (hasError == 2) {
+			log = "Non-Divergence detected in " + nameDiagram;
+		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {
 			log = "FDR license is not valid!\n" +
 					"Please activate FDR license and restart Astah.";
 		}
-		
+
 		return log;
 	}
 	

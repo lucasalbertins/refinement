@@ -12,6 +12,7 @@ import com.change_vision.jude.api.inf.model.INamedElement;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.ref.astah.adapter.ActivityDiagram;
 import com.ref.exceptions.WellFormedException;
+import com.ref.activityDiagram.adapter.TestUtils;
 
 public class ActivityDiagramTest {
 	public static com.change_vision.jude.api.inf.model.IActivityDiagram ad;

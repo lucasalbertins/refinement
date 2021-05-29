@@ -14,6 +14,7 @@ import com.ref.astah.adapter.Activity;
 import com.ref.astah.adapter.ActivityDiagram;
 import com.ref.exceptions.WellFormedException;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.activityDiagram.adapter.TestUtils;
 
 public class ActivityTest {
 	public static com.change_vision.jude.api.inf.model.IActivityDiagram ad;

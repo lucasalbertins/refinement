@@ -18,6 +18,14 @@
                menubarPath="tool/ref/"
                id="ref">
          </action>
+         <action
+			   label="%menu_label2"
+               icon="icons/sample.gif"
+               class="com.ref.astah.ui.RobochartLocationAction"
+               tooltip="%menu_tooltip2"
+               menubarPath="tool/ref/"
+               id="ref">
+         </action>
      </actionSet>
    </extension>
    <extension point="com.change_vision.astah.ui.actionSets">
@@ -35,6 +43,7 @@
                label="%AD2_menu_group"
                path="tool/AD/verification">
          </menu>
+         <!--
          <action
 			   label="%AD_menu_label"
                icon="icons/sample.gif"
@@ -51,6 +60,7 @@
                  menubarPath="tool/AD/verification/"
                  id="verificationDeterminism">
          </action>
+         -->
          <action
                  label="%AD_menu_label3"
                  icon="icons/sample.gif"

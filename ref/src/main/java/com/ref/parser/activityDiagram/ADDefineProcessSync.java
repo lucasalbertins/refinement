@@ -83,7 +83,9 @@ public class ADDefineProcessSync {
             processSync.append("ProcessDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = normal(");
             processSync.append(node.getValue() + termination + "(id))\n");
         }
-//        processSync.append("Node_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n");
+//        if (!adUtils.hasPins()) {
+//        	processSync.append("\nNode_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n\n");			
+//		}
 
         return processSync.toString();
     }

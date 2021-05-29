@@ -1,5 +1,6 @@
 package com.ref.parser.activityDiagram;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
 import com.ref.interfaces.activityDiagram.IActivityNode;
+import com.ref.traceability.activityDiagram.ActivityController;
 
 
 public class ADParser {
@@ -28,10 +30,8 @@ public class ADParser {
     public int countClear_ad;
     public int limiteInf;
     public int limiteSup;
-////////////////////////////////////////////////////////////////////////////////////////    
     public int countUntil_ad;
     public int countAny_ad;
-////////////////////////////////////////////////////////////////////////////////////////
     
     private static String firstDiagram = null;
     public static boolean containsCallBehavior = false;
@@ -128,16 +128,12 @@ public class ADParser {
         createdAccept = new ArrayList<>();
         createdAction = new ArrayList<>();
         allGuards = new HashMap<>();
-////////////////////////////////////////////////////////////////////////////////////////        
         this.countUntil_ad = 0;
         this.countAny_ad = 0;
-        
         this.robo = new ArrayList<String>();
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
         this.waitAccept = new ArrayList<>();
-////////////////////////////////////////////////////////////////////////////////////////
-        
         
     }
 
@@ -192,10 +188,8 @@ public class ADParser {
         resetStatic();
         allGuards = new HashMap<>();
         firstDiagram = ad.getId(); //set first diagram
-////////////////////////////////////////////////////////////////////////////////////////        
         this.countUntil_ad = 1;
         this.countAny_ad = 1;
-////////////////////////////////////////////////////////////////////////////////////////        
     }
 
     public void resetStatic() {
@@ -267,63 +261,72 @@ public class ADParser {
         String robochart = parameterValueDiagram.get("robochart");
         String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
         if (robochart != null && !robochart.equals("")) {
-			robochart = "include " + robochart + "\n";
+//			robochart = "include " + robochart + "\n";
+			try {
+				robochart = "include \"" + ActivityController.getInstance().roboInclude + "\"\n";
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		} else {
 			throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
 		}
 
-        String n_recurse = "\n\nNRecurse(S, P) = |~| ev : S @ ev -> P\n\n";
+        String n_recurse = "\n\nNRecurse(S, P) = |~| ev : S @ ev -> P";
+        String wait_props = "\n\n";
         
-    	String wait_props =  "\n\n"
-    			+ adUtils.printUntilWithPins2() + "\n\n"
-//    			+ "\n"
-//    			+ "WAIT(alphabet,event) = \n"
-//    			+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
-//    			+ "	|~|\n"
-//    			+ "	event -> SKIP\n"
-    			+ "WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
-    			+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n"
-    			+  adUtils.alphabetRobo(robochart_alphabet)
-    			+ "\n\n";
+//        if (!adUtils.hasPins()) {
+        	wait_props = adUtils.printUntilWithPins2() + "\n\n"
+        			+ "WAIT(alphabet,event) = \n"
+        			+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
+        			+ "	|~|\n"
+        			+ "	event -> SKIP\n\n"
+//        			+ "WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ||| CONTROL : processes @ CONTROL\n\n"
+        			//Prop = PROP(Wait_control_processes) 
+//        			+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + "\n\n"
+//        			+ adUtils.alphabetRobo(robochart_alphabet)
+//        			+ "\n\n";
+//		} 
+//			wait_props = adUtils.printUntilWithPins2() + "\n\n"
+					+ "WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
+					+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n"
+					+  adUtils.alphabetRobo(robochart_alphabet)
+					+ "\n\n";
+			
+			if (countAny_ad > 0 && countUntil_ad > 0) {
+				wait_props +=
+						"PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = (MAIN [|{|begin, end, chaos, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) ) \\ {|begin, end, chaos|}\n\n"
+								+ adUtils.printUntils()
+								+ adUtils.printAny();
+			} else if (countUntil_ad > 0) {
+				wait_props +=
+						"PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = (MAIN [|{|begin, end, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) ) \\ {|begin, end|}\n\n"
+								+ adUtils.printUntils();
+			} else if (countAny_ad > 0) {
+				wait_props +=
+						"PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = (MAIN [|{|chaos, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) ) \\ {|chaos|}\n\n"
+								+ adUtils.printAny();
+			} else {
+				wait_props +=
+						"PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = (MAIN)\n\n";
+			}
+			
+			wait_props += adUtils.printControlProcesses();       	
+
+        //    	String head_prop_nodes = "\nNode_" + adUtils.nameDiagramResolver(ad.getName()) + "(id) = composeNodes(id)\r\n";
+	        String wait_props_nodes = "\r\n"
+	        		+ "Node_" + adUtils.nameDiagramResolver(ad.getName()) + "(id) = composeNodes_" + adUtils.nameDiagramResolver(ad.getName()) + "(id)\r\n\n"
+	        		+ "composeNodes_" + adUtils.nameDiagramResolver(ad.getName()) + "(id) = \r\n"
+	        		+ "	let\r\n"
+	        		+ "	    alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s = seq(alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + ")\r\n"
+	        		+ "		composeNodes_(id,<ev>,_) = ProcessDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev)\r\n"
+	        		+ "		composeNodes_(id,<ev>^tail,past) = \r\n"
+	        		+ "			ProcessDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev) \r\n"
+	        		+ "				[|union(diff(AlphabetDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev),past),{endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id})|] \r\n"
+	        		+ "			( composeNodes_(id,tail,union(past,AlphabetDiagram_" + ad.getName() + "(id,ev))) )\r\n"
+	        		+ "	within \r\n"
+	        		+ "		composeNodes_(id,alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s,{})";  
     	
-    	if (countAny_ad > 0 && countUntil_ad > 0) {
-    		wait_props +=
-					"PROP_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) = (MAIN [|{|begin, end, chaos, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) ) \\ {|begin, end, chaos|}\n\n"
-//					+ adUtils.printUntils()
-					+ adUtils.printAny();
-		} else if (countUntil_ad > 0) {
-			wait_props +=
-					"PROP_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) = (MAIN [|{|begin, end, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) ) \\ {|begin, end|}\n\n";
-//					+ adUtils.printUntils();
-		} else if (countAny_ad > 0) {
-			wait_props +=
-					"PROP_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) = (MAIN [|{|chaos, endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "|}|] WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) ) \\ {|chaos|}\n\n"
-					+ adUtils.printAny();
-		} else {
-			wait_props +=
-					"PROP_" + adUtils.nameDiagramResolver(ad.getName()).toUpperCase() + "(processes) = (MAIN)\n\n";
-		}
-    	   
-    	wait_props += ""
-				+ adUtils.printControlProcesses();
-//				+ "\n\n\n\n";
-//				+ adUtils.mapEvents();
-    	
-//    	String head_prop_nodes = "\nNode_" + adUtils.nameDiagramResolver(ad.getName()) + "(id) = composeNodes(id)\r\n";
-    	String check_prop_nodes = "";
-    	check_prop_nodes += "\r\n"
-    			+ "\nNode_" + adUtils.nameDiagramResolver(ad.getName()) + "(id) = composeNodes" + adUtils.nameDiagramResolver(ad.getName()) + "(id)\r\n"
-    			+ "composeNodes" + adUtils.nameDiagramResolver(ad.getName()) + "(id) = \r\n"
-    			+ "	let\r\n"
-    			+ "	    alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s = seq(alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + ")\r\n"
-    			+ "		composeNodes_(id,<ev>,_) = ProcessDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev)\r\n"
-    			+ "		composeNodes_(id,<ev>^tail,past) = \r\n"
-    			+ "			ProcessDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev) \r\n"
-    			+ "				[|union(diff(AlphabetDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev),past),{endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id})|] \r\n"
-    			+ "			( composeNodes_(id,tail,union(past,AlphabetDiagram_" + ad.getName() + "(id,ev))) )\r\n"
-    			+ "	within \r\n"
-    			+ "		composeNodes_(id,alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s,{})";       
-////////////////////////////////////////////////////////////////////////////////////////
+    	//---------------------------------------------------------------------------------------------------------------
     	
         String parser = (firstDiagram.equals(ad.getId())?"transparent normal\n":"")+
         		(firstDiagram.equals(ad.getId())?robochart:"") +
@@ -341,7 +344,7 @@ public class ADParser {
                 check +
                 (firstDiagram.equals(ad.getId())?n_recurse:"") +
                 wait_props +
-                check_prop_nodes;
+                wait_props_nodes;
 //                (firstDiagram.equals(ad.getId())?check_prop_nodes:"");
 
         //reset the static values
