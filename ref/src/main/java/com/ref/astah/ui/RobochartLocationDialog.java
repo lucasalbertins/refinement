@@ -33,7 +33,7 @@ public class RobochartLocationDialog extends JDialog {
 	public RobochartLocationDialog(JFrame frame, boolean modal) throws IOException, ClassNotFoundException {
 		super(frame, modal);
 		initComponents();
-		this.setTitle("Select Robochart Folder");
+		this.setTitle("Select Robochart File");
 		this.setLocation(new Point(276, 182));
 		this.setSize(new Dimension(450, 150));
 		this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -99,7 +99,7 @@ public class RobochartLocationDialog extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (tf.getText().equals("")) {
-					msg.setText("Please select a valid folder!");
+					msg.setText("Please select a valid file!");
 				} else {
 					
 					try {
@@ -112,8 +112,6 @@ public class RobochartLocationDialog extends JDialog {
 					} catch (IOException e1) {
 						msg.setText("Error: " + e1.getMessage());
 					}
-					
-					
 
 				}
 

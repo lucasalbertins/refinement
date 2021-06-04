@@ -19,6 +19,7 @@ import com.change_vision.jude.api.inf.editor.TransactionManager;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
 import com.ref.log.Logador;
 import com.ref.parser.activityDiagram.ADParser;
+import com.ref.parser.activityDiagram.ADUtils;
 //import com.ref.refinement.activityDiagram.CounterExamples.CounterExType;
 import com.ref.ui.CheckingProgressBar;
 
@@ -72,9 +73,11 @@ public class FdrWrapper {
 
     private Class<?> determinismCounterexampleClass;
 
-    private Class<?> robochartCounterexampleClass;
-
-
+    private Class<?> divergenceCounterexampleClass;
+    //-------------------------------------------------------
+    private List<Object> counterExamples = new ArrayList<>();
+    public static List<Object> lista; // = new ArrayList<Node>();
+    
     public boolean loadFDR(String path) {
 
 		File file = new File(path);
@@ -117,11 +120,7 @@ public class FdrWrapper {
 
 		counterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Counterexample");
 
-		traceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceCounterexample");
-
 		debugContextClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DebugContext");
-
-		refinementCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.RefinementCounterexample");
 
 		behaviourClass = urlCl.loadClass("uk.ac.ox.cs.fdr.Behaviour");
 
@@ -136,13 +135,17 @@ public class FdrWrapper {
 		TransitionList = urlCl.loadClass("uk.ac.ox.cs.fdr.TransitionList");
 
 		Transition = urlCl.loadClass("uk.ac.ox.cs.fdr.Transition");
+		
+		traceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceCounterexample");
+		
+		refinementCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.RefinementCounterexample");
 
 		deadlockCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeadlockCounterexample");
 		
 		determinismCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeterminismCounterexample");
 
-		robochartCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.RefinementDivergenceCounterexample");
-		
+		divergenceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DivergenceCounterexample");
+
 		urlCl.loadClass("uk.ac.ox.cs.fdr.ProgressReporter");
 
 		classes.add(fdrClass.getName());
@@ -194,7 +197,7 @@ public class FdrWrapper {
 		this.resultado = new HashMap<Integer, List<String>>();
 		List<String> resultParcial = null;
 		int iteration = 0;
-		boolean hasCounterExample = false;
+		boolean hasCounterExample = false; 
 
 			Object session;
 			try {
@@ -340,7 +343,6 @@ public class FdrWrapper {
 	}
 	
 	private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass,
-
 			Object paramValue) throws Exception {
 
 		Method method;
@@ -350,13 +352,13 @@ public class FdrWrapper {
 			if (paramClass != null) {
 				method = dsClass.getMethod(propertyName, paramClass);
 				method.setAccessible(true);
+				
 				return method.invoke(ds, paramValue);
-
+				
 			} else {
-
 				method = dsClass.getMethod(propertyName);
-				method.setAccessible(true);
-				return method.invoke(ds);
+				method.setAccessible(true); 
+				return method.invoke(ds); 
 
 			}
 
@@ -370,7 +372,9 @@ public class FdrWrapper {
 	/*  Activity Diagram  */
 
 	public List<String> describeDeadlockCounterExample(Object session, Object counterExample) throws Exception {
-		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "specificationBehaviour", null, null);
+//		specificationBehaviour não se encontra na class uk.ac.ox.cs.fdr.DeadlockCounterexample
+//		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "specificationBehaviour", null, null);
+		Object behaviour = invokeProperty(deadlockCounterexampleClass, counterExample, "behaviour", null, null);
 		List<String> trace = describeBehaviourDeadLock(session, behaviour);
 
 		return trace;
@@ -414,8 +418,8 @@ public class FdrWrapper {
     }
     //------------------------------------------------------------------------------------
     public List<String> describeRobochartCounterExample(Object session, Object counterExample) throws Exception {
-    	Object behaviour = invokeProperty(robochartCounterexampleClass, counterExample, "specificationBehaviour", null, null);
-    	List<String> trace = describeBehaviourDeterminism(session, behaviour);
+    	Object behaviour = invokeProperty(traceCounterexampleClass, counterExample, "implementationBehaviour", null, null);
+    	List<String> trace = describeBehaviourRobochart(session, behaviour);
     	
     	return trace;
     }
@@ -670,7 +674,7 @@ public class FdrWrapper {
 
 		return trace;
 	}
-	
+
 	public List<String> checkRobochartProperty(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
 		//returns the trace
 		/*
@@ -702,19 +706,21 @@ public class FdrWrapper {
 						invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
 						List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
-						Object assertion = assertions.get(2);
+//						Object assertion = assertions.get(2);
+						Object assertion = assertions.get(assertions.size()-1); // capturar o último elemento(assert do .csp)
 
 						progressBar.setProgress(2, "", false);
 						invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-
+						
 						for (Object robochartCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
 								"counterexamples", null, null)) {
-
+							
 							progressBar.setProgress(3, "", false);
 							trace = describeRobochartCounterExample(session, robochartCounterexample);
+							trace.add(getErrorEvent(robochartCounterexample, session));
 							hasError = 2;
 						}
-
+						
 						if (hasError == 0) {
 							hasError = 1;
 						}
@@ -746,7 +752,6 @@ public class FdrWrapper {
 		} else {
 			progressBar.setProgress(5, handleLogRobochartProperty(hasError, nameDiagram), false);
 		}
-		
 		return trace;
 	}
 

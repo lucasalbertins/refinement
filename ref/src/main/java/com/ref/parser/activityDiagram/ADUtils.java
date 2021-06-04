@@ -508,7 +508,7 @@ public class ADUtils {
 	////////////////////////////////////////////////////////////////////////////////////////
 	public String nameRobochartResolver(String name) {
 		return name.replace(" ", "").replace("!", "_").replace("@", "_").replace("%", "_")
-				.replace("&", "_").replace("*", "_").replace("(", ".").replace(")", "")
+				.replace("&", "_").replace("*", "_").replace("(", "Call.").replace(")", "")
 				.replace("+", "_").replace("-", "_").replace("=", "_").replace("?", "_")
 				.replace(":", "_").replace("/", "_").replace(";", "_").replace(">", "_")
 				.replace("<", "_").replace(",", ".").replace("{", "_").replace("}", "_")
@@ -1038,7 +1038,7 @@ public class ADUtils {
 		}
 		//		channels.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + "idAccept" + "(alphabet) = \n");
 		//		channels.append("NRecurse(diff(alphabet, " + printUntilWithPins() + ")," + "WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + "idAccept" + "(alphabet))\n |~| \n");
-		//		channels.append(printUntilWithPins() + "?u -> set_accept_ultrasonic_u_P_Teste.u -> SKIP\n");		
+		//		channels.append(printUntilWithPins() + "?u -> set_accept_ultrasonic_u_P_Teste.u -> SKIP\n");	
 		return channels.toString();
 	}
 	//-----------------------------------------------
@@ -1059,7 +1059,7 @@ public class ADUtils {
 		int c = 0;		
 		for (int i = 1; i <= adParser.countUntil_ad; i++) {
 			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i);
-			if ((c + 1) < adParser.countUntil_ad) {
+			if ((c + 1) < adParser.countUntil_ad || adParser.countAny_ad > 0) {
 				channels.append(", ");
 			}
 			c++;

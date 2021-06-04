@@ -12,6 +12,7 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 import com.ref.fdr.FdrWrapper;
+import com.ref.traceability.activityDiagram.ActivityController;
 
 public class Activator implements BundleActivator {
 
@@ -22,8 +23,9 @@ public class Activator implements BundleActivator {
 			InputStream input;
 			input = new FileInputStream("ref.properties");
 			prop.load(input);
-			wrapper.loadFDR(prop.getProperty("fdr3_jar_location"));
+			wrapper.loadFDR(prop.getProperty(ActivityController.FDR3_JAR_LOCATION_PROPERTY));
 			wrapper.loadClasses();
+			
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}

@@ -10,6 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import com.change_vision.jude.api.inf.model.IActivityDiagram;
 import com.change_vision.jude.api.inf.model.IDiagram;
@@ -22,8 +23,10 @@ import com.ref.exceptions.ParsingException;
 import com.ref.exceptions.WellFormedException;
 import com.ref.fdr.FdrWrapper;
 import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.parser.activityDiagram.ADAlphabet;
 import com.ref.parser.activityDiagram.ADParser;
 import com.ref.parser.activityDiagram.ADUtils;
+import com.ref.traceability.CounterexampleDescriptor;
 //import com.ref.traceability.CounterexampleDescriptor;
 import com.ref.ui.CheckingProgressBar;
 import com.ref.wellformedness.WellFormedness;
@@ -39,14 +42,39 @@ public class ActivityController {
 	public static final String FDR3_LOCATION_PROPERTY = "fdr3_location";
 	public static final String FDR3_JAR_LOCATION_PROPERTY = "fdr3_jar_location";
 
-	public static final String ROBOCHART_PROPERTY_FILE = System.getProperty("user.home") + System.getProperty("file.separator") + "ref.properties";
 	public static final String ROBOCHART_LOCATION_PROPERTY = "robochart_location";
-	public static final String ROBOCHART_FOLDER_LOCATION_PROPERTY = "robochart_folder_location";
+	public static final String ROBOCHART_CSP_LOCATION_PROPERTY = "robochart_csp_location";
 
 	private static ActivityController controller;
 
-	public String robochartFolder;
-	public String roboInclude;
+	private String robochartFolder;
+	private String roboInclude;
+	
+	private List<String> eventsFdr;
+	
+	public String getRobochartFolder() {
+		return robochartFolder;
+	}
+
+	public void setRobochartFolder(String robochartFolder) {
+		this.robochartFolder = robochartFolder;
+	}
+
+	public String getRoboInclude() {
+		return roboInclude;
+	}
+
+	public void setRoboInclude(String roboInclude) {
+		this.roboInclude = roboInclude;
+	}
+	
+	public List<String> getEventsFdr() {
+		return eventsFdr;
+	}
+
+	public void setEventsFdr(List<String> eventsFdr) {
+		this.eventsFdr = eventsFdr;
+	}
 
 	private ActivityController() throws IOException {
 		File propertyFile = new File(FDR3_PROPERTY_FILE);
@@ -60,6 +88,10 @@ public class ActivityController {
 		} else {
 			prop = new Properties();
 			prop.load(new FileInputStream(propertyFile));
+			System.out.println("Gerado em " + prop.getProperty(ActivityController.ROBOCHART_LOCATION_PROPERTY ));
+			if (prop.getProperty(ActivityController.ROBOCHART_CSP_LOCATION_PROPERTY) != null) {
+				updateRobochartInfo(prop.getProperty(ActivityController.ROBOCHART_CSP_LOCATION_PROPERTY));				
+			}
 		}
 	}
 
@@ -87,7 +119,6 @@ public class ActivityController {
 		WellFormedness.WellFormed();
 
 		settingFDR();
-//		settingRobochart();
 
 		ADParser parser = new ADParser(activity, activityDiagram.getName(), activityDiagram);
 		String diagramCSP = parser.parserDiagram();
@@ -103,7 +134,8 @@ public class ActivityController {
 
 //		String robochartFolder = uh + fs + "Google Drive" + fs + "UFRPE 2020" + fs + "Mestrado PPGIA" + fs + "RoboChart Models" + fs + "SimFW" + fs + "csp-gen" + fs + "defs";
 
-		writer = new PrintWriter(robochartFolder + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "UTF-8");
+		writer = new PrintWriter(getRobochartFolder() + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "UTF-8");
+		
 		writer.print(diagramCSP);
 		writer.flush();
 		writer.close();
@@ -133,18 +165,24 @@ public class ActivityController {
 			AdapterUtils.resetStatics();
 			try {
 				traceCounterExample = FdrWrapper.getInstance().checkRobochartProperty(
-						robochartFolder + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser,
-						activityDiagram.getName(), progressBar);
+					getRobochartFolder() + fs + ADUtils.nameResolver(activityDiagram.getName()) + ".csp", parser,
+					activityDiagram.getName(), progressBar);
 			} catch (Exception e) {
 				AdapterUtils.resetStatics();
 				throw new FDRException("An error occurred during checking robochart property.");
 			}
 		}
 
+		// CONSTRUIR CONTRAEXEMPLO PARA DIAGRAMA DE SEQUENCIA
+		// usar a classe CounterExampleDescriptor para criar o diagrama de sequencia de acordo com  
+		// o contraExemplo que está dentro da lista traceCounterExample.
 		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
-			//usar a classe CounterExampleDescriptor para criar o diagrama de sequencia de acordo com o contraexemplo que está dentro da lista traceCounterExample.
+			for (String evento : traceCounterExample) {
+				System.out.println(evento);
+			}
+//			CounterexampleDescriptor cd = new CounterexampleDescriptor(eventsFdr);	
 		}
-
+		
 //		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
 //			CounterExampleBuilder cb = new CounterExampleBuilder(traceCounterExample, activity, parser.getAlphabetAD(),
 //					ADParser.IdSignals);
@@ -152,7 +190,7 @@ public class ActivityController {
 //			 * responsible for link the CSP counter example events to the ID of the diagram
 //			 * element of each diagram
 //			 */
-//			return cb.createCounterExample(activity);// who should be painted in each diagram
+//			return cb.createCounterExample(activity);// who should be painted in each diagram?
 //			/*
 //			 * creates a copy of the diagrams and paints the elements that is on the counter
 //			 * example
@@ -175,11 +213,24 @@ public class ActivityController {
 			}
 			FdrWrapper wrapper = FdrWrapper.getInstance();
 			String pathFDR = prop.getProperty(FDR3_JAR_LOCATION_PROPERTY);
-			if (!pathFDR.isEmpty()) {
+			String pathCSP = prop.getProperty(ROBOCHART_CSP_LOCATION_PROPERTY);
+			if (!pathFDR.isEmpty() || !pathCSP.isEmpty()) {
 				File fdrLocation = new File(pathFDR);
+				File cspLocation = new File(pathCSP);
 
 				if (fdrLocation.exists()) {
 					wrapper.loadFDR(pathFDR);
+					if (firstInteration) { // carrega as classes um unica vez
+						try {
+							wrapper.loadClasses();
+						} catch (MalformedURLException | ClassNotFoundException e) {
+							e.printStackTrace();
+							throw new FDRException(e.getMessage());
+						}
+						firstInteration = false;
+					}
+				} else if (cspLocation.exists()) {
+					wrapper.loadFDR(pathCSP);
 					if (firstInteration) { // carrega as classes um unica vez
 						try {
 							wrapper.loadClasses();
@@ -198,7 +249,6 @@ public class ActivityController {
 		} else {
 			throw new FDRException("FDR not found, set FDR location in Tools > Properties Plugin Configuration > FDR Location.");
 		}
-
 	}
 
 	public void setFDRLocation(String location) throws FDRException {
@@ -230,9 +280,7 @@ public class ActivityController {
 			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}
-
 		}
-
 	}
 
 	public String getFDRLocation() {
@@ -241,101 +289,45 @@ public class ActivityController {
 
 	//--------------------------------------------------------------------------
 
-//	private void settingRobochart() throws FDRException {
-//		File robochartProperty = new File(ROBOCHART_PROPERTY_FILE);
-//
-//		if (robochartProperty.exists()) {
-//			Properties prop = new Properties();
-//			try {
-//				prop.load(new FileInputStream(robochartProperty));
-//			} catch (IOException e1) {
-//				e1.printStackTrace();
-//				throw new FDRException(e1.getMessage());
-//			}
-//			FdrWrapper wrapper = FdrWrapper.getInstance();
-//			String pathRobo = prop.getProperty(ROBOCHART_FOLDER_LOCATION_PROPERTY);
-//
-//			if (!pathRobo.isEmpty()) {
-//				File RobochartLocation = new File(pathRobo);
-//
-//				if (RobochartLocation.exists()) {
-//					wrapper.loadFDR(pathRobo);
-//					if (firstInteration) { // carrega as classes um unica vez
-//						try {
-//							wrapper.loadClasses();
-//						} catch (MalformedURLException | ClassNotFoundException e) {
-//							e.printStackTrace();
-//							throw new FDRException(e.getMessage());
-//						}
-//						firstInteration = false;
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	public void setRobochartLocation(String location) throws FDRException {
 
-		File robolib = new File(location);
-
-//		if(!robolib.isFile()) {
-//			//tratar trows new Exception
-//		}
-
-		roboInclude = robolib.getName();
-		robochartFolder = robolib.getParent();
+		updateRobochartInfo(location);
 
 		String filename = null;
 		if (System.getProperty("os.name").startsWith("Mac OS X")) {
-			filename = robochartFolder + "/";
+			filename = getRobochartFolder() + "/" + getRoboInclude();
 
 		} else if (System.getProperty("os.name").contains("Win")) {
-			filename = robochartFolder + "\\";
+			filename = getRobochartFolder() + "\\" + getRoboInclude();
 		} else { //LINUX
-			filename = robochartFolder + "/";
+			filename = getRobochartFolder() + "/" + getRoboInclude();
 		}
-
-		try {
-			prop.setProperty(ROBOCHART_LOCATION_PROPERTY, robochartFolder);
-			prop.setProperty(ROBOCHART_FOLDER_LOCATION_PROPERTY, filename);
-			prop.store(new FileOutputStream(new File(ROBOCHART_PROPERTY_FILE)), null);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
+		
+		File cspfile = new File(filename);
+		if (!cspfile.exists()) {
+			throw new FDRException(getRoboInclude() + " not found!");
+		} else {
+			try {
+				prop.setProperty(ROBOCHART_LOCATION_PROPERTY, getRobochartFolder());
+				prop.setProperty(ROBOCHART_CSP_LOCATION_PROPERTY, filename);
+				prop.store(new FileOutputStream(new File(FDR3_PROPERTY_FILE)), null);
+			} catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
-
-//		}else {
-//			//jogar erro
-//		}
-
-//		String filename = null;
-//		if (System.getProperty("os.name").startsWith("Mac OS X")) {
-//			filename = location + "/";
-//
-//		} else if (System.getProperty("os.name").contains("Win")) {
-//			filename = location + "\\";
-//		}else {//LINUX
-//			filename = location + "/";
-//		}
-//
-//
-//		robochartFolder = robolib.getAbsolutePath();
-//		try {
-//			prop.setProperty(ROBOCHART_LOCATION_PROPERTY, location);
-//			prop.setProperty(ROBOCHART_FOLDER_LOCATION_PROPERTY, filename);
-//			prop.store(new FileOutputStream(new File(ROBOCHART_PROPERTY_FILE)), null);
-//		} catch (FileNotFoundException e1) {
-//			e1.printStackTrace();
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
-
-
 	}
 
 	public String getRobochartLocation() {
-		return prop.getProperty(ROBOCHART_LOCATION_PROPERTY);
+		return prop.getProperty(ROBOCHART_CSP_LOCATION_PROPERTY);
+	}
+	
+	public void updateRobochartInfo(String location) {
+		File robolib = new File(location);
+
+		setRoboInclude(robolib.getName());
+		setRobochartFolder(robolib.getParent());
 	}
 
 }

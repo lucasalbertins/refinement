@@ -221,11 +221,20 @@ public class ADParser {
         boolean reset = false;
         String check = "";
         String callBehaviour = "";
-
+        ADUtils adUtils = defineADUtils();
+        String partitionName;
+		try {
+			partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
+		} catch (Exception e) {
+			throw new ParsingException(
+					"The module should have a partition. \n Please, insert and try again.");
+		}
+		
         if (countCall.size() == 0) { //If first occurrence
-            check = "\nassert MAIN :[deadlock free]" +
-                    "\nassert MAIN :[divergence free]" +
-                    "\nassert MAIN :[deterministic]";
+            check = //"\nassert MAIN :[deadlock free]" +
+                    //"\nassert MAIN :[divergence free]" +
+                    //"\nassert MAIN :[deterministic]" +
+                    "\nassert Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " [T= P_" + partitionName;
             reset = true;
         }
         
@@ -256,14 +265,14 @@ public class ADParser {
         String processSync = defineProcessSync();
 //        String pool = definePool();
 ////////////////////////////////////////////////////////////////////////////////////////        
-        ADUtils adUtils = defineADUtils();
+        adUtils = defineADUtils();
         HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
         String robochart = parameterValueDiagram.get("robochart");
         String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
         if (robochart != null && !robochart.equals("")) {
 //			robochart = "include " + robochart + "\n";
 			try {
-				robochart = "include \"" + ActivityController.getInstance().roboInclude + "\"\n";
+				robochart = "include \"" + ActivityController.getInstance().getRoboInclude() + "\"\n";
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -272,25 +281,19 @@ public class ADParser {
 		}
 
         String n_recurse = "\n\nNRecurse(S, P) = |~| ev : S @ ev -> P";
-        String wait_props = "\n\n";
+        String wait_props = "\n\n" + adUtils.printUntilWithPins2();
         
-//        if (!adUtils.hasPins()) {
-        	wait_props = adUtils.printUntilWithPins2() + "\n\n"
-        			+ "WAIT(alphabet,event) = \n"
-        			+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
-        			+ "	|~|\n"
-        			+ "	event -> SKIP\n\n"
-//        			+ "WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ||| CONTROL : processes @ CONTROL\n\n"
-        			//Prop = PROP(Wait_control_processes) 
-//        			+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + "\n\n"
-//        			+ adUtils.alphabetRobo(robochart_alphabet)
-//        			+ "\n\n";
-//		} 
-//			wait_props = adUtils.printUntilWithPins2() + "\n\n"
-					+ "WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
-					+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n"
-					+  adUtils.alphabetRobo(robochart_alphabet)
-					+ "\n\n";
+        	if (firstDiagram.equals(ad.getId())) {
+				wait_props += "\n\nWAIT(alphabet,event) = \n"
+    						+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
+    						+ "	|~|\n"
+    						+ "	event -> SKIP";						
+			}
+
+			wait_props += "\n\nWAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
+						+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n"
+						+  adUtils.alphabetRobo(robochart_alphabet)
+						+ "\n\n";
 			
 			if (countAny_ad > 0 && countUntil_ad > 0) {
 				wait_props +=
@@ -324,7 +327,7 @@ public class ADParser {
 	        		+ "				[|union(diff(AlphabetDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "(id,ev),past),{endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id})|] \r\n"
 	        		+ "			( composeNodes_(id,tail,union(past,AlphabetDiagram_" + ad.getName() + "(id,ev))) )\r\n"
 	        		+ "	within \r\n"
-	        		+ "		composeNodes_(id,alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s,{})";  
+	        		+ "		composeNodes_(id,alphabet_" + adUtils.nameDiagramResolver(ad.getName()) + "_s,{})\n\n";  
     	
     	//---------------------------------------------------------------------------------------------------------------
     	

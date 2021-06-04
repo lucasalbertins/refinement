@@ -13,6 +13,7 @@ import com.change_vision.jude.api.inf.model.ILifeline;
 import com.change_vision.jude.api.inf.model.IMessage;
 import com.change_vision.jude.api.inf.model.IModel;
 import com.change_vision.jude.api.inf.model.INamedElement;
+import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
@@ -33,9 +34,9 @@ public class CounterexampleDescriptor {
     }
 
     /*
-        This is the method that creates a counter example sequence diagram in Astah.
+        This is the method that creates a counterexample sequence diagram in Astah.
         It receives a list of events as parameter, this list is created by the FdrWrapper
-        class as a result of the method getCounterExamples()
+        class as a result of the method()
      */
     public void buildCounterExample(String name, List<String> entrada, ProjectAccessor projectAccessor)
             throws ClassNotFoundException, IOException {
@@ -79,6 +80,10 @@ public class CounterexampleDescriptor {
         IModel project = projectAccessor.getProject();
         // create sequence diagram
         SequenceDiagramEditor de = projectAccessor.getDiagramEditorFactory().getSequenceDiagramEditor();
+        //-------------------------------------------
+        // Linha incluida para Diagrama de Sequência
+        ISequenceDiagram newDgm = de.createSequenceDiagram(project, "CounterExample");
+        //-------------------------------------------
         // Creates the lifelines and position them properly in the sequence diagram
         List<INodePresentation> myLifelines = CreateLifelines(project, de);
         // create messages, combinedFragment, interactionUse, stateInvariant
@@ -91,6 +96,7 @@ public class CounterexampleDescriptor {
         for (String lf : lifelineBases) {
             String[] split = lf.split("_");
             IClass boundary = findNamedElement(project.getOwnedElements(), split[0], IClass.class);
+            // Modificar o split[] pelo nome que desejamos criar
             INodePresentation objPs1 = de.createLifeline(split[1], position);
             ILifeline lifeline1 = (ILifeline) objPs1.getModel();
             lifeline1.setBase(boundary);
