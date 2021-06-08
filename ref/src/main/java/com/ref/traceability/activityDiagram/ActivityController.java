@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class ActivityController {
 	private String robochartFolder;
 	private String roboInclude;
 	
-	private List<String> eventsFdr;
+	private List<String> eventsFdr = new ArrayList<>();
 	
 	public String getRobochartFolder() {
 		return robochartFolder;
@@ -179,8 +180,12 @@ public class ActivityController {
 		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
 			for (String evento : traceCounterExample) {
 				System.out.println(evento);
+				eventsFdr.add(evento);
 			}
-//			CounterexampleDescriptor cd = new CounterexampleDescriptor(eventsFdr);	
+//			for (String ev : eventsFdr) {
+//				System.out.println(ev);
+//			}
+			CounterexampleDescriptor cd = new CounterexampleDescriptor(eventsFdr);	
 		}
 		
 //		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace

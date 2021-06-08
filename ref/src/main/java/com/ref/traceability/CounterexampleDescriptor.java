@@ -22,6 +22,7 @@ public class CounterexampleDescriptor {
 
     private Map<String, String> lifelinesMap;
     private List<String> lifelineBases;
+    private List<String> rawEvents;
 
     /*
         The counterExampleDescriptor needs a map of all lifelines contained in the current project.
@@ -31,6 +32,10 @@ public class CounterexampleDescriptor {
     public CounterexampleDescriptor(Map<String, String> lifelinesMap) {
         this.lifelinesMap = lifelinesMap;
         this.lifelineBases = new ArrayList<>(lifelinesMap.values());
+    }
+    
+    public CounterexampleDescriptor(List<String> rawEvents) {
+    	this.rawEvents = rawEvents;
     }
 
     /*
