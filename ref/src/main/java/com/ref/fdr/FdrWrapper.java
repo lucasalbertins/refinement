@@ -792,7 +792,7 @@ public class FdrWrapper {
 		if (hasError == 1) {
 			log = nameDiagram + " is a divergence!";
 		} else if (hasError == 2) {
-			log = "Non-Divergence detected in " + nameDiagram;
+			log = "Non-Refinement in Traces detected in " + nameDiagram;
 		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {

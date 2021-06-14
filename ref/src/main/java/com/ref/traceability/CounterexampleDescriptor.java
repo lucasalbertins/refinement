@@ -1,10 +1,18 @@
 package com.ref.traceability;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.change_vision.jude.api.inf.AstahAPI;
 import com.change_vision.jude.api.inf.editor.SequenceDiagramEditor;
 import com.change_vision.jude.api.inf.editor.TransactionManager;
 import com.change_vision.jude.api.inf.exception.InvalidEditingException;
@@ -19,25 +27,30 @@ import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 
 public class CounterexampleDescriptor {
-
-    private Map<String, String> lifelinesMap;
-    private List<String> lifelineBases;
+	
+//    private Map<String, String> lifelinesMap;
+//    private List<String> lifelineBases;
     private List<String> rawEvents;
-
+    private String stateMachineName;
+    
     /*
         The counterExampleDescriptor needs a map of all lifelines contained in the current project.
         The map entries have the format < lf(int)id, (lf base)_(lf instance) >
         and are defined in the lifelines3 attribute of SDParser class
      */
-    public CounterexampleDescriptor(Map<String, String> lifelinesMap) {
-        this.lifelinesMap = lifelinesMap;
-        this.lifelineBases = new ArrayList<>(lifelinesMap.values());
-    }
+//    public CounterexampleDescriptor(Map<String, String> lifelinesMap) {
+//        this.lifelinesMap = lifelinesMap;
+//        this.lifelineBases = new ArrayList<>(lifelinesMap.values());
+//    }
     
-    public CounterexampleDescriptor(List<String> rawEvents) {
-    	this.rawEvents = rawEvents;
+    public CounterexampleDescriptor(List<String> lifelineBases) {
+    	try {
+    		ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
+			buildCounterExample("Test_SD", lifelineBases, projectAccessor);
+		} catch (ClassNotFoundException | IOException e) {
+			e.printStackTrace();
+		}
     }
-
     /*
         This is the method that creates a counterexample sequence diagram in Astah.
         It receives a list of events as parameter, this list is created by the FdrWrapper
@@ -46,14 +59,11 @@ public class CounterexampleDescriptor {
     public void buildCounterExample(String name, List<String> entrada, ProjectAccessor projectAccessor)
             throws ClassNotFoundException, IOException {
 
-        List<String> events = preProcess(entrada);
-//        if (projectAccessor == null) {
-//            projectAccessor = ProjectAccessorFactory.getProjectAccessor();
-//            projectAccessor.create(name);
-//        }
+        this.rawEvents = preProcess(entrada);
+
         try {
             TransactionManager.beginTransaction();
-            createSequenceDiagram(events, projectAccessor);
+            createSequenceDiagram(rawEvents, projectAccessor);
             TransactionManager.endTransaction();
             projectAccessor.save();
 
@@ -70,119 +80,78 @@ public class CounterexampleDescriptor {
         the counter Example SD, such as beginInteraction and endInteraction
      */
     private List<String> preProcess(List<String> entrada) {
-        List<String> result = new ArrayList<String>();
-
-        for (String trace : entrada) {
-            String newtrace = trace.replace("beginInteraction, ", "");
-            newtrace = newtrace.replaceAll(", endInteraction", "");
-            result.add(newtrace);
-        }
-        return result;
+    	List<String> result = new ArrayList<String>(); 
+    	String[] split = entrada.get(0).split("::");
+    	this.stateMachineName = split[0];
+    	for (int i = 0; i < entrada.size(); i++) {
+    		String newtrace;
+    		if (entrada.get(i).contains(".in") || entrada.get(i).contains(".out")) {
+    			newtrace = entrada.get(i).replace(this.stateMachineName + "::", "");
+    			result.add(newtrace);
+			} else {
+	    		newtrace = entrada.get(i).replace(this.stateMachineName + "::", "").replace("Call", "");
+	    		String sufix = newtrace.replaceFirst("\\.", "(").replace(".", ",");
+	    		sufix += ")";
+	    		result.add(sufix);
+			}
+    	}
+    	return result;
     }
 
     private void createSequenceDiagram(List<String> events, ProjectAccessor projectAccessor) throws Exception {
-
         IModel project = projectAccessor.getProject();
         // create sequence diagram
         SequenceDiagramEditor de = projectAccessor.getDiagramEditorFactory().getSequenceDiagramEditor();
-        //-------------------------------------------
-        // Linha incluida para Diagrama de Sequência
-        ISequenceDiagram newDgm = de.createSequenceDiagram(project, "CounterExample");
-        //-------------------------------------------
+        // create diagram name
+        ISequenceDiagram newDgm = de.createSequenceDiagram(project, stateMachineName + " - " + LocalDateTime.now());
         // Creates the lifelines and position them properly in the sequence diagram
         List<INodePresentation> myLifelines = CreateLifelines(project, de);
         // create messages, combinedFragment, interactionUse, stateInvariant
-        CreateMessages(events, de, myLifelines);
+        CreateMessages(events, de, myLifelines);        
     }
-
+    
     private List<INodePresentation> CreateLifelines(IModel project, SequenceDiagramEditor de) throws InvalidEditingException {
-        List<INodePresentation> myLifelines = new ArrayList<INodePresentation>();
-        double position = 0;
-        for (String lf : lifelineBases) {
-            String[] split = lf.split("_");
-            IClass boundary = findNamedElement(project.getOwnedElements(), split[0], IClass.class);
-            // Modificar o split[] pelo nome que desejamos criar
-            INodePresentation objPs1 = de.createLifeline(split[1], position);
-            ILifeline lifeline1 = (ILifeline) objPs1.getModel();
-            lifeline1.setBase(boundary);
-            position = position + 200;
-            myLifelines.add(objPs1);
-        }
-        return myLifelines;
+    	List<INodePresentation> myLifelines = new ArrayList<INodePresentation>();
+    	double position = 0;
+    	INodePresentation objPs1 = de.createLifeline(stateMachineName, position);
+    	ILifeline lifeline1 = (ILifeline) objPs1.getModel();
+    	position += 200;
+    	myLifelines.add(objPs1);
+    	INodePresentation objPs2 = de.createLifeline("Controller", position);
+    	lifeline1 = (ILifeline) objPs2.getModel();
+    	position += 200;
+    	myLifelines.add(objPs2);
+    	
+    	return myLifelines;
     }
 
     private void CreateMessages(List<String> events, SequenceDiagramEditor de, List<INodePresentation> myLifelines) throws InvalidEditingException {
         List<ILinkPresentation> msgs = new ArrayList<ILinkPresentation>();
-
-        List<String> msgsSpecification = getMessages(events.get(1));
-        List<String> msgsImplementation;
-
-        if (events.get(0).equals("endInteraction")) {
-            msgsImplementation = getMessages(events.get(2));
-        } else {
-            msgsSpecification.add(events.get(0));
-            msgsImplementation = null;
-        }
-
-        int msgType;
         int msgPosition = 160;
-
-        for (int i = 0; i < msgsSpecification.size(); i++) {
-            String[] msgSplit = msgsSpecification.get(i).split("\\.");
-
-            // Checks if the message is asynchronous(SIG) or synchronous(OP)
-            if (msgSplit[0].contains("SIG")) {
-                msgType = 1;
-            }
-            else {
-                msgType = 0;
-            }
-            msgPosition =  BuildMessage(msgPosition,events, de, myLifelines, msgs, msgsSpecification, msgsImplementation, msgType, i, msgSplit);
+        for (int i = 0; i < events.size(); i++) {
+				msgPosition =  BuildMessage(msgPosition, events, de, myLifelines, msgs, i);
         }
     }
 
-    private int BuildMessage(int msgPosition, List<String> events, SequenceDiagramEditor de, List<INodePresentation> myLifelines, List<ILinkPresentation> msgs, List<String> msgsSpecification, List<String> msgsImplementation, int msgType, int i, String[] msgSplit) throws InvalidEditingException {
-
-        int[] ids;
-        // Just consider messages that are not return messages
-        if (!msgSplit[1].equals("r")) {
-            ids = findLifeline(msgSplit[2], msgSplit[3], myLifelines);
-            if (ids[0] != -1 && ids[1] != -1) {
-                String[] msgName = msgSplit[4].split("_");
-                if (msgName.length >= 1 && !msgSplit[4].contains("_O")) {
-                    ILinkPresentation msg = de.createMessage(msgName[0], myLifelines.get(ids[0]),
-                            myLifelines.get(ids[1]), msgPosition);
-
-                    if (events.get(0).equals("endInteraction")
-                            && !msgsImplementation.get(i).equals(msgsSpecification.get(i))) {
-                        msg.setProperty("line.color", "#FF0000");
-                    }
-
-                    if (!events.get(0).equals("endInteraction") && i == msgsSpecification.size() - 1) {
-                        msg.setProperty("line.color", "#FF0000");
-                    }
-
-                    if (msgType == 1) {
-                        IMessage m = (IMessage) msg.getModel();
-                        m.setAsynchronous(true);
-                    } else {
-                        msgs.add(msg);
-                    }
-
-                    msgPosition = msgPosition + 50;
-                } else {
-                    IMessage message;
-                    for (ILinkPresentation msg : msgs) {
-                        message = (IMessage) msg.getModel();
-                        if (msgName[0].equals(message.getName())) {
-                            de.createReturnMessage("", msg);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return msgPosition;
+    private int BuildMessage(int msgPosition, List<String> events, SequenceDiagramEditor de, List<INodePresentation> myLifelines, 
+    	List<ILinkPresentation> msgs, int i) throws InvalidEditingException {
+    	ILinkPresentation msg = null;
+    	if (events.get(i).contains(".in")) {
+    		msg = de.createMessage(events.get(i), myLifelines.get(1), myLifelines.get(0), msgPosition);
+		} else if (events.get(i).contains(".out")) {
+			msg = de.createMessage(events.get(i), myLifelines.get(0), myLifelines.get(1), msgPosition);
+		} else {
+			msg = de.createMessage(events.get(i), myLifelines.get(0), myLifelines.get(0), msgPosition);
+		}
+    	
+    	if (i == events.size()-1) {
+			msg.setProperty("line.color", "#FF0000");
+		}
+		IMessage m = (IMessage) msg.getModel();
+		m.setAsynchronous(true);
+		msgPosition += 50;
+			
+    	return msgPosition;
     }
 
     private List<String> getMessages(String string) {
@@ -194,54 +163,4 @@ public class CounterexampleDescriptor {
         }
         return msgs;
     }
-
-    private int[] findLifeline(String lfsrcID, String lfdestID, List<INodePresentation> myLifelines) {
-        String lfName1 = lifelinesMap.get(lfsrcID);
-        String lfName2 = lifelinesMap.get(lfdestID);
-        String[] split1 = lfName1.split("_");
-        String[] split2 = lfName2.split("_");
-        int id = 0;
-        int[] result = {-1, -1};
-        ILifeline life;
-
-        for (INodePresentation lf : myLifelines) {
-            life = (ILifeline) lf.getModel();
-            if (life.getName().equals(split1[1])) {
-                result[0] = id;
-            }
-            if (life.getName().equals(split2[1])) {
-                result[1] = id;
-            }
-            id++;
-        }
-        return result;
-    }
-
-    private <T extends INamedElement> T findNamedElement(INamedElement[] children, String name, Class<T> clazz) {
-        for (INamedElement child : children) {
-            if (clazz.isInstance(child) && child.getName().equals(name)) {
-                return clazz.cast(child);
-            }
-        }
-        return null;
-    }
-
-//    private IPresentation findPresentationByType(ISequenceDiagram dgm, String type) throws InvalidUsingException {
-//        for (IPresentation ps : dgm.getPresentations()) {
-//            if (ps.getType().equals(type)) {
-//                return ps;
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private static INamedElement[] findSequence(ProjectAccessor projectAccessor) throws ProjectNotFoundException {
-//        INamedElement[] foundElements = projectAccessor.findElements(new ModelFinder() {
-//            public boolean isTarget(INamedElement namedElement) {
-//                return namedElement instanceof ISequenceDiagram;
-//            }
-//        });
-//        return foundElements;
-//    }
-
 }
