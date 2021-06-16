@@ -174,33 +174,14 @@ public class ActivityController {
 			}
 		}
 
-		// CONSTRUIR CONTRAEXEMPLO PARA DIAGRAMA DE SEQUENCIA
-		// usar a classe CounterExampleDescriptor para criar o diagrama de sequencia de acordo com  
-		// o contraExemplo que está dentro da lista traceCounterExample.
 		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
 			for (String evento : traceCounterExample) {
-				System.out.println(evento);
+//				System.out.println(evento);
 				eventsFdr.add(evento);
 			}
-//			for (String ev : eventsFdr) {
-//				System.out.println(ev);
-//			}
 			CounterexampleDescriptor cd = new CounterexampleDescriptor(eventsFdr);	
 		}
 		
-//		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
-//			CounterExampleBuilder cb = new CounterExampleBuilder(traceCounterExample, activity, parser.getAlphabetAD(),
-//					ADParser.IdSignals);
-//			/*
-//			 * responsible for link the CSP counter example events to the ID of the diagram
-//			 * element of each diagram
-//			 */
-//			return cb.createCounterExample(activity);// who should be painted in each diagram?
-//			/*
-//			 * creates a copy of the diagrams and paints the elements that is on the counter
-//			 * example
-//			 */
-//		}
 		return null;
 
 	}
