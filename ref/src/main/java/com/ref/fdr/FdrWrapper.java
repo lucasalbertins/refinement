@@ -679,8 +679,8 @@ public class FdrWrapper {
 		//returns the trace
 		/*
 		0 = error
-		1 = deadlock free
-		2 = deadlock detected
+		1 = success
+		2 = counter example
 		3 = compilation failed
 		4 = invalid license
 		*/
@@ -790,7 +790,7 @@ public class FdrWrapper {
 	private String handleLogRobochartProperty(int hasError, String nameDiagram) {
 		String log = "";
 		if (hasError == 1) {
-			log = nameDiagram + " is a divergence!";
+			log = "The property " + nameDiagram + " holds!";
 		} else if (hasError == 2) {
 			log = "Non-Refinement in Traces detected in " + nameDiagram;
 		} else if (hasError == 3 || hasError == 0) {

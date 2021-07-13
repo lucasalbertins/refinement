@@ -103,7 +103,7 @@ public class ActivityController {
 		return controller;
 	}
 
-	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws FDRException,ParsingException, FileNotFoundException, UnsupportedEncodingException, WellFormedException{
+	public void AstahInvocation(IDiagram diagram, VerificationType type, CheckingProgressBar progressBar) throws Exception{
 
 		Activity activity = new Activity(((IActivityDiagram) diagram).getActivity());
 			ActivityDiagram activityDiagram = new ActivityDiagram( (IActivityDiagram) diagram);
@@ -116,7 +116,7 @@ public class ActivityController {
 	}
 
 	public HashMap<IActivity, List<String>> checkProperty(Activity activity,
-			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws FileNotFoundException, UnsupportedEncodingException, ParsingException, FDRException, WellFormedException{
+			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws Exception{
 		WellFormedness.WellFormed();
 
 		settingFDR();
@@ -175,6 +175,7 @@ public class ActivityController {
 		}
 
 		if (traceCounterExample != null && !traceCounterExample.isEmpty()) {// If there is a trace
+			eventsFdr.clear();
 			for (String evento : traceCounterExample) {
 //				System.out.println(evento);
 				eventsFdr.add(evento);

@@ -93,10 +93,11 @@ public class CheckingProgressBar extends JFrame implements FocusListener {
             step1 = true;
         } else if (!step2 && value == 2) {
             if (typeAssertion == 0) {
-                text.append("Checking for deadlock...<br>");
-            } else {
-                text.append("Checking for non-determinism...<br>");
-            }
+                text.append("Checking for traces ...<br>");
+            } 
+//            else {
+//                text.append("Checking for non-determinism...<br>");
+//            }
             step2 = true;
         } else if (!step3 && value == 3) {
             text.append("Creating counterexamples...<br>");

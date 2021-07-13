@@ -25,13 +25,15 @@ import com.change_vision.jude.api.inf.presentation.INodePresentation;
 import com.change_vision.jude.api.inf.presentation.PresentationPropertyConstants;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
 import com.change_vision.jude.api.inf.project.ProjectAccessorFactory;
+import com.ref.interfaces.activityDiagram.IActivity;
+import com.ref.parser.activityDiagram.ADUtils;
 
 public class CounterexampleDescriptor {
 	
     private Map<String, String> lifelinesMap;
     private List<String> lifelineBases;
     private List<String> rawEvents;
-    private String stateMachineName;
+    private String swimmingLine;
     
     /*
         The counterExampleDescriptor needs a map of all lifelines contained in the current project.
@@ -43,7 +45,7 @@ public class CounterexampleDescriptor {
         this.lifelineBases = new ArrayList<>(lifelinesMap.values());
     }
     
-    public CounterexampleDescriptor(List<String> lifelineBases) {
+    public CounterexampleDescriptor(List<String> lifelineBases) throws Exception {
     	try {
     		ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			buildCounterExample("Test_SD", lifelineBases, projectAccessor);
@@ -57,8 +59,7 @@ public class CounterexampleDescriptor {
         class as a result of the method()
      */
     public void buildCounterExample(String name, List<String> entrada, ProjectAccessor projectAccessor)
-            throws ClassNotFoundException, IOException {
-
+            throws Exception {
 //        this.rawEvents = preProcess(entrada);
         this.rawEvents = new ArrayList<>(preProcess(entrada));
 
@@ -70,6 +71,7 @@ public class CounterexampleDescriptor {
 
         } catch (Exception e) {
             e.printStackTrace();
+            throw new Exception(e.getMessage());
         } finally {
             TransactionManager.abortTransaction();
             // projectAccessor.close();
@@ -82,9 +84,9 @@ public class CounterexampleDescriptor {
     private List<String> preProcess(List<String> entrada) {
     	List<String> result = new ArrayList<String>(); 
     	String[] split = entrada.get(0).split("::");
-    	this.stateMachineName = split[0];
+    	this.swimmingLine = split[0];
     	for (int i = 0; i < entrada.size(); i++) {
-    		String newtrace = entrada.get(i).replace(this.stateMachineName + "::", "").replace("Call", "");
+    		String newtrace = entrada.get(i).replace(this.swimmingLine + "::", "").replace("Call", "");
 			result.add(newtrace);
     	}
     	return result;
@@ -95,7 +97,7 @@ public class CounterexampleDescriptor {
         // create sequence diagram
         SequenceDiagramEditor de = projectAccessor.getDiagramEditorFactory().getSequenceDiagramEditor();
         // create diagram name
-        ISequenceDiagram newDgm = de.createSequenceDiagram(project, stateMachineName + " - " + LocalDateTime.now());
+        ISequenceDiagram newDgm = de.createSequenceDiagram(project,"counterExample_" + swimmingLine + "_" + LocalDateTime.now());
         // Creates the lifelines and position them properly in the sequence diagram
         List<INodePresentation> myLifelines = CreateLifelines(project, de);
         // create messages, combinedFragment, interactionUse, stateInvariant
@@ -125,7 +127,7 @@ public class CounterexampleDescriptor {
     	myLifelines.add(objPs1);
     	position += 300;
     	
-    	INodePresentation objPs2 = de.createLifeline(stateMachineName, position);
+    	INodePresentation objPs2 = de.createLifeline(swimmingLine, position);
 //    	objPs2.setProperty("fill.color", "#ADD8E6");
     	lifeline = (ILifeline) objPs2.getModel();
     	myLifelines.add(objPs2);
@@ -148,22 +150,23 @@ public class CounterexampleDescriptor {
     	String[] split = events.get(i).split("\\.");
     	String ev = split[0].toString();
     	String args = "";
-    	int c = 1;
-    	for (int j = 1; j < split.length; j++) {
-    		if (!split[j].contains(".in") || !split[j].contains(".out")) {
-    			args += split[j];	
-    			if ((c + 1) <  split.length) {
-    				args += ",";
-				}
+    	String arg1 = split[split.length-1].toString();
+    	String arg2 = split[split.length-2].toString();
+    	if (!(arg1.equals("in")) && !(arg1.equals("out"))) {
+			args = arg1;
+			if (!(arg2.equals("in")) && !(arg2.equals("out")) && !(arg2.equals(ev))) {
+				args += "," + arg2;
 			}
-    		c++;
-    	}    	
+		}
+    	
     	if (events.get(i).contains(".in")) {
     		msg = de.createMessage(ev, myLifelines.get(0), myLifelines.get(1), msgPosition);
     		m = (IMessage) msg.getModel();
+    		m.setArgument(args);
 		} else if (events.get(i).contains(".out")) {
+			msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(0), msgPosition);
 			m = (IMessage) msg.getModel();
-			msg = de.createMessage(events.get(i), myLifelines.get(1), myLifelines.get(0), msgPosition);
+			m.setArgument(args);
 		} else {
 			msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(1), msgPosition);
 			m = (IMessage) msg.getModel();

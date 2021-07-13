@@ -88,6 +88,8 @@ public class ADParser {
 	public List<String> eventsUntil;
 	public HashMap<String, String> untilList;
 	public List<String> waitAccept;
+	public List<String> listUnion;
+	public StringBuilder alphabetUnion;
 	////////////////////////////////////////////////////////////////////////////////////////
 
     public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
@@ -134,6 +136,8 @@ public class ADParser {
         this.eventsUntil = new ArrayList<>();
         this.untilList = new HashMap<>();
         this.waitAccept = new ArrayList<>();
+        this.listUnion = new ArrayList<>();
+        this.alphabetUnion = new StringBuilder();
         
     }
 
@@ -176,7 +180,7 @@ public class ADParser {
         parameterNodesOutputObject = new HashMap<>();
         memoryLocal = new HashMap<Pair<String,String>,String>();
         memoryLocalChannel = new ArrayList<>();
-        unionList = new ArrayList<>();
+//        unionList = new ArrayList<>();
         typeUnionList = new HashMap<>();
         callBehaviourInputs = new HashMap<>();
         callBehaviourNumber = new ArrayList<>();
@@ -246,7 +250,6 @@ public class ADParser {
 
         String nodes = defineNodesActionAndControl();
 
-        
         for (IActivity adCalling: callBehaviourList) {
             if (!callBehaviourListCreated.contains(adCalling)) {
                 callBehaviourListCreated.add(adCalling);
@@ -255,8 +258,30 @@ public class ADParser {
                 alphabetAD = new ADCompositeAlphabet(ad);
                 this.alphabetAD.add(adParser.getAlphabetAD());
             }
-        }
-
+            listUnion.add("alphabet_Astah_" + adUtils.nameDiagramResolver(adCalling.getName()));
+        }  
+        listUnion.add("alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()));
+        if (callBehaviourList.size() > 0 && firstDiagram.equals(ad.getId())) {
+        	for (int i = 0; i < callBehaviourList.size(); i++) {
+        		alphabetUnion.append("union(");
+        	}			
+        	int u = 1;
+        	for (int i = 0; i < listUnion.size(); i++) {
+        		alphabetUnion.append(listUnion.get(i));  				
+        		if (u < 2) {
+        			alphabetUnion.append(", ");
+        			u++;
+        		} else if (u >= 2 && i < listUnion.size()-1) {
+        			alphabetUnion.append("), ");
+        			u = 2;
+        		} else {
+        			alphabetUnion.append(")");
+        		}				
+        	}	
+		} else {
+			alphabetUnion.append("alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()));
+		}
+		
         String channel = defineChannels();
         String main = defineMainNodes();
         String type = defineTypes();
@@ -291,9 +316,13 @@ public class ADParser {
 			}
 
 			wait_props += "\n\nWAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
-						+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n"
-						+  adUtils.alphabetRobo(robochart_alphabet)
-						+ "\n\n";
+						+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ ";							
+				if (!firstDiagram.equals(ad.getId())) {
+					wait_props += "alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n";							
+				} else {
+					wait_props += alphabetUnion.toString() + " \n\n";
+				}	
+			wait_props +=  adUtils.alphabetRobo(robochart_alphabet) + "\n\n";
 			
 			if (countAny_ad > 0 && countUntil_ad > 0) {
 				wait_props +=

@@ -50,7 +50,7 @@ public class TemplateRobochartActionAD implements IPluginActionDelegate {
 						} catch (Exception e) {
 							progressBar.setVisible(false);
 							progressBar.repaint();
-							JOptionPane.showMessageDialog( window.getParent(), "An error occurred during checking determinism.","Checking Deadlock Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog( window.getParent(), "An error occurred during checking traces.","Checking Trace Error", JOptionPane.ERROR_MESSAGE);
 							e.printStackTrace();
 						}
 					}

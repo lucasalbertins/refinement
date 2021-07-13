@@ -1087,5 +1087,4 @@ public class ADUtils {
 	public boolean hasPins() {
 		return hasPins;
 	}
-
 }
