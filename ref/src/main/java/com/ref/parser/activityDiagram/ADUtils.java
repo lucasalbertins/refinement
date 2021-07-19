@@ -276,7 +276,7 @@ public class ADUtils {
 					"_"+nameDiagramResolver(ad.getName())+".id"+",");
 			// PathPlanningSM::ultrasonic.in?u -> set_u_ultrasonic_P_Teste.id?c!u -> SKIP
 			waitAccept.add(partitionName + "::" + nAccept + "?" + nameDiagramResolver(outPins[i].getName()) + " -> set_" + nameDiagramResolver(outPins[i].getName()) 
-			+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP");
+			+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP\n\n");
 		}
 		accept.setCharAt(accept.length()-1, ' ');
 		accept.append("|} |> ");
