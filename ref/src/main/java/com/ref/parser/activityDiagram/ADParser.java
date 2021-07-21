@@ -292,18 +292,19 @@ public class ADParser {
 ////////////////////////////////////////////////////////////////////////////////////////        
         adUtils = defineADUtils();
         HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
-        String robochart = parameterValueDiagram.get("robochart");
+//        String robochart = parameterValueDiagram.get("robochart");
         String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
-        if (robochart != null && !robochart.equals("")) {
+//        if (robochart != null && !robochart.equals("")) {
 //			robochart = "include " + robochart + "\n";
+        String robochart = "";
 			try {
 				robochart = "include \"" + ActivityController.getInstance().getRoboInclude() + "\"\n";
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
 			}
-		} else {
-			throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
-		}
+//		} else {
+//			throw new ParsingException("Specify the Robochart file providing the property \"robochart = {robochartFilePath};\" in the definition field.");
+//		}
 
         String n_recurse = "\n\nNRecurse(S, P) = |~| ev : S @ ev -> P";
         String wait_props = "\n\n" + adUtils.printUntilWithPins2();
