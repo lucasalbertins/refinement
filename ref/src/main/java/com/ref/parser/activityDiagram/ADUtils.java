@@ -345,7 +345,7 @@ public class ADUtils {
 
 	public void clear(ArrayList<String> alphabetNode, StringBuilder action) {
 		String clear = "clear_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countClear_ad++;
-		alphabetNode.add(clear);
+		//alphabetNode.add(clear);
 		action.append(clear + " -> ");
 	}
 

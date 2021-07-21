@@ -168,7 +168,7 @@ public class CounterexampleDescriptor {
 			m = (IMessage) msg.getModel();
 			m.setArgument(args);
 		} else {
-			msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(1), msgPosition);
+			msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(0), msgPosition);
 			m = (IMessage) msg.getModel();
 			m.setArgument(args);
 		}    	
