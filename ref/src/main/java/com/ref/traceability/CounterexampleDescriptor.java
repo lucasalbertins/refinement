@@ -1,8 +1,10 @@
 package com.ref.traceability;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,13 +20,10 @@ import com.change_vision.jude.api.inf.model.ILifeline;
 import com.change_vision.jude.api.inf.model.IMessage;
 import com.change_vision.jude.api.inf.model.IModel;
 import com.change_vision.jude.api.inf.model.INamedElement;
-import com.change_vision.jude.api.inf.model.IOperation;
 import com.change_vision.jude.api.inf.model.ISequenceDiagram;
 import com.change_vision.jude.api.inf.presentation.ILinkPresentation;
 import com.change_vision.jude.api.inf.presentation.INodePresentation;
-import com.change_vision.jude.api.inf.presentation.PresentationPropertyConstants;
 import com.change_vision.jude.api.inf.project.ProjectAccessor;
-import com.change_vision.jude.api.inf.project.ProjectAccessorFactory;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.parser.activityDiagram.ADUtils;
 
@@ -34,6 +33,11 @@ public class CounterexampleDescriptor {
     private List<String> lifelineBases;
     private List<String> rawEvents;
     private String swimmingLine;
+    private String nome;
+    
+    Date dataHoraAtual = new Date();
+    String data = new SimpleDateFormat("dd-MM-yyyy").format(dataHoraAtual);
+    String hora = new SimpleDateFormat("HH:mm:ss").format(dataHoraAtual);
     
     /*
         The counterExampleDescriptor needs a map of all lifelines contained in the current project.
@@ -60,7 +64,6 @@ public class CounterexampleDescriptor {
      */
     public void buildCounterExample(String name, List<String> entrada, ProjectAccessor projectAccessor)
             throws Exception {
-//        this.rawEvents = preProcess(entrada);
         this.rawEvents = new ArrayList<>(preProcess(entrada));
 
         try {
@@ -96,8 +99,8 @@ public class CounterexampleDescriptor {
         IModel project = projectAccessor.getProject();
         // create sequence diagram
         SequenceDiagramEditor de = projectAccessor.getDiagramEditorFactory().getSequenceDiagramEditor();
-        // create diagram name
-        ISequenceDiagram newDgm = de.createSequenceDiagram(project,"counterExample_" + swimmingLine + "_" + LocalDateTime.now());
+        // create diagram name        
+        ISequenceDiagram newDgm = de.createSequenceDiagram(project,"counterExample_" + swimmingLine + "_" + data + "_" + hora);
         // Creates the lifelines and position them properly in the sequence diagram
         List<INodePresentation> myLifelines = CreateLifelines(project, de);
         // create messages, combinedFragment, interactionUse, stateInvariant
@@ -114,12 +117,12 @@ public class CounterexampleDescriptor {
     	BasicModelEditor bme = ModelEditorFactory.getBasicModelEditor();
     	IClass actor;
     	try {
-    		actor = bme.createClass(project, "Actor0");    	
+    		actor = bme.createClass(project, "Environment");    	
     	} catch (InvalidEditingException e) {
     		e.getMessage();
     	}
     	finally {
-    		actor = findNamedElement(project.getOwnedElements(), "Actor0", IClass.class);
+    		actor = findNamedElement(project.getOwnedElements(), "Environment", IClass.class);
     	}
     	actor.addStereotype("actor");
     	lifeline.setBase(actor);
