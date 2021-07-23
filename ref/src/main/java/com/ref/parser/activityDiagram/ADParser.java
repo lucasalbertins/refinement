@@ -307,16 +307,19 @@ public class ADParser {
 //		}
 
         String n_recurse = "\n\nNRecurse(S, P) = |~| ev : S @ ev -> P";
-        String wait_props = "\n\n" + adUtils.printUntilWithPins2();
+//        String wait_props = "\n\n" + adUtils.printUntilWithPins2();
+        String wait_props = adUtils.printUntilWithPins2();
         
         	if (firstDiagram.equals(ad.getId())) {
 				wait_props += "\n\nWAIT(alphabet,event) = \n"
     						+ "	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))\n"
     						+ "	|~|\n"
-    						+ "	event -> SKIP";						
+    						+ "	event -> SKIP\n\n";						
+			} else {
+				wait_props += "\n\n";
 			}
 
-			wait_props += "\n\nWAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
+			wait_props += "WAIT_PROCCESSES_" + adUtils.nameDiagramResolver(ad.getName()) + "(processes) = ( ||| CONTROL : processes @ CONTROL )  /\\ endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + "?id -> SKIP\n\n"
 						+ "Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " = PROP_" + adUtils.nameDiagramResolver(ad.getName()) + "(Wait_control_processes_" + adUtils.nameDiagramResolver(ad.getName()) + ") \\ ";							
 				if (!firstDiagram.equals(ad.getId())) {
 					wait_props += "alphabet_Astah_" + adUtils.nameDiagramResolver(ad.getName()) + " \n\n";							

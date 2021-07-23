@@ -262,7 +262,7 @@ public class ADUtils {
 		//		waitAccept.add(partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in"));
 
 		// WAIT_accept_ultrasonic_1(alphabet) = 
-		waitAccept.add("WAIT_accept_" + nameRobochartResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet) = \n");
+		waitAccept.add("\n\nWAIT_accept_" + nameRobochartResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet) = \n");
 		// NRecurse(diff(alphabet, {| PathPlanningSM::ultrasonic.in |}), WAIT_accept_ultrasonic_1(alphabet)) 
 		waitAccept.add("NRecurse(diff(alphabet, {|" + partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in") + "|}), WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet))\n |~| \n");
 
@@ -276,7 +276,7 @@ public class ADUtils {
 					"_"+nameDiagramResolver(ad.getName())+".id"+",");
 			// PathPlanningSM::ultrasonic.in?u -> set_u_ultrasonic_P_Teste.id?c!u -> SKIP
 			waitAccept.add(partitionName + "::" + nAccept + "?" + nameDiagramResolver(outPins[i].getName()) + " -> set_" + nameDiagramResolver(outPins[i].getName()) 
-			+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP\n\n");
+			+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP");
 		}
 		accept.setCharAt(accept.length()-1, ' ');
 		accept.append("|} |> ");
