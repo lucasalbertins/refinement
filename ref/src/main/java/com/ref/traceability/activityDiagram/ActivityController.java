@@ -140,6 +140,10 @@ public class ActivityController {
 		writer.print(diagramCSP);
 		writer.flush();
 		writer.close();
+		
+		
+		String alpha =FdrWrapper.getInstance().processAlphabet2(getRobochartFolder() + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "P_PathPlanningSM");
+		System.out.println("Alphabet: = " + alpha);
 
 		List<String> traceCounterExample = null;
 		if (type == VerificationType.DEADLOCK) {

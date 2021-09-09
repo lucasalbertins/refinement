@@ -26,7 +26,7 @@ import com.ref.ui.CheckingProgressBar;
 public class FdrWrapper {
 
 	public static List<String> traceCounterExample;
-	
+
 	private static FdrWrapper instance;
 
 	private Map<Integer, List<String>> resultado;
@@ -62,6 +62,8 @@ public class FdrWrapper {
 	private Class<?> TransitionList;
 
 	private Class<?> Transition;
+	
+	private Class<?> SemanticModelTraces;
 
 	private File fdrJar;
 
@@ -71,14 +73,19 @@ public class FdrWrapper {
 
 	private Class<?> deadlockCounterexampleClass;
 
-    private Class<?> determinismCounterexampleClass;
+	private Class<?> determinismCounterexampleClass;
 
-    private Class<?> divergenceCounterexampleClass;
-    //-------------------------------------------------------
-    private List<Object> counterExamples = new ArrayList<>();
-    public static List<Object> lista; // = new ArrayList<Node>();
-    
-    public boolean loadFDR(String path) {
+	private Class<?> divergenceCounterexampleClass;
+
+	private Class<?> machineEvaluatorResult;
+
+	private Class<?> compiledEventList;
+
+	// -------------------------------------------------------
+	private List<Object> counterExamples = new ArrayList<>();
+	public static List<Object> lista; // = new ArrayList<Node>();
+
+	public boolean loadFDR(String path) {
 
 		File file = new File(path);
 
@@ -135,13 +142,13 @@ public class FdrWrapper {
 		TransitionList = urlCl.loadClass("uk.ac.ox.cs.fdr.TransitionList");
 
 		Transition = urlCl.loadClass("uk.ac.ox.cs.fdr.Transition");
-		
+
 		traceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.TraceCounterexample");
-		
+
 		refinementCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.RefinementCounterexample");
 
 		deadlockCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeadlockCounterexample");
-		
+
 		determinismCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DeterminismCounterexample");
 
 		divergenceCounterexampleClass = urlCl.loadClass("uk.ac.ox.cs.fdr.DivergenceCounterexample");
@@ -180,6 +187,18 @@ public class FdrWrapper {
 
 		classes.add(Canceller.getName());
 
+		// ========================================================//
+		machineEvaluatorResult = urlCl.loadClass("uk.ac.ox.cs.fdr.MachineEvaluatorResult");
+		classes.add(machineEvaluatorResult.getName());
+
+		
+		SemanticModelTraces = urlCl.loadClass("uk.ac.ox.cs.fdr.SemanticModel");
+		classes.add(SemanticModelTraces.getName());
+		
+		compiledEventList = urlCl.loadClass("uk.ac.ox.cs.fdr.CompiledEventList");
+		classes.add(compiledEventList.getName());
+		// ========================================================//
+
 	}
 
 	public List<String> getClasses() {
@@ -192,49 +211,48 @@ public class FdrWrapper {
 		return this.resultado;
 	}
 
-	public boolean verify(String filename, String refType) throws Exception{
+	public boolean verify(String filename, String refType) throws Exception {
 
 		this.resultado = new HashMap<Integer, List<String>>();
 		List<String> resultParcial = null;
 		int iteration = 0;
-		boolean hasCounterExample = false; 
+		boolean hasCounterExample = false;
 
-			Object session;
-			try {
-				session = sessionClass.newInstance();
-				invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
-				
-				for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
-						null)) {
-					
-					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-					
-					for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-							"counterexamples", null, null)) {
-						
-						if (refType.equals("STRICT") || (refType.equals("WEAK") && iteration == 1)) {
-							resultParcial = describeCounterExample(session, counterExample);
-							this.resultado.put(iteration, resultParcial);
-						}
-						
-						hasCounterExample = true;
+		Object session;
+		try {
+			session = sessionClass.newInstance();
+			invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+			for (Object assertion : (Iterable<?>) invokeProperty(session.getClass(), session, "assertions", null,
+					null)) {
+
+				invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
+
+				for (Object counterExample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+						"counterexamples", null, null)) {
+
+					if (refType.equals("STRICT") || (refType.equals("WEAK") && iteration == 1)) {
+						resultParcial = describeCounterExample(session, counterExample);
+						this.resultado.put(iteration, resultParcial);
 					}
-					iteration++;
-				}
-			} catch (InstantiationException e) {
-				throw new Exception("Set your fdr path 1");
-			} catch (IllegalAccessException e) {
-				throw new Exception("Set your fdr path 2");
-			} catch (Exception e) {
-				Logador logger = Logador.getInstance();
-				logger.log("LOG FDRWRAPPER");
-				for(StackTraceElement element :e.getStackTrace()){
-					logger.log(element.toString());						
-				}
-				throw new Exception(e.getMessage());
-			}
 
-   
+					hasCounterExample = true;
+				}
+				iteration++;
+			}
+		} catch (InstantiationException e) {
+			throw new Exception("Set your fdr path 1");
+		} catch (IllegalAccessException e) {
+			throw new Exception("Set your fdr path 2");
+		} catch (Exception e) {
+			Logador logger = Logador.getInstance();
+			logger.log("LOG FDRWRAPPER");
+			for (StackTraceElement element : e.getStackTrace()) {
+				logger.log(element.toString());
+			}
+			throw new Exception(e.getMessage());
+		}
+
 		return hasCounterExample;
 	}
 
@@ -341,7 +359,7 @@ public class FdrWrapper {
 			node = invokeProperty(Transition, evento, "destination", null, null);
 		}
 	}
-	
+
 	private static Object invokeProperty(Class<?> dsClass, Object ds, String propertyName, Class<?> paramClass,
 			Object paramValue) throws Exception {
 
@@ -352,13 +370,13 @@ public class FdrWrapper {
 			if (paramClass != null) {
 				method = dsClass.getMethod(propertyName, paramClass);
 				method.setAccessible(true);
-				
+
 				return method.invoke(ds, paramValue);
-				
+
 			} else {
 				method = dsClass.getMethod(propertyName);
-				method.setAccessible(true); 
-				return method.invoke(ds); 
+				method.setAccessible(true);
+				return method.invoke(ds);
 
 			}
 
@@ -368,8 +386,8 @@ public class FdrWrapper {
 		}
 
 	}
-	
-	/*  Activity Diagram  */
+
+	/* Activity Diagram */
 
 	public List<String> describeDeadlockCounterExample(Object session, Object counterExample) throws Exception {
 //		specificationBehaviour não se encontra na class uk.ac.ox.cs.fdr.DeadlockCounterexample
@@ -395,75 +413,75 @@ public class FdrWrapper {
 		return trace;
 	}
 
-    public List<String> describeDeterminismCounterExample(Object session, Object counterExample) throws Exception {
-        Object behaviour = invokeProperty(determinismCounterexampleClass, counterExample, "specificationBehaviour", null, null);
-        List<String> trace = describeBehaviourDeterminism(session, behaviour);
+	public List<String> describeDeterminismCounterExample(Object session, Object counterExample) throws Exception {
+		Object behaviour = invokeProperty(determinismCounterexampleClass, counterExample, "specificationBehaviour",
+				null, null);
+		List<String> trace = describeBehaviourDeterminism(session, behaviour);
 
-        return trace;
-    }
+		return trace;
+	}
 
-    private List<String> describeBehaviourDeterminism(Object session, Object behaviour) throws Exception {
+	private List<String> describeBehaviourDeterminism(Object session, Object behaviour) throws Exception {
 
-        List<String> trace = new ArrayList<>();
+		List<String> trace = new ArrayList<>();
 
-        for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
+		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
 
-            if (event != 1 && event != 0) {
-                Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-                trace.add(result.toString());
-            }
-        }
+			if (event != 1 && event != 0) {
+				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
+				trace.add(result.toString());
+			}
+		}
 
-        return trace;
-    }
-    //------------------------------------------------------------------------------------
-    public List<String> describeRobochartCounterExample(Object session, Object counterExample) throws Exception {
-    	Object behaviour = invokeProperty(traceCounterexampleClass, counterExample, "implementationBehaviour", null, null);
-    	List<String> trace = describeBehaviourRobochart(session, behaviour);
-    	
-    	return trace;
-    }
-    
-    private List<String> describeBehaviourRobochart(Object session, Object behaviour) throws Exception {
-    	
-    	List<String> trace = new ArrayList<>();
-    	
-    	for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
-    		
-    		if (event != 1 && event != 0) {
-    			Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
-    			trace.add(result.toString());
-    		}
-    	}
-    	
-    	return trace;
-    }
-    //------------------------------------------------------------------------------------
+		return trace;
+	}
+
+	// ------------------------------------------------------------------------------------
+	public List<String> describeRobochartCounterExample(Object session, Object counterExample) throws Exception {
+		Object behaviour = invokeProperty(traceCounterexampleClass, counterExample, "implementationBehaviour", null,
+				null);
+		List<String> trace = describeBehaviourRobochart(session, behaviour);
+
+		return trace;
+	}
+
+	private List<String> describeBehaviourRobochart(Object session, Object behaviour) throws Exception {
+
+		List<String> trace = new ArrayList<>();
+
+		for (Long event : (Iterable<Long>) invokeProperty(behaviourClass, behaviour, "trace", null, null)) {
+
+			if (event != 1 && event != 0) {
+				Object result = invokeProperty(sessionClass, session, "uncompileEvent", long.class, event);
+				trace.add(result.toString());
+			}
+		}
+
+		return trace;
+	}
+	// ------------------------------------------------------------------------------------
 
 	public String getErrorEvent(Object counterExample, Object session) {
-        String errorEvent = "";
-        try {
-            Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
-            if ((Long) error != 1 && (Long) error != 0) {
-                errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, error).toString();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return errorEvent;
-    }
+		String errorEvent = "";
+		try {
+			Object error = invokeProperty(traceCounterexampleClass, counterExample, "errorEvent", null, null);
+			if ((Long) error != 1 && (Long) error != 0) {
+				errorEvent = invokeProperty(sessionClass, session, "uncompileEvent", long.class, error).toString();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return errorEvent;
+	}
 
-	
-	public List<String> checkDeadlock(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
-		//returns the trace
-		
-	/*
-	0 = error
-	1 = deadlock free
-	2 = deadlock detected
-	3 = compilation failed
-	4 = invalid license
-	*/
+	public List<String> checkDeadlock(String filename, ADParser parser, String nameDiagram,
+			CheckingProgressBar progressBar) throws Exception {
+		// returns the trace
+
+		/*
+		 * 0 = error 1 = deadlock free 2 = deadlock detected 3 = compilation failed 4 =
+		 * invalid license
+		 */
 
 		progressBar.setProgress(1, "", false);
 
@@ -472,7 +490,7 @@ public class FdrWrapper {
 		try {
 
 			Object fdr = fdrClass.newInstance();
-			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
+			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null, null);
 
 			if (!hasValidLicense) {
 				hasError = 4;
@@ -484,14 +502,15 @@ public class FdrWrapper {
 
 					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
-					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null,
+							null);
 					Object assertion = assertions.get(0);
 
 					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-					for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-							"counterexamples", null, null)) {
+					for (Object DeadlockCounterExampleObj : (Iterable<?>) invokeProperty(assertion.getClass(),
+							assertion, "counterexamples", null, null)) {
 
 						progressBar.setProgress(3, "", false);
 						trace = describeDeadlockCounterExample(session, DeadlockCounterExampleObj);
@@ -504,7 +523,7 @@ public class FdrWrapper {
 
 					progressBar.setProgress(4, "", false);
 
-				}catch (InvalidEditingException e) {
+				} catch (InvalidEditingException e) {
 					TransactionManager.abortTransaction();
 				} catch (Exception e) {
 					TransactionManager.abortTransaction();
@@ -519,7 +538,7 @@ public class FdrWrapper {
 		} catch (Exception e) {
 			Logador logger = Logador.getInstance();
 			logger.log("LOG FDRWRAPPER");
-			for(StackTraceElement element :e.getStackTrace()){
+			for (StackTraceElement element : e.getStackTrace()) {
 				logger.log(element.toString());
 			}
 		}
@@ -532,22 +551,19 @@ public class FdrWrapper {
 		return trace;
 	}
 
-	public int checkLivelock(String filename) throws Exception{
+	public int checkLivelock(String filename) throws Exception {
 
-	/*
-	0 = error
-	1 = deadlock free
-	2 = deadlock detected
-	3 = compilation failed
-	4 = invalid license
-	*/
+		/*
+		 * 0 = error 1 = deadlock free 2 = deadlock detected 3 = compilation failed 4 =
+		 * invalid license
+		 */
 
 		int hasError = 0;
 
 		try {
 
 			Object fdr = fdrClass.newInstance();
-			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
+			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null, null);
 
 			if (!hasValidLicense) {
 				hasError = 4;
@@ -559,13 +575,13 @@ public class FdrWrapper {
 
 					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
-					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null,
+							null);
 					Object assertion = assertions.get(1);
 
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-					if (!((boolean) invokeProperty(assertion.getClass(), assertion,
-							"passed", null, null))) {
+					if (!((boolean) invokeProperty(assertion.getClass(), assertion, "passed", null, null))) {
 						hasError = 2;
 					}
 
@@ -587,34 +603,31 @@ public class FdrWrapper {
 		} catch (Exception e) {
 			Logador logger = Logador.getInstance();
 			logger.log("LOG FDRWRAPPER");
-			for(StackTraceElement element :e.getStackTrace()){
+			for (StackTraceElement element : e.getStackTrace()) {
 				logger.log(element.toString());
 			}
 		}
 
-
 		return hasError;
 	}
 
-	public List<String> checkDeterminism(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
-		//returns the trace
-	/*
-	0 = error
-	1 = deadlock free
-	2 = deadlock detected
-	3 = compilation failed
-	4 = invalid license
-	*/
+	public List<String> checkDeterminism(String filename, ADParser parser, String nameDiagram,
+			CheckingProgressBar progressBar) throws Exception {
+		// returns the trace
+		/*
+		 * 0 = error 1 = deadlock free 2 = deadlock detected 3 = compilation failed 4 =
+		 * invalid license
+		 */
 
 		progressBar.setProgress(1, "", false);
 
 		int hasError = 0;
 		List<String> trace = null;
-		
+
 		try {
 
 			Object fdr = fdrClass.newInstance();
-			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
+			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null, null);
 
 			if (!hasValidLicense) {
 				hasError = 4;
@@ -626,14 +639,15 @@ public class FdrWrapper {
 
 					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
 
-					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null,
+							null);
 					Object assertion = assertions.get(2);
 
 					progressBar.setProgress(2, "", false);
 					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-					for (Object DeterminismCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-							"counterexamples", null, null)) {
+					for (Object DeterminismCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(),
+							assertion, "counterexamples", null, null)) {
 
 						progressBar.setProgress(3, "", false);
 						trace = describeDeterminismCounterExample(session, DeterminismCounterexample);
@@ -661,7 +675,7 @@ public class FdrWrapper {
 		} catch (Exception e) {
 			Logador logger = Logador.getInstance();
 			logger.log("LOG FDRWRAPPER");
-			for(StackTraceElement element :e.getStackTrace()){
+			for (StackTraceElement element : e.getStackTrace()) {
 				logger.log(element.toString());
 			}
 		}
@@ -675,78 +689,78 @@ public class FdrWrapper {
 		return trace;
 	}
 
-	public List<String> checkRobochartProperty(String filename, ADParser parser, String nameDiagram, CheckingProgressBar progressBar) throws Exception{
-		//returns the trace
+	public List<String> checkRobochartProperty(String filename, ADParser parser, String nameDiagram,
+			CheckingProgressBar progressBar) throws Exception {
+		// returns the trace
 		/*
-		0 = error
-		1 = success
-		2 = counter example
-		3 = compilation failed
-		4 = invalid license
-		*/
+		 * 0 = error 1 = success 2 = counter example 3 = compilation failed 4 = invalid
+		 * license
+		 */
 
-			progressBar.setProgress(1, "", false);
+		progressBar.setProgress(1, "", false);
 
-			int hasError = 0;
-			List<String> trace = null;
-			
-			try {
+		int hasError = 0;
+		List<String> trace = null;
 
-				Object fdr = fdrClass.newInstance();
-				boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null , null);
+		try {
 
-				if (!hasValidLicense) {
-					hasError = 4;
-				}
+			Object fdr = fdrClass.newInstance();
+			boolean hasValidLicense = (boolean) invokeProperty(fdr.getClass(), fdr, "hasValidLicense", null, null);
 
-				if (hasError == 0) {
-					try {
-						session = sessionClass.newInstance();
+			if (!hasValidLicense) {
+				hasError = 4;
+			}
 
-						invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+			if (hasError == 0) {
+				try {
+					session = sessionClass.newInstance();
 
-						List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null, null);
+					invokeProperty(session.getClass(), session, "loadFile", String.class, filename);
+
+					List<Object> assertions = (List) invokeProperty(session.getClass(), session, "assertions", null,
+							null);
 //						Object assertion = assertions.get(2);
-						Object assertion = assertions.get(assertions.size()-1); // capturar o último elemento(assert do .csp)
+					Object assertion = assertions.get(assertions.size() - 1); // capturar o último elemento(assert do
+																				// .csp)
 
-						progressBar.setProgress(2, "", false);
-						invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
-						
-						for (Object robochartCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
-								"counterexamples", null, null)) {
-							
-							progressBar.setProgress(3, "", false);
-							trace = describeRobochartCounterExample(session, robochartCounterexample);
-							trace.add(getErrorEvent(robochartCounterexample, session));
-							hasError = 2;
-						}
-						
-						if (hasError == 0) {
-							hasError = 1;
-						}
+					progressBar.setProgress(2, "", false);
+					invokeProperty(assertion.getClass(), assertion, "execute", Canceller, null);
 
-						progressBar.setProgress(4, "", false);
+					for (Object robochartCounterexample : (Iterable<?>) invokeProperty(assertion.getClass(), assertion,
+							"counterexamples", null, null)) {
 
-					} catch (InvalidEditingException e) {
-						TransactionManager.abortTransaction();
-					} catch (Exception e) {
-						TransactionManager.abortTransaction();
-						hasError = 3;
+						progressBar.setProgress(3, "", false);
+						trace = describeRobochartCounterExample(session, robochartCounterexample);
+						trace.add(getErrorEvent(robochartCounterexample, session));
+						hasError = 2;
 					}
-				}
 
-			} catch (InstantiationException e) {
-				throw new Exception("Set your fdr path 1");
-			} catch (IllegalAccessException e) {
-				throw new Exception("Set your fdr path 2");
-			} catch (Exception e) {
-				Logador logger = Logador.getInstance();
-				logger.log("LOG FDRWRAPPER");
-				for(StackTraceElement element :e.getStackTrace()){
-					logger.log(element.toString());
+					if (hasError == 0) {
+						hasError = 1;
+					}
+
+					progressBar.setProgress(4, "", false);
+
+				} catch (InvalidEditingException e) {
+					TransactionManager.abortTransaction();
+				} catch (Exception e) {
+					TransactionManager.abortTransaction();
+					hasError = 3;
 				}
 			}
-		
+
+		} catch (InstantiationException e) {
+			throw new Exception("Set your fdr path 1");
+		} catch (IllegalAccessException e) {
+			throw new Exception("Set your fdr path 2");
+		} catch (Exception e) {
+			Logador logger = Logador.getInstance();
+			logger.log("LOG FDRWRAPPER");
+			for (StackTraceElement element : e.getStackTrace()) {
+				logger.log(element.toString());
+			}
+		}
+
 		if (hasError == 1) {
 			progressBar.setProgress(5, handleLogRobochartProperty(hasError, nameDiagram), true);
 		} else {
@@ -764,8 +778,7 @@ public class FdrWrapper {
 		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {
-			log = "FDR license is not valid!\n" +
-					"Please activate FDR license and restart Astah.";
+			log = "FDR license is not valid!\n" + "Please activate FDR license and restart Astah.";
 		}
 
 		return log;
@@ -780,13 +793,12 @@ public class FdrWrapper {
 		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {
-			log = "FDR license is not valid!\n" +
-					"Please activate FDR license and restart Astah.";
+			log = "FDR license is not valid!\n" + "Please activate FDR license and restart Astah.";
 		}
 
 		return log;
 	}
-	
+
 	private String handleLogRobochartProperty(int hasError, String nameDiagram) {
 		String log = "";
 		if (hasError == 1) {
@@ -796,11 +808,76 @@ public class FdrWrapper {
 		} else if (hasError == 3 || hasError == 0) {
 			log = "Compilation failed in " + nameDiagram;
 		} else if (hasError == 4) {
-			log = "FDR license is not valid!\n" +
-					"Please activate FDR license and restart Astah.";
+			log = "FDR license is not valid!\n" + "Please activate FDR license and restart Astah.";
 		}
 
 		return log;
 	}
-	
+
+//	public List<String> processAlphabet(String cspFile, String procName){
+//		List<String> evList = new ArrayList<>();
+//		Session session = new Session();
+//		session.loadFile(cspFile);
+//		MachineEvaluatorResult mer = session.evaluateProcess(procName, SemanticModel.Traces, null);
+//		CompiledEventList cel = mer.result().alphabet(false);
+//		for (Long ev : cel) {
+//			String evName = (session.uncompileEvent(ev)).toString();
+//			evList.add(evName);
+//		}
+//		fdr.libraryExit();
+//		return evList;
+//	}
+
+	public String processAlphabet2(String cspFile, String procName) throws Exception {
+		StringBuilder evSB = new StringBuilder();
+
+		try {
+			session = sessionClass.newInstance();
+			// invokeProperty(classe, objeto, "nome do método", tipo do parâmetro que pode
+			// ser passado ao método, valor do parâmetro);
+			invokeProperty(session.getClass(), session, "loadFile", String.class, cspFile);
+//			session.loadFile(cspFile);
+//			invokeProperty(assertionClass, cspFile, procName, fdrClass, evSB);
+
+			//MachineEvaluatorResult mer = session.evaluateProcess(procName, SemanticModel.Traces, null);
+			Object mer = invokePropertyEvaluateProcess(session.getClass(), session, procName);
+			Object machine = invokeProperty(machineEvaluatorResult, mer, "result", null, null);
+			List<Object> cel = (List<Object>)invokeProperty(Machine, machine, "alphabet", Boolean.class, false);
+			//CompiledEventList cel = mer.result().alphabet(false); // false para não incluir TAUs
+			int c = 0;
+			evSB.append("alphabet_robochart = {| ");
+			for (Object ev : cel) {
+				
+				//String evName = (session.uncompileEvent(ev)).toString();
+				String evName = invokeProperty(sessionClass, session, "uncompileEvent", long.class, (Long)ev).toString();
+				evSB.append(evName);
+				c++;
+				if (c < cel.size())
+					evSB.append(", ");
+				else
+					evSB.append(" |}");
+			}
+//			fdr.libraryExit();
+
+		} catch (InstantiationException e) {
+			TransactionManager.abortTransaction();
+		} catch (IllegalAccessException e) {
+			TransactionManager.abortTransaction();
+		}
+
+		return evSB.toString();
+	}
+
+	private Object invokePropertyEvaluateProcess(Class<? extends Object> dsClass, Object ds, String procName) throws Exception {
+		Method method;
+//		Object teste = SemanticModelTraces.getField("Traces");
+		//session.evaluateProcess(procName, SemanticModel.Traces, null);
+			
+		method = dsClass.getMethod("evaluateProcess", String.class, SemanticModelTraces, Canceller);
+		method.setAccessible(true);
+
+		return method.invoke(ds, procName, SemanticModelTraces.getField("Traces"), null);
+
+	}
+
 }
