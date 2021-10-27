@@ -141,9 +141,10 @@ public class ActivityController {
 		writer.flush();
 		writer.close();
 		
-		
-		String alpha =FdrWrapper.getInstance().processAlphabet2(getRobochartFolder() + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "P_PathPlanningSM");
-		System.out.println("Alphabet: = " + alpha);
+//		String cspFile = getRobochartFolder() + fs + ADUtils.nameResolver(activity.getName()) + ".csp";
+//		String procName = "P_PathPlanningSM";
+//		String alpha = FdrWrapper.getInstance().processAlphabet2(cspFile, procName);
+//		System.out.println("Alphabet: = " + alpha);
 
 		List<String> traceCounterExample = null;
 		if (type == VerificationType.DEADLOCK) {

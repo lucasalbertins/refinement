@@ -235,7 +235,7 @@ public class ADUtils {
 
 		adParser.countUntil_ad++;
 //		if (!hasPins) {
-//			 alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);//TODO olhar
+//			 alphabetNode.add("begin." + adParser.countUntil_ad + ",end." + adParser.countUntil_ad);
 //		}
 		action.append("begin." + adParser.countUntil_ad + " -> end." + adParser.countUntil_ad + posUntil);
 		robo.add(partitionName + "::" + eventName);

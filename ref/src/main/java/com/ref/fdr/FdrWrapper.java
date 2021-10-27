@@ -837,15 +837,14 @@ public class FdrWrapper {
 			// ser passado ao método, valor do parâmetro);
 			invokeProperty(session.getClass(), session, "loadFile", String.class, cspFile);
 //			session.loadFile(cspFile);
-//			invokeProperty(assertionClass, cspFile, procName, fdrClass, evSB);
 
 			//MachineEvaluatorResult mer = session.evaluateProcess(procName, SemanticModel.Traces, null);
 			Object mer = invokePropertyEvaluateProcess(session.getClass(), session, procName);
 			Object machine = invokeProperty(machineEvaluatorResult, mer, "result", null, null);
-			List<Object> cel = (List<Object>)invokeProperty(Machine, machine, "alphabet", Boolean.class, false);
+			List<Object> cel = (List<Object>)invokeProperty(Machine, machine, "alphabet", boolean.class, false);
 			//CompiledEventList cel = mer.result().alphabet(false); // false para não incluir TAUs
 			int c = 0;
-			evSB.append("alphabet_robochart = {| ");
+			evSB.append("{| ");
 			for (Object ev : cel) {
 				
 				//String evName = (session.uncompileEvent(ev)).toString();
@@ -870,13 +869,14 @@ public class FdrWrapper {
 
 	private Object invokePropertyEvaluateProcess(Class<? extends Object> dsClass, Object ds, String procName) throws Exception {
 		Method method;
-//		Object teste = SemanticModelTraces.getField("Traces");
+		Object smt = SemanticModelTraces.getField("Traces").get(null);
+//		System.out.println(smt.getClass().getName());
 		//session.evaluateProcess(procName, SemanticModel.Traces, null);
-			
+//									name, Session, 
 		method = dsClass.getMethod("evaluateProcess", String.class, SemanticModelTraces, Canceller);
 		method.setAccessible(true);
 
-		return method.invoke(ds, procName, SemanticModelTraces.getField("Traces"), null);
+		return method.invoke(ds, procName, smt, null);
 
 	}
 

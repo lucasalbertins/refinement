@@ -99,6 +99,8 @@ public class ADDefineChannels {
             for (String in : parameterNodesInput.keySet()) {
                 channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
                 channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
+//                channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "\n");
+//                channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "\n");
             }
 
             for (String out : parameterNodesOutput.keySet()) {
@@ -110,11 +112,15 @@ public class ADDefineChannels {
 
                 channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
                 channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+//                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "\n");
+//                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "\n");
             }
 
             for (Pair<String, String> pair : memoryLocal.keySet()) {
-                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+            	channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+            	channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+//                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "\n");
+//                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "\n");
             }
 
         }
@@ -139,6 +145,7 @@ public class ADDefineChannels {
                     allObjectEdges.add(type);
                 }
                 channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "_" + nameDiagram + "\n");
+//                channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "\n");
                 alphabetAstah.add(objectEdge);
             }
 

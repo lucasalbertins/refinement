@@ -163,6 +163,7 @@ public class ADDefineTypes {
             }
 
             for (String definitionName : typesParameter.keySet()) {
+//            	types.append("--" + definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
                 types.append(definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
             }
 

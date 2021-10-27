@@ -10,6 +10,7 @@ import java.util.Set;
 
 import com.ref.astah.adapter.ActivityNode;
 import com.ref.exceptions.ParsingException;
+import com.ref.fdr.FdrWrapper;
 import com.ref.interfaces.activityDiagram.IAction;
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityDiagram;
@@ -220,7 +221,7 @@ public class ADParser {
      * Master Function
      * */
 
-    public String parserDiagram() throws ParsingException {
+    public String parserDiagram() throws Exception, ParsingException {
     	
         boolean reset = false;
         String check = "";
@@ -290,10 +291,15 @@ public class ADParser {
         String processSync = defineProcessSync();
 //        String pool = definePool();
 ////////////////////////////////////////////////////////////////////////////////////////        
+        String procName = "P_" + partitionName;
+        String fs = System.getProperty("file.separator");
+        String cspFile = ActivityController.getInstance().getRobochartFolder() + fs + adUtils.nameDiagramResolver(ad.getName())  + ".csp";
+////////////////////////////////////////////////////////////////////////////////////////        
         adUtils = defineADUtils();
         HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
 //        String robochart = parameterValueDiagram.get("robochart");
-        String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
+//        String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
+        String robochart_alphabet = FdrWrapper.getInstance().processAlphabet2(cspFile, procName);
 //        if (robochart != null && !robochart.equals("")) {
 //			robochart = "include " + robochart + "\n";
         String robochart = "";
