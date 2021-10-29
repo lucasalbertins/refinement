@@ -1,0 +1,26 @@
+[
+{ "name": "Detecting is non-deterministic (a1) [failures divergences model]",
+  "type": "deterministic",
+  "negated": true 
+},
+{ "name": "OnlyCommands is deadlock free (a2) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "OnlyGasAndLight is deadlock free (a3) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "Impl1 refines Spec1 (a4) [failures divergences model]",
+  "type": "refines",
+  "negated": false 
+},
+{ "name": "ChemicalDetectorSoftware is deadlock free (a5) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "ChemicalDetectorSoftware is divergence free (a6) [failures divergences model]",
+  "type": "divergence-free",
+  "negated": false 
+}
+			]

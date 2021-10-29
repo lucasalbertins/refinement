@@ -1,0 +1,42 @@
+include "core_defs.csp"
+include "timed_definitions.csp"
+include "file_SimFW_defs.csp"
+include "CFootBot.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate CFootBot
+P_CFootBot = let
+	id__ = 0
+	
+	
+	
+	const_Movement_stm_ref0_lv = const_SMovement_lv
+	const_Movement_stm_ref0_PI = const_SMovement_PI
+	const_Movement_stm_ref0_av = const_SMovement_av
+		
+	
+within
+	CFootBot::O__(id__,
+			    const_Movement_stm_ref0_lv,
+			    const_Movement_stm_ref0_PI,
+			    const_Movement_stm_ref0_av)
+assert P_CFootBot :[deadlock-free]	
+assert P_CFootBot;RUN({r__}) :[deadlock-free]
+assert P_CFootBot :[deterministic]
+assert P_CFootBot :[divergence-free]
+
+-- generate CFootBot_ctrl_ref0
+P_CFootBot_ctrl_ref0 = let
+	id__ = 0
+within
+	CFootBot::ctrl_ref0::O__(id__,
+			    const_Movement_stm_ref0_lv,
+			    const_Movement_stm_ref0_PI,
+			    const_Movement_stm_ref0_av)
+
+assert P_CFootBot_ctrl_ref0 :[deadlock-free]	
+assert P_CFootBot_ctrl_ref0;RUN({r__}) :[deadlock-free]
+assert P_CFootBot_ctrl_ref0 :[deterministic]
+assert P_CFootBot_ctrl_ref0 :[divergence-free]
+

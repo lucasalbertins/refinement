@@ -1,0 +1,20 @@
+include "file_ClearSM.csp"
+
+-- generate CleanSM
+P_CleanSM = let
+	id__ = 0
+	
+	
+	
+within
+	CleanSM::O__(
+		id__,
+		const_CleanSM_voltage
+	)
+assert P_CleanSM :[deadlock-free]	
+assert P_CleanSM;RUN({r__}) :[deadlock-free]
+assert P_CleanSM :[deterministic]
+assert P_CleanSM :[divergence-free]
+
+
+

@@ -1,0 +1,17 @@
+module OP_move
+exports
+	Timed(OneStep) {
+	D__(id__,
+				lv,
+				av) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(move_BOUND)
+	
+	O__(id__,
+				lv,
+				av) = D__(id__,
+				lv,
+				av)
+	}
+endmodule

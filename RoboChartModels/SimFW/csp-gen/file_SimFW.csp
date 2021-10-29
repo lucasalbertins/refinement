@@ -1,0 +1,6 @@
+include "defs/robochart_defs.csp"
+include "defs/core_defs.csp"
+include "defs/file_SimFW_defs.csp"
+include "defs/file_SimFW.csp"
+include "instantiations.csp"
+channel r__

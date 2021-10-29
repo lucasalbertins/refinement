@@ -1,0 +1,10 @@
+-- data definitions used by platform:/resource/RoboVacuum/functions.rct
+
+pre_sqrt(a) = true
+pre_abs(a) = true
+pre_turn_right(x) = true
+pre_turn_left(x) = true
+pre_get_sign(a) = true
+pre_get_linear_speed(spl,spr) = true
+pre_floor(x) = true
+	

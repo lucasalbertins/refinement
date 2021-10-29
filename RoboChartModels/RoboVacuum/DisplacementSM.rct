@@ -1,0 +1,44 @@
+stm DisplacementSM {
+	uses DisplacementEvent
+	var d : int
+	var speed : TripleAxis
+	const t : int
+	initial i0
+
+	state wait_input {
+	}
+	state update_displacement {
+		entry d = d + speed . X * t
+	}
+
+	transition t2 {
+		from wait_input
+		to update_displacement
+		trigger sp ? speed
+	}
+	transition t3 {
+		from update_displacement
+		to wait_input
+		trigger
+		action 
+	displacement ! d ; wait ( t )
+	}
+	transition t0 {
+		from i0
+		to j0
+		trigger
+		action d = 0
+	}
+	transition t1 {
+		from j0
+		to wait_input
+	}
+	transition t4 {
+		from wait_input
+		to j0
+		trigger displacement ? d
+		condition d == 0
+	}
+	event sp : TripleAxis
+	junction j0
+}

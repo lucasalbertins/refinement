@@ -1,0 +1,61 @@
+
+
+
+
+module OP_brush
+exports
+	Timed(OneStep) {
+	D__(id__,
+				voltage) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(brush_BOUND)
+	
+	O__(id__,
+				voltage) = D__(id__,
+				voltage)
+	}
+endmodule
+module OP_vacuum
+exports
+	Timed(OneStep) {
+	D__(id__,
+				voltage) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(vacuum_BOUND)
+	
+	O__(id__,
+				voltage) = D__(id__,
+				voltage)
+	}
+endmodule
+module OP_output_left_motor
+exports
+	Timed(OneStep) {
+	D__(id__,
+				x) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(output_left_motor_BOUND)
+	
+	O__(id__,
+				x) = D__(id__,
+				x)
+	}
+endmodule
+module OP_output_right_motor
+exports
+	Timed(OneStep) {
+	D__(id__,
+				x) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(output_right_motor_BOUND)
+	
+	O__(id__,
+				x) = D__(id__,
+				x)
+	}
+endmodule
+

@@ -1,0 +1,4 @@
+-- generate includes
+include "LinearSpeedSM.csp"
+include "defs/LinearSpeedSM_coreassertions.csp"
+

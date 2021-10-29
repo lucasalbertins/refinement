@@ -1,0 +1,31 @@
+-- data definitions used by platform:/resource/ChemicalDetector/System.rct
+datatype Command = Command_faster | Command_left | Command_right | Command_back | Command_slower
+Command_is(Command_faster,Command_faster) = true
+Command_is(_,Command_faster) = false
+Command_is(Command_left,Command_left) = true
+Command_is(_,Command_left) = false
+Command_is(Command_right,Command_right) = true
+Command_is(_,Command_right) = false
+Command_is(Command_back,Command_back) = true
+Command_is(_,Command_back) = false
+Command_is(Command_slower,Command_slower) = true
+Command_is(_,Command_slower) = false
+
+datatype Color = Color_green | Color_amber | Color_red
+Color_is(Color_green,Color_green) = true
+Color_is(_,Color_green) = false
+Color_is(Color_amber,Color_amber) = true
+Color_is(_,Color_amber) = false
+Color_is(Color_red,Color_red) = true
+Color_is(_,Color_red) = false
+
+datatype Chemical = Chemical_anomaly | Chemical_danger | Chemical_innocuous
+Chemical_is(Chemical_anomaly,Chemical_anomaly) = true
+Chemical_is(_,Chemical_anomaly) = false
+Chemical_is(Chemical_danger,Chemical_danger) = true
+Chemical_is(_,Chemical_danger) = false
+Chemical_is(Chemical_innocuous,Chemical_innocuous) = true
+Chemical_is(_,Chemical_innocuous) = false
+
+
+	

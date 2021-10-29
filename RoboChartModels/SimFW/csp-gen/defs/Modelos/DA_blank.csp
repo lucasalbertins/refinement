@@ -1,0 +1,71 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_DA_blank = {1..1}
+countAccept_obstacle = {1..1}
+countSignal_obstacle = {1..1}
+datatype alphabet_DA_blank = moveCall_0_2__DA_blank_t_alphabet | accept_obstacle_1_DA_blank_t_alphabet| DecisionNode_MergeNode0_DA_blank_t_alphabet| init_DA_blank_t_alphabet
+robochart_DA_blank = "SMovement_coreassertions.csp"
+robochart_alphabet_DA_blank = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_DA_blank = {1..4}
+countUpdate_DA_blank = {1..1}
+countClear_DA_blank = {1..0}
+limiteUpdate_DA_blank = {(1)..(1)}
+channel startActivity_DA_blank: ID_DA_blank
+channel endActivity_DA_blank: ID_DA_blank
+channel ce_DA_blank: ID_DA_blank.countCe_DA_blank
+channel clear_DA_blank: ID_DA_blank.countClear_DA_blank
+channel update_DA_blank: ID_DA_blank.countUpdate_DA_blank.limiteUpdate_DA_blank
+channel endDiagram_DA_blank: ID_DA_blank
+channel dc
+
+alphabet_Astah = {| startActivity_DA_blank, endActivity_DA_blank, ce_DA_blank, clear_DA_blank, update_DA_blank, endDiagram_DA_blank, dc |}
+
+MAIN = normal(DA_blank(1))
+END_DIAGRAM_DA_blank(id) = endDiagram_DA_blank.id -> SKIP
+DA_blank(ID_DA_blank) = (Internal_DA_blank(ID_DA_blank) [|{|update_DA_blank,clear_DA_blank,endDiagram_DA_blank|}|] TokenManager_DA_blank_t(ID_DA_blank,0,0))
+Internal_DA_blank(id) = StartActivity_DA_blank(id); Node_DA_blank(id); EndActivity_DA_blank(id)
+StartActivity_DA_blank(id) = startActivity_DA_blank.id -> SKIP
+EndActivity_DA_blank(id) = endActivity_DA_blank.id -> SKIP
+AlphabetDiagram_DA_blank(id,moveCall_0_2__DA_blank_t_alphabet) = {|ce_DA_blank.id.3,SMovement::moveCall.0.2,ce_DA_blank.id.4,endDiagram_DA_blank.id|}
+AlphabetDiagram_DA_blank(id,accept_obstacle_1_DA_blank_t_alphabet) = {|ce_DA_blank.id.2,SMovement::obstacle.in,ce_DA_blank.id.3,endDiagram_DA_blank.id|}
+AlphabetDiagram_DA_blank(id,DecisionNode_MergeNode0_DA_blank_t_alphabet) = {|ce_DA_blank.id.1,ce_DA_blank.id.4,ce_DA_blank.id.2,endDiagram_DA_blank.id|}
+AlphabetDiagram_DA_blank(id,init_DA_blank_t_alphabet) = {|update_DA_blank.id.1,ce_DA_blank.id.1,endDiagram_DA_blank.id|}
+AlphabetDiagram_DA_blank_t(id) = union(union(union(AlphabetDiagram_DA_blank(id,moveCall_0_2__DA_blank_t_alphabet),AlphabetDiagram_DA_blank(id,accept_obstacle_1_DA_blank_t_alphabet)),AlphabetDiagram_DA_blank(id,DecisionNode_MergeNode0_DA_blank_t_alphabet)),AlphabetDiagram_DA_blank(id,init_DA_blank_t_alphabet))
+
+ProcessDiagram_DA_blank(id,moveCall_0_2__DA_blank_t_alphabet) = normal(moveCall_0_2__DA_blank_t(id))
+ProcessDiagram_DA_blank(id,accept_obstacle_1_DA_blank_t_alphabet) = normal(accept_obstacle_1_DA_blank_t(id))
+ProcessDiagram_DA_blank(id,DecisionNode_MergeNode0_DA_blank_t_alphabet) = normal(DecisionNode_MergeNode0_DA_blank_t(id))
+ProcessDiagram_DA_blank(id,init_DA_blank_t_alphabet) = normal(init_DA_blank_t(id))
+Node_DA_blank(id) = || x:alphabet_DA_blank @ [AlphabetDiagram_DA_blank(id,x)] ProcessDiagram_DA_blank(id,x)
+InitialNode0_DA_blank_t(id) = update_DA_blank.id.1!(1-0) -> ((ce_DA_blank.id.1 -> SKIP))
+accept_obstacle_1_DA_blank(id) = ((ce_DA_blank.id.2 -> SKIP)); SMovement::obstacle.in -> ((ce_DA_blank.id.3 -> SKIP)); accept_obstacle_1_DA_blank(id)
+accept_obstacle_1_DA_blank_t(id) = accept_obstacle_1_DA_blank(id) /\ END_DIAGRAM_DA_blank(id)
+moveCall_0_2__DA_blank(id) = ((ce_DA_blank.id.3 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_DA_blank.id.4 -> SKIP)); moveCall_0_2__DA_blank(id)
+moveCall_0_2__DA_blank_t(id) = moveCall_0_2__DA_blank(id) /\ END_DIAGRAM_DA_blank(id)
+DecisionNode_MergeNode0_DA_blank(id) = ((ce_DA_blank.id.1 -> SKIP) [] (ce_DA_blank.id.4 -> SKIP)); ce_DA_blank.id.2 -> DecisionNode_MergeNode0_DA_blank(id)
+DecisionNode_MergeNode0_DA_blank_t(id) = DecisionNode_MergeNode0_DA_blank(id) /\ END_DIAGRAM_DA_blank(id)
+init_DA_blank_t(id) = (InitialNode0_DA_blank_t(id)) /\ END_DIAGRAM_DA_blank(id)
+
+TokenManager_DA_blank(id,x,init) = update_DA_blank.id?c?y:limiteUpdate_DA_blank -> x+y < 10 & x+y > -10 & TokenManager_DA_blank(id,x+y,1) [] clear_DA_blank.id?c -> endDiagram_DA_blank.id -> SKIP [] x == 0 & init == 1 & endDiagram_DA_blank.id -> SKIP
+TokenManager_DA_blank_t(id,x,init) = TokenManager_DA_blank(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL
+
+Prop = PROP(Wait_control_processes) 
+
+alphabet_robochart_DA_blank = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP(processes) = (MAIN)
+
+Wait_control_processes = {}

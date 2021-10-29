@@ -1,0 +1,14 @@
+module OP_vacuum
+exports
+	Timed(OneStep) {
+	D__(id__,
+				voltage) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(vacuum_BOUND)
+	
+	O__(id__,
+				voltage) = D__(id__,
+				voltage)
+	}
+endmodule

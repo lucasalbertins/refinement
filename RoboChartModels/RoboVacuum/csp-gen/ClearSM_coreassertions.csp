@@ -1,0 +1,6 @@
+-- generate includes
+include "defs/CleanSM_coreassertions.csp"
+include "defs/brush_coreassertions.csp"
+include "defs/vacuum_coreassertions.csp"
+include "ClearSM.csp"
+
