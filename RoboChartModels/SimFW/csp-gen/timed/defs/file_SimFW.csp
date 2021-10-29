@@ -408,8 +408,8 @@ exports
 							-- {WC_TID_SMovement_t3_0}
 							-- Summary of all identified named elements:
 							-- {
-							-- WC_TID_SMovement_t3_0
 							-- x
+							-- WC_TID_SMovement_t3_0
 							-- }
 							
 							-- Allocation plan:
@@ -453,15 +453,15 @@ exports
 							)
 							
 							-- Memory cell processes
-							Memory_opt_WC_TID_SMovement_t3_0(x__) = ( 
-								getWC.WC_TID_SMovement_t3_0_ID!x__ -> Memory_opt_WC_TID_SMovement_t3_0(x__)
-								[]
-								setWC.WC_TID_SMovement_t3_0_ID?x__ -> Memory_opt_WC_TID_SMovement_t3_0(x__)
-							)
 							Memory_opt_x(x__) = ( 
 								get_x!x__ -> Memory_opt_x(x__)
 								[]
 								set_x?x__ -> Memory_opt_x(x__)
+							)
+							Memory_opt_WC_TID_SMovement_t3_0(x__) = ( 
+								getWC.WC_TID_SMovement_t3_0_ID!x__ -> Memory_opt_WC_TID_SMovement_t3_0(x__)
+								[]
+								setWC.WC_TID_SMovement_t3_0_ID?x__ -> Memory_opt_WC_TID_SMovement_t3_0(x__)
 							)
 							
 							-- Composition of memory, StateMachine and Memory transition processes

@@ -120,8 +120,8 @@ public class ActivityController {
 		WellFormedness.WellFormed();
 
 		settingFDR();
-
-		ADParser parser = new ADParser(activity, activityDiagram.getName(), activityDiagram);
+		String roboPath = prop.getProperty(ROBOCHART_CSP_LOCATION_PROPERTY);
+		ADParser parser = new ADParser(activity, activityDiagram.getName(), activityDiagram, roboPath);
 		String diagramCSP = parser.parserDiagram();
 
 		String fs = System.getProperty("file.separator");
@@ -134,8 +134,8 @@ public class ActivityController {
 		PrintWriter writer;
 
 //		String robochartFolder = uh + fs + "Google Drive" + fs + "UFRPE 2020" + fs + "Mestrado PPGIA" + fs + "RoboChart Models" + fs + "SimFW" + fs + "csp-gen" + fs + "defs";
-
-		writer = new PrintWriter(getRobochartFolder() + fs + ADUtils.nameResolver(activity.getName()) + ".csp", "UTF-8");
+		String caminho = getRobochartFolder() + fs + ADUtils.nameResolver(activity.getName()) + ".csp";
+		writer = new PrintWriter(caminho, "UTF-8");
 		
 		writer.print(diagramCSP);
 		writer.flush();
@@ -294,7 +294,6 @@ public class ActivityController {
 		} else { //LINUX
 			filename = getRobochartFolder() + "/" + getRoboInclude();
 		}
-		
 		File cspfile = new File(filename);
 		if (!cspfile.exists()) {
 			throw new FDRException(getRoboInclude() + " not found!");

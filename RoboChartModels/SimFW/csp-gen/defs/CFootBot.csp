@@ -372,12 +372,12 @@ module CFootBot
 				-- optimised memory
 				-- Sets of named elements identified according to transition conditions:
 				-- {}
-				-- {PI,av}
+				-- {av,PI}
 				-- Summary of all identified named elements:
 				-- {
-				-- PI
-				-- av
 				-- x
+				-- av
+				-- PI
 				-- }
 				
 				-- Allocation plan:
@@ -385,7 +385,7 @@ module CFootBot
 				--	=> {
 				--		TID_SMovement_t1,
 				--		TID_SMovement_t2}
-				-- 1:{PI,av}
+				-- 1:{av,PI}
 				--	=> {
 				--		TID_SMovement_t3}
 				
@@ -403,8 +403,8 @@ module CFootBot
 						Update
 				)
 				MemoryTransitions_opt_1(id__,
-					 const_SMovement_PI,
-					 const_SMovement_av) =
+					 const_SMovement_av,
+					 const_SMovement_PI) =
 				(
 					let
 						Update = Current(id__)
@@ -446,8 +446,8 @@ module CFootBot
 					          )
 					      	  [| {|internal__.TID_SMovement_t3|} |]
 					      	  MemoryTransitions_opt_1(id__,
-					      	  	 const_SMovement_PI,
-					      	  	 const_SMovement_av)
+					      	  	 const_SMovement_av,
+					      	  	 const_SMovement_PI)
 					      	  )\{|internal__.TID_SMovement_t3|})
 					      )
 				

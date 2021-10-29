@@ -91,9 +91,10 @@ public class ADParser {
 	public List<String> waitAccept;
 	public List<String> listUnion;
 	public StringBuilder alphabetUnion;
+	public String roboPath;
 	////////////////////////////////////////////////////////////////////////////////////////
 
-    public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram) {
+    public ADParser(IActivity ad, String nameAD, IActivityDiagram adDiagram, String roboPath) {
         this.ad = ad;
         this.adDiagram = adDiagram;
         setName(nameAD);
@@ -139,6 +140,7 @@ public class ADParser {
         this.waitAccept = new ArrayList<>();
         this.listUnion = new ArrayList<>();
         this.alphabetUnion = new StringBuilder();
+        this.roboPath = roboPath;
         
     }
 
@@ -234,12 +236,13 @@ public class ADParser {
 			throw new ParsingException(
 					"The module should have a partition. \n Please, insert and try again.");
 		}
-		
+		String procName = "P_" + partitionName;
         if (countCall.size() == 0) { //If first occurrence
             check = //"\nassert MAIN :[deadlock free]" +
                     //"\nassert MAIN :[divergence free]" +
                     //"\nassert MAIN :[deterministic]" +
-                    "\nassert Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " [T= P_" + partitionName;
+                    //"\nassert Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " [T= P_" + partitionName;
+            		"\nassert Prop_" + adUtils.nameDiagramResolver(ad.getName()) + " [T= " + procName;
             reset = true;
         }
         
@@ -254,7 +257,7 @@ public class ADParser {
         for (IActivity adCalling: callBehaviourList) {
             if (!callBehaviourListCreated.contains(adCalling)) {
                 callBehaviourListCreated.add(adCalling);
-                ADParser adParser = new ADParser(adCalling, adCalling.getActivityDiagram().getName(), adCalling.getActivityDiagram());
+                ADParser adParser = new ADParser(adCalling, adCalling.getActivityDiagram().getName(), adCalling.getActivityDiagram(), roboPath);
                 callBehaviour += "\n" + (adParser.parserDiagram());
                 alphabetAD = new ADCompositeAlphabet(ad);
                 this.alphabetAD.add(adParser.getAlphabetAD());
@@ -292,14 +295,15 @@ public class ADParser {
 //        String pool = definePool();
 ////////////////////////////////////////////////////////////////////////////////////////        
 //        String procName = "P_" + partitionName;
-//        String fs = System.getProperty("file.separator");
-//        String cspFile = ActivityController.getInstance().getRobochartFolder() + fs + adUtils.nameDiagramResolver(ad.getName())  + ".csp";
+        String fs = System.getProperty("file.separator");
+        // file_PathPlanningSM_coreassertions.csp
+        String cspFile = roboPath;
 ////////////////////////////////////////////////////////////////////////////////////////        
         adUtils = defineADUtils();
-        HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
+//        HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
 //        String robochart = parameterValueDiagram.get("robochart");
-        String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
-//        String robochart_alphabet = FdrWrapper.getInstance().processAlphabet2(cspFile, procName);
+//        String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
+        String robochart_alphabet = FdrWrapper.getInstance().processAlphabet2(cspFile, procName);
 //        if (robochart != null && !robochart.equals("")) {
 //			robochart = "include " + robochart + "\n";
         String robochart = "";

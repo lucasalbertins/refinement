@@ -324,8 +324,8 @@
 				-- 0:{}
 				--	=> {
 				--		TID_CleanSM_t1,
-				--		TID_CleanSM_t0,
-				--		TID_CleanSM_t2}
+				--		TID_CleanSM_t2,
+				--		TID_CleanSM_t0}
 				
 				-- Memory transition processes
 				MemoryTransitions_opt_0(id__) =
@@ -336,9 +336,9 @@
 						 	   = 
 						 	   clean__!TID_CleanSM_t1.in?clean_var:{clean_var|clean_var <- core_boolean, (clean_var==true)} -> Update
 						 	   []
-						 	   internal__!TID_CleanSM_t0 -> Update
-						 	   []
 						 	   clean__!TID_CleanSM_t2.in?clean_var:{clean_var|clean_var <- core_boolean, (clean_var==false)} -> Update
+						 	   []
+						 	   internal__!TID_CleanSM_t0 -> Update
 					within
 						Update
 				)
