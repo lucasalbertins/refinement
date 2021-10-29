@@ -291,15 +291,15 @@ public class ADParser {
         String processSync = defineProcessSync();
 //        String pool = definePool();
 ////////////////////////////////////////////////////////////////////////////////////////        
-        String procName = "P_" + partitionName;
-        String fs = System.getProperty("file.separator");
-        String cspFile = ActivityController.getInstance().getRobochartFolder() + fs + adUtils.nameDiagramResolver(ad.getName())  + ".csp";
+//        String procName = "P_" + partitionName;
+//        String fs = System.getProperty("file.separator");
+//        String cspFile = ActivityController.getInstance().getRobochartFolder() + fs + adUtils.nameDiagramResolver(ad.getName())  + ".csp";
 ////////////////////////////////////////////////////////////////////////////////////////        
         adUtils = defineADUtils();
         HashMap<String, String> parameterValueDiagram = adUtils.getParameterValueDiagram("");
 //        String robochart = parameterValueDiagram.get("robochart");
-//        String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
-        String robochart_alphabet = FdrWrapper.getInstance().processAlphabet2(cspFile, procName);
+        String robochart_alphabet = parameterValueDiagram.get("robochart_alphabet");
+//        String robochart_alphabet = FdrWrapper.getInstance().processAlphabet2(cspFile, procName);
 //        if (robochart != null && !robochart.equals("")) {
 //			robochart = "include " + robochart + "\n";
         String robochart = "";
