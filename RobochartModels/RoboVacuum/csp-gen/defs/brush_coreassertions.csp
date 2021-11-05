@@ -1,0 +1,21 @@
+include "file_operations_defs.csp"
+include "core_defs.csp"
+include "brush.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate OP_brush
+P_OP_brush = let
+	id__ = 0
+	
+	voltage = 0
+	
+	
+	
+within
+	OP_brush::O__(id__,
+				voltage)
+assert P_OP_brush :[deadlock-free]	
+assert P_OP_brush;RUN({r__}) :[deadlock-free]
+assert P_OP_brush :[deterministic]
+assert P_OP_brush :[divergence-free]

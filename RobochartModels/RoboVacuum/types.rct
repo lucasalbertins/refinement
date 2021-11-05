@@ -1,0 +1,9 @@
+enumeration Direction { left right } 
+
+datatype TripleAxis {
+	X : int
+	Y : int
+	Z : int
+}
+
+enumeration Orientation { up right down left } 

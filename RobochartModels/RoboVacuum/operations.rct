@@ -1,0 +1,20 @@
+operation brush ( voltage : int
+) {
+	terminates
+}
+
+operation vacuum ( voltage : int
+) {
+	terminates
+}
+
+operation output_left_motor ( x : int
+) {
+	terminates
+}
+
+operation output_right_motor ( x : int
+) {
+	terminates
+}
+

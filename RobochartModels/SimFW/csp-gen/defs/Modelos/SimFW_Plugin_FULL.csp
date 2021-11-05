@@ -1,0 +1,83 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_DA = {1..1}
+datatype alphabet_DA = accept_obstacle_1_DA_t_alphabet | moveCall_0_2__DA_t_alphabet| init_DA_t_alphabet| DecisionNode_MergeNode0_DA_t_alphabet
+robochart_DA = "SMovement_coreassertions.csp"
+countCe_DA = {1..4}
+countUpdate_DA = {1..1}
+countClear_DA = {1..0}
+limiteUpdate_DA = {(1)..(1)}
+channel startActivity_DA: ID_DA
+channel endActivity_DA: ID_DA
+channel ce_DA: ID_DA.countCe_DA
+channel clear_DA: ID_DA.countClear_DA
+channel update_DA: ID_DA.countUpdate_DA.limiteUpdate_DA
+channel endDiagram_DA: ID_DA
+--channel SMovement::moveCall.0.2: ID_DA
+channel dc
+channel begin, end:  {1..1}
+
+alphabet_Astah = {| startActivity_DA, endActivity_DA, ce_DA, clear_DA, update_DA, endDiagram_DA, dc |}
+
+MAIN = normal(DA(1))
+END_DIAGRAM_DA(id) = endDiagram_DA.id -> SKIP
+DA(ID_DA) = (Internal_DA(ID_DA) [|{|update_DA,clear_DA,endDiagram_DA|}|] TokenManager_DA_t(ID_DA,0,0))
+Internal_DA(id) = StartActivity_DA(id); Node_DA(id); EndActivity_DA(id)
+StartActivity_DA(id) = startActivity_DA.id -> SKIP
+EndActivity_DA(id) = endActivity_DA.id -> SKIP
+AlphabetDiagram_DA(id,accept_obstacle_1_DA_t_alphabet) = {|ce_DA.id.2,begin.1,end.1,ce_DA.id.3,endDiagram_DA.id|}
+AlphabetDiagram_DA(id,moveCall_0_2__DA_t_alphabet) = {|ce_DA.id.3,SMovement::moveCall.0.2,ce_DA.id.4,endDiagram_DA.id|}
+AlphabetDiagram_DA(id,init_DA_t_alphabet) = {|update_DA.id.1,ce_DA.id.1,endDiagram_DA.id|}
+AlphabetDiagram_DA(id,DecisionNode_MergeNode0_DA_t_alphabet) = {|ce_DA.id.1,ce_DA.id.4,ce_DA.id.2,endDiagram_DA.id|}
+AlphabetDiagram_DA_t(id) = union(union(union(AlphabetDiagram_DA(id,accept_obstacle_1_DA_t_alphabet),AlphabetDiagram_DA(id,moveCall_0_2__DA_t_alphabet)),AlphabetDiagram_DA(id,init_DA_t_alphabet)),AlphabetDiagram_DA(id,DecisionNode_MergeNode0_DA_t_alphabet))
+
+ProcessDiagram_DA(id,accept_obstacle_1_DA_t_alphabet) = normal(accept_obstacle_1_DA_t(id))
+ProcessDiagram_DA(id,moveCall_0_2__DA_t_alphabet) = normal(moveCall_0_2__DA_t(id))
+ProcessDiagram_DA(id,init_DA_t_alphabet) = normal(init_DA_t(id))
+ProcessDiagram_DA(id,DecisionNode_MergeNode0_DA_t_alphabet) = normal(DecisionNode_MergeNode0_DA_t(id))
+Node_DA(id) = || x:alphabet_DA @ [AlphabetDiagram_DA(id,x)] ProcessDiagram_DA(id,x)
+InitialNode0_DA_t(id) = update_DA.id.1!(1-0) -> ((ce_DA.id.1 -> SKIP))
+accept_obstacle_1_DA(id) = ((ce_DA.id.2 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_DA.id.3 -> SKIP)); accept_obstacle_1_DA(id)
+accept_obstacle_1_DA_t(id) = accept_obstacle_1_DA(id) /\ END_DIAGRAM_DA(id)
+moveCall_0_2__DA(id) = ((ce_DA.id.3 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_DA.id.4 -> SKIP)); moveCall_0_2__DA(id)
+moveCall_0_2__DA_t(id) = moveCall_0_2__DA(id) /\ END_DIAGRAM_DA(id)
+DecisionNode_MergeNode0_DA(id) = ((ce_DA.id.1 -> SKIP) [] (ce_DA.id.4 -> SKIP)); ce_DA.id.2 -> DecisionNode_MergeNode0_DA(id)
+DecisionNode_MergeNode0_DA_t(id) = DecisionNode_MergeNode0_DA(id) /\ END_DIAGRAM_DA(id)
+init_DA_t(id) = (InitialNode0_DA_t(id)) /\ END_DIAGRAM_DA(id)
+
+TokenManager_DA(id,x,init) = update_DA.id?c?y:limiteUpdate_DA -> x+y < 10 & x+y > -10 & TokenManager_DA(id,x+y,1) [] clear_DA.id?c -> endDiagram_DA.id -> SKIP [] x == 0 & init == 1 & endDiagram_DA.id -> SKIP
+TokenManager_DA_t(id,x,init) = TokenManager_DA(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL
+
+PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \ {|begin, end|}
+
+alphabet_robochart_DA = {| SMovement::obstacle, SMovement::moveCall.0.2 |}
+
+Wait_DA = WAIT(alphabet_robochart_DA, SMovement::obstacle)
+
+Wait_DA_control = begin.1 -> Wait_DA; end.1 -> Wait_DA_control	
+
+Wait_control_processes = {Wait_DA_control}
+
+Prop = PROP(Wait_control_processes) 
+
+assert Wait [FD= Prop \ alphabet_Astah
+assert Prop \ alphabet_Astah [FD= Wait 
+
+--Propriedade Original 
+
+-- Wait = 	NRecurse(diff(alphabet, {SMovement::obstacle.in}), Wait) 
+-- 		|~| 
+-- 		SMovement::obstacle.in -> SMovement::moveCall.0.2 -> Wait 

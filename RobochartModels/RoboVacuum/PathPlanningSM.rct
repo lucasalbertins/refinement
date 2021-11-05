@@ -1,0 +1,136 @@
+stm PathPlanningSM {
+	uses MovementCommands
+	uses SensorConstants
+	initial i0
+	state Go_up {
+		entry move_forward
+	}
+
+	transition t0 {
+		from i0
+		to Resume
+		trigger
+		action cycles = 0
+	}
+	transition t1 {
+		from Go_up
+		to Go_right
+		trigger ultrasonic ? u
+		condition u >= cliff
+	}
+	uses SensorEvents
+	state Go_right {
+		entry turn ! Direction::right ; move_forward ; displacement ! 0
+	}
+	state Go_down {
+		entry turn ! Direction::right ; move_forward
+	}
+	state Go_right_again {
+	}
+	state Return {
+		entry turn ! Direction::left ; turn ! Direction::left ; move_forward ; clean ! false
+	}
+	state Dock {
+		entry turn ! Direction::left ; move_forward
+	}
+	state Sleep {
+		entry stop ; wait ( sleep_time )
+	}
+
+	transition t3 {
+		from Go_right
+		to Go_down
+		trigger displacement ? d
+		condition d >= nozzle
+	}
+	transition t4 {
+		from Go_down
+		to Go_right_again
+		trigger ultrasonic ? u
+		condition u >= cliff
+		action 
+	
+	turn ! Direction::left ; move_forward ; displacement ! 0
+	}
+	transition t6 {
+		from Go_right_again
+		to Check_end
+		trigger ultrasonic ? u
+		condition u < cliff
+	}
+	transition t7 {
+		from Go_right_again
+		to Return
+		trigger ultrasonic ? u
+		condition u >= cliff
+		action cycles = 0
+	}
+	transition t5 {
+		from Check_end
+		to Go_right_again
+		trigger displacement ? d
+		condition d < nozzle
+	}
+	transition t8 {
+		from Check_end
+		to Check_battery
+		trigger displacement ? d
+		condition d >= nozzle
+		action cycles = cycles + 1
+	}
+	uses CleaningEvents
+	uses DisplacementEvent
+var cycles : int
+	state Check_end {
+	}
+	state Check_battery {
+	}
+	transition t9 {
+		from Check_battery
+		to Go_up
+		trigger battery_level ? b
+		condition b > battery_low
+		action turn ! Direction::left
+	}
+	transition t10 {
+		from Check_battery
+		to Return
+		trigger battery_level ? b
+		condition b <= battery_low
+	}
+	transition t11 {
+		from Return
+		to Dock
+		trigger ultrasonic ? u
+		condition u >= cliff
+	}
+	transition t12 {
+		from Dock
+		to Sleep
+		trigger charging
+	}
+	transition t13 {
+		from Sleep
+		to Resume
+		trigger
+		action turn ! Direction::left ; turn ! Direction::left ; move_forward
+	}
+	state Resume {
+		entry turn ! Direction::right ; move_forward ; displacement ! 0
+		exit turn ! Direction::left
+	}
+	transition t14 {
+		from Resume
+		to Go_up
+		trigger displacement ? d
+		condition d >= cycles * 2 * nozzle
+		action clean ! true
+	}
+	transition t2 {
+		from Go_right
+		to Go_down
+		trigger ultrasonic ? u
+		condition u >= cliff
+	}
+}
+

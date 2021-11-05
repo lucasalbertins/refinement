@@ -1,0 +1,38 @@
+stm Detecting {
+	event gas
+	initial i1
+	state CleanAir {
+	}
+	state GasPresent {
+	}
+	transition t1 {
+		from i1
+		to CleanAir
+	}
+	transition t2 {
+		from CleanAir
+		to GasPresent
+		trigger gas
+	}
+event detect : Chemical
+	transition t3 {
+		from GasPresent
+		to CleanAir
+		trigger
+		
+	detect . Chemical :: innocuous
+	}
+	transition t4 {
+		from GasPresent
+		to CleanAir
+		trigger
+		
+	detect . Chemical :: anomaly
+	}
+//	transition t5 {
+//		from GasPresent
+//		to CleanAir
+//		trigger action { 2 }> detect . Chemical::danger <{ 1 }
+//	}
+}
+

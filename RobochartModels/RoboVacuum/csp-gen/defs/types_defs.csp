@@ -1,0 +1,26 @@
+-- data definitions used by platform:/resource/RoboVacuum/types.rct
+datatype Direction = Direction_left | Direction_right
+
+Direction_is(Direction_left,Direction_left) = true
+Direction_is(_,Direction_left) = false
+Direction_is(Direction_right,Direction_right) = true
+Direction_is(_,Direction_right) = false
+
+nametype TripleAxis = (int,int,int)
+TripleAxis_X((X,Y,Z)) = X
+update_TripleAxis_X((X,Y,Z),v__) = (v__,Y,Z)
+TripleAxis_Y((X,Y,Z)) = Y
+update_TripleAxis_Y((X,Y,Z),v__) = (X,v__,Z)
+TripleAxis_Z((X,Y,Z)) = Z
+update_TripleAxis_Z((X,Y,Z),v__) = (X,Y,v__)
+datatype Orientation = Orientation_up | Orientation_right | Orientation_down | Orientation_left
+
+Orientation_is(Orientation_up,Orientation_up) = true
+Orientation_is(_,Orientation_up) = false
+Orientation_is(Orientation_right,Orientation_right) = true
+Orientation_is(_,Orientation_right) = false
+Orientation_is(Orientation_down,Orientation_down) = true
+Orientation_is(_,Orientation_down) = false
+Orientation_is(Orientation_left,Orientation_left) = true
+Orientation_is(_,Orientation_left) = false
+

@@ -1,0 +1,21 @@
+include "core_defs.csp"
+include "file_ClearSM_defs.csp"
+include "robochart_defs.csp"
+include "CleanSM.csp"
+include "../instantiations.csp"
+channel r__
+-- generate CleanSM
+P_CleanSM = let
+	id__ = 0
+	
+	
+	
+within
+	CleanSM::O__(
+		id__,
+		const_CleanSM_voltage
+	)
+assert P_CleanSM :[deadlock-free]	
+assert P_CleanSM;RUN({r__}) :[deadlock-free]
+assert P_CleanSM :[deterministic]
+assert P_CleanSM :[divergence-free]

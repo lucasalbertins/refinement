@@ -1,0 +1,87 @@
+include "SMovement_coreassertions.csp"
+
+ID_SimFW = {1..1}
+datatype T = lock | unlock
+datatype alphabet_SimFW = init_SimFW_t_alphabet | move_0_av__SimFW_t_alphabet| obstacle_SimFW_t_alphabet| DecisionNode_MergeNode0_SimFW_t_alphabet
+countCe_SimFW = {1..4}
+countUpdate_SimFW = {1..1}
+countClear_SimFW = {1..0}
+limiteUpdate_SimFW = {(1)..(1)}
+channel startActivity_SimFW: ID_SimFW
+channel endActivity_SimFW: ID_SimFW
+channel ce_SimFW: countCe_SimFW
+channel clear_SimFW: countClear_SimFW
+channel update_SimFW: countUpdate_SimFW.limiteUpdate_SimFW
+channel endDiagram_SimFW
+channel event_obstacle_SimFW,event_move_0_av__SimFW
+channel loop
+channel dc
+
+channel begin, end: {1..1}
+
+alphabet_Astah = {|startActivity_SimFW, endActivity_SimFW, ce_SimFW, clear_SimFW, update_SimFW, endDiagram_SimFW, loop, dc,
+					event_obstacle_SimFW, event_move_0_av__SimFW |}
+
+MAIN = SimFW(1); LOOP
+LOOP = loop -> LOOP
+END_DIAGRAM_SimFW = endDiagram_SimFW -> SKIP
+SimFW(ID_SimFW) = (Internal_SimFW(ID_SimFW) [|{|update_SimFW,clear_SimFW,endDiagram_SimFW|}|] TokenManager_SimFW_t(0,0))
+Internal_SimFW(ID_SimFW) = StartActivity_SimFW(ID_SimFW); Node_SimFW; EndActivity_SimFW(ID_SimFW)
+StartActivity_SimFW(ID_SimFW) = startActivity_SimFW.ID_SimFW -> SKIP
+EndActivity_SimFW(ID_SimFW) = endActivity_SimFW.ID_SimFW -> SKIP
+AlphabetDiagram_SimFW(init_SimFW_t_alphabet) = {|update_SimFW.1,ce_SimFW.1,endDiagram_SimFW|}
+AlphabetDiagram_SimFW(move_0_av__SimFW_t_alphabet) = {|ce_SimFW.3,SMovement::moveCall.0.2,ce_SimFW.4,endDiagram_SimFW|}
+--AlphabetDiagram_SimFW(move_0_av__SimFW_t_alphabet) = {|ce_SimFW.3,event_move_0_av__SimFW,ce_SimFW.4,endDiagram_SimFW|}
+AlphabetDiagram_SimFW(obstacle_SimFW_t_alphabet) = {|begin.1, end.1, ce_SimFW.2,event_obstacle_SimFW,ce_SimFW.3,endDiagram_SimFW|}
+--AlphabetDiagram_SimFW(obstacle_SimFW_t_alphabet) = {|ce_SimFW.2,event_obstacle_SimFW,ce_SimFW.3,endDiagram_SimFW|}
+AlphabetDiagram_SimFW(DecisionNode_MergeNode0_SimFW_t_alphabet) = {|ce_SimFW.1,ce_SimFW.4,ce_SimFW.2,endDiagram_SimFW|}
+ProcessDiagram_SimFW(init_SimFW_t_alphabet) = init_SimFW_t
+ProcessDiagram_SimFW(move_0_av__SimFW_t_alphabet) = move_0_av__SimFW_t
+ProcessDiagram_SimFW(obstacle_SimFW_t_alphabet) = obstacle_SimFW_t
+ProcessDiagram_SimFW(DecisionNode_MergeNode0_SimFW_t_alphabet) = DecisionNode_MergeNode0_SimFW_t
+Node_SimFW = || x:alphabet_SimFW @ [AlphabetDiagram_SimFW(x)] ProcessDiagram_SimFW(x)
+InitialNode0_SimFW_t = update_SimFW.1!(1-0) -> ((ce_SimFW.1 -> SKIP))
+obstacle_SimFW = ((ce_SimFW.2 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_SimFW.3 -> SKIP)); obstacle_SimFW
+--obstacle_SimFW = ((ce_SimFW.2 -> SKIP)); event_obstacle_SimFW -> ((ce_SimFW.3 -> SKIP)); obstacle_SimFW
+obstacle_SimFW_t = obstacle_SimFW /\ END_DIAGRAM_SimFW
+move_0_av__SimFW = ((ce_SimFW.3 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_SimFW.4 -> SKIP)); move_0_av__SimFW
+--move_0_av__SimFW = ((ce_SimFW.3 -> SKIP)); event_move_0_av__SimFW -> ((ce_SimFW.4 -> SKIP)); move_0_av__SimFW
+move_0_av__SimFW_t = move_0_av__SimFW /\ END_DIAGRAM_SimFW
+DecisionNode_MergeNode0_SimFW = ((ce_SimFW.1 -> SKIP) [] (ce_SimFW.4 -> SKIP)); ce_SimFW.2 -> DecisionNode_MergeNode0_SimFW
+DecisionNode_MergeNode0_SimFW_t = DecisionNode_MergeNode0_SimFW /\ END_DIAGRAM_SimFW
+init_SimFW_t = (InitialNode0_SimFW_t) /\ END_DIAGRAM_SimFW
+
+TokenManager_SimFW(x,init) = update_SimFW?c?y:limiteUpdate_SimFW -> x+y < 10 & x+y > -10 & TokenManager_SimFW(x+y,1) [] clear_SimFW?c -> endDiagram_SimFW -> SKIP [] x == 0 & init == 1 & endDiagram_SimFW -> SKIP
+TokenManager_SimFW_t(x,init) = TokenManager_SimFW(x,init)
+
+--assert MAIN :[deadlock free]
+--assert MAIN :[divergence free]
+--assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+alphabet = {|SMovement::obstacle, SMovement::moveCall|}
+
+
+WaitSimFW = NRecurse(diff(alphabet, {SMovement::obstacle.in}), WaitSimFW)
+			|~|
+			SMovement::obstacle.in -> SKIP
+
+WaitSimFW2 = begin.1 -> WaitSimFW; end.1 -> WaitSimFW2	
+
+Prop = (MAIN [|{|begin, end|}|] WaitSimFW2) \ {|begin, end|} 	
+
+
+--WaitSimFW2 = begin -> WaitSimFW; end -> WaitSimFW2	
+--Prop = (MAIN [|{|begin, end|}|] WaitSimFW2) \ {begin, end} 
+
+--assert Prop \ alphabet_Astah [FD= P_SMovement 
+
+assert Wait [FD= Prop \ alphabet_Astah
+assert Prop \ alphabet_Astah [FD= Wait
+
+--Propriedade Original 
+
+Wait = NRecurse(diff(alphabet, {SMovement::obstacle.in}), Wait)
+			|~|
+		SMovement::obstacle.in -> SMovement::moveCall.0.2 -> Wait

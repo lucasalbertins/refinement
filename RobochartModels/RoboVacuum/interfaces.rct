@@ -1,0 +1,95 @@
+interface MovementCommands {
+	event move_forward
+	event turn : Direction
+	event stop
+}
+
+interface MovementOperations {
+	output_left_motor( x : int)
+	output_right_motor( x : int)
+}
+
+interface SensorEvents {
+	event ultrasonic : int
+
+	event battery_level : int
+	event charging
+
+}
+
+interface SensorConstants {
+	const cliff : int
+	const nozzle : int
+	var u : int
+	var d : int
+	var b : int
+	const battery_low : int
+	const sleep_time : int
+
+	const acc_distance : int
+}
+
+interface MovementEvents {
+	event acc_l : TripleAxis
+	event acc_r : TripleAxis
+	event speed_l : TripleAxis
+	event speed_r : TripleAxis
+	event angle : real
+}
+
+interface CleaningOperations {
+	vacuum( x : int)
+	brush( x : int)
+}
+
+interface PIDEVents {
+	event actual : int
+	event target : int
+}
+
+interface SpeedEvents {
+	event acc : TripleAxis
+	event sp : TripleAxis
+}
+
+interface CleaningEvents {
+	event clean : boolean
+}
+
+interface DisplacementEvent {
+	event displacement : int
+}
+
+interface MidVars {
+	const climb_speed : int
+	const descent_speed : int
+	const side_speed : int
+	const forward_angle : int
+	const left_angle : int
+	const right_angle : int
+	var lspeed : int
+	var rspeed:int
+	var angle : int
+	var speed_adj : int
+	var angle_adj : int
+	const turn_speed : int
+	var direction : Direction
+	var orientation : Orientation
+	const movesp : int
+	const stopsp : int
+}
+
+interface PIDVariables {
+	var prior_error : int
+	var integral : int
+	const kp : int
+	const ki : int
+	const kd : int
+	var error : int
+	var derivative : int
+	var output : int
+	const step : int
+	var target_value : int
+	var actual_value : int
+	var old_target : int
+}

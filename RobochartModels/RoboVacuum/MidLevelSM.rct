@@ -1,0 +1,243 @@
+stm MidLevelSM {
+	uses MovementCommands
+	uses MidVars
+	requires MovementOperations
+	event target_speed : int
+	event target_angle : int
+	event speed_adjustment : int
+	event angle_adjustment : int
+	initial i0
+	const step : int
+
+	state Go_up {
+		entry target_speed ! climb_speed ; speed_adjustment ? speed_adj ; target_angle
+		! forward_angle ; angle_adjustment ? angle_adj ; lspeed = lspeed - speed_adj
+		- angle_adj ; rspeed = rspeed - speed_adj + angle_adj ; output_left_motor(
+		lspeed) ; output_right_motor( rspeed)
+	}
+	state Turn_right {
+		entry target_speed ! turn_speed ; speed_adjustment ? speed_adj ; target_angle !
+		right_angle ; angle_adjustment ? angle_adj ; lspeed = lspeed - speed_adj -
+		angle_adj ; rspeed = rspeed - speed_adj + angle_adj ; output_left_motor(
+		lspeed) ; output_right_motor( rspeed)
+	}
+	state Go_down {
+		entry target_speed ! descent_speed ; speed_adjustment ? speed_adj ;
+		target_angle ! forward_angle ; angle_adjustment ? angle_adj ; lspeed =
+		lspeed - speed_adj - angle_adj ; rspeed = rspeed - speed_adj + angle_adj ;
+		output_left_motor( lspeed) ; output_right_motor( rspeed)
+	}
+	state Turn_left {
+		entry target_speed ! turn_speed ; speed_adjustment ? speed_adj ; target_angle !
+		left_angle ; angle_adjustment ? angle_adj ; lspeed = lspeed - speed_adj -
+		angle_adj ; rspeed = rspeed - speed_adj + angle_adj ; output_left_motor(
+		lspeed) ; output_right_motor( rspeed)
+	}
+	state Go_side {
+		entry target_speed ! side_speed ; speed_adjustment ? speed_adj ; target_angle !
+		forward_angle ; angle_adjustment ? angle_adj ; lspeed = lspeed - speed_adj -
+		angle_adj ; rspeed = rspeed - speed_adj + angle_adj ; output_left_motor(
+		lspeed) ; output_right_motor( rspeed)
+	}
+	state Stop {
+		entry target_speed ! turn_speed ; speed_adjustment ? speed_adj ; target_angle !
+		forward_angle ; angle_adjustment ? angle_adj ; lspeed = lspeed - speed_adj -
+		angle_adj ; rspeed = rspeed - speed_adj + angle_adj ; output_left_motor(
+		lspeed) ; output_right_motor( rspeed)
+	}
+	transition t1 {
+		from Go_up
+		to Turn_right
+		trigger turn ? direction
+		condition direction == Direction::right
+		action orientation = turn_right ( orientation ) ; lspeed = stopsp ; rspeed =
+			stopsp
+	}
+	transition t2 {
+		from Turn_right
+		to Go_side
+		trigger move_forward
+		condition orientation == Orientation::left \/ orientation ==
+		Orientation::right
+		action rspeed = movesp ; lspeed = movesp
+	}
+	transition t3 {
+		from Go_up
+		to Turn_left
+		trigger turn ? direction
+		condition direction == Direction::left
+		action orientation = turn_left ( orientation ) ; lspeed = stopsp ; rspeed =
+			stopsp
+	} 
+	transition t4 {
+		from Turn_right
+		to Turn_right
+		trigger turn ? direction
+		condition direction == Direction::right
+		action orientation = turn_right ( orientation ) 
+	}
+	transition t5 {
+		from Turn_left
+		to Go_side
+		trigger move_forward
+		condition orientation == Orientation::left \/ orientation ==
+		Orientation::right
+		action lspeed = movesp ; rspeed = movesp
+	}
+	transition t6 {
+		from Turn_left
+		to Turn_left
+		trigger turn ? direction
+		condition direction == Direction::left
+		action orientation = turn_left ( orientation )
+	}
+	transition t7 {
+		from Turn_right
+		to Go_up
+		trigger move_forward
+		condition orientation == Orientation::up
+		action lspeed = movesp ; rspeed = movesp
+	}
+	transition t8 {
+		from Turn_right
+		to Go_down
+		trigger move_forward
+		condition orientation == Orientation::down
+		action lspeed = movesp ; rspeed = movesp
+	}
+	transition t9 {
+		from Turn_left
+		to Go_up
+		trigger move_forward
+		condition orientation == Orientation::up
+		action lspeed = movesp ; rspeed = movesp
+	}
+	transition t10 {
+		from Turn_left
+		to Go_down
+		trigger move_forward
+		condition orientation == Orientation::down
+		action lspeed = movesp ; rspeed = movesp
+	}
+	transition t11 {
+		from Go_side
+		to Turn_left
+		trigger turn ? direction
+		condition direction == Direction::left
+		action orientation = turn_left ( orientation ) ; lspeed = stopsp ; rspeed =
+			stopsp
+	}
+	transition t12 {
+		from Go_side
+		to Turn_right
+		trigger turn ? direction
+		condition direction == Direction::right
+		action orientation = turn_right ( orientation ) ; lspeed = stopsp ; rspeed =
+			stopsp
+	}
+	transition t13 {
+		from Go_down
+		to Turn_left
+		trigger turn ? direction
+		condition direction == Direction::left
+		action orientation = turn_left ( orientation ) ; lspeed = stopsp ; rspeed =
+			stopsp
+	}
+	transition t14 {
+		from Go_down
+		to Turn_right
+		trigger turn ? direction
+		condition direction == Direction::right
+		action orientation = turn_right ( orientation ) ; lspeed = stopsp ; rspeed =
+			stopsp
+	}
+	transition t0 {
+		from i0
+		to Go_up
+		trigger
+		action orientation = Orientation::up ; lspeed = 0 ; rspeed = 0
+	}
+	transition t15 {
+		from Turn_right
+		to Turn_left
+		trigger turn ? direction
+		condition direction == Direction::left
+		action orientation = turn_left ( orientation )
+	}
+	transition t16 {
+		from Turn_left
+		to Turn_right
+		trigger turn ? direction
+		condition direction == Direction::right
+		action orientation = turn_right ( orientation )
+	}
+	transition t17 {
+		from Go_up
+		to Stop
+		trigger stop
+		action lspeed = stopsp ; rspeed = stopsp
+	}
+	transition t18 {
+		from Go_down
+		to Stop
+		trigger stop
+		action lspeed = stopsp ; rspeed = stopsp
+	}
+	transition t19 {
+		from Go_side
+		to Stop
+		trigger stop
+		action lspeed = stopsp ; rspeed = stopsp
+	}
+	transition t20 {
+		from Stop
+		to Turn_right
+		trigger turn ? direction
+		condition direction == Direction::right
+		action orientation = turn_right ( orientation )
+	}
+	transition t21 {
+		from Stop
+		to Turn_left
+		trigger turn ? direction
+		condition direction == Direction::left
+		action orientation = turn_left ( orientation )
+	}
+	transition t22 {
+		from Turn_right
+		to Turn_right
+		trigger
+		condition sinceEntry ( Turn_right ) >= step
+	}
+	transition t23 {
+		from Go_side
+		to Go_side
+		trigger
+		condition sinceEntry ( Turn_left ) >= step
+	}
+	transition t24 {
+		from Go_up
+		to Go_up
+		trigger
+		condition sinceEntry ( Go_up ) >= step
+	}
+	transition t25 {
+		from Turn_left
+		to Turn_left
+		trigger
+		condition sinceEntry ( Turn_left ) >= step
+	}
+	transition t26 {
+		from Stop
+		to Stop
+		trigger
+		condition sinceEntry ( Stop ) >= step
+	}
+	transition t27 {
+		from Go_down
+		to Go_down
+		trigger
+		condition sinceEntry ( Go_down ) >= step
+	}
+}
+

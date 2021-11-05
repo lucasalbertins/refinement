@@ -1,0 +1,87 @@
+stm Signalling {
+	event detect : Chemical
+	event light : Color
+	initial i1
+	state Waiting {
+		entry send light ! Color::green
+	}
+	state AnomalousGas {
+	
+		
+		
+		entry send light . Color::amber
+	}
+	transition t1 {
+		from i1
+		to Waiting
+	}
+	
+	transition t3 {
+		from Waiting
+		to AnomalousGas
+		trigger detect ? c
+		condition c == Chemical::anomaly
+	}
+	transition t4a {
+		from AnomalousGas
+		to Waiting
+	trigger detect ? c
+		condition c == Chemical::innocuous
+	}
+	event siren
+	state DangerousGas {
+		
+		
+		
+	
+		
+		entry 
+	send light ! Color::red ; send siren ; wait ( flagTime ) ; send flag
+	}
+	transition t4 {
+		from Waiting
+		to DangerousGas
+		trigger detect ? c
+		condition c == Chemical::danger
+	}
+	transition t5 {
+		from DangerousGas
+		to AnomalousGas
+		trigger detect ? c
+		condition c == Chemical::anomaly
+	}
+	transition t6 {
+		from DangerousGas
+		to Waiting
+		trigger detect ? c
+		condition c == Chemical::innocuous
+	}
+const flagTime : nat
+	event flag
+transition t7 {
+		from AnomalousGas
+		to DangerousGas
+		trigger detect ? c
+		condition c == Chemical::danger
+	}
+	transition t0 {
+               from Waiting
+               to Waiting
+               trigger detect ? c
+		condition c == Chemical::innocuous
+	}
+       transition t2 {
+               from AnomalousGas
+               to AnomalousGas
+               trigger detect ? c
+		condition c == Chemical::anomaly
+	}
+       transition t8 {
+               from DangerousGas
+               to DangerousGas
+               trigger detect ? c
+		condition c == Chemical::danger
+	}
+	
+	var c : Chemical
+}

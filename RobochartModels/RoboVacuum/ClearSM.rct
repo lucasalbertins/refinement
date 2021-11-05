@@ -1,0 +1,29 @@
+stm CleanSM {
+	requires CleaningOperations
+	const voltage : int
+	initial i0
+	state clean {
+		entry brush( voltage) ; vacuum( voltage)
+	}
+	transition t0 {
+		from i0
+		to dont_clean
+	}
+	uses CleaningEvents
+	var clean_var : boolean
+	state dont_clean {
+		entry brush( 0) ; vacuum( 0)
+	}
+	transition t1 {
+		from dont_clean
+		to clean
+		trigger clean ? clean_var
+		condition clean_var == true
+	}
+	transition t2 {
+		from clean
+		to dont_clean
+		trigger clean ? clean_var
+		condition clean_var == false
+	}
+}

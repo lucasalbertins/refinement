@@ -1,0 +1,836 @@
+
+
+
+module AngularSpeedSM
+exports
+	-- flow channels
+	channel internal__ : TIDS
+	channel enteredV, enterV, exitV, exitedV : SIDS
+	channel enter, entered: SIDS.SIDS
+	channel exit,exited: SIDS.SIDS
+	channel terminate
+	
+	-- variable channels
+	channel get_speed, set_speed: core_int
+	channel get_turn_angle, set_turn_angle: core_real
+	channel get_direction, set_direction: Direction
+	channel get_al, set_al: TripleAxis
+	channel get_ar, set_ar: TripleAxis
+			
+	-- shared variable channels
+	
+	-- local variable channels for defined operations that are required by the state machine
+	
+	-- declaring state machine events
+	channel acc_l__: TIDS.InOut.TripleAxis
+	channel acc_l: InOut.TripleAxis
+	channel acc_r__: TIDS.InOut.TripleAxis
+	channel acc_r: InOut.TripleAxis
+	channel angle__: TIDS.InOut.core_int
+	channel angle: InOut.core_int
+	
+	-- declaring call and ret events for undefined operations
+	
+	-- Only the undefined operations are declared here.
+	-- If the state machine is in isolation, all required operations will be undefined.
+	-- If it is in the context of a controller, the required operations not provided by the
+	-- controller will be declared here, and the defined operations will be defined in the
+	-- context of the Controller module, and therefore within scope of the state machien module.
+	
+	
+	-- definition of functions used to expose flow channels
+	ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
+					   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
+					   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
+					   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
+						 
+	ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	
+	-- declaring identifiers of state and final states
+	datatype SIDS = SID_AngularSpeedSM
+	              | SID_AngularSpeedSM_wait_input
+	              | SID_AngularSpeedSM_wait_ar
+	              | SID_AngularSpeedSM_wait_al
+	              | SID_AngularSpeedSM_update_value
+	
+	-- declaring identifiers of transitions
+	datatype TIDS = NULLTRANSITION__
+	              | TID_AngularSpeedSM_t0
+	              | TID_AngularSpeedSM_t2
+	              | TID_AngularSpeedSM_t3
+	              | TID_AngularSpeedSM_t4
+	              | TID_AngularSpeedSM_t5
+	              | TID_AngularSpeedSM_t6
+	
+	-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
+	
+	ITIDS = {
+		TID_AngularSpeedSM_t2,	TID_AngularSpeedSM_t3,	TID_AngularSpeedSM_t4,	TID_AngularSpeedSM_t5,	TID_AngularSpeedSM_t6
+	}
+	
+	int_int = {|
+		acc_l__.TID_AngularSpeedSM_t2,
+		acc_r__.TID_AngularSpeedSM_t2,
+		angle__.TID_AngularSpeedSM_t2,
+		internal__.TID_AngularSpeedSM_t2,
+		acc_l__.TID_AngularSpeedSM_t3,
+		acc_r__.TID_AngularSpeedSM_t3,
+		angle__.TID_AngularSpeedSM_t3,
+		internal__.TID_AngularSpeedSM_t3,
+		acc_l__.TID_AngularSpeedSM_t4,
+		acc_r__.TID_AngularSpeedSM_t4,
+		angle__.TID_AngularSpeedSM_t4,
+		internal__.TID_AngularSpeedSM_t4,
+		acc_l__.TID_AngularSpeedSM_t5,
+		acc_r__.TID_AngularSpeedSM_t5,
+		angle__.TID_AngularSpeedSM_t5,
+		internal__.TID_AngularSpeedSM_t5,
+		acc_l__.TID_AngularSpeedSM_t6,
+		acc_r__.TID_AngularSpeedSM_t6,
+		angle__.TID_AngularSpeedSM_t6,
+		internal__.TID_AngularSpeedSM_t6
+	|}
+		
+	
+	internal_events = {|enter,entered,exit,exited|}
+	shared_variable_events = {|
+	|}
+			
+	
+	-- declaring all states
+	CS_AngularSpeedSM_wait_input_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_AngularSpeedSM_wait_input,SID_AngularSpeedSM_wait_ar,SID_AngularSpeedSM_wait_al,SID_AngularSpeedSM_update_value},
+		y____ <- {SID_AngularSpeedSM_wait_input}
+	|}
+	
+	
+	AngularSpeedSM_wait_input_triggers = {|
+		acc_l__.TID_AngularSpeedSM_t5,
+		acc_l__.TID_AngularSpeedSM_t2,
+		internal__.TID_AngularSpeedSM_t6,
+		acc_r__.TID_AngularSpeedSM_t3,
+		acc_r__.TID_AngularSpeedSM_t4
+	|}
+	
+	State_AngularSpeedSM_wait_input(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = let
+		T_AngularSpeedSM_t2(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance) = acc_l__!TID_AngularSpeedSM_t2.in?al -> set_al!al ->  (exit.SID_AngularSpeedSM_wait_input.SID_AngularSpeedSM_wait_input -> SKIP;
+							SKIP;exited.SID_AngularSpeedSM_wait_input.SID_AngularSpeedSM_wait_input -> SKIP;
+							enter!SID_AngularSpeedSM_wait_input!SID_AngularSpeedSM_wait_ar -> entered!SID_AngularSpeedSM_wait_input!SID_AngularSpeedSM_wait_ar ->
+							State_AngularSpeedSM_wait_input(id__,
+									    const_AngularSpeedSM_t,
+									    const_AngularSpeedSM_acc_distance)
+		)
+		T_AngularSpeedSM_t3(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance) = acc_r__!TID_AngularSpeedSM_t3.in?ar -> set_ar!ar ->  (exit.SID_AngularSpeedSM_wait_input.SID_AngularSpeedSM_wait_input -> SKIP;
+							SKIP;exited.SID_AngularSpeedSM_wait_input.SID_AngularSpeedSM_wait_input -> SKIP;
+							enter!SID_AngularSpeedSM_wait_input!SID_AngularSpeedSM_wait_al -> entered!SID_AngularSpeedSM_wait_input!SID_AngularSpeedSM_wait_al ->
+							State_AngularSpeedSM_wait_input(id__,
+									    const_AngularSpeedSM_t,
+									    const_AngularSpeedSM_acc_distance)
+		)
+		State_AngularSpeedSM_wait_input_execute(id__,o____) = SKIP; 
+			entered!o____!SID_AngularSpeedSM_wait_input ->
+			(SKIP; STOP /\ (
+				T_AngularSpeedSM_t2(id__,
+						    const_AngularSpeedSM_t,
+						    const_AngularSpeedSM_acc_distance)[]
+				T_AngularSpeedSM_t3(id__,
+						    const_AngularSpeedSM_t,
+						    const_AngularSpeedSM_acc_distance)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4}) -> exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_input})!SID_AngularSpeedSM_wait_input -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_input -> SKIP);
+						State_AngularSpeedSM_wait_input(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_l__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_input})!SID_AngularSpeedSM_wait_input -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_input -> SKIP);
+						State_AngularSpeedSM_wait_input(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_r__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_input})!SID_AngularSpeedSM_wait_input -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_input -> SKIP);
+						State_AngularSpeedSM_wait_input(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_input})!SID_AngularSpeedSM_wait_input -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_input -> SKIP);
+						State_AngularSpeedSM_wait_input(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_AngularSpeedSM_wait_input})!SID_AngularSpeedSM_wait_input -> (State_AngularSpeedSM_wait_input_execute(id__,x____))
+	
+	CS_AngularSpeedSM_wait_ar_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_AngularSpeedSM_wait_input,SID_AngularSpeedSM_wait_ar,SID_AngularSpeedSM_wait_al,SID_AngularSpeedSM_update_value},
+		y____ <- {SID_AngularSpeedSM_wait_ar}
+	|}
+	
+	
+	AngularSpeedSM_wait_ar_triggers = {|
+		acc_l__.TID_AngularSpeedSM_t5,
+		internal__.TID_AngularSpeedSM_t6,
+		acc_l__.TID_AngularSpeedSM_t2,
+		acc_r__.TID_AngularSpeedSM_t3,
+		acc_r__.TID_AngularSpeedSM_t4
+	|}
+	
+	State_AngularSpeedSM_wait_ar(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = let
+		T_AngularSpeedSM_t4(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance) = acc_r__!TID_AngularSpeedSM_t4.in?ar -> set_ar!ar ->  (exit.SID_AngularSpeedSM_wait_ar.SID_AngularSpeedSM_wait_ar -> SKIP;
+							SKIP;exited.SID_AngularSpeedSM_wait_ar.SID_AngularSpeedSM_wait_ar -> SKIP;
+							enter!SID_AngularSpeedSM_wait_ar!SID_AngularSpeedSM_update_value -> entered!SID_AngularSpeedSM_wait_ar!SID_AngularSpeedSM_update_value ->
+							State_AngularSpeedSM_wait_ar(id__,
+									    const_AngularSpeedSM_t,
+									    const_AngularSpeedSM_acc_distance)
+		)
+		State_AngularSpeedSM_wait_ar_execute(id__,o____) = SKIP; 
+			entered!o____!SID_AngularSpeedSM_wait_ar ->
+			(SKIP; STOP /\ (
+				T_AngularSpeedSM_t4(id__,
+						    const_AngularSpeedSM_t,
+						    const_AngularSpeedSM_acc_distance)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4}) -> exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_ar})!SID_AngularSpeedSM_wait_ar -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_ar -> SKIP);
+						State_AngularSpeedSM_wait_ar(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_l__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_ar})!SID_AngularSpeedSM_wait_ar -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_ar -> SKIP);
+						State_AngularSpeedSM_wait_ar(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_r__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_ar})!SID_AngularSpeedSM_wait_ar -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_ar -> SKIP);
+						State_AngularSpeedSM_wait_ar(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_ar})!SID_AngularSpeedSM_wait_ar -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_ar -> SKIP);
+						State_AngularSpeedSM_wait_ar(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_AngularSpeedSM_wait_ar})!SID_AngularSpeedSM_wait_ar -> (State_AngularSpeedSM_wait_ar_execute(id__,x____))
+	
+	CS_AngularSpeedSM_wait_al_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_AngularSpeedSM_wait_input,SID_AngularSpeedSM_wait_ar,SID_AngularSpeedSM_wait_al,SID_AngularSpeedSM_update_value},
+		y____ <- {SID_AngularSpeedSM_wait_al}
+	|}
+	
+	
+	AngularSpeedSM_wait_al_triggers = {|
+		acc_l__.TID_AngularSpeedSM_t5,
+		internal__.TID_AngularSpeedSM_t6,
+		acc_l__.TID_AngularSpeedSM_t2,
+		acc_r__.TID_AngularSpeedSM_t3,
+		acc_r__.TID_AngularSpeedSM_t4
+	|}
+	
+	State_AngularSpeedSM_wait_al(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = let
+		T_AngularSpeedSM_t5(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance) = acc_l__!TID_AngularSpeedSM_t5.in?al -> set_al!al ->  (exit.SID_AngularSpeedSM_wait_al.SID_AngularSpeedSM_wait_al -> SKIP;
+							SKIP;exited.SID_AngularSpeedSM_wait_al.SID_AngularSpeedSM_wait_al -> SKIP;
+							enter!SID_AngularSpeedSM_wait_al!SID_AngularSpeedSM_update_value -> entered!SID_AngularSpeedSM_wait_al!SID_AngularSpeedSM_update_value ->
+							State_AngularSpeedSM_wait_al(id__,
+									    const_AngularSpeedSM_t,
+									    const_AngularSpeedSM_acc_distance)
+		)
+		State_AngularSpeedSM_wait_al_execute(id__,o____) = SKIP; 
+			entered!o____!SID_AngularSpeedSM_wait_al ->
+			(SKIP; STOP /\ (
+				T_AngularSpeedSM_t5(id__,
+						    const_AngularSpeedSM_t,
+						    const_AngularSpeedSM_acc_distance)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4}) -> exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_al})!SID_AngularSpeedSM_wait_al -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_al -> SKIP);
+						State_AngularSpeedSM_wait_al(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_l__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_al})!SID_AngularSpeedSM_wait_al -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_al -> SKIP);
+						State_AngularSpeedSM_wait_al(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_r__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_al})!SID_AngularSpeedSM_wait_al -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_al -> SKIP);
+						State_AngularSpeedSM_wait_al(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_wait_al})!SID_AngularSpeedSM_wait_al -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_wait_al -> SKIP);
+						State_AngularSpeedSM_wait_al(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_AngularSpeedSM_wait_al})!SID_AngularSpeedSM_wait_al -> (State_AngularSpeedSM_wait_al_execute(id__,x____))
+	
+	CS_AngularSpeedSM_update_value_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_AngularSpeedSM_wait_input,SID_AngularSpeedSM_wait_ar,SID_AngularSpeedSM_wait_al,SID_AngularSpeedSM_update_value},
+		y____ <- {SID_AngularSpeedSM_update_value}
+	|}
+	
+	
+	AngularSpeedSM_update_value_triggers = {|
+		acc_l__.TID_AngularSpeedSM_t5,
+		internal__.TID_AngularSpeedSM_t6,
+		acc_l__.TID_AngularSpeedSM_t2,
+		acc_r__.TID_AngularSpeedSM_t3,
+		acc_r__.TID_AngularSpeedSM_t4
+	|}
+	
+	State_AngularSpeedSM_update_value(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = let
+		T_AngularSpeedSM_t6(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance) = internal__!TID_AngularSpeedSM_t6 ->  exit.SID_AngularSpeedSM_update_value.SID_AngularSpeedSM_update_value -> SKIP;
+							SKIP;exited.SID_AngularSpeedSM_update_value.SID_AngularSpeedSM_update_value -> SKIP;
+							get_turn_angle?turn_angle -> get_al?al -> true&(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP);SKIP;enter!SID_AngularSpeedSM_update_value!SID_AngularSpeedSM_wait_input -> entered!SID_AngularSpeedSM_update_value!SID_AngularSpeedSM_wait_input ->
+							State_AngularSpeedSM_update_value(id__,
+									    const_AngularSpeedSM_t,
+									    const_AngularSpeedSM_acc_distance)
+		State_AngularSpeedSM_update_value_execute(id__,o____) = get_turn_angle?turn_angle -> get_ar?ar -> get_al?al -> true & (set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP); 
+			entered!o____!SID_AngularSpeedSM_update_value ->
+			(SKIP; STOP /\ (
+				T_AngularSpeedSM_t6(id__,
+						    const_AngularSpeedSM_t,
+						    const_AngularSpeedSM_acc_distance)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4}) -> exit?y____:diff(SIDS,{SID_AngularSpeedSM_update_value})!SID_AngularSpeedSM_update_value -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_update_value -> SKIP);
+						State_AngularSpeedSM_update_value(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_l__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_update_value})!SID_AngularSpeedSM_update_value -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_update_value -> SKIP);
+						State_AngularSpeedSM_update_value(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] acc_r__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_update_value})!SID_AngularSpeedSM_update_value -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_update_value -> SKIP);
+						State_AngularSpeedSM_update_value(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+				[] angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_AngularSpeedSM_t5,TID_AngularSpeedSM_t6,TID_AngularSpeedSM_t2,TID_AngularSpeedSM_t3,TID_AngularSpeedSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_AngularSpeedSM_update_value})!SID_AngularSpeedSM_update_value -> (
+						SKIP;
+						exited!y____!SID_AngularSpeedSM_update_value -> SKIP);
+						State_AngularSpeedSM_update_value(id__,
+								    const_AngularSpeedSM_t,
+								    const_AngularSpeedSM_acc_distance)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_AngularSpeedSM_update_value})!SID_AngularSpeedSM_update_value -> (State_AngularSpeedSM_update_value_execute(id__,x____))
+	
+	
+	I_AngularSpeedSM_i0(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = let
+		T_AngularSpeedSM_t0(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance) = internal__!TID_AngularSpeedSM_t0 -> true & (set_turn_angle!0 -> SKIP);enter!SID_AngularSpeedSM!SID_AngularSpeedSM_wait_input -> entered!SID_AngularSpeedSM!SID_AngularSpeedSM_wait_input ->
+		SKIP
+	within
+		T_AngularSpeedSM_t0(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+	
+	
+	State_AngularSpeedSM_wait_input_R(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = 
+		State_AngularSpeedSM_wait_input(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+			[|diff(int_int,AngularSpeedSM_wait_input_triggers)|]
+		SKIP
+			 		
+	State_AngularSpeedSM_wait_ar_R(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = 
+		State_AngularSpeedSM_wait_ar(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+			[|diff(int_int,AngularSpeedSM_wait_ar_triggers)|]
+		SKIP
+			 		
+	State_AngularSpeedSM_wait_al_R(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = 
+		State_AngularSpeedSM_wait_al(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+			[|diff(int_int,AngularSpeedSM_wait_al_triggers)|]
+		SKIP
+			 		
+	State_AngularSpeedSM_update_value_R(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = 
+		State_AngularSpeedSM_update_value(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+			[|diff(int_int,AngularSpeedSM_update_value_triggers)|]
+		SKIP
+			 		
+		
+	STM(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = (
+		I_AngularSpeedSM_i0(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+			[|
+				{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
+					x____ <- diff(SIDS,{SID_AngularSpeedSM_wait_input,SID_AngularSpeedSM_wait_ar,SID_AngularSpeedSM_wait_al,SID_AngularSpeedSM_update_value}),
+					y____ <- {SID_AngularSpeedSM_wait_input,SID_AngularSpeedSM_wait_ar,SID_AngularSpeedSM_wait_al,SID_AngularSpeedSM_update_value}
+			|}|]
+		(
+			State_AngularSpeedSM_wait_input_R(id__,
+					    const_AngularSpeedSM_t,
+					    const_AngularSpeedSM_acc_distance)
+				[|inter(CS_AngularSpeedSM_wait_input_sync,union(union(CS_AngularSpeedSM_wait_ar_sync,CS_AngularSpeedSM_wait_al_sync),CS_AngularSpeedSM_update_value_sync))|]
+			(
+				State_AngularSpeedSM_wait_ar_R(id__,
+						    const_AngularSpeedSM_t,
+						    const_AngularSpeedSM_acc_distance)
+					[|inter(CS_AngularSpeedSM_wait_ar_sync,union(CS_AngularSpeedSM_wait_al_sync,CS_AngularSpeedSM_update_value_sync))|]
+				(
+					State_AngularSpeedSM_wait_al_R(id__,
+							    const_AngularSpeedSM_t,
+							    const_AngularSpeedSM_acc_distance)
+						[|inter(CS_AngularSpeedSM_wait_al_sync,CS_AngularSpeedSM_update_value_sync)|]
+					State_AngularSpeedSM_update_value_R(id__,
+							    const_AngularSpeedSM_t,
+							    const_AngularSpeedSM_acc_distance)
+				)
+			)
+		)
+	)
+	
+	-- optimized memory process
+	channel getV_speed: core_int
+	channel getV_turn_angle: core_real
+	channel getV_direction: Direction
+	channel getV_al: TripleAxis
+	channel getV_ar: TripleAxis
+	
+	-- individual memory processes
+	Memory_speed(speed) = (
+		get_speed!speed -> Memory_speed(speed)
+		[]
+		getV_speed!speed -> Memory_speed(speed)
+		[]
+		set_speed?x__ -> Memory_speed(x__)
+	)
+	Memory_turn_angle(turn_angle) = (
+		get_turn_angle!turn_angle -> Memory_turn_angle(turn_angle)
+		[]
+		getV_turn_angle!turn_angle -> Memory_turn_angle(turn_angle)
+		[]
+		set_turn_angle?x__ -> Memory_turn_angle(x__)
+	)
+	Memory_direction(direction) = (
+		get_direction!direction -> Memory_direction(direction)
+		[]
+		getV_direction!direction -> Memory_direction(direction)
+		[]
+		set_direction?x__ -> Memory_direction(x__)
+	)
+	Memory_al(al) = (
+		get_al!al -> Memory_al(al)
+		[]
+		getV_al!al -> Memory_al(al)
+		[]
+		set_al?x__ -> Memory_al(x__)
+		[]
+		acc_l__!TID_AngularSpeedSM_t2.in?al -> Memory_al(al)
+		[]
+		acc_l__!TID_AngularSpeedSM_t5.in?al -> Memory_al(al)
+	)
+	Memory_ar(ar) = (
+		get_ar!ar -> Memory_ar(ar)
+		[]
+		getV_ar!ar -> Memory_ar(ar)
+		[]
+		set_ar?x__ -> Memory_ar(x__)
+		[]
+		acc_r__!TID_AngularSpeedSM_t3.in?ar -> Memory_ar(ar)
+		[]
+		acc_r__!TID_AngularSpeedSM_t4.in?ar -> Memory_ar(ar)
+	)
+	
+	-- processes that read variables and offer transitions
+	MemoryTransitions(id__, speed, turn_angle, direction, al, ar) = 		
+	(internal__!TID_AngularSpeedSM_t0 -> SKIP
+	[]
+	acc_l__!TID_AngularSpeedSM_t2.in?al -> SKIP
+	[]
+	acc_r__!TID_AngularSpeedSM_t3.in?ar -> SKIP
+	[]
+	acc_r__!TID_AngularSpeedSM_t4.in?ar -> SKIP
+	[]
+	acc_l__!TID_AngularSpeedSM_t5.in?al -> SKIP
+	[]
+	internal__!TID_AngularSpeedSM_t6 -> SKIP[]
+	set_speed?x__ -> SKIP[]
+	set_turn_angle?x__ -> SKIP[]
+	set_direction?x__ -> SKIP[]
+	set_al?x__ -> SKIP[]
+	set_ar?x__ -> SKIP)
+	
+	MemoryTransitions_AngularSpeedSM(id__, const_AngularSpeedSM_t, const_AngularSpeedSM_acc_distance) = (getV_speed?speed ->
+	getV_turn_angle?turn_angle ->
+	getV_direction?direction ->
+	getV_al?al ->
+	getV_ar?ar ->
+	MemoryTransitions(id__, speed, turn_angle, direction, al, ar)			
+	); MemoryTransitions_AngularSpeedSM(id__, const_AngularSpeedSM_t, const_AngularSpeedSM_acc_distance)
+			
+	
+	-- synchronisation, hiding and process sets 
+	MemoryVariablesProcesses_AngularSpeedSM = Union(
+		{
+			{
+				(Memory_speed(0),{|set_speed,get_speed,getV_speed|}),
+				(Memory_turn_angle(0),{|set_turn_angle,get_turn_angle,getV_turn_angle|}),
+				(Memory_direction(Direction_left),{|getV_direction,set_direction,get_direction|}),
+				(Memory_al((0,0,0)),{|acc_l__.TID_AngularSpeedSM_t5,set_al,get_al,getV_al,acc_l__.TID_AngularSpeedSM_t2|}),
+				(Memory_ar((0,0,0)),{|acc_r__.TID_AngularSpeedSM_t3,get_ar,acc_r__.TID_AngularSpeedSM_t4,getV_ar,set_ar|})
+			}
+		}
+	)
+	
+	MemoryVariablesSyncSet = Union({
+		{|
+			getV_direction,
+			set_speed,
+			set_al,
+			getV_turn_angle,
+			getV_al,
+			acc_l__.TID_AngularSpeedSM_t2,
+			set_ar,
+			acc_r__.TID_AngularSpeedSM_t3,
+			acc_r__.TID_AngularSpeedSM_t4,
+			acc_l__.TID_AngularSpeedSM_t5,
+			set_turn_angle,
+			set_direction,
+			getV_ar,
+			getV_speed
+		|}	
+	})
+	
+	MemoryVariablesHideSet = Union({
+		{|
+			getV_direction,
+			getV_ar,
+			getV_speed,
+			getV_turn_angle,
+			getV_al
+		|}
+	})
+	
+	-- combined individual memory processes
+	MemoryVariables = ||| (P, alpha) : MemoryVariablesProcesses_AngularSpeedSM @ P
+	
+	-- complete memory process	
+	MemoryN(id__, const_AngularSpeedSM_t, const_AngularSpeedSM_acc_distance) = sbisim(diamond((sbisim(diamond(MemoryVariables)) [| MemoryVariablesSyncSet |] sbisim(diamond(MemoryTransitions_AngularSpeedSM(id__, const_AngularSpeedSM_t, const_AngularSpeedSM_acc_distance)))) \ MemoryVariablesHideSet))
+	
+	-- optimised memory
+	-- Sets of named elements identified according to transition conditions:
+	-- {}
+	-- Summary of all identified named elements:
+	-- {
+	-- turn_angle
+	-- direction
+	-- speed
+	-- al
+	-- ar
+	-- }
+	
+	-- Allocation plan:
+	-- 0:{}
+	--	=> {
+	--		TID_AngularSpeedSM_t5,
+	--		TID_AngularSpeedSM_t2,
+	--		TID_AngularSpeedSM_t6,
+	--		TID_AngularSpeedSM_t3,
+	--		TID_AngularSpeedSM_t0,
+	--		TID_AngularSpeedSM_t4}
+	
+	-- Memory transition processes
+	MemoryTransitions_opt_0(id__) =
+	(
+		let
+			Update = Current(id__)
+			Current(id__)
+			 	   = 
+			 	   acc_l__!TID_AngularSpeedSM_t5.in?al -> Update
+			 	   []
+			 	   acc_l__!TID_AngularSpeedSM_t2.in?al -> Update
+			 	   []
+			 	   internal__!TID_AngularSpeedSM_t6 -> Update
+			 	   []
+			 	   acc_r__!TID_AngularSpeedSM_t3.in?ar -> Update
+			 	   []
+			 	   internal__!TID_AngularSpeedSM_t0 -> Update
+			 	   []
+			 	   acc_r__!TID_AngularSpeedSM_t4.in?ar -> Update
+		within
+			Update
+	)
+	
+	-- Memory cell processes
+	Memory_opt_turn_angle(x__) = ( 
+		get_turn_angle!x__ -> Memory_opt_turn_angle(x__)
+		[]
+		set_turn_angle?x__ -> Memory_opt_turn_angle(x__)
+	)
+	Memory_opt_direction(x__) = ( 
+		get_direction!x__ -> Memory_opt_direction(x__)
+		[]
+		set_direction?x__ -> Memory_opt_direction(x__)
+	)
+	Memory_opt_speed(x__) = ( 
+		get_speed!x__ -> Memory_opt_speed(x__)
+		[]
+		set_speed?x__ -> Memory_opt_speed(x__)
+	)
+	Memory_opt_al(x__) = ( 
+		get_al!x__ -> Memory_opt_al(x__)
+		[]
+		set_al?x__ -> Memory_opt_al(x__)
+	)
+	Memory_opt_ar(x__) = ( 
+		get_ar!x__ -> Memory_opt_ar(x__)
+		[]
+		set_ar?x__ -> Memory_opt_ar(x__)
+	)
+	
+	-- Composition of memory, StateMachine and Memory transition processes
+	
+	MemorySTM_opt(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) =
+		sbisim(	
+		  dbisim(
+		    sbisim(dbisim(sbisim(Memory_opt_turn_angle(0)
+		          	[| {|set_turn_angle,get_turn_angle|} |] 
+		          	dbisim(sbisim(Memory_opt_direction(Direction_left)
+		          	      	[| {|set_direction,get_direction|} |] 
+		          	      	dbisim(sbisim(Memory_opt_speed(0)
+		          	      	      	[| {|set_speed,get_speed|} |] 
+		          	      	      	dbisim(sbisim(Memory_opt_al((0,0,0))
+		          	      	      	      	[| {|set_al,get_al|} |] 
+		          	      	      	      	dbisim(sbisim(Memory_opt_ar((0,0,0))
+		          	      	      	      	      	[| {|get_ar,set_ar|} |] 
+		          	      	      	      	      	STM_core(id__,
+		          	      	      	      	      			    const_AngularSpeedSM_t,
+		          	      	      	      	      			    const_AngularSpeedSM_acc_distance)
+		          	      	      	      	      	)\ {|get_ar,set_ar|}
+		          	      	      	      	      )
+		          	      	      	      	)\ {|set_al,get_al|}
+		          	      	      	      )
+		          	      	      	)\ {|set_speed,get_speed|}
+		          	      	      )
+		          	      	)\ {|set_direction,get_direction|}
+		          	      )
+		          	)\ {|set_turn_angle,get_turn_angle|}
+		          )
+		      	  [| {|acc_r__.TID_AngularSpeedSM_t3,acc_r__.TID_AngularSpeedSM_t4,acc_l__.TID_AngularSpeedSM_t5,internal__.TID_AngularSpeedSM_t0,acc_l__.TID_AngularSpeedSM_t2,internal__.TID_AngularSpeedSM_t6|} |]
+		      	  MemoryTransitions_opt_0(id__)
+		      	  )\{||})
+		      )
+	
+	-- main process
+	
+	MachineMemorySyncSet = Union({
+		union(
+			union(
+				{|get_speed,set_speed,
+				get_turn_angle,set_turn_angle,
+				get_direction,set_direction,
+				get_al,set_al,
+				get_ar,set_ar|},
+				{||}
+			)
+				
+			,
+			{|internal__.TID_AngularSpeedSM_t0,
+			acc_l__.TID_AngularSpeedSM_t2,
+			acc_r__.TID_AngularSpeedSM_t3,
+			acc_r__.TID_AngularSpeedSM_t4,
+			acc_l__.TID_AngularSpeedSM_t5,
+			internal__.TID_AngularSpeedSM_t6|}
+		)
+	})
+	
+	MachineMemoryHidingSet = Union({
+		union(
+			{|get_speed,set_speed,
+			get_turn_angle,set_turn_angle,
+			get_direction,set_direction,
+			get_al,set_al,
+			get_ar,set_ar|},
+			{||}
+		)
+	})
+	
+	MachineInternalEvents = {|
+		internal__
+	|}
+	
+	AUX(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = (
+		(
+			STM(id__,
+					    const_AngularSpeedSM_t,
+					    const_AngularSpeedSM_acc_distance)
+				[|MachineMemorySyncSet|]
+			sbisim(diamond(MemoryN(id__, const_AngularSpeedSM_t, const_AngularSpeedSM_acc_distance)))
+		)[[
+			acc_l__.x____ <- acc_l,
+			acc_r__.x____ <- acc_r,
+			angle__.x____ <- angle
+			| x____ <- TIDS
+		]]
+		\MachineMemoryHidingSet
+	)
+	[|{|terminate|}|>SKIP\MachineInternalEvents
+	
+	
+	STM_core(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = 
+		sbisim(diamond(STM(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)))
+		
+	AUX_opt(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = 
+		(MemorySTM_opt(id__,
+				    const_AngularSpeedSM_t,
+				    const_AngularSpeedSM_acc_distance)
+		)[[
+			acc_l__.x____ <- acc_l,
+			acc_r__.x____ <- acc_r,
+			angle__.x____ <- angle
+			| x____ <- TIDS
+		]]
+		[|{|terminate|}|>SKIP\MachineInternalEvents
+
+	-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+			
+	FVS__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = AUX_opt(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance)
+	Dunopt__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = AUX(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) \ internal_events
+	D__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = AUX_opt(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) \ internal_events
+	O__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = sbisim(diamond(D__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance)))
+	VS__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = ShowV(FVS__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance))
+	VS_O__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = sbisim(diamond(VS__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance)))
+	HEXT__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) = O__(id__,
+			    const_AngularSpeedSM_t,
+			    const_AngularSpeedSM_acc_distance) [|shared_variable_events|] SKIP	
+endmodule
+
+
