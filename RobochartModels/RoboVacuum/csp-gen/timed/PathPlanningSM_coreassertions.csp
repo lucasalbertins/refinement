@@ -1,4 +1,0 @@
--- generate includes
-include "defs/PathPlanningSM_coreassertions.csp"
-include "PathPlanningSM.csp"
-

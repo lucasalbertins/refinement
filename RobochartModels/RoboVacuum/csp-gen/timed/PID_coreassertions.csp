@@ -1,4 +1,0 @@
--- generate includes
-include "PID.csp"
-include "defs/PID_coreassertions.csp"
-
