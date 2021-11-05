@@ -1,4 +1,0 @@
--- generate includes
-include "InputDuplicationSM.csp"
-include "defs/InputDuplicationSM_coreassertions.csp"
-

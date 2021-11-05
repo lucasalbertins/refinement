@@ -1,4 +1,0 @@
--- generate includes
-include "DisplacementSM.csp"
-include "defs/DisplacementSM_coreassertions.csp"
-
