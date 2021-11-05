@@ -1,0 +1,3397 @@
+module MidLevelSM
+exports
+	-- flow channels
+	channel internal__ : TIDS
+	channel enteredV, enterV, exitV, exitedV : SIDS
+	channel enter, entered: SIDS.SIDS
+	channel exit,exited: SIDS.SIDS
+	channel terminate
+	
+	-- variable channels
+	channel get_lspeed, set_lspeed: core_int
+	channel get_rspeed, set_rspeed: core_int
+	channel get_angle, set_angle: core_int
+	channel get_speed_adj, set_speed_adj: core_int
+	channel get_angle_adj, set_angle_adj: core_int
+	channel get_direction, set_direction: Direction
+	channel get_orientation, set_orientation: Orientation
+			
+	-- shared variable channels
+	
+	-- local variable channels for defined operations that are required by the state machine
+	
+	-- declaring state machine events
+	channel target_speed__: TIDS.InOut.core_int
+	channel target_speed: InOut.core_int
+	channel target_angle__: TIDS.InOut.core_int
+	channel target_angle: InOut.core_int
+	channel speed_adjustment__: TIDS.InOut.core_int
+	channel speed_adjustment: InOut.core_int
+	channel angle_adjustment__: TIDS.InOut.core_int
+	channel angle_adjustment: InOut.core_int
+	channel move_forward__: TIDS.InOut
+	channel move_forward: InOut
+	channel turn__: TIDS.InOut.Direction
+	channel turn: InOut.Direction
+	channel stop__: TIDS.InOut
+	channel stop: InOut
+	
+	-- declaring call and ret events for undefined operations
+	channel output_left_motorCall: core_int
+	channel output_right_motorCall: core_int
+	
+	-- Only the undefined operations are declared here.
+	-- If the state machine is in isolation, all required operations will be undefined.
+	-- If it is in the context of a controller, the required operations not provided by the
+	-- controller will be declared here, and the defined operations will be defined in the
+	-- context of the Controller module, and therefore within scope of the state machien module.
+	CALL__output_left_motor(id__,
+			    x) =  output_left_motorCall.x -> SKIP
+	
+	CALL__output_right_motor(id__,
+			    x) =  output_right_motorCall.x -> SKIP
+	
+	
+	
+	-- definition of functions used to expose flow channels
+	ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
+					   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
+					   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
+					   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
+						 
+	ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	
+	-- declaring identifiers of state and final states
+	datatype SIDS = SID_MidLevelSM
+	              | SID_MidLevelSM_Go_up
+	              | SID_MidLevelSM_Turn_right
+	              | SID_MidLevelSM_Go_down
+	              | SID_MidLevelSM_Turn_left
+	              | SID_MidLevelSM_Go_side
+	              | SID_MidLevelSM_Stop
+	
+	-- declaring identifiers of transitions
+	datatype TIDS = NULLTRANSITION__
+	              | TID_MidLevelSM_t1
+	              | TID_MidLevelSM_t2
+	              | TID_MidLevelSM_t3
+	              | TID_MidLevelSM_t4
+	              | TID_MidLevelSM_t5
+	              | TID_MidLevelSM_t6
+	              | TID_MidLevelSM_t7
+	              | TID_MidLevelSM_t8
+	              | TID_MidLevelSM_t9
+	              | TID_MidLevelSM_t10
+	              | TID_MidLevelSM_t11
+	              | TID_MidLevelSM_t12
+	              | TID_MidLevelSM_t13
+	              | TID_MidLevelSM_t14
+	              | TID_MidLevelSM_t0
+	              | TID_MidLevelSM_t15
+	              | TID_MidLevelSM_t16
+	              | TID_MidLevelSM_t17
+	              | TID_MidLevelSM_t18
+	              | TID_MidLevelSM_t19
+	              | TID_MidLevelSM_t20
+	              | TID_MidLevelSM_t21
+	              | TID_MidLevelSM_t22
+	              | TID_MidLevelSM_t23
+	              | TID_MidLevelSM_t24
+	              | TID_MidLevelSM_t25
+	              | TID_MidLevelSM_t26
+	              | TID_MidLevelSM_t27
+	
+	-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
+	
+	ITIDS = {
+		TID_MidLevelSM_t1,	TID_MidLevelSM_t2,	TID_MidLevelSM_t3,	TID_MidLevelSM_t4,	TID_MidLevelSM_t5,	TID_MidLevelSM_t6,	TID_MidLevelSM_t7,	TID_MidLevelSM_t8,	TID_MidLevelSM_t9,	TID_MidLevelSM_t10,	TID_MidLevelSM_t11,	TID_MidLevelSM_t12,	TID_MidLevelSM_t13,	TID_MidLevelSM_t14,	TID_MidLevelSM_t15,	TID_MidLevelSM_t16,	TID_MidLevelSM_t17,	TID_MidLevelSM_t18,	TID_MidLevelSM_t19,	TID_MidLevelSM_t20,	TID_MidLevelSM_t21,	TID_MidLevelSM_t22,	TID_MidLevelSM_t23,	TID_MidLevelSM_t24,	TID_MidLevelSM_t25,	TID_MidLevelSM_t26,	TID_MidLevelSM_t27
+	}
+	
+	int_int = {|
+		target_speed__.TID_MidLevelSM_t1,
+		target_angle__.TID_MidLevelSM_t1,
+		speed_adjustment__.TID_MidLevelSM_t1,
+		angle_adjustment__.TID_MidLevelSM_t1,
+		move_forward__.TID_MidLevelSM_t1,
+		turn__.TID_MidLevelSM_t1,
+		stop__.TID_MidLevelSM_t1,
+		internal__.TID_MidLevelSM_t1,
+		target_speed__.TID_MidLevelSM_t2,
+		target_angle__.TID_MidLevelSM_t2,
+		speed_adjustment__.TID_MidLevelSM_t2,
+		angle_adjustment__.TID_MidLevelSM_t2,
+		move_forward__.TID_MidLevelSM_t2,
+		turn__.TID_MidLevelSM_t2,
+		stop__.TID_MidLevelSM_t2,
+		internal__.TID_MidLevelSM_t2,
+		target_speed__.TID_MidLevelSM_t3,
+		target_angle__.TID_MidLevelSM_t3,
+		speed_adjustment__.TID_MidLevelSM_t3,
+		angle_adjustment__.TID_MidLevelSM_t3,
+		move_forward__.TID_MidLevelSM_t3,
+		turn__.TID_MidLevelSM_t3,
+		stop__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t3,
+		target_speed__.TID_MidLevelSM_t4,
+		target_angle__.TID_MidLevelSM_t4,
+		speed_adjustment__.TID_MidLevelSM_t4,
+		angle_adjustment__.TID_MidLevelSM_t4,
+		move_forward__.TID_MidLevelSM_t4,
+		turn__.TID_MidLevelSM_t4,
+		stop__.TID_MidLevelSM_t4,
+		internal__.TID_MidLevelSM_t4,
+		target_speed__.TID_MidLevelSM_t5,
+		target_angle__.TID_MidLevelSM_t5,
+		speed_adjustment__.TID_MidLevelSM_t5,
+		angle_adjustment__.TID_MidLevelSM_t5,
+		move_forward__.TID_MidLevelSM_t5,
+		turn__.TID_MidLevelSM_t5,
+		stop__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t5,
+		target_speed__.TID_MidLevelSM_t6,
+		target_angle__.TID_MidLevelSM_t6,
+		speed_adjustment__.TID_MidLevelSM_t6,
+		angle_adjustment__.TID_MidLevelSM_t6,
+		move_forward__.TID_MidLevelSM_t6,
+		turn__.TID_MidLevelSM_t6,
+		stop__.TID_MidLevelSM_t6,
+		internal__.TID_MidLevelSM_t6,
+		target_speed__.TID_MidLevelSM_t7,
+		target_angle__.TID_MidLevelSM_t7,
+		speed_adjustment__.TID_MidLevelSM_t7,
+		angle_adjustment__.TID_MidLevelSM_t7,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t7,
+		stop__.TID_MidLevelSM_t7,
+		internal__.TID_MidLevelSM_t7,
+		target_speed__.TID_MidLevelSM_t8,
+		target_angle__.TID_MidLevelSM_t8,
+		speed_adjustment__.TID_MidLevelSM_t8,
+		angle_adjustment__.TID_MidLevelSM_t8,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t8,
+		stop__.TID_MidLevelSM_t8,
+		internal__.TID_MidLevelSM_t8,
+		target_speed__.TID_MidLevelSM_t9,
+		target_angle__.TID_MidLevelSM_t9,
+		speed_adjustment__.TID_MidLevelSM_t9,
+		angle_adjustment__.TID_MidLevelSM_t9,
+		move_forward__.TID_MidLevelSM_t9,
+		turn__.TID_MidLevelSM_t9,
+		stop__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t9,
+		target_speed__.TID_MidLevelSM_t10,
+		target_angle__.TID_MidLevelSM_t10,
+		speed_adjustment__.TID_MidLevelSM_t10,
+		angle_adjustment__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t10,
+		turn__.TID_MidLevelSM_t10,
+		stop__.TID_MidLevelSM_t10,
+		internal__.TID_MidLevelSM_t10,
+		target_speed__.TID_MidLevelSM_t11,
+		target_angle__.TID_MidLevelSM_t11,
+		speed_adjustment__.TID_MidLevelSM_t11,
+		angle_adjustment__.TID_MidLevelSM_t11,
+		move_forward__.TID_MidLevelSM_t11,
+		turn__.TID_MidLevelSM_t11,
+		stop__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t11,
+		target_speed__.TID_MidLevelSM_t12,
+		target_angle__.TID_MidLevelSM_t12,
+		speed_adjustment__.TID_MidLevelSM_t12,
+		angle_adjustment__.TID_MidLevelSM_t12,
+		move_forward__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t12,
+		stop__.TID_MidLevelSM_t12,
+		internal__.TID_MidLevelSM_t12,
+		target_speed__.TID_MidLevelSM_t13,
+		target_angle__.TID_MidLevelSM_t13,
+		speed_adjustment__.TID_MidLevelSM_t13,
+		angle_adjustment__.TID_MidLevelSM_t13,
+		move_forward__.TID_MidLevelSM_t13,
+		turn__.TID_MidLevelSM_t13,
+		stop__.TID_MidLevelSM_t13,
+		internal__.TID_MidLevelSM_t13,
+		target_speed__.TID_MidLevelSM_t14,
+		target_angle__.TID_MidLevelSM_t14,
+		speed_adjustment__.TID_MidLevelSM_t14,
+		angle_adjustment__.TID_MidLevelSM_t14,
+		move_forward__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t14,
+		stop__.TID_MidLevelSM_t14,
+		internal__.TID_MidLevelSM_t14,
+		target_speed__.TID_MidLevelSM_t15,
+		target_angle__.TID_MidLevelSM_t15,
+		speed_adjustment__.TID_MidLevelSM_t15,
+		angle_adjustment__.TID_MidLevelSM_t15,
+		move_forward__.TID_MidLevelSM_t15,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t15,
+		internal__.TID_MidLevelSM_t15,
+		target_speed__.TID_MidLevelSM_t16,
+		target_angle__.TID_MidLevelSM_t16,
+		speed_adjustment__.TID_MidLevelSM_t16,
+		angle_adjustment__.TID_MidLevelSM_t16,
+		move_forward__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t16,
+		stop__.TID_MidLevelSM_t16,
+		internal__.TID_MidLevelSM_t16,
+		target_speed__.TID_MidLevelSM_t17,
+		target_angle__.TID_MidLevelSM_t17,
+		speed_adjustment__.TID_MidLevelSM_t17,
+		angle_adjustment__.TID_MidLevelSM_t17,
+		move_forward__.TID_MidLevelSM_t17,
+		turn__.TID_MidLevelSM_t17,
+		stop__.TID_MidLevelSM_t17,
+		internal__.TID_MidLevelSM_t17,
+		target_speed__.TID_MidLevelSM_t18,
+		target_angle__.TID_MidLevelSM_t18,
+		speed_adjustment__.TID_MidLevelSM_t18,
+		angle_adjustment__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t18,
+		turn__.TID_MidLevelSM_t18,
+		stop__.TID_MidLevelSM_t18,
+		internal__.TID_MidLevelSM_t18,
+		target_speed__.TID_MidLevelSM_t19,
+		target_angle__.TID_MidLevelSM_t19,
+		speed_adjustment__.TID_MidLevelSM_t19,
+		angle_adjustment__.TID_MidLevelSM_t19,
+		move_forward__.TID_MidLevelSM_t19,
+		turn__.TID_MidLevelSM_t19,
+		stop__.TID_MidLevelSM_t19,
+		internal__.TID_MidLevelSM_t19,
+		target_speed__.TID_MidLevelSM_t20,
+		target_angle__.TID_MidLevelSM_t20,
+		speed_adjustment__.TID_MidLevelSM_t20,
+		angle_adjustment__.TID_MidLevelSM_t20,
+		move_forward__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t20,
+		stop__.TID_MidLevelSM_t20,
+		internal__.TID_MidLevelSM_t20,
+		target_speed__.TID_MidLevelSM_t21,
+		target_angle__.TID_MidLevelSM_t21,
+		speed_adjustment__.TID_MidLevelSM_t21,
+		angle_adjustment__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t21,
+		turn__.TID_MidLevelSM_t21,
+		stop__.TID_MidLevelSM_t21,
+		internal__.TID_MidLevelSM_t21,
+		target_speed__.TID_MidLevelSM_t22,
+		target_angle__.TID_MidLevelSM_t22,
+		speed_adjustment__.TID_MidLevelSM_t22,
+		angle_adjustment__.TID_MidLevelSM_t22,
+		move_forward__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t22,
+		stop__.TID_MidLevelSM_t22,
+		internal__.TID_MidLevelSM_t22,
+		target_speed__.TID_MidLevelSM_t23,
+		target_angle__.TID_MidLevelSM_t23,
+		speed_adjustment__.TID_MidLevelSM_t23,
+		angle_adjustment__.TID_MidLevelSM_t23,
+		move_forward__.TID_MidLevelSM_t23,
+		turn__.TID_MidLevelSM_t23,
+		stop__.TID_MidLevelSM_t23,
+		internal__.TID_MidLevelSM_t23,
+		target_speed__.TID_MidLevelSM_t24,
+		target_angle__.TID_MidLevelSM_t24,
+		speed_adjustment__.TID_MidLevelSM_t24,
+		angle_adjustment__.TID_MidLevelSM_t24,
+		move_forward__.TID_MidLevelSM_t24,
+		turn__.TID_MidLevelSM_t24,
+		stop__.TID_MidLevelSM_t24,
+		internal__.TID_MidLevelSM_t24,
+		target_speed__.TID_MidLevelSM_t25,
+		target_angle__.TID_MidLevelSM_t25,
+		speed_adjustment__.TID_MidLevelSM_t25,
+		angle_adjustment__.TID_MidLevelSM_t25,
+		move_forward__.TID_MidLevelSM_t25,
+		turn__.TID_MidLevelSM_t25,
+		stop__.TID_MidLevelSM_t25,
+		internal__.TID_MidLevelSM_t25,
+		target_speed__.TID_MidLevelSM_t26,
+		target_angle__.TID_MidLevelSM_t26,
+		speed_adjustment__.TID_MidLevelSM_t26,
+		angle_adjustment__.TID_MidLevelSM_t26,
+		move_forward__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t26,
+		stop__.TID_MidLevelSM_t26,
+		internal__.TID_MidLevelSM_t26,
+		target_speed__.TID_MidLevelSM_t27,
+		target_angle__.TID_MidLevelSM_t27,
+		speed_adjustment__.TID_MidLevelSM_t27,
+		angle_adjustment__.TID_MidLevelSM_t27,
+		move_forward__.TID_MidLevelSM_t27,
+		turn__.TID_MidLevelSM_t27,
+		stop__.TID_MidLevelSM_t27,
+		internal__.TID_MidLevelSM_t27
+	|}
+		
+	
+	internal_events = {|enter,entered,exit,exited|}
+	shared_variable_events = {|
+	|}
+			
+	
+	-- declaring all states
+	CS_MidLevelSM_Go_up_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop},
+		y____ <- {SID_MidLevelSM_Go_up}
+	|}
+	
+	
+	MidLevelSM_Go_up_triggers = {|
+		turn__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t24,
+		internal__.TID_MidLevelSM_t25,
+		turn__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t13,
+		stop__.TID_MidLevelSM_t17,
+		turn__.TID_MidLevelSM_t4,
+		move_forward__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t23,
+		internal__.TID_MidLevelSM_t27,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t2,
+		turn__.TID_MidLevelSM_t1,
+		stop__.TID_MidLevelSM_t19,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t6
+	|}
+	
+	State_MidLevelSM_Go_up(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t1(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t1.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_right(orientation) -> SKIP);true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_up!SID_MidLevelSM_Turn_right -> entered!SID_MidLevelSM_Go_up!SID_MidLevelSM_Turn_right ->
+							State_MidLevelSM_Go_up(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t3(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t3.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_left(orientation) -> SKIP);true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_up!SID_MidLevelSM_Turn_left -> entered!SID_MidLevelSM_Go_up!SID_MidLevelSM_Turn_left ->
+							State_MidLevelSM_Go_up(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t17(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = stop__!TID_MidLevelSM_t17.in ->  (exit.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_up!SID_MidLevelSM_Stop -> entered!SID_MidLevelSM_Go_up!SID_MidLevelSM_Stop ->
+							State_MidLevelSM_Go_up(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t24(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t24 ->  exit.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_up.SID_MidLevelSM_Go_up -> SKIP;
+							enter!SID_MidLevelSM_Go_up!SID_MidLevelSM_Go_up -> State_MidLevelSM_Go_up_execute(id__,SID_MidLevelSM_Go_up)
+		State_MidLevelSM_Go_up_execute(id__,o____) = true&(target_speed.out!const_MidLevelSM_climb_speed -> SKIP);true&(speed_adjustment.in?speed_adj -> set_speed_adj!speed_adj -> SKIP);true&(target_angle.out!const_MidLevelSM_forward_angle -> SKIP);true&(angle_adjustment.in?angle_adj -> set_angle_adj!angle_adj -> SKIP);get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> get_lspeed?lspeed -> true & (set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_rspeed?rspeed -> get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> true & (set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_lspeed?lspeed -> true&CALL__output_left_motor(
+					id__,
+					lspeed
+				);get_rspeed?rspeed -> true&CALL__output_right_motor(
+					id__,
+					rspeed
+				); 
+			entered!o____!SID_MidLevelSM_Go_up ->
+			(SKIP; STOP /\ (
+				T_MidLevelSM_t1(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t3(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t17(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t24(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6}) -> exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_speed__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] speed_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] angle_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] move_forward__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] stop__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t24,TID_MidLevelSM_t25,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t1,TID_MidLevelSM_t19,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_up -> SKIP);
+						State_MidLevelSM_Go_up(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_MidLevelSM_Go_up})!SID_MidLevelSM_Go_up -> (State_MidLevelSM_Go_up_execute(id__,x____))
+	
+	CS_MidLevelSM_Turn_right_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop},
+		y____ <- {SID_MidLevelSM_Turn_right}
+	|}
+	
+	
+	MidLevelSM_Turn_right_triggers = {|
+		turn__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t25,
+		internal__.TID_MidLevelSM_t24,
+		turn__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t13,
+		turn__.TID_MidLevelSM_t4,
+		stop__.TID_MidLevelSM_t17,
+		move_forward__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t23,
+		internal__.TID_MidLevelSM_t27,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t2,
+		stop__.TID_MidLevelSM_t19,
+		turn__.TID_MidLevelSM_t1,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t6
+	|}
+	
+	State_MidLevelSM_Turn_right(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t2(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = move_forward__!TID_MidLevelSM_t2.in ->  (exit.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							true & (set_rspeed!const_MidLevelSM_movesp -> SKIP);true & (set_lspeed!const_MidLevelSM_movesp -> SKIP);enter!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Go_side -> entered!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Go_side ->
+							State_MidLevelSM_Turn_right(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t4(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t4.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_right(orientation) -> SKIP);enter!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Turn_right -> State_MidLevelSM_Turn_right_execute(id__,SID_MidLevelSM_Turn_right)
+		)
+		T_MidLevelSM_t7(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = move_forward__!TID_MidLevelSM_t7.in ->  (exit.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_movesp -> SKIP);true & (set_rspeed!const_MidLevelSM_movesp -> SKIP);enter!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Go_up -> entered!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Go_up ->
+							State_MidLevelSM_Turn_right(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t8(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = move_forward__!TID_MidLevelSM_t8.in ->  (exit.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_movesp -> SKIP);true & (set_rspeed!const_MidLevelSM_movesp -> SKIP);enter!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Go_down -> entered!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Go_down ->
+							State_MidLevelSM_Turn_right(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t15(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t15.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_left(orientation) -> SKIP);enter!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Turn_left -> entered!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Turn_left ->
+							State_MidLevelSM_Turn_right(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t22(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t22 ->  exit.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_right.SID_MidLevelSM_Turn_right -> SKIP;
+							enter!SID_MidLevelSM_Turn_right!SID_MidLevelSM_Turn_right -> State_MidLevelSM_Turn_right_execute(id__,SID_MidLevelSM_Turn_right)
+		State_MidLevelSM_Turn_right_execute(id__,o____) = true&(target_speed.out!const_MidLevelSM_turn_speed -> SKIP);true&(speed_adjustment.in?speed_adj -> set_speed_adj!speed_adj -> SKIP);true&(target_angle.out!const_MidLevelSM_right_angle -> SKIP);true&(angle_adjustment.in?angle_adj -> set_angle_adj!angle_adj -> SKIP);get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> get_lspeed?lspeed -> true & (set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_rspeed?rspeed -> get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> true & (set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_lspeed?lspeed -> true&CALL__output_left_motor(
+					id__,
+					lspeed
+				);get_rspeed?rspeed -> true&CALL__output_right_motor(
+					id__,
+					rspeed
+				); 
+			entered!o____!SID_MidLevelSM_Turn_right ->
+			(SKIP; STOP /\ (
+				T_MidLevelSM_t2(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t4(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t7(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t8(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t15(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t22(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6}) -> exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_speed__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] speed_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] angle_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] move_forward__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] stop__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_right -> SKIP);
+						State_MidLevelSM_Turn_right(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_MidLevelSM_Turn_right})!SID_MidLevelSM_Turn_right -> (State_MidLevelSM_Turn_right_execute(id__,x____))
+	
+	CS_MidLevelSM_Go_down_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop},
+		y____ <- {SID_MidLevelSM_Go_down}
+	|}
+	
+	
+	MidLevelSM_Go_down_triggers = {|
+		turn__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t25,
+		internal__.TID_MidLevelSM_t24,
+		turn__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t13,
+		turn__.TID_MidLevelSM_t4,
+		stop__.TID_MidLevelSM_t17,
+		move_forward__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t27,
+		internal__.TID_MidLevelSM_t23,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t2,
+		stop__.TID_MidLevelSM_t19,
+		turn__.TID_MidLevelSM_t1,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t6
+	|}
+	
+	State_MidLevelSM_Go_down(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t13(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t13.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_left(orientation) -> SKIP);true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_down!SID_MidLevelSM_Turn_left -> entered!SID_MidLevelSM_Go_down!SID_MidLevelSM_Turn_left ->
+							State_MidLevelSM_Go_down(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t14(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t14.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_right(orientation) -> SKIP);true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_down!SID_MidLevelSM_Turn_right -> entered!SID_MidLevelSM_Go_down!SID_MidLevelSM_Turn_right ->
+							State_MidLevelSM_Go_down(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t18(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = stop__!TID_MidLevelSM_t18.in ->  (exit.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_down!SID_MidLevelSM_Stop -> entered!SID_MidLevelSM_Go_down!SID_MidLevelSM_Stop ->
+							State_MidLevelSM_Go_down(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t27(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t27 ->  exit.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_down.SID_MidLevelSM_Go_down -> SKIP;
+							enter!SID_MidLevelSM_Go_down!SID_MidLevelSM_Go_down -> State_MidLevelSM_Go_down_execute(id__,SID_MidLevelSM_Go_down)
+		State_MidLevelSM_Go_down_execute(id__,o____) = true&(target_speed.out!const_MidLevelSM_descent_speed -> SKIP);true&(speed_adjustment.in?speed_adj -> set_speed_adj!speed_adj -> SKIP);true&(target_angle.out!const_MidLevelSM_forward_angle -> SKIP);true&(angle_adjustment.in?angle_adj -> set_angle_adj!angle_adj -> SKIP);get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> get_lspeed?lspeed -> true & (set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_rspeed?rspeed -> get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> true & (set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_lspeed?lspeed -> true&CALL__output_left_motor(
+					id__,
+					lspeed
+				);get_rspeed?rspeed -> true&CALL__output_right_motor(
+					id__,
+					rspeed
+				); 
+			entered!o____!SID_MidLevelSM_Go_down ->
+			(SKIP; STOP /\ (
+				T_MidLevelSM_t13(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t14(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t18(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t27(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6}) -> exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_speed__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] speed_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] angle_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] move_forward__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] stop__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t27,TID_MidLevelSM_t23,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_down -> SKIP);
+						State_MidLevelSM_Go_down(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_MidLevelSM_Go_down})!SID_MidLevelSM_Go_down -> (State_MidLevelSM_Go_down_execute(id__,x____))
+	
+	CS_MidLevelSM_Turn_left_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop},
+		y____ <- {SID_MidLevelSM_Turn_left}
+	|}
+	
+	
+	MidLevelSM_Turn_left_triggers = {|
+		turn__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t25,
+		internal__.TID_MidLevelSM_t24,
+		turn__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t13,
+		turn__.TID_MidLevelSM_t4,
+		stop__.TID_MidLevelSM_t17,
+		move_forward__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t23,
+		internal__.TID_MidLevelSM_t27,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t2,
+		stop__.TID_MidLevelSM_t19,
+		turn__.TID_MidLevelSM_t1,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t6
+	|}
+	
+	State_MidLevelSM_Turn_left(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t5(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = move_forward__!TID_MidLevelSM_t5.in ->  (exit.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_movesp -> SKIP);true & (set_rspeed!const_MidLevelSM_movesp -> SKIP);enter!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Go_side -> entered!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Go_side ->
+							State_MidLevelSM_Turn_left(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t6(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t6.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_left(orientation) -> SKIP);enter!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Turn_left -> State_MidLevelSM_Turn_left_execute(id__,SID_MidLevelSM_Turn_left)
+		)
+		T_MidLevelSM_t9(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = move_forward__!TID_MidLevelSM_t9.in ->  (exit.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_movesp -> SKIP);true & (set_rspeed!const_MidLevelSM_movesp -> SKIP);enter!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Go_up -> entered!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Go_up ->
+							State_MidLevelSM_Turn_left(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t10(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = move_forward__!TID_MidLevelSM_t10.in ->  (exit.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_movesp -> SKIP);true & (set_rspeed!const_MidLevelSM_movesp -> SKIP);enter!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Go_down -> entered!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Go_down ->
+							State_MidLevelSM_Turn_left(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t16(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t16.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_right(orientation) -> SKIP);enter!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Turn_right -> entered!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Turn_right ->
+							State_MidLevelSM_Turn_left(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t25(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t25 ->  exit.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Turn_left.SID_MidLevelSM_Turn_left -> SKIP;
+							enter!SID_MidLevelSM_Turn_left!SID_MidLevelSM_Turn_left -> State_MidLevelSM_Turn_left_execute(id__,SID_MidLevelSM_Turn_left)
+		State_MidLevelSM_Turn_left_execute(id__,o____) = true&(target_speed.out!const_MidLevelSM_turn_speed -> SKIP);true&(speed_adjustment.in?speed_adj -> set_speed_adj!speed_adj -> SKIP);true&(target_angle.out!const_MidLevelSM_left_angle -> SKIP);true&(angle_adjustment.in?angle_adj -> set_angle_adj!angle_adj -> SKIP);get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> get_lspeed?lspeed -> true & (set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_rspeed?rspeed -> get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> true & (set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_lspeed?lspeed -> true&CALL__output_left_motor(
+					id__,
+					lspeed
+				);get_rspeed?rspeed -> true&CALL__output_right_motor(
+					id__,
+					rspeed
+				); 
+			entered!o____!SID_MidLevelSM_Turn_left ->
+			(SKIP; STOP /\ (
+				T_MidLevelSM_t5(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t6(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t9(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t10(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t16(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t25(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6}) -> exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_speed__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] speed_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] angle_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] move_forward__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] stop__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Turn_left -> SKIP);
+						State_MidLevelSM_Turn_left(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_MidLevelSM_Turn_left})!SID_MidLevelSM_Turn_left -> (State_MidLevelSM_Turn_left_execute(id__,x____))
+	
+	CS_MidLevelSM_Go_side_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop},
+		y____ <- {SID_MidLevelSM_Go_side}
+	|}
+	
+	
+	MidLevelSM_Go_side_triggers = {|
+		turn__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t25,
+		internal__.TID_MidLevelSM_t24,
+		turn__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t13,
+		stop__.TID_MidLevelSM_t17,
+		turn__.TID_MidLevelSM_t4,
+		move_forward__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t23,
+		internal__.TID_MidLevelSM_t27,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t2,
+		stop__.TID_MidLevelSM_t19,
+		turn__.TID_MidLevelSM_t1,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t6
+	|}
+	
+	State_MidLevelSM_Go_side(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t11(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t11.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_left(orientation) -> SKIP);true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_side!SID_MidLevelSM_Turn_left -> entered!SID_MidLevelSM_Go_side!SID_MidLevelSM_Turn_left ->
+							State_MidLevelSM_Go_side(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t12(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t12.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_right(orientation) -> SKIP);true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_side!SID_MidLevelSM_Turn_right -> entered!SID_MidLevelSM_Go_side!SID_MidLevelSM_Turn_right ->
+							State_MidLevelSM_Go_side(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t19(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = stop__!TID_MidLevelSM_t19.in ->  (exit.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							true & (set_lspeed!const_MidLevelSM_stopsp -> SKIP);true & (set_rspeed!const_MidLevelSM_stopsp -> SKIP);enter!SID_MidLevelSM_Go_side!SID_MidLevelSM_Stop -> entered!SID_MidLevelSM_Go_side!SID_MidLevelSM_Stop ->
+							State_MidLevelSM_Go_side(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t23(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t23 ->  exit.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Go_side.SID_MidLevelSM_Go_side -> SKIP;
+							enter!SID_MidLevelSM_Go_side!SID_MidLevelSM_Go_side -> State_MidLevelSM_Go_side_execute(id__,SID_MidLevelSM_Go_side)
+		State_MidLevelSM_Go_side_execute(id__,o____) = true&(target_speed.out!const_MidLevelSM_side_speed -> SKIP);true&(speed_adjustment.in?speed_adj -> set_speed_adj!speed_adj -> SKIP);true&(target_angle.out!const_MidLevelSM_forward_angle -> SKIP);true&(angle_adjustment.in?angle_adj -> set_angle_adj!angle_adj -> SKIP);get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> get_lspeed?lspeed -> true & (set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_rspeed?rspeed -> get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> true & (set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_lspeed?lspeed -> true&CALL__output_left_motor(
+					id__,
+					lspeed
+				);get_rspeed?rspeed -> true&CALL__output_right_motor(
+					id__,
+					rspeed
+				); 
+			entered!o____!SID_MidLevelSM_Go_side ->
+			(SKIP; STOP /\ (
+				T_MidLevelSM_t11(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t12(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t19(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t23(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6}) -> exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_speed__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] speed_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] angle_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] move_forward__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] stop__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t17,TID_MidLevelSM_t4,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Go_side -> SKIP);
+						State_MidLevelSM_Go_side(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_MidLevelSM_Go_side})!SID_MidLevelSM_Go_side -> (State_MidLevelSM_Go_side_execute(id__,x____))
+	
+	CS_MidLevelSM_Stop_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop},
+		y____ <- {SID_MidLevelSM_Stop}
+	|}
+	
+	
+	MidLevelSM_Stop_triggers = {|
+		turn__.TID_MidLevelSM_t3,
+		internal__.TID_MidLevelSM_t25,
+		internal__.TID_MidLevelSM_t24,
+		turn__.TID_MidLevelSM_t12,
+		turn__.TID_MidLevelSM_t13,
+		turn__.TID_MidLevelSM_t4,
+		stop__.TID_MidLevelSM_t17,
+		move_forward__.TID_MidLevelSM_t5,
+		internal__.TID_MidLevelSM_t23,
+		internal__.TID_MidLevelSM_t27,
+		move_forward__.TID_MidLevelSM_t8,
+		turn__.TID_MidLevelSM_t14,
+		turn__.TID_MidLevelSM_t15,
+		stop__.TID_MidLevelSM_t18,
+		move_forward__.TID_MidLevelSM_t10,
+		move_forward__.TID_MidLevelSM_t9,
+		internal__.TID_MidLevelSM_t26,
+		turn__.TID_MidLevelSM_t11,
+		internal__.TID_MidLevelSM_t22,
+		turn__.TID_MidLevelSM_t16,
+		turn__.TID_MidLevelSM_t21,
+		move_forward__.TID_MidLevelSM_t2,
+		stop__.TID_MidLevelSM_t19,
+		turn__.TID_MidLevelSM_t1,
+		move_forward__.TID_MidLevelSM_t7,
+		turn__.TID_MidLevelSM_t20,
+		turn__.TID_MidLevelSM_t6
+	|}
+	
+	State_MidLevelSM_Stop(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t20(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t20.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Stop.SID_MidLevelSM_Stop -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Stop.SID_MidLevelSM_Stop -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_right(orientation) -> SKIP);enter!SID_MidLevelSM_Stop!SID_MidLevelSM_Turn_right -> entered!SID_MidLevelSM_Stop!SID_MidLevelSM_Turn_right ->
+							State_MidLevelSM_Stop(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t21(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = turn__!TID_MidLevelSM_t21.in?direction -> set_direction!direction ->  (exit.SID_MidLevelSM_Stop.SID_MidLevelSM_Stop -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Stop.SID_MidLevelSM_Stop -> SKIP;
+							get_orientation?orientation -> true & (set_orientation!turn_left(orientation) -> SKIP);enter!SID_MidLevelSM_Stop!SID_MidLevelSM_Turn_left -> entered!SID_MidLevelSM_Stop!SID_MidLevelSM_Turn_left ->
+							State_MidLevelSM_Stop(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+		)
+		T_MidLevelSM_t26(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t26 ->  exit.SID_MidLevelSM_Stop.SID_MidLevelSM_Stop -> SKIP;
+							SKIP;exited.SID_MidLevelSM_Stop.SID_MidLevelSM_Stop -> SKIP;
+							enter!SID_MidLevelSM_Stop!SID_MidLevelSM_Stop -> State_MidLevelSM_Stop_execute(id__,SID_MidLevelSM_Stop)
+		State_MidLevelSM_Stop_execute(id__,o____) = true&(target_speed.out!const_MidLevelSM_turn_speed -> SKIP);true&(speed_adjustment.in?speed_adj -> set_speed_adj!speed_adj -> SKIP);true&(target_angle.out!const_MidLevelSM_forward_angle -> SKIP);true&(angle_adjustment.in?angle_adj -> set_angle_adj!angle_adj -> SKIP);get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> get_lspeed?lspeed -> true & (set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_rspeed?rspeed -> get_angle_adj?angle_adj -> get_speed_adj?speed_adj -> true & (set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP);get_lspeed?lspeed -> true&CALL__output_left_motor(
+					id__,
+					lspeed
+				);get_rspeed?rspeed -> true&CALL__output_right_motor(
+					id__,
+					rspeed
+				); 
+			entered!o____!SID_MidLevelSM_Stop ->
+			(SKIP; STOP /\ (
+				T_MidLevelSM_t20(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t21(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)[]
+				T_MidLevelSM_t26(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6}) -> exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_speed__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] target_angle__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] speed_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] angle_adjustment__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] move_forward__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+				[] stop__?x____:diff(ITIDS,{NULLTRANSITION__,TID_MidLevelSM_t3,TID_MidLevelSM_t25,TID_MidLevelSM_t24,TID_MidLevelSM_t12,TID_MidLevelSM_t13,TID_MidLevelSM_t4,TID_MidLevelSM_t17,TID_MidLevelSM_t5,TID_MidLevelSM_t23,TID_MidLevelSM_t27,TID_MidLevelSM_t8,TID_MidLevelSM_t14,TID_MidLevelSM_t15,TID_MidLevelSM_t18,TID_MidLevelSM_t10,TID_MidLevelSM_t9,TID_MidLevelSM_t26,TID_MidLevelSM_t11,TID_MidLevelSM_t22,TID_MidLevelSM_t16,TID_MidLevelSM_t21,TID_MidLevelSM_t2,TID_MidLevelSM_t19,TID_MidLevelSM_t1,TID_MidLevelSM_t7,TID_MidLevelSM_t20,TID_MidLevelSM_t6})?d____ ->	exit?y____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (
+						SKIP;
+						exited!y____!SID_MidLevelSM_Stop -> SKIP);
+						State_MidLevelSM_Stop(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_MidLevelSM_Stop})!SID_MidLevelSM_Stop -> (State_MidLevelSM_Stop_execute(id__,x____))
+	
+	
+	I_MidLevelSM_i0(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = let
+		T_MidLevelSM_t0(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp) = internal__!TID_MidLevelSM_t0 -> true & (set_orientation!Orientation_up -> SKIP);true & (set_lspeed!0 -> SKIP);true & (set_rspeed!0 -> SKIP);enter!SID_MidLevelSM!SID_MidLevelSM_Go_up -> entered!SID_MidLevelSM!SID_MidLevelSM_Go_up ->
+		SKIP
+	within
+		T_MidLevelSM_t0(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+	
+	
+	State_MidLevelSM_Go_up_R(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		State_MidLevelSM_Go_up(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|diff(int_int,MidLevelSM_Go_up_triggers)|]
+		SKIP
+			 		
+	State_MidLevelSM_Turn_right_R(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		State_MidLevelSM_Turn_right(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|diff(int_int,MidLevelSM_Turn_right_triggers)|]
+		SKIP
+			 		
+	State_MidLevelSM_Go_down_R(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		State_MidLevelSM_Go_down(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|diff(int_int,MidLevelSM_Go_down_triggers)|]
+		SKIP
+			 		
+	State_MidLevelSM_Turn_left_R(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		State_MidLevelSM_Turn_left(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|diff(int_int,MidLevelSM_Turn_left_triggers)|]
+		SKIP
+			 		
+	State_MidLevelSM_Go_side_R(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		State_MidLevelSM_Go_side(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|diff(int_int,MidLevelSM_Go_side_triggers)|]
+		SKIP
+			 		
+	State_MidLevelSM_Stop_R(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		State_MidLevelSM_Stop(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|diff(int_int,MidLevelSM_Stop_triggers)|]
+		SKIP
+			 		
+		
+	STM(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = (
+		I_MidLevelSM_i0(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+			[|
+				{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
+					x____ <- diff(SIDS,{SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop}),
+					y____ <- {SID_MidLevelSM_Go_up,SID_MidLevelSM_Turn_right,SID_MidLevelSM_Go_down,SID_MidLevelSM_Turn_left,SID_MidLevelSM_Go_side,SID_MidLevelSM_Stop}
+			|}|]
+		(
+			State_MidLevelSM_Go_up_R(id__,
+					    const_MidLevelSM_step,
+					    const_MidLevelSM_climb_speed,
+					    const_MidLevelSM_descent_speed,
+					    const_MidLevelSM_side_speed,
+					    const_MidLevelSM_forward_angle,
+					    const_MidLevelSM_left_angle,
+					    const_MidLevelSM_right_angle,
+					    const_MidLevelSM_turn_speed,
+					    const_MidLevelSM_movesp,
+					    const_MidLevelSM_stopsp)
+				[|inter(CS_MidLevelSM_Go_up_sync,union(union(union(union(CS_MidLevelSM_Turn_right_sync,CS_MidLevelSM_Go_down_sync),CS_MidLevelSM_Turn_left_sync),CS_MidLevelSM_Go_side_sync),CS_MidLevelSM_Stop_sync))|]
+			(
+				State_MidLevelSM_Turn_right_R(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp)
+					[|inter(CS_MidLevelSM_Turn_right_sync,union(union(union(CS_MidLevelSM_Go_down_sync,CS_MidLevelSM_Turn_left_sync),CS_MidLevelSM_Go_side_sync),CS_MidLevelSM_Stop_sync))|]
+				(
+					State_MidLevelSM_Go_down_R(id__,
+							    const_MidLevelSM_step,
+							    const_MidLevelSM_climb_speed,
+							    const_MidLevelSM_descent_speed,
+							    const_MidLevelSM_side_speed,
+							    const_MidLevelSM_forward_angle,
+							    const_MidLevelSM_left_angle,
+							    const_MidLevelSM_right_angle,
+							    const_MidLevelSM_turn_speed,
+							    const_MidLevelSM_movesp,
+							    const_MidLevelSM_stopsp)
+						[|inter(CS_MidLevelSM_Go_down_sync,union(union(CS_MidLevelSM_Turn_left_sync,CS_MidLevelSM_Go_side_sync),CS_MidLevelSM_Stop_sync))|]
+					(
+						State_MidLevelSM_Turn_left_R(id__,
+								    const_MidLevelSM_step,
+								    const_MidLevelSM_climb_speed,
+								    const_MidLevelSM_descent_speed,
+								    const_MidLevelSM_side_speed,
+								    const_MidLevelSM_forward_angle,
+								    const_MidLevelSM_left_angle,
+								    const_MidLevelSM_right_angle,
+								    const_MidLevelSM_turn_speed,
+								    const_MidLevelSM_movesp,
+								    const_MidLevelSM_stopsp)
+							[|inter(CS_MidLevelSM_Turn_left_sync,union(CS_MidLevelSM_Go_side_sync,CS_MidLevelSM_Stop_sync))|]
+						(
+							State_MidLevelSM_Go_side_R(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+								[|inter(CS_MidLevelSM_Go_side_sync,CS_MidLevelSM_Stop_sync)|]
+							State_MidLevelSM_Stop_R(id__,
+									    const_MidLevelSM_step,
+									    const_MidLevelSM_climb_speed,
+									    const_MidLevelSM_descent_speed,
+									    const_MidLevelSM_side_speed,
+									    const_MidLevelSM_forward_angle,
+									    const_MidLevelSM_left_angle,
+									    const_MidLevelSM_right_angle,
+									    const_MidLevelSM_turn_speed,
+									    const_MidLevelSM_movesp,
+									    const_MidLevelSM_stopsp)
+						)
+					)
+				)
+			)
+		)
+	)
+	
+	-- optimized memory process
+	channel getV_lspeed: core_int
+	channel getV_rspeed: core_int
+	channel getV_angle: core_int
+	channel getV_speed_adj: core_int
+	channel getV_angle_adj: core_int
+	channel getV_direction: Direction
+	channel getV_orientation: Orientation
+	
+	-- individual memory processes
+	Memory_lspeed(lspeed) = (
+		get_lspeed!lspeed -> Memory_lspeed(lspeed)
+		[]
+		getV_lspeed!lspeed -> Memory_lspeed(lspeed)
+		[]
+		set_lspeed?x__ -> Memory_lspeed(x__)
+	)
+	Memory_rspeed(rspeed) = (
+		get_rspeed!rspeed -> Memory_rspeed(rspeed)
+		[]
+		getV_rspeed!rspeed -> Memory_rspeed(rspeed)
+		[]
+		set_rspeed?x__ -> Memory_rspeed(x__)
+	)
+	Memory_angle(angle) = (
+		get_angle!angle -> Memory_angle(angle)
+		[]
+		getV_angle!angle -> Memory_angle(angle)
+		[]
+		set_angle?x__ -> Memory_angle(x__)
+	)
+	Memory_speed_adj(speed_adj) = (
+		get_speed_adj!speed_adj -> Memory_speed_adj(speed_adj)
+		[]
+		getV_speed_adj!speed_adj -> Memory_speed_adj(speed_adj)
+		[]
+		set_speed_adj?x__ -> Memory_speed_adj(x__)
+	)
+	Memory_angle_adj(angle_adj) = (
+		get_angle_adj!angle_adj -> Memory_angle_adj(angle_adj)
+		[]
+		getV_angle_adj!angle_adj -> Memory_angle_adj(angle_adj)
+		[]
+		set_angle_adj?x__ -> Memory_angle_adj(x__)
+	)
+	Memory_direction(direction) = (
+		get_direction!direction -> Memory_direction(direction)
+		[]
+		getV_direction!direction -> Memory_direction(direction)
+		[]
+		set_direction?x__ -> Memory_direction(x__)
+		[]
+		turn__!TID_MidLevelSM_t1.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t3.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t4.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t6.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t11.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t12.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t13.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t14.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t15.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t16.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t20.in?direction -> Memory_direction(direction)
+		[]
+		turn__!TID_MidLevelSM_t21.in?direction -> Memory_direction(direction)
+	)
+	Memory_orientation(orientation) = (
+		get_orientation!orientation -> Memory_orientation(orientation)
+		[]
+		getV_orientation!orientation -> Memory_orientation(orientation)
+		[]
+		set_orientation?x__ -> Memory_orientation(x__)
+	)
+	
+	-- processes that read variables and offer transitions
+	MemoryTransitions(id__, lspeed, rspeed, angle, speed_adj, angle_adj, direction, orientation) = 		
+	(turn__!TID_MidLevelSM_t1.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> SKIP
+	[]
+	(((orientation==Orientation_left) or (orientation==Orientation_right)))&(move_forward__!TID_MidLevelSM_t2.in -> SKIP)
+	[]
+	turn__!TID_MidLevelSM_t3.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t4.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> SKIP
+	[]
+	(((orientation==Orientation_left) or (orientation==Orientation_right)))&(move_forward__!TID_MidLevelSM_t5.in -> SKIP)
+	[]
+	turn__!TID_MidLevelSM_t6.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> SKIP
+	[]
+	((orientation==Orientation_up))&(move_forward__!TID_MidLevelSM_t7.in -> SKIP)
+	[]
+	((orientation==Orientation_down))&(move_forward__!TID_MidLevelSM_t8.in -> SKIP)
+	[]
+	((orientation==Orientation_up))&(move_forward__!TID_MidLevelSM_t9.in -> SKIP)
+	[]
+	((orientation==Orientation_down))&(move_forward__!TID_MidLevelSM_t10.in -> SKIP)
+	[]
+	turn__!TID_MidLevelSM_t11.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t12.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t13.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t14.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> SKIP
+	[]
+	internal__!TID_MidLevelSM_t0 -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t15.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t16.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> SKIP
+	[]
+	stop__!TID_MidLevelSM_t17.in -> SKIP
+	[]
+	stop__!TID_MidLevelSM_t18.in -> SKIP
+	[]
+	stop__!TID_MidLevelSM_t19.in -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t20.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> SKIP
+	[]
+	turn__!TID_MidLevelSM_t21.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> SKIP
+	[]
+	(true)&(internal__!TID_MidLevelSM_t22 -> SKIP)
+	[]
+	(true)&(internal__!TID_MidLevelSM_t23 -> SKIP)
+	[]
+	(true)&(internal__!TID_MidLevelSM_t24 -> SKIP)
+	[]
+	(true)&(internal__!TID_MidLevelSM_t25 -> SKIP)
+	[]
+	(true)&(internal__!TID_MidLevelSM_t26 -> SKIP)
+	[]
+	(true)&(internal__!TID_MidLevelSM_t27 -> SKIP)[]
+	set_lspeed?x__ -> SKIP[]
+	set_rspeed?x__ -> SKIP[]
+	set_angle?x__ -> SKIP[]
+	set_speed_adj?x__ -> SKIP[]
+	set_angle_adj?x__ -> SKIP[]
+	set_direction?x__ -> SKIP[]
+	set_orientation?x__ -> SKIP)
+	
+	MemoryTransitions_MidLevelSM(id__, const_MidLevelSM_step, const_MidLevelSM_climb_speed, const_MidLevelSM_descent_speed, const_MidLevelSM_side_speed, const_MidLevelSM_forward_angle, const_MidLevelSM_left_angle, const_MidLevelSM_right_angle, const_MidLevelSM_turn_speed, const_MidLevelSM_movesp, const_MidLevelSM_stopsp) = (getV_lspeed?lspeed ->
+	getV_rspeed?rspeed ->
+	getV_angle?angle ->
+	getV_speed_adj?speed_adj ->
+	getV_angle_adj?angle_adj ->
+	getV_direction?direction ->
+	getV_orientation?orientation ->
+	MemoryTransitions(id__, lspeed, rspeed, angle, speed_adj, angle_adj, direction, orientation)			
+	); MemoryTransitions_MidLevelSM(id__, const_MidLevelSM_step, const_MidLevelSM_climb_speed, const_MidLevelSM_descent_speed, const_MidLevelSM_side_speed, const_MidLevelSM_forward_angle, const_MidLevelSM_left_angle, const_MidLevelSM_right_angle, const_MidLevelSM_turn_speed, const_MidLevelSM_movesp, const_MidLevelSM_stopsp)
+			
+	
+	-- synchronisation, hiding and process sets 
+	MemoryVariablesProcesses_MidLevelSM = Union(
+		{
+			{
+				(Memory_lspeed(0),{|set_lspeed,getV_lspeed,get_lspeed|}),
+				(Memory_rspeed(0),{|getV_rspeed,set_rspeed,get_rspeed|}),
+				(Memory_angle(0),{|get_angle,getV_angle,set_angle|}),
+				(Memory_speed_adj(0),{|set_speed_adj,get_speed_adj,getV_speed_adj|}),
+				(Memory_angle_adj(0),{|set_angle_adj,getV_angle_adj,get_angle_adj|}),
+				(Memory_direction(Direction_left),{|getV_direction,turn__.TID_MidLevelSM_t15,turn__.TID_MidLevelSM_t16,turn__.TID_MidLevelSM_t6,turn__.TID_MidLevelSM_t4,set_direction,turn__.TID_MidLevelSM_t11,get_direction,turn__.TID_MidLevelSM_t12,turn__.TID_MidLevelSM_t13,turn__.TID_MidLevelSM_t14,turn__.TID_MidLevelSM_t3,turn__.TID_MidLevelSM_t1,turn__.TID_MidLevelSM_t20,turn__.TID_MidLevelSM_t21|}),
+				(Memory_orientation(Orientation_up),{|get_orientation,getV_orientation,set_orientation|})
+			}
+		}
+	)
+	
+	MemoryVariablesSyncSet = Union({
+		{|
+			getV_angle,
+			set_lspeed,
+			getV_rspeed,
+			getV_lspeed,
+			set_rspeed,
+			set_direction,
+			turn__.TID_MidLevelSM_t20,
+			turn__.TID_MidLevelSM_t21,
+			set_speed_adj,
+			getV_direction,
+			turn__.TID_MidLevelSM_t15,
+			turn__.TID_MidLevelSM_t16,
+			getV_angle_adj,
+			getV_speed_adj,
+			turn__.TID_MidLevelSM_t6,
+			set_angle_adj,
+			turn__.TID_MidLevelSM_t4,
+			getV_orientation,
+			set_angle,
+			turn__.TID_MidLevelSM_t11,
+			turn__.TID_MidLevelSM_t12,
+			turn__.TID_MidLevelSM_t13,
+			turn__.TID_MidLevelSM_t14,
+			turn__.TID_MidLevelSM_t3,
+			set_orientation,
+			turn__.TID_MidLevelSM_t1
+		|}	
+	})
+	
+	MemoryVariablesHideSet = Union({
+		{|
+			getV_direction,
+			getV_rspeed,
+			getV_lspeed,
+			getV_orientation,
+			getV_angle_adj,
+			getV_angle,
+			getV_speed_adj
+		|}
+	})
+	
+	-- combined individual memory processes
+	MemoryVariables = ||| (P, alpha) : MemoryVariablesProcesses_MidLevelSM @ P
+	
+	-- complete memory process	
+	MemoryN(id__, const_MidLevelSM_step, const_MidLevelSM_climb_speed, const_MidLevelSM_descent_speed, const_MidLevelSM_side_speed, const_MidLevelSM_forward_angle, const_MidLevelSM_left_angle, const_MidLevelSM_right_angle, const_MidLevelSM_turn_speed, const_MidLevelSM_movesp, const_MidLevelSM_stopsp) = sbisim(diamond((sbisim(diamond(MemoryVariables)) [| MemoryVariablesSyncSet |] sbisim(diamond(MemoryTransitions_MidLevelSM(id__, const_MidLevelSM_step, const_MidLevelSM_climb_speed, const_MidLevelSM_descent_speed, const_MidLevelSM_side_speed, const_MidLevelSM_forward_angle, const_MidLevelSM_left_angle, const_MidLevelSM_right_angle, const_MidLevelSM_turn_speed, const_MidLevelSM_movesp, const_MidLevelSM_stopsp)))) \ MemoryVariablesHideSet))
+	
+	-- optimised memory
+	-- Sets of named elements identified according to transition conditions:
+	-- {}
+	-- {orientation}
+	-- {step}
+	-- Summary of all identified named elements:
+	-- {
+	-- lspeed
+	-- rspeed
+	-- speed_adj
+	-- orientation
+	-- angle
+	-- direction
+	-- step
+	-- angle_adj
+	-- }
+	
+	-- Allocation plan:
+	-- 0:{}
+	--	=> {
+	--		TID_MidLevelSM_t3,
+	--		TID_MidLevelSM_t12,
+	--		TID_MidLevelSM_t0,
+	--		TID_MidLevelSM_t11,
+	--		TID_MidLevelSM_t16,
+	--		TID_MidLevelSM_t21,
+	--		TID_MidLevelSM_t13,
+	--		TID_MidLevelSM_t4,
+	--		TID_MidLevelSM_t17,
+	--		TID_MidLevelSM_t1,
+	--		TID_MidLevelSM_t19,
+	--		TID_MidLevelSM_t14,
+	--		TID_MidLevelSM_t20,
+	--		TID_MidLevelSM_t15,
+	--		TID_MidLevelSM_t18,
+	--		TID_MidLevelSM_t6}
+	-- 1:{orientation}
+	--	=> {
+	--		TID_MidLevelSM_t9,
+	--		TID_MidLevelSM_t5,
+	--		TID_MidLevelSM_t2,
+	--		TID_MidLevelSM_t7,
+	--		TID_MidLevelSM_t8,
+	--		TID_MidLevelSM_t10}
+	-- 2:{step}
+	--	=> {
+	--		TID_MidLevelSM_t26,
+	--		TID_MidLevelSM_t24,
+	--		TID_MidLevelSM_t25,
+	--		TID_MidLevelSM_t23,
+	--		TID_MidLevelSM_t27,
+	--		TID_MidLevelSM_t22}
+	
+	-- Memory transition processes
+	MemoryTransitions_opt_0(id__) =
+	(
+		let
+			Update = Current(id__)
+			Current(id__)
+			 	   = 
+			 	   turn__!TID_MidLevelSM_t3.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t12.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> Update
+			 	   []
+			 	   internal__!TID_MidLevelSM_t0 -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t11.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t16.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t21.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t13.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t4.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> Update
+			 	   []
+			 	   stop__!TID_MidLevelSM_t17.in -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t1.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> Update
+			 	   []
+			 	   stop__!TID_MidLevelSM_t19.in -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t14.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t20.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t15.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> Update
+			 	   []
+			 	   stop__!TID_MidLevelSM_t18.in -> Update
+			 	   []
+			 	   turn__!TID_MidLevelSM_t6.in?direction:{direction|direction <- Direction, (direction==Direction_left)} -> Update
+		within
+			Update
+	)
+	MemoryTransitions_opt_1(id__) =
+	(
+		let
+			Update = 
+			get_orientation?orientation ->
+			Current(id__,
+				 orientation)
+			Current(id__,
+				 orientation)
+			 	   = 
+			 	   ((orientation==Orientation_up))&(move_forward__!TID_MidLevelSM_t9.in -> Update)
+			 	   []
+			 	   (((orientation==Orientation_left) or (orientation==Orientation_right)))&(move_forward__!TID_MidLevelSM_t5.in -> Update)
+			 	   []
+			 	   (((orientation==Orientation_left) or (orientation==Orientation_right)))&(move_forward__!TID_MidLevelSM_t2.in -> Update)
+			 	   []
+			 	   ((orientation==Orientation_up))&(move_forward__!TID_MidLevelSM_t7.in -> Update)
+			 	   []
+			 	   ((orientation==Orientation_down))&(move_forward__!TID_MidLevelSM_t8.in -> Update)
+			 	   []
+			 	   ((orientation==Orientation_down))&(move_forward__!TID_MidLevelSM_t10.in -> Update)
+			 	   	 
+			 	   	 []
+			 	   	 set_orientation?x__ -> Update
+		within
+			Update
+	)
+	MemoryTransitions_opt_2(id__,
+		 const_MidLevelSM_step) =
+	(
+		let
+			Update = Current(id__)
+			Current(id__)
+			 	   = 
+			 	   (true)&(internal__!TID_MidLevelSM_t26 -> Update)
+			 	   []
+			 	   (true)&(internal__!TID_MidLevelSM_t24 -> Update)
+			 	   []
+			 	   (true)&(internal__!TID_MidLevelSM_t25 -> Update)
+			 	   []
+			 	   (true)&(internal__!TID_MidLevelSM_t23 -> Update)
+			 	   []
+			 	   (true)&(internal__!TID_MidLevelSM_t27 -> Update)
+			 	   []
+			 	   (true)&(internal__!TID_MidLevelSM_t22 -> Update)
+		within
+			Update
+	)
+	
+	-- Memory cell processes
+	Memory_opt_lspeed(x__) = ( 
+		get_lspeed!x__ -> Memory_opt_lspeed(x__)
+		[]
+		set_lspeed?x__ -> Memory_opt_lspeed(x__)
+	)
+	Memory_opt_rspeed(x__) = ( 
+		get_rspeed!x__ -> Memory_opt_rspeed(x__)
+		[]
+		set_rspeed?x__ -> Memory_opt_rspeed(x__)
+	)
+	Memory_opt_speed_adj(x__) = ( 
+		get_speed_adj!x__ -> Memory_opt_speed_adj(x__)
+		[]
+		set_speed_adj?x__ -> Memory_opt_speed_adj(x__)
+	)
+	Memory_opt_orientation(x__) = ( 
+		get_orientation!x__ -> Memory_opt_orientation(x__)
+		[]
+		set_orientation?x__ -> Memory_opt_orientation(x__)
+	)
+	Memory_opt_angle(x__) = ( 
+		get_angle!x__ -> Memory_opt_angle(x__)
+		[]
+		set_angle?x__ -> Memory_opt_angle(x__)
+	)
+	Memory_opt_direction(x__) = ( 
+		get_direction!x__ -> Memory_opt_direction(x__)
+		[]
+		set_direction?x__ -> Memory_opt_direction(x__)
+	)
+	Memory_opt_angle_adj(x__) = ( 
+		get_angle_adj!x__ -> Memory_opt_angle_adj(x__)
+		[]
+		set_angle_adj?x__ -> Memory_opt_angle_adj(x__)
+	)
+	
+	-- Composition of memory, StateMachine and Memory transition processes
+	
+	MemorySTM_opt(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) =
+		dbisim(
+		  sbisim(Memory_opt_orientation(Orientation_up)
+		      	[| {|get_orientation,set_orientation|} |] 
+		      	sbisim(	
+		      	  dbisim(
+		      	    sbisim(sbisim(	
+		      	      dbisim(
+		      	        sbisim(sbisim(	
+		      	          dbisim(
+		      	            sbisim(dbisim(sbisim(Memory_opt_lspeed(0)
+		      	                  	[| {|set_lspeed,get_lspeed|} |] 
+		      	                  	dbisim(sbisim(Memory_opt_rspeed(0)
+		      	                  	      	[| {|set_rspeed,get_rspeed|} |] 
+		      	                  	      	dbisim(sbisim(Memory_opt_speed_adj(0)
+		      	                  	      	      	[| {|set_speed_adj,get_speed_adj|} |] 
+		      	                  	      	      	dbisim(sbisim(Memory_opt_angle(0)
+		      	                  	      	      	      	[| {|get_angle,set_angle|} |] 
+		      	                  	      	      	      	dbisim(sbisim(Memory_opt_direction(Direction_left)
+		      	                  	      	      	      	      	[| {|set_direction,get_direction|} |] 
+		      	                  	      	      	      	      	dbisim(sbisim(Memory_opt_angle_adj(0)
+		      	                  	      	      	      	      	      	[| {|set_angle_adj,get_angle_adj|} |] 
+		      	                  	      	      	      	      	      	STM_core(id__,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_step,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_climb_speed,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_descent_speed,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_side_speed,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_forward_angle,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_left_angle,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_right_angle,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_turn_speed,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_movesp,
+		      	                  	      	      	      	      	      			    const_MidLevelSM_stopsp)
+		      	                  	      	      	      	      	      	)\ {|set_angle_adj,get_angle_adj|}
+		      	                  	      	      	      	      	      )
+		      	                  	      	      	      	      	)\ {|set_direction,get_direction|}
+		      	                  	      	      	      	      )
+		      	                  	      	      	      	)\ {|get_angle,set_angle|}
+		      	                  	      	      	      )
+		      	                  	      	      	)\ {|set_speed_adj,get_speed_adj|}
+		      	                  	      	      )
+		      	                  	      	)\ {|set_rspeed,get_rspeed|}
+		      	                  	      )
+		      	                  	)\ {|set_lspeed,get_lspeed|}
+		      	                  )
+		      	              	  [| {|turn__.TID_MidLevelSM_t15,turn__.TID_MidLevelSM_t16,internal__.TID_MidLevelSM_t0,turn__.TID_MidLevelSM_t6,turn__.TID_MidLevelSM_t4,stop__.TID_MidLevelSM_t17,stop__.TID_MidLevelSM_t19,stop__.TID_MidLevelSM_t18,turn__.TID_MidLevelSM_t11,turn__.TID_MidLevelSM_t12,turn__.TID_MidLevelSM_t13,turn__.TID_MidLevelSM_t14,turn__.TID_MidLevelSM_t3,turn__.TID_MidLevelSM_t1,turn__.TID_MidLevelSM_t20,turn__.TID_MidLevelSM_t21|} |]
+		      	              	  MemoryTransitions_opt_0(id__)
+		      	              	  )\{||})
+		      	              )
+		      	          	  [| {|internal__.TID_MidLevelSM_t27,internal__.TID_MidLevelSM_t26,internal__.TID_MidLevelSM_t23,internal__.TID_MidLevelSM_t22,internal__.TID_MidLevelSM_t25,internal__.TID_MidLevelSM_t24|} |]
+		      	          	  MemoryTransitions_opt_2(id__,
+		      	          	  	 const_MidLevelSM_step)
+		      	          	  )\{||})
+		      	          )
+		      	      	  [| {|move_forward__.TID_MidLevelSM_t2,move_forward__.TID_MidLevelSM_t10,move_forward__.TID_MidLevelSM_t5,set_orientation,move_forward__.TID_MidLevelSM_t7,move_forward__.TID_MidLevelSM_t8,move_forward__.TID_MidLevelSM_t9|} |]
+		      	      	  MemoryTransitions_opt_1(id__)
+		      	      	  )\{||})
+		      	      )
+		      	) \ {|get_orientation,set_orientation|}
+		      )
+	
+	-- main process
+	
+	MachineMemorySyncSet = Union({
+		union(
+			union(
+				{|get_lspeed,set_lspeed,
+				get_rspeed,set_rspeed,
+				get_angle,set_angle,
+				get_speed_adj,set_speed_adj,
+				get_angle_adj,set_angle_adj,
+				get_direction,set_direction,
+				get_orientation,set_orientation|},
+				{||}
+			)
+				
+			,
+			{|turn__.TID_MidLevelSM_t1,
+			move_forward__.TID_MidLevelSM_t2,
+			turn__.TID_MidLevelSM_t3,
+			turn__.TID_MidLevelSM_t4,
+			move_forward__.TID_MidLevelSM_t5,
+			turn__.TID_MidLevelSM_t6,
+			move_forward__.TID_MidLevelSM_t7,
+			move_forward__.TID_MidLevelSM_t8,
+			move_forward__.TID_MidLevelSM_t9,
+			move_forward__.TID_MidLevelSM_t10,
+			turn__.TID_MidLevelSM_t11,
+			turn__.TID_MidLevelSM_t12,
+			turn__.TID_MidLevelSM_t13,
+			turn__.TID_MidLevelSM_t14,
+			internal__.TID_MidLevelSM_t0,
+			turn__.TID_MidLevelSM_t15,
+			turn__.TID_MidLevelSM_t16,
+			stop__.TID_MidLevelSM_t17,
+			stop__.TID_MidLevelSM_t18,
+			stop__.TID_MidLevelSM_t19,
+			turn__.TID_MidLevelSM_t20,
+			turn__.TID_MidLevelSM_t21,
+			internal__.TID_MidLevelSM_t22,
+			internal__.TID_MidLevelSM_t23,
+			internal__.TID_MidLevelSM_t24,
+			internal__.TID_MidLevelSM_t25,
+			internal__.TID_MidLevelSM_t26,
+			internal__.TID_MidLevelSM_t27|}
+		)
+	})
+	
+	MachineMemoryHidingSet = Union({
+		union(
+			{|get_lspeed,set_lspeed,
+			get_rspeed,set_rspeed,
+			get_angle,set_angle,
+			get_speed_adj,set_speed_adj,
+			get_angle_adj,set_angle_adj,
+			get_direction,set_direction,
+			get_orientation,set_orientation|},
+			{||}
+		)
+	})
+	
+	MachineInternalEvents = {|
+		internal__
+	|}
+	
+	AUX(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = (
+		(
+			STM(id__,
+					    const_MidLevelSM_step,
+					    const_MidLevelSM_climb_speed,
+					    const_MidLevelSM_descent_speed,
+					    const_MidLevelSM_side_speed,
+					    const_MidLevelSM_forward_angle,
+					    const_MidLevelSM_left_angle,
+					    const_MidLevelSM_right_angle,
+					    const_MidLevelSM_turn_speed,
+					    const_MidLevelSM_movesp,
+					    const_MidLevelSM_stopsp)
+				[|MachineMemorySyncSet|]
+			sbisim(diamond(MemoryN(id__, const_MidLevelSM_step, const_MidLevelSM_climb_speed, const_MidLevelSM_descent_speed, const_MidLevelSM_side_speed, const_MidLevelSM_forward_angle, const_MidLevelSM_left_angle, const_MidLevelSM_right_angle, const_MidLevelSM_turn_speed, const_MidLevelSM_movesp, const_MidLevelSM_stopsp)))
+		)[[
+			target_speed__.x____ <- target_speed,
+			target_angle__.x____ <- target_angle,
+			speed_adjustment__.x____ <- speed_adjustment,
+			angle_adjustment__.x____ <- angle_adjustment,
+			move_forward__.x____ <- move_forward,
+			turn__.x____ <- turn,
+			stop__.x____ <- stop
+			| x____ <- TIDS
+		]]
+		\MachineMemoryHidingSet
+	)
+	[|{|terminate|}|>SKIP\MachineInternalEvents
+	
+	
+	STM_core(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		sbisim(diamond(STM(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)))
+		
+	AUX_opt(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = 
+		(MemorySTM_opt(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp)
+		)[[
+			target_speed__.x____ <- target_speed,
+			target_angle__.x____ <- target_angle,
+			speed_adjustment__.x____ <- speed_adjustment,
+			angle_adjustment__.x____ <- angle_adjustment,
+			move_forward__.x____ <- move_forward,
+			turn__.x____ <- turn,
+			stop__.x____ <- stop
+			| x____ <- TIDS
+		]]
+		[|{|terminate|}|>SKIP\MachineInternalEvents
+
+	-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+			
+	FVS__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = AUX_opt(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp)
+	Dunopt__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = AUX(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) \ internal_events
+	D__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = AUX_opt(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) \ internal_events
+	O__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = sbisim(diamond(D__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp)))
+	VS__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = ShowV(FVS__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp))
+	VS_O__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = sbisim(diamond(VS__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp)))
+	HEXT__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) = O__(id__,
+			    const_MidLevelSM_step,
+			    const_MidLevelSM_climb_speed,
+			    const_MidLevelSM_descent_speed,
+			    const_MidLevelSM_side_speed,
+			    const_MidLevelSM_forward_angle,
+			    const_MidLevelSM_left_angle,
+			    const_MidLevelSM_right_angle,
+			    const_MidLevelSM_turn_speed,
+			    const_MidLevelSM_movesp,
+			    const_MidLevelSM_stopsp) [|shared_variable_events|] SKIP	
+endmodule

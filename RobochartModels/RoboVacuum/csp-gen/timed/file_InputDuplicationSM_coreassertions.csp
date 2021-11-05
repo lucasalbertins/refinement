@@ -1,0 +1,16 @@
+include "file_InputDuplicationSM.csp"
+
+-- generate InputDuplicationSM
+P_InputDuplicationSM = let
+	id = 0
+within
+	InputDuplicationSM::O__(
+		id
+	)
+assert P_InputDuplicationSM :[deadlock-free]	
+assert P_InputDuplicationSM;RUN({r__}) :[deadlock-free]
+assert P_InputDuplicationSM :[deterministic]
+assert P_InputDuplicationSM :[divergence-free]
+
+
+

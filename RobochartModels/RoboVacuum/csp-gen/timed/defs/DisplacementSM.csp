@@ -1,0 +1,608 @@
+		module DisplacementSM
+		exports
+			-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+			external prioritise
+			transparent wbisim
+			transparent dbisim
+			transparent sbisim
+		
+			Timed(OneStep) {	
+				-- flow channels
+				channel internal__ : TIDS
+				channel enteredV, enterV, exitV, exitedV : SIDS
+				channel enter, entered: SIDS.SIDS
+				channel exit,exited: SIDS.SIDS
+				channel terminate
+				
+				-- variable channels
+				channel get_d, set_d: core_int
+				channel get_speed, set_speed: TripleAxis
+						
+				-- shared variable channels
+				
+				-- local variable channels for defined operations that are required by the state machine
+				
+				-- declaring state machine events
+				channel sp__: TIDS.InOut.TripleAxis
+				channel sp: InOut.TripleAxis
+				channel displacement__: TIDS.InOut.core_int
+				channel displacement: InOut.core_int
+				
+				-- declaring call and ret events for undefined operations
+			
+				-- Only the undefined operations are declared here.
+				-- If the state machine is in isolation, all required operations will be undefined.
+				-- If it is in the context of a controller, the required operations not provided by the
+				-- controller will be declared here, and the defined operations will be defined in the
+				-- context of the Controller module, and therefore within scope of the state machien module.
+				
+				
+				-- definition of functions used to expose flow channels
+				ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
+								   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
+								   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
+								   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
+									 
+				ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
+							[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+							[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
+							[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				
+				-- declaring identifiers of state and final states
+				datatype SIDS = SID_DisplacementSM
+				              | SID_DisplacementSM_wait_input
+				              | SID_DisplacementSM_update_displacement
+				
+				-- declaring identifiers of transitions
+				datatype TIDS = NULLTRANSITION__
+				              | TID_DisplacementSM_t2
+				              | TID_DisplacementSM_t3
+				              | TID_DisplacementSM_t0
+				              | TID_DisplacementSM_t1
+				              | TID_DisplacementSM_t4
+				
+				-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
+				
+				ITIDS = {
+					TID_DisplacementSM_t2,	TID_DisplacementSM_t3,	TID_DisplacementSM_t4
+				}
+				
+				int_int = {|
+					sp__.TID_DisplacementSM_t2,
+					displacement__.TID_DisplacementSM_t2,
+					internal__.TID_DisplacementSM_t2,
+					sp__.TID_DisplacementSM_t3,
+					displacement__.TID_DisplacementSM_t3,
+					internal__.TID_DisplacementSM_t3,
+					sp__.TID_DisplacementSM_t4,
+					displacement__.TID_DisplacementSM_t4,
+					internal__.TID_DisplacementSM_t4
+				|}
+					
+				
+				internal_events = {|enter,entered,exit,exited|}
+				shared_variable_events = {|
+				|}
+						
+				
+				-- declaring all states
+				CS_DisplacementSM_wait_input_sync = {|
+					enter.y____.x____, 
+					entered.y____.x____, 
+					exit.y____.x____, 
+					exited.y____.x____,
+					enter.x____.y____, 
+					entered.x____.y____, 
+					exit.x____.y____, 
+					exited.x____.y____ |
+					x____ <- {SID_DisplacementSM_wait_input,SID_DisplacementSM_update_displacement},
+					y____ <- {SID_DisplacementSM_wait_input}
+				|}
+				
+				
+				DisplacementSM_wait_input_triggers = {|
+					internal__.TID_DisplacementSM_t3,
+					sp__.TID_DisplacementSM_t2,
+					internal__.TID_DisplacementSM_t1,
+					displacement__.TID_DisplacementSM_t4
+				|}
+				
+				State_DisplacementSM_wait_input(id__,
+						    const_DisplacementSM_t) = let
+					T_DisplacementSM_t2(id__,
+							    const_DisplacementSM_t) = sp__!TID_DisplacementSM_t2.in?speed -> set_speed!speed ->  (exit.SID_DisplacementSM_wait_input.SID_DisplacementSM_wait_input -> SKIP;
+										SKIP;exited.SID_DisplacementSM_wait_input.SID_DisplacementSM_wait_input -> SKIP;
+										enter!SID_DisplacementSM_wait_input!SID_DisplacementSM_update_displacement -> entered!SID_DisplacementSM_wait_input!SID_DisplacementSM_update_displacement ->
+										State_DisplacementSM_wait_input(id__,
+												    const_DisplacementSM_t)
+					)
+					T_DisplacementSM_t4(id__,
+							    const_DisplacementSM_t) = displacement__!TID_DisplacementSM_t4.in?d -> set_d!d ->  (exit.SID_DisplacementSM_wait_input.SID_DisplacementSM_wait_input -> SKIP;
+										SKIP;exited.SID_DisplacementSM_wait_input.SID_DisplacementSM_wait_input -> SKIP;
+										J_DisplacementSM_j0(id__,
+												    const_DisplacementSM_t))
+					J_DisplacementSM_j0(id__,
+							    const_DisplacementSM_t) = (
+								(internal__!TID_DisplacementSM_t1 -> enter!SID_DisplacementSM_wait_input!SID_DisplacementSM_wait_input -> State_DisplacementSM_wait_input_execute(id__,SID_DisplacementSM_wait_input)
+								)
+								)
+					State_DisplacementSM_wait_input_execute(id__,o____) = SKIP; 
+						entered!o____!SID_DisplacementSM_wait_input ->
+						(SKIP; STOP /\ (
+							T_DisplacementSM_t2(id__,
+									    const_DisplacementSM_t)[]
+							T_DisplacementSM_t4(id__,
+									    const_DisplacementSM_t)
+							[]
+							internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_DisplacementSM_t3,TID_DisplacementSM_t2,TID_DisplacementSM_t1,TID_DisplacementSM_t4}) -> exit?y____:diff(SIDS,{SID_DisplacementSM_wait_input})!SID_DisplacementSM_wait_input -> (
+									SKIP;
+									exited!y____!SID_DisplacementSM_wait_input -> SKIP);
+									State_DisplacementSM_wait_input(id__,
+											    const_DisplacementSM_t)
+							[] sp__?x____:diff(ITIDS,{NULLTRANSITION__,TID_DisplacementSM_t3,TID_DisplacementSM_t2,TID_DisplacementSM_t1,TID_DisplacementSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_DisplacementSM_wait_input})!SID_DisplacementSM_wait_input -> (
+									SKIP;
+									exited!y____!SID_DisplacementSM_wait_input -> SKIP);
+									State_DisplacementSM_wait_input(id__,
+											    const_DisplacementSM_t)
+							[] displacement__?x____:diff(ITIDS,{NULLTRANSITION__,TID_DisplacementSM_t3,TID_DisplacementSM_t2,TID_DisplacementSM_t1,TID_DisplacementSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_DisplacementSM_wait_input})!SID_DisplacementSM_wait_input -> (
+									SKIP;
+									exited!y____!SID_DisplacementSM_wait_input -> SKIP);
+									State_DisplacementSM_wait_input(id__,
+											    const_DisplacementSM_t)
+						))
+				within
+					enter?x____:diff(SIDS,{SID_DisplacementSM_wait_input})!SID_DisplacementSM_wait_input -> (State_DisplacementSM_wait_input_execute(id__,x____))
+				
+				CS_DisplacementSM_update_displacement_sync = {|
+					enter.y____.x____, 
+					entered.y____.x____, 
+					exit.y____.x____, 
+					exited.y____.x____,
+					enter.x____.y____, 
+					entered.x____.y____, 
+					exit.x____.y____, 
+					exited.x____.y____ |
+					x____ <- {SID_DisplacementSM_wait_input,SID_DisplacementSM_update_displacement},
+					y____ <- {SID_DisplacementSM_update_displacement}
+				|}
+				
+				
+				DisplacementSM_update_displacement_triggers = {|
+					internal__.TID_DisplacementSM_t3,
+					sp__.TID_DisplacementSM_t2,
+					internal__.TID_DisplacementSM_t1,
+					displacement__.TID_DisplacementSM_t4
+				|}
+				
+				State_DisplacementSM_update_displacement(id__,
+						    const_DisplacementSM_t) = let
+					T_DisplacementSM_t3(id__,
+							    const_DisplacementSM_t) = internal__!TID_DisplacementSM_t3 ->  exit.SID_DisplacementSM_update_displacement.SID_DisplacementSM_update_displacement -> SKIP;
+										SKIP;exited.SID_DisplacementSM_update_displacement.SID_DisplacementSM_update_displacement -> SKIP;
+										get_d?d -> true&(displacement.out!d -> SKIP);WAIT(const_DisplacementSM_t);enter!SID_DisplacementSM_update_displacement!SID_DisplacementSM_wait_input -> entered!SID_DisplacementSM_update_displacement!SID_DisplacementSM_wait_input ->
+										State_DisplacementSM_update_displacement(id__,
+												    const_DisplacementSM_t)
+					State_DisplacementSM_update_displacement_execute(id__,o____) = get_d?d -> get_speed?speed -> true & (set_d!Plus(d, Mult(TripleAxis_X(speed), const_DisplacementSM_t, core_int), core_int) -> SKIP); 
+						entered!o____!SID_DisplacementSM_update_displacement ->
+						(SKIP; STOP /\ (
+							T_DisplacementSM_t3(id__,
+									    const_DisplacementSM_t)
+							[]
+							internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_DisplacementSM_t3,TID_DisplacementSM_t2,TID_DisplacementSM_t1,TID_DisplacementSM_t4}) -> exit?y____:diff(SIDS,{SID_DisplacementSM_update_displacement})!SID_DisplacementSM_update_displacement -> (
+									SKIP;
+									exited!y____!SID_DisplacementSM_update_displacement -> SKIP);
+									State_DisplacementSM_update_displacement(id__,
+											    const_DisplacementSM_t)
+							[] sp__?x____:diff(ITIDS,{NULLTRANSITION__,TID_DisplacementSM_t3,TID_DisplacementSM_t2,TID_DisplacementSM_t1,TID_DisplacementSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_DisplacementSM_update_displacement})!SID_DisplacementSM_update_displacement -> (
+									SKIP;
+									exited!y____!SID_DisplacementSM_update_displacement -> SKIP);
+									State_DisplacementSM_update_displacement(id__,
+											    const_DisplacementSM_t)
+							[] displacement__?x____:diff(ITIDS,{NULLTRANSITION__,TID_DisplacementSM_t3,TID_DisplacementSM_t2,TID_DisplacementSM_t1,TID_DisplacementSM_t4})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_DisplacementSM_update_displacement})!SID_DisplacementSM_update_displacement -> (
+									SKIP;
+									exited!y____!SID_DisplacementSM_update_displacement -> SKIP);
+									State_DisplacementSM_update_displacement(id__,
+											    const_DisplacementSM_t)
+						))
+				within
+					enter?x____:diff(SIDS,{SID_DisplacementSM_update_displacement})!SID_DisplacementSM_update_displacement -> (State_DisplacementSM_update_displacement_execute(id__,x____))
+				
+				
+				I_DisplacementSM_i0(id__,
+						    const_DisplacementSM_t) = let
+					J_DisplacementSM_j0(id__,
+							    const_DisplacementSM_t) = (
+								(internal__!TID_DisplacementSM_t1 -> enter!SID_DisplacementSM!SID_DisplacementSM_wait_input -> entered!SID_DisplacementSM!SID_DisplacementSM_wait_input ->
+								SKIP
+								)
+								)
+					T_DisplacementSM_t0(id__,
+							    const_DisplacementSM_t) = internal__!TID_DisplacementSM_t0 -> true & (set_d!0 -> SKIP);J_DisplacementSM_j0(id__,
+							    const_DisplacementSM_t)
+				within
+					T_DisplacementSM_t0(id__,
+							    const_DisplacementSM_t)
+				
+				
+				State_DisplacementSM_wait_input_R(id__,
+						    const_DisplacementSM_t) = 
+					State_DisplacementSM_wait_input(id__,
+							    const_DisplacementSM_t)
+						[|diff(int_int,DisplacementSM_wait_input_triggers)|]
+					SKIP
+						 		
+				State_DisplacementSM_update_displacement_R(id__,
+						    const_DisplacementSM_t) = 
+					State_DisplacementSM_update_displacement(id__,
+							    const_DisplacementSM_t)
+						[|diff(int_int,DisplacementSM_update_displacement_triggers)|]
+					SKIP
+						 		
+					
+				STM(id__,
+						    const_DisplacementSM_t) = (
+					I_DisplacementSM_i0(id__,
+							    const_DisplacementSM_t)
+						[|
+							{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
+								x____ <- diff(SIDS,{SID_DisplacementSM_wait_input,SID_DisplacementSM_update_displacement}),
+								y____ <- {SID_DisplacementSM_wait_input,SID_DisplacementSM_update_displacement}
+						|}|]
+					(
+						State_DisplacementSM_wait_input_R(id__,
+								    const_DisplacementSM_t)
+							[|inter(CS_DisplacementSM_wait_input_sync,CS_DisplacementSM_update_displacement_sync)|]
+						State_DisplacementSM_update_displacement_R(id__,
+								    const_DisplacementSM_t)
+					)
+				)
+				
+				-- optimized memory process
+				channel getV_d: core_int
+				channel getV_speed: TripleAxis
+				
+				-- individual memory processes
+				Memory_d(x__) = ( 
+					get_d!x__ -> Memory_d(x__)
+					[]
+					getV_d!x__ -> Memory_d(x__)
+					[]
+					set_d?x__ -> Memory_d(x__)
+					[]
+					displacement__!TID_DisplacementSM_t4.in?d -> Memory_d(d)
+				)
+				Memory_speed(x__) = ( 
+					get_speed!x__ -> Memory_speed(x__)
+					[]
+					getV_speed!x__ -> Memory_speed(x__)
+					[]
+					set_speed?x__ -> Memory_speed(x__)
+					[]
+					sp__!TID_DisplacementSM_t2.in?speed -> Memory_speed(speed)
+				)
+				
+				-- processes that read variables and offer transitions
+				MemoryTransitions(id__,
+					 d,
+					 speed,
+					 const_DisplacementSM_t) = (
+					sp__!TID_DisplacementSM_t2.in?speed -> SKIP
+					[]
+					internal__!TID_DisplacementSM_t3 -> SKIP
+					[]
+					internal__!TID_DisplacementSM_t0 -> SKIP
+					[]
+					internal__!TID_DisplacementSM_t1 -> SKIP
+					[]
+					displacement__!TID_DisplacementSM_t4.in?d:{d|d <- core_int, (d==0)} -> SKIP
+				
+					[]
+						set_d?x__ -> SKIP
+					[]
+					set_speed?x__ -> SKIP
+				 	)
+				MemoryTransitions_DisplacementSM(id__,
+					 const_DisplacementSM_t) =
+					(
+					getV_d?d ->	
+					getV_speed?speed ->
+					 MemoryTransitions(id__,
+					 	 d,
+					 	 speed,
+					 	 const_DisplacementSM_t);
+					 MemoryTransitions_DisplacementSM(id__,
+					 	 const_DisplacementSM_t)
+					)
+				
+				-- synchronisation, hiding and process sets 
+				MemoryVariablesProcesses_DisplacementSM = Union(
+					{
+						{
+							Memory_d(0),
+							Memory_speed((0,0,0))
+						}
+					}
+				)
+				
+				MemoryVariablesSyncSet = Union({
+					{|
+						displacement__.TID_DisplacementSM_t4,
+						set_d,
+						set_speed,
+						sp__.TID_DisplacementSM_t2,
+						getV_speed,
+						setWC,
+						getV_d
+					|}	
+				})
+				
+				MemoryVariablesHideSet = Union({
+					{|
+						getV_speed,
+						getWC,
+						getV_d
+					|}
+				})
+				
+				-- combined individual memory processes
+				MemoryVariables = ||| P : MemoryVariablesProcesses_DisplacementSM @ P
+				
+				-- complete memory process
+				MemoryN(id__,
+					 const_DisplacementSM_t) = (MemoryVariables [| MemoryVariablesSyncSet |] MemoryTransitions_DisplacementSM(id__,
+					 const_DisplacementSM_t)) \ MemoryVariablesHideSet
+				
+				-- optimised memory
+				-- Sets of named elements identified according to transition conditions:
+				-- {}
+				-- Summary of all identified named elements:
+				-- {
+				-- d
+				-- speed
+				-- }
+				
+				-- Allocation plan:
+				-- 0:{}
+				--	=> {
+				--		TID_DisplacementSM_t2,
+				--		TID_DisplacementSM_t3,
+				--		TID_DisplacementSM_t1,
+				--		TID_DisplacementSM_t0,
+				--		TID_DisplacementSM_t4}
+				
+				-- Memory transition processes
+				MemoryTransitions_opt_0(id__) =
+				(
+					let
+						Update = Current(id__)
+						Current(id__)
+						 	   = 
+						 	   sp__!TID_DisplacementSM_t2.in?speed -> Update
+						 	   []
+						 	   internal__!TID_DisplacementSM_t3 -> Update
+						 	   []
+						 	   internal__!TID_DisplacementSM_t1 -> Update
+						 	   []
+						 	   internal__!TID_DisplacementSM_t0 -> Update
+						 	   []
+						 	   displacement__!TID_DisplacementSM_t4.in?d:{d|d <- core_int, (d==0)} -> Update
+					within
+						Update
+				)
+				
+				-- Memory cell processes
+				Memory_opt_d(x__) = ( 
+					get_d!x__ -> Memory_opt_d(x__)
+					[]
+					set_d?x__ -> Memory_opt_d(x__)
+				)
+				Memory_opt_speed(x__) = ( 
+					get_speed!x__ -> Memory_opt_speed(x__)
+					[]
+					set_speed?x__ -> Memory_opt_speed(x__)
+				)
+				
+				-- Composition of memory, StateMachine and Memory transition processes
+				
+				MemorySTM_opt(id__,
+						    const_DisplacementSM_t) =
+					sbisim(	
+					  dbisim(
+					    sbisim(dbisim(sbisim(Memory_opt_d(0)
+					          	[| {|get_d,set_d|} |] 
+					          	dbisim(sbisim(Memory_opt_speed((0,0,0))
+					          	      	[| {|set_speed,get_speed|} |] 
+					          	      	STM_core(id__,
+					          	      			    const_DisplacementSM_t)
+					          	      	)\ {|set_speed,get_speed|}
+					          	      )
+					          	)\ {|get_d,set_d|}
+					          )
+					      	  [| {|displacement__.TID_DisplacementSM_t4,sp__.TID_DisplacementSM_t2,internal__.TID_DisplacementSM_t1,internal__.TID_DisplacementSM_t0,internal__.TID_DisplacementSM_t3|} |]
+					      	  MemoryTransitions_opt_0(id__)
+					      	  )\{|internal__.TID_DisplacementSM_t1|})
+					      )
+				
+				-- main process
+				
+				MachineMemorySyncSet = Union({
+					union(
+						union(
+							{|get_d,set_d,
+							get_speed,set_speed|},
+							{||}
+						)
+							
+						,
+						{|sp__.TID_DisplacementSM_t2,
+						internal__.TID_DisplacementSM_t3,
+						internal__.TID_DisplacementSM_t0,
+						internal__.TID_DisplacementSM_t1,
+						displacement__.TID_DisplacementSM_t4|}
+					),
+					{|deadline|},
+					WCresets
+				})
+				
+				MachineMemoryHidingSet = Union({
+					union(
+						{|get_d,set_d,
+						get_speed,set_speed|},
+						{||}
+					)
+					,
+					{|deadline|}
+				})
+				
+				MachineInternalEvents = {|
+					internal__
+				|}
+			
+				-- main process
+				AUX(id__,
+						    const_DisplacementSM_t) = prioritise((((
+					wbisim(STM(id__,
+							    const_DisplacementSM_t))
+						[|MachineMemorySyncSet|]
+					(
+						(MemoryN(id__,
+							 const_DisplacementSM_t))
+							[| union(WCsets,WCsync) |]
+						Clocks(id__,
+								    const_DisplacementSM_t)
+					)\WCsets
+				)
+				[[
+					sp__.x____ <- sp,
+					displacement__.x____ <- displacement
+					| x____ <- TIDS
+				]]
+				\MachineMemoryHidingSet)
+				[|{|terminate|}|>SKIP\MachineInternalEvents)
+				,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
+				
+				STM_core(id__,
+						    const_DisplacementSM_t) = 
+					dbisim(
+						sbisim(
+								(STM(id__,
+										    const_DisplacementSM_t)
+								[| union(WCsync,WCresets) |]
+								Clocks(id__,
+										    const_DisplacementSM_t))\WCresets
+							  )
+						  )
+				
+				AUX_opt(id__,
+						    const_DisplacementSM_t) = 
+					prioritise(
+						(MemorySTM_opt(id__,
+								    const_DisplacementSM_t)
+						)[[
+							sp__.x____ <- sp,
+							displacement__.x____ <- displacement
+							| x____ <- TIDS
+						]]
+					[|{|terminate|}|>SKIP\MachineInternalEvents
+					,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
+				
+				internal_(id__,
+						    const_DisplacementSM_t) = prioritise((((
+					wbisim(STM(id__,
+							    const_DisplacementSM_t))
+						[|MachineMemorySyncSet|]
+					((MemoryN(id__,
+						 const_DisplacementSM_t)) [| union(WCsets,WCsync) |] Clocks(id__,
+							    const_DisplacementSM_t))\WCsets
+				)
+				\MachineMemoryHidingSet)
+				[|{|terminate|}|>SKIP)
+				,<Union({internal_events, ClockResets, {|internal__,terminate|}}),{tock}>)		
+				-- declare clocks
+				datatype ClockSet = dummyC
+				channel clockReset 				-- no clocks declared
+				
+				-- declare trigger deadlines channel
+				channel deadline : TIDS.Signal
+				
+				-- compile clocks process
+				
+				-- set of strings that uniquely identify the waiting conditions, each of which is 
+				-- used to synchronise with the Memory process to set the correspoding variable in
+				-- the memory process.
+				datatype setWC_identifierSet = dummyWC
+				
+				-- declaring getWC and setWC channel for updating memory variables related to clocks
+				channel setWC : setWC_identifierSet.Bool
+				channel getWC : setWC_identifierSet.Bool
+				
+				-- Set of pairs capturing waiting condition processes and their alphabet.
+				-- It includes the corresponding set of the defined operations.
+				WCset(id__,
+						    const_DisplacementSM_t) = Union({
+					{
+					}
+					})
+				
+				-- Auxiliary function to rename the channel set for required clocks.
+				
+				-- Set of transition events for which synchronisation is required between Clocks and the Memory process.
+				-- It includes the corresponding set of the defined operations.
+				WCsync = Union({
+					{||}
+					})
+				-- Set of all clock resets, including 'clockReset.C' events and 'entered.x.y' events where x is drawn
+				-- from the set of all state machine state identifiers. It includes the corresponding set of the defined operations.
+				WCresets = Union({
+					{| | x <- SIDS |}
+					})
+				-- Set of all waiting condition set events. It includes the corresponding set of the defined operations.
+				WCsets = Union({
+					{|setWC|}
+					})
+				
+				
+				
+				-- Clocks process
+				Clocks(id__,
+						    const_DisplacementSM_t) = || (alpha, P) : WCset(id__,
+						    const_DisplacementSM_t) @ [alpha] wbisim(P)
+
+				-- collects all clockResets including those of operations
+				ClockResets = Union({
+					{|clockReset|}
+									})
+				
+				-- With no internal events visible
+				Dunopt__(id__,
+						    const_DisplacementSM_t) = timed_priority(AUX(id__,
+						    const_DisplacementSM_t) \ union(internal_events,ClockResets))
+				
+				D__(id__,
+						    const_DisplacementSM_t) = timed_priority(AUX_opt(id__,
+						    const_DisplacementSM_t) \ union(internal_events,ClockResets))
+				
+				O__(id__,
+						    const_DisplacementSM_t) = D__(id__,
+						    const_DisplacementSM_t)
+				
+				-- With enter/entered/exit/exited events visible
+				FVS__(id__,
+						    const_DisplacementSM_t) = timed_priority(AUX(id__,
+						    const_DisplacementSM_t) \ ClockResets)
+				
+				-- With enterV/enteredV/exitV/exitedV events visible
+				VS__(id__,
+						    const_DisplacementSM_t) = ShowV(timed_priority(AUX(id__,
+						    const_DisplacementSM_t) \ ClockResets))
+				
+				-- With clock resets visible
+				FVS_C__(id__,
+						    const_DisplacementSM_t) = AUX(id__,
+						    const_DisplacementSM_t)
+			}
+		endmodule

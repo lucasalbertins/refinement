@@ -1,0 +1,4 @@
+-- generate includes
+include "AngularSpeedSM.csp"
+include "defs/AngularSpeedSM_coreassertions.csp"
+

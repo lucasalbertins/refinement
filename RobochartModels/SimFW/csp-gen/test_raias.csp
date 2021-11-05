@@ -1,0 +1,84 @@
+transparent normal
+include "file_SimFW_coreassertions.csp"
+ID_test_raias = {1..1}
+datatype alphabet_test_raias = move_0_2__1_test_raias_t_alphabet | accept_obstacle_1_test_raias_t_alphabet| DecisionNode_MergeNode0_test_raias_t_alphabet| InitialNode0_test_raias_t_alphabet
+robochart_alphabet_test_raias = {|CFootBot::moveCall,CFootBot::obstacle.in,CFootBot::obstacle.out|}
+countCe_test_raias = {1..4}
+countUpdate_test_raias = {1..1}
+countClear_test_raias = {1..0}
+limiteUpdate_test_raias = {(1)..(1)}
+channel startActivity_test_raias: ID_test_raias
+channel endActivity_test_raias: ID_test_raias
+channel ce_test_raias: ID_test_raias.countCe_test_raias
+channel clear_test_raias: ID_test_raias.countClear_test_raias
+channel update_test_raias: ID_test_raias.countUpdate_test_raias.limiteUpdate_test_raias
+channel endDiagram_test_raias: ID_test_raias
+channel dc
+channel begin, end:  {1..1}
+
+alphabet_Astah_test_raias = {| startActivity_test_raias, endActivity_test_raias, ce_test_raias, clear_test_raias, update_test_raias, endDiagram_test_raias, dc |}
+
+MAIN = normal(test_raias(1))
+END_DIAGRAM_test_raias(id) = endDiagram_test_raias.id -> SKIP
+test_raias(ID_test_raias) = (Internal_test_raias(ID_test_raias) [|{|update_test_raias,clear_test_raias,endDiagram_test_raias|}|] TokenManager_test_raias_t(ID_test_raias,0,0))
+Internal_test_raias(id) = StartActivity_test_raias(id); Node_test_raias(id); EndActivity_test_raias(id)
+StartActivity_test_raias(id) = startActivity_test_raias.id -> SKIP
+EndActivity_test_raias(id) = endActivity_test_raias.id -> SKIP
+AlphabetDiagram_test_raias(id,move_0_2__1_test_raias_t_alphabet) = {|ce_test_raias.id.4,ce_test_raias.id.2,endDiagram_test_raias.id|}
+AlphabetDiagram_test_raias(id,accept_obstacle_1_test_raias_t_alphabet) = {|ce_test_raias.id.3,ce_test_raias.id.4,endDiagram_test_raias.id|}
+AlphabetDiagram_test_raias(id,DecisionNode_MergeNode0_test_raias_t_alphabet) = {|ce_test_raias.id.1,ce_test_raias.id.2,ce_test_raias.id.3,endDiagram_test_raias.id|}
+AlphabetDiagram_test_raias(id,InitialNode0_test_raias_t_alphabet) = {|ce_test_raias.id.1,endDiagram_test_raias.id|}
+AlphabetDiagram_test_raias_t(id) = union(union(union(AlphabetDiagram_test_raias(id,move_0_2__1_test_raias_t_alphabet),AlphabetDiagram_test_raias(id,accept_obstacle_1_test_raias_t_alphabet)),AlphabetDiagram_test_raias(id,DecisionNode_MergeNode0_test_raias_t_alphabet)),AlphabetDiagram_test_raias(id,InitialNode0_test_raias_t_alphabet))
+
+ProcessDiagram_test_raias(id,move_0_2__1_test_raias_t_alphabet) = normal(move_0_2__1_test_raias_t(id))
+ProcessDiagram_test_raias(id,accept_obstacle_1_test_raias_t_alphabet) = normal(accept_obstacle_1_test_raias_t(id))
+ProcessDiagram_test_raias(id,DecisionNode_MergeNode0_test_raias_t_alphabet) = normal(DecisionNode_MergeNode0_test_raias_t(id))
+ProcessDiagram_test_raias(id,InitialNode0_test_raias_t_alphabet) = normal(InitialNode0_test_raias_t(id))
+InitialNode0_test_raias(id) = update_test_raias.id.1!(1-0) -> ((ce_test_raias.id.1 -> SKIP))
+InitialNode0_test_raias_t(id) = InitialNode0_test_raias(id) /\ END_DIAGRAM_test_raias(id)
+DecisionNode_MergeNode0_test_raias(id) = ((ce_test_raias.id.1 -> SKIP) [] (ce_test_raias.id.2 -> SKIP)); ce_test_raias.id.3 -> DecisionNode_MergeNode0_test_raias(id)
+DecisionNode_MergeNode0_test_raias_t(id) = DecisionNode_MergeNode0_test_raias(id) /\ END_DIAGRAM_test_raias(id)
+accept_obstacle_1_test_raias(id) = ((ce_test_raias.id.3 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_test_raias.id.4 -> SKIP)); accept_obstacle_1_test_raias(id)
+accept_obstacle_1_test_raias_t(id) = accept_obstacle_1_test_raias(id) /\ END_DIAGRAM_test_raias(id)
+move_0_2__1_test_raias(id) = ((ce_test_raias.id.4 -> SKIP)); CFootBot::moveCall.0.2 -> ((ce_test_raias.id.2 -> SKIP)); move_0_2__1_test_raias(id)
+move_0_2__1_test_raias_t(id) = move_0_2__1_test_raias(id) /\ END_DIAGRAM_test_raias(id)
+
+TokenManager_test_raias(id,x,init) = update_test_raias.id?c?y:limiteUpdate_test_raias -> x+y < 10 & x+y > -10 & TokenManager_test_raias(id,x+y,1) [] clear_test_raias.id?c -> endDiagram_test_raias.id -> SKIP [] x == 0 & init == 1 & endDiagram_test_raias.id -> SKIP
+TokenManager_test_raias_t(id,x,init) = TokenManager_test_raias(id,x,init)
+
+assert Prop_test_raias [T= P_CFootBot
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_test_raias(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_test_raias?id -> SKIP
+
+Prop_test_raias = PROP_test_raias(Wait_control_processes_test_raias) \ alphabet_Astah_test_raias 
+
+alphabet_robochart_test_raias = {|CFootBot::moveCall,CFootBot::obstacle.in,CFootBot::obstacle.out|}
+
+PROP_test_raias(processes) = (MAIN [|{|begin, end, endDiagram_test_raias|}|] WAIT_PROCCESSES_test_raias(processes) ) \ {|begin, end|}
+
+Wait_test_raias_1 = WAIT(alphabet_robochart_test_raias, CFootBot::obstacle.in)
+
+Wait_test_raias_control_1 = begin.1 -> Wait_test_raias_1; end.1 -> Wait_test_raias_control_1
+
+Wait_control_processes_test_raias = {Wait_test_raias_control_1}
+
+Node_test_raias(id) = composeNodes_test_raias(id)
+
+composeNodes_test_raias(id) = 
+	let
+	    alphabet_test_raias_s = seq(alphabet_test_raias)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_test_raias(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_test_raias(id,ev) 
+				[|union(diff(AlphabetDiagram_test_raias(id,ev),past),{endDiagram_test_raias.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_test_raias(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_test_raias_s,{})
+

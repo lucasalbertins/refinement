@@ -1,0 +1,1090 @@
+
+
+
+module PID
+exports
+	-- flow channels
+	channel internal__ : TIDS
+	channel enteredV, enterV, exitV, exitedV : SIDS
+	channel enter, entered: SIDS.SIDS
+	channel exit,exited: SIDS.SIDS
+	channel terminate
+	
+	-- variable channels
+	channel get_prior_error, set_prior_error: core_int
+	channel get_integral, set_integral: core_int
+	channel get_error, set_error: core_int
+	channel get_derivative, set_derivative: core_int
+	channel get_output, set_output: core_int
+	channel get_target_value, set_target_value: core_int
+	channel get_actual_value, set_actual_value: core_int
+	channel get_old_target, set_old_target: core_int
+			
+	-- shared variable channels
+	
+	-- local variable channels for defined operations that are required by the state machine
+	
+	-- declaring state machine events
+	channel err_output__: TIDS.InOut.core_int
+	channel err_output: InOut.core_int
+	channel actual__: TIDS.InOut.core_int
+	channel actual: InOut.core_int
+	channel target__: TIDS.InOut.core_int
+	channel target: InOut.core_int
+	
+	-- declaring call and ret events for undefined operations
+	
+	-- Only the undefined operations are declared here.
+	-- If the state machine is in isolation, all required operations will be undefined.
+	-- If it is in the context of a controller, the required operations not provided by the
+	-- controller will be declared here, and the defined operations will be defined in the
+	-- context of the Controller module, and therefore within scope of the state machien module.
+	
+	
+	-- definition of functions used to expose flow channels
+	ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
+					   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
+					   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
+					   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
+						 
+	ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+				[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
+				[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
+	
+	-- declaring identifiers of state and final states
+	datatype SIDS = SID_PID
+	              | SID_PID_Update
+	              | SID_PID_Wait_target
+	              | SID_PID_Wait_actual
+	              | SID_PID_Reset
+	
+	-- declaring identifiers of transitions
+	datatype TIDS = NULLTRANSITION__
+	              | TID_PID_t0
+	              | TID_PID_t1
+	              | TID_PID_t4
+	              | TID_PID_t5
+	              | TID_PID_t2
+	              | TID_PID_t3
+	
+	-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
+	
+	ITIDS = {
+		TID_PID_t1,	TID_PID_t4,	TID_PID_t5,	TID_PID_t2,	TID_PID_t3
+	}
+	
+	int_int = {|
+		err_output__.TID_PID_t1,
+		actual__.TID_PID_t1,
+		target__.TID_PID_t1,
+		internal__.TID_PID_t1,
+		err_output__.TID_PID_t4,
+		actual__.TID_PID_t4,
+		target__.TID_PID_t4,
+		internal__.TID_PID_t4,
+		err_output__.TID_PID_t5,
+		actual__.TID_PID_t5,
+		target__.TID_PID_t5,
+		internal__.TID_PID_t5,
+		err_output__.TID_PID_t2,
+		actual__.TID_PID_t2,
+		target__.TID_PID_t2,
+		internal__.TID_PID_t2,
+		err_output__.TID_PID_t3,
+		actual__.TID_PID_t3,
+		target__.TID_PID_t3,
+		internal__.TID_PID_t3
+	|}
+		
+	
+	internal_events = {|enter,entered,exit,exited|}
+	shared_variable_events = {|
+	|}
+			
+	
+	-- declaring all states
+	CS_PID_Update_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_PID_Update,SID_PID_Wait_target,SID_PID_Wait_actual,SID_PID_Reset},
+		y____ <- {SID_PID_Update}
+	|}
+	
+	
+	PID_Update_triggers = {|
+		actual__.TID_PID_t3,
+		target__.TID_PID_t2,
+		target__.TID_PID_t4,
+		internal__.TID_PID_t1,
+		actual__.TID_PID_t5
+	|}
+	
+	State_PID_Update(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = let
+		T_PID_t1(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step) = internal__!TID_PID_t1 ->  exit.SID_PID_Update.SID_PID_Update -> SKIP;
+							SKIP;exited.SID_PID_Update.SID_PID_Update -> SKIP;
+							SKIP;enter!SID_PID_Update!SID_PID_Wait_target -> entered!SID_PID_Update!SID_PID_Wait_target ->
+							State_PID_Update(id__,
+									    const_PID_kp,
+									    const_PID_ki,
+									    const_PID_kd,
+									    const_PID_step)
+		State_PID_Update_execute(id__,o____) = get_target_value?target_value -> get_actual_value?actual_value -> true & (set_error!Minus(actual_value, target_value, core_int) -> SKIP);get_error?error -> get_integral?integral -> true & (set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP);get_error?error -> get_prior_error?prior_error -> const_PID_step != 0 & (set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP);get_error?error -> get_derivative?derivative -> get_integral?integral -> true & (set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP);get_error?error -> true & (set_prior_error!error -> SKIP);get_output?output -> true&(err_output.out!output -> SKIP);get_target_value?target_value -> true & (set_old_target!target_value -> SKIP); 
+			entered!o____!SID_PID_Update ->
+			(SKIP; STOP /\ (
+				T_PID_t1(id__,
+						    const_PID_kp,
+						    const_PID_ki,
+						    const_PID_kd,
+						    const_PID_step)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5}) -> exit?y____:diff(SIDS,{SID_PID_Update})!SID_PID_Update -> (
+						SKIP;
+						exited!y____!SID_PID_Update -> SKIP);
+						State_PID_Update(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] err_output__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Update})!SID_PID_Update -> (
+						SKIP;
+						exited!y____!SID_PID_Update -> SKIP);
+						State_PID_Update(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] actual__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Update})!SID_PID_Update -> (
+						SKIP;
+						exited!y____!SID_PID_Update -> SKIP);
+						State_PID_Update(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] target__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Update})!SID_PID_Update -> (
+						SKIP;
+						exited!y____!SID_PID_Update -> SKIP);
+						State_PID_Update(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_PID_Update})!SID_PID_Update -> (State_PID_Update_execute(id__,x____))
+	
+	CS_PID_Wait_target_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_PID_Update,SID_PID_Wait_target,SID_PID_Wait_actual,SID_PID_Reset},
+		y____ <- {SID_PID_Wait_target}
+	|}
+	
+	
+	PID_Wait_target_triggers = {|
+		actual__.TID_PID_t3,
+		target__.TID_PID_t2,
+		target__.TID_PID_t4,
+		internal__.TID_PID_t1,
+		actual__.TID_PID_t5
+	|}
+	
+	State_PID_Wait_target(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = let
+		T_PID_t4(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step) = target__!TID_PID_t4.in?target_value -> set_target_value!target_value ->  (exit.SID_PID_Wait_target.SID_PID_Wait_target -> SKIP;
+							SKIP;exited.SID_PID_Wait_target.SID_PID_Wait_target -> SKIP;
+							enter!SID_PID_Wait_target!SID_PID_Wait_actual -> entered!SID_PID_Wait_target!SID_PID_Wait_actual ->
+							State_PID_Wait_target(id__,
+									    const_PID_kp,
+									    const_PID_ki,
+									    const_PID_kd,
+									    const_PID_step)
+		)
+		T_PID_t2(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step) = target__!TID_PID_t2.in?target_value -> set_target_value!target_value ->  (exit.SID_PID_Wait_target.SID_PID_Wait_target -> SKIP;
+							SKIP;exited.SID_PID_Wait_target.SID_PID_Wait_target -> SKIP;
+							enter!SID_PID_Wait_target!SID_PID_Reset -> entered!SID_PID_Wait_target!SID_PID_Reset ->
+							State_PID_Wait_target(id__,
+									    const_PID_kp,
+									    const_PID_ki,
+									    const_PID_kd,
+									    const_PID_step)
+		)
+		State_PID_Wait_target_execute(id__,o____) = SKIP; 
+			entered!o____!SID_PID_Wait_target ->
+			(SKIP; STOP /\ (
+				T_PID_t4(id__,
+						    const_PID_kp,
+						    const_PID_ki,
+						    const_PID_kd,
+						    const_PID_step)[]
+				T_PID_t2(id__,
+						    const_PID_kp,
+						    const_PID_ki,
+						    const_PID_kd,
+						    const_PID_step)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5}) -> exit?y____:diff(SIDS,{SID_PID_Wait_target})!SID_PID_Wait_target -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_target -> SKIP);
+						State_PID_Wait_target(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] err_output__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Wait_target})!SID_PID_Wait_target -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_target -> SKIP);
+						State_PID_Wait_target(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] actual__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Wait_target})!SID_PID_Wait_target -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_target -> SKIP);
+						State_PID_Wait_target(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] target__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Wait_target})!SID_PID_Wait_target -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_target -> SKIP);
+						State_PID_Wait_target(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_PID_Wait_target})!SID_PID_Wait_target -> (State_PID_Wait_target_execute(id__,x____))
+	
+	CS_PID_Wait_actual_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_PID_Update,SID_PID_Wait_target,SID_PID_Wait_actual,SID_PID_Reset},
+		y____ <- {SID_PID_Wait_actual}
+	|}
+	
+	
+	PID_Wait_actual_triggers = {|
+		actual__.TID_PID_t3,
+		target__.TID_PID_t2,
+		target__.TID_PID_t4,
+		internal__.TID_PID_t1,
+		actual__.TID_PID_t5
+	|}
+	
+	State_PID_Wait_actual(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = let
+		T_PID_t5(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step) = actual__!TID_PID_t5.in?actual_value -> set_actual_value!actual_value ->  (exit.SID_PID_Wait_actual.SID_PID_Wait_actual -> SKIP;
+							SKIP;exited.SID_PID_Wait_actual.SID_PID_Wait_actual -> SKIP;
+							enter!SID_PID_Wait_actual!SID_PID_Update -> entered!SID_PID_Wait_actual!SID_PID_Update ->
+							State_PID_Wait_actual(id__,
+									    const_PID_kp,
+									    const_PID_ki,
+									    const_PID_kd,
+									    const_PID_step)
+		)
+		State_PID_Wait_actual_execute(id__,o____) = SKIP; 
+			entered!o____!SID_PID_Wait_actual ->
+			(SKIP; STOP /\ (
+				T_PID_t5(id__,
+						    const_PID_kp,
+						    const_PID_ki,
+						    const_PID_kd,
+						    const_PID_step)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5}) -> exit?y____:diff(SIDS,{SID_PID_Wait_actual})!SID_PID_Wait_actual -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_actual -> SKIP);
+						State_PID_Wait_actual(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] err_output__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Wait_actual})!SID_PID_Wait_actual -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_actual -> SKIP);
+						State_PID_Wait_actual(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] actual__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Wait_actual})!SID_PID_Wait_actual -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_actual -> SKIP);
+						State_PID_Wait_actual(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] target__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Wait_actual})!SID_PID_Wait_actual -> (
+						SKIP;
+						exited!y____!SID_PID_Wait_actual -> SKIP);
+						State_PID_Wait_actual(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_PID_Wait_actual})!SID_PID_Wait_actual -> (State_PID_Wait_actual_execute(id__,x____))
+	
+	CS_PID_Reset_sync = {|
+		enter.y____.x____, 
+		entered.y____.x____, 
+		exit.y____.x____, 
+		exited.y____.x____,
+		enter.x____.y____, 
+		entered.x____.y____, 
+		exit.x____.y____, 
+		exited.x____.y____ |
+		x____ <- {SID_PID_Update,SID_PID_Wait_target,SID_PID_Wait_actual,SID_PID_Reset},
+		y____ <- {SID_PID_Reset}
+	|}
+	
+	
+	PID_Reset_triggers = {|
+		actual__.TID_PID_t3,
+		target__.TID_PID_t2,
+		target__.TID_PID_t4,
+		internal__.TID_PID_t1,
+		actual__.TID_PID_t5
+	|}
+	
+	State_PID_Reset(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = let
+		T_PID_t3(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step) = actual__!TID_PID_t3.in?actual_value -> set_actual_value!actual_value ->  (exit.SID_PID_Reset.SID_PID_Reset -> SKIP;
+							SKIP;exited.SID_PID_Reset.SID_PID_Reset -> SKIP;
+							enter!SID_PID_Reset!SID_PID_Update -> entered!SID_PID_Reset!SID_PID_Update ->
+							State_PID_Reset(id__,
+									    const_PID_kp,
+									    const_PID_ki,
+									    const_PID_kd,
+									    const_PID_step)
+		)
+		State_PID_Reset_execute(id__,o____) = true & (set_prior_error!0 -> SKIP);true & (set_integral!0 -> SKIP); 
+			entered!o____!SID_PID_Reset ->
+			(SKIP; STOP /\ (
+				T_PID_t3(id__,
+						    const_PID_kp,
+						    const_PID_ki,
+						    const_PID_kd,
+						    const_PID_step)
+				[]
+				internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5}) -> exit?y____:diff(SIDS,{SID_PID_Reset})!SID_PID_Reset -> (
+						SKIP;
+						exited!y____!SID_PID_Reset -> SKIP);
+						State_PID_Reset(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] err_output__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Reset})!SID_PID_Reset -> (
+						SKIP;
+						exited!y____!SID_PID_Reset -> SKIP);
+						State_PID_Reset(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] actual__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Reset})!SID_PID_Reset -> (
+						SKIP;
+						exited!y____!SID_PID_Reset -> SKIP);
+						State_PID_Reset(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+				[] target__?x____:diff(ITIDS,{NULLTRANSITION__,TID_PID_t3,TID_PID_t2,TID_PID_t4,TID_PID_t1,TID_PID_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_PID_Reset})!SID_PID_Reset -> (
+						SKIP;
+						exited!y____!SID_PID_Reset -> SKIP);
+						State_PID_Reset(id__,
+								    const_PID_kp,
+								    const_PID_ki,
+								    const_PID_kd,
+								    const_PID_step)
+			))
+	within
+		enter?x____:diff(SIDS,{SID_PID_Reset})!SID_PID_Reset -> (State_PID_Reset_execute(id__,x____))
+	
+	
+	I_PID_i0(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = let
+		T_PID_t0(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step) = internal__!TID_PID_t0 -> true & (set_prior_error!0 -> SKIP);true & (set_integral!0 -> SKIP);enter!SID_PID!SID_PID_Wait_target -> entered!SID_PID!SID_PID_Wait_target ->
+		SKIP
+	within
+		T_PID_t0(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+	
+	
+	State_PID_Update_R(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = 
+		State_PID_Update(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+			[|diff(int_int,PID_Update_triggers)|]
+		SKIP
+			 		
+	State_PID_Wait_target_R(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = 
+		State_PID_Wait_target(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+			[|diff(int_int,PID_Wait_target_triggers)|]
+		SKIP
+			 		
+	State_PID_Wait_actual_R(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = 
+		State_PID_Wait_actual(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+			[|diff(int_int,PID_Wait_actual_triggers)|]
+		SKIP
+			 		
+	State_PID_Reset_R(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = 
+		State_PID_Reset(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+			[|diff(int_int,PID_Reset_triggers)|]
+		SKIP
+			 		
+		
+	STM(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = (
+		I_PID_i0(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+			[|
+				{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
+					x____ <- diff(SIDS,{SID_PID_Update,SID_PID_Wait_target,SID_PID_Wait_actual,SID_PID_Reset}),
+					y____ <- {SID_PID_Update,SID_PID_Wait_target,SID_PID_Wait_actual,SID_PID_Reset}
+			|}|]
+		(
+			State_PID_Update_R(id__,
+					    const_PID_kp,
+					    const_PID_ki,
+					    const_PID_kd,
+					    const_PID_step)
+				[|inter(CS_PID_Update_sync,union(union(CS_PID_Wait_target_sync,CS_PID_Wait_actual_sync),CS_PID_Reset_sync))|]
+			(
+				State_PID_Wait_target_R(id__,
+						    const_PID_kp,
+						    const_PID_ki,
+						    const_PID_kd,
+						    const_PID_step)
+					[|inter(CS_PID_Wait_target_sync,union(CS_PID_Wait_actual_sync,CS_PID_Reset_sync))|]
+				(
+					State_PID_Wait_actual_R(id__,
+							    const_PID_kp,
+							    const_PID_ki,
+							    const_PID_kd,
+							    const_PID_step)
+						[|inter(CS_PID_Wait_actual_sync,CS_PID_Reset_sync)|]
+					State_PID_Reset_R(id__,
+							    const_PID_kp,
+							    const_PID_ki,
+							    const_PID_kd,
+							    const_PID_step)
+				)
+			)
+		)
+	)
+	
+	-- optimized memory process
+	channel getV_prior_error: core_int
+	channel getV_integral: core_int
+	channel getV_error: core_int
+	channel getV_derivative: core_int
+	channel getV_output: core_int
+	channel getV_target_value: core_int
+	channel getV_actual_value: core_int
+	channel getV_old_target: core_int
+	
+	-- individual memory processes
+	Memory_prior_error(prior_error) = (
+		get_prior_error!prior_error -> Memory_prior_error(prior_error)
+		[]
+		getV_prior_error!prior_error -> Memory_prior_error(prior_error)
+		[]
+		set_prior_error?x__ -> Memory_prior_error(x__)
+	)
+	Memory_integral(integral) = (
+		get_integral!integral -> Memory_integral(integral)
+		[]
+		getV_integral!integral -> Memory_integral(integral)
+		[]
+		set_integral?x__ -> Memory_integral(x__)
+	)
+	Memory_error(error) = (
+		get_error!error -> Memory_error(error)
+		[]
+		getV_error!error -> Memory_error(error)
+		[]
+		set_error?x__ -> Memory_error(x__)
+	)
+	Memory_derivative(derivative) = (
+		get_derivative!derivative -> Memory_derivative(derivative)
+		[]
+		getV_derivative!derivative -> Memory_derivative(derivative)
+		[]
+		set_derivative?x__ -> Memory_derivative(x__)
+	)
+	Memory_output(output) = (
+		get_output!output -> Memory_output(output)
+		[]
+		getV_output!output -> Memory_output(output)
+		[]
+		set_output?x__ -> Memory_output(x__)
+	)
+	Memory_target_value(target_value) = (
+		get_target_value!target_value -> Memory_target_value(target_value)
+		[]
+		getV_target_value!target_value -> Memory_target_value(target_value)
+		[]
+		set_target_value?x__ -> Memory_target_value(x__)
+		[]
+		target__!TID_PID_t4.in?target_value -> Memory_target_value(target_value)
+		[]
+		target__!TID_PID_t2.in?target_value -> Memory_target_value(target_value)
+	)
+	Memory_actual_value(actual_value) = (
+		get_actual_value!actual_value -> Memory_actual_value(actual_value)
+		[]
+		getV_actual_value!actual_value -> Memory_actual_value(actual_value)
+		[]
+		set_actual_value?x__ -> Memory_actual_value(x__)
+		[]
+		actual__!TID_PID_t5.in?actual_value -> Memory_actual_value(actual_value)
+		[]
+		actual__!TID_PID_t3.in?actual_value -> Memory_actual_value(actual_value)
+	)
+	Memory_old_target(old_target) = (
+		get_old_target!old_target -> Memory_old_target(old_target)
+		[]
+		getV_old_target!old_target -> Memory_old_target(old_target)
+		[]
+		set_old_target?x__ -> Memory_old_target(x__)
+	)
+	
+	-- processes that read variables and offer transitions
+	MemoryTransitions(id__, prior_error, integral, error, derivative, output, target_value, actual_value, old_target) = 		
+	(internal__!TID_PID_t0 -> SKIP
+	[]
+	internal__!TID_PID_t1 -> SKIP
+	[]
+	target__!TID_PID_t4.in?target_value:{target_value|target_value <- core_int, (target_value==old_target)} -> SKIP
+	[]
+	actual__!TID_PID_t5.in?actual_value -> SKIP
+	[]
+	target__!TID_PID_t2.in?target_value:{target_value|target_value <- core_int, (target_value!=old_target)} -> SKIP
+	[]
+	actual__!TID_PID_t3.in?actual_value -> SKIP[]
+	set_prior_error?x__ -> SKIP[]
+	set_integral?x__ -> SKIP[]
+	set_error?x__ -> SKIP[]
+	set_derivative?x__ -> SKIP[]
+	set_output?x__ -> SKIP[]
+	set_target_value?x__ -> SKIP[]
+	set_actual_value?x__ -> SKIP[]
+	set_old_target?x__ -> SKIP)
+	
+	MemoryTransitions_PID(id__, const_PID_kp, const_PID_ki, const_PID_kd, const_PID_step) = (getV_prior_error?prior_error ->
+	getV_integral?integral ->
+	getV_error?error ->
+	getV_derivative?derivative ->
+	getV_output?output ->
+	getV_target_value?target_value ->
+	getV_actual_value?actual_value ->
+	getV_old_target?old_target ->
+	MemoryTransitions(id__, prior_error, integral, error, derivative, output, target_value, actual_value, old_target)			
+	); MemoryTransitions_PID(id__, const_PID_kp, const_PID_ki, const_PID_kd, const_PID_step)
+			
+	
+	-- synchronisation, hiding and process sets 
+	MemoryVariablesProcesses_PID = Union(
+		{
+			{
+				(Memory_prior_error(0),{|get_prior_error,getV_prior_error,set_prior_error|}),
+				(Memory_integral(0),{|getV_integral,set_integral,get_integral|}),
+				(Memory_error(0),{|set_error,getV_error,get_error|}),
+				(Memory_derivative(0),{|getV_derivative,get_derivative,set_derivative|}),
+				(Memory_output(0),{|getV_output,set_output,get_output|}),
+				(Memory_target_value(0),{|target__.TID_PID_t2,target__.TID_PID_t4,get_target_value,getV_target_value,set_target_value|}),
+				(Memory_actual_value(0),{|get_actual_value,getV_actual_value,actual__.TID_PID_t3,set_actual_value,actual__.TID_PID_t5|}),
+				(Memory_old_target(0),{|getV_old_target,get_old_target,set_old_target|})
+			}
+		}
+	)
+	
+	MemoryVariablesSyncSet = Union({
+		{|
+			set_error,
+			getV_actual_value,
+			getV_error,
+			getV_old_target,
+			set_integral,
+			getV_derivative,
+			getV_output,
+			target__.TID_PID_t4,
+			getV_target_value,
+			set_prior_error,
+			set_target_value,
+			set_old_target,
+			getV_integral,
+			target__.TID_PID_t2,
+			set_derivative,
+			set_output,
+			actual__.TID_PID_t3,
+			getV_prior_error,
+			set_actual_value,
+			actual__.TID_PID_t5
+		|}	
+	})
+	
+	MemoryVariablesHideSet = Union({
+		{|
+			getV_integral,
+			getV_actual_value,
+			getV_error,
+			getV_old_target,
+			getV_derivative,
+			getV_output,
+			getV_target_value,
+			getV_prior_error
+		|}
+	})
+	
+	-- combined individual memory processes
+	MemoryVariables = ||| (P, alpha) : MemoryVariablesProcesses_PID @ P
+	
+	-- complete memory process	
+	MemoryN(id__, const_PID_kp, const_PID_ki, const_PID_kd, const_PID_step) = sbisim(diamond((sbisim(diamond(MemoryVariables)) [| MemoryVariablesSyncSet |] sbisim(diamond(MemoryTransitions_PID(id__, const_PID_kp, const_PID_ki, const_PID_kd, const_PID_step)))) \ MemoryVariablesHideSet))
+	
+	-- optimised memory
+	-- Sets of named elements identified according to transition conditions:
+	-- {}
+	-- {old_target}
+	-- Summary of all identified named elements:
+	-- {
+	-- error
+	-- integral
+	-- target_value
+	-- derivative
+	-- output
+	-- old_target
+	-- actual_value
+	-- prior_error
+	-- }
+	
+	-- Allocation plan:
+	-- 0:{}
+	--	=> {
+	--		TID_PID_t3,
+	--		TID_PID_t0,
+	--		TID_PID_t1,
+	--		TID_PID_t5}
+	-- 1:{old_target}
+	--	=> {
+	--		TID_PID_t2,
+	--		TID_PID_t4}
+	
+	-- Memory transition processes
+	MemoryTransitions_opt_0(id__) =
+	(
+		let
+			Update = Current(id__)
+			Current(id__)
+			 	   = 
+			 	   actual__!TID_PID_t3.in?actual_value -> Update
+			 	   []
+			 	   internal__!TID_PID_t0 -> Update
+			 	   []
+			 	   internal__!TID_PID_t1 -> Update
+			 	   []
+			 	   actual__!TID_PID_t5.in?actual_value -> Update
+		within
+			Update
+	)
+	MemoryTransitions_opt_1(id__) =
+	(
+		let
+			Update = 
+			get_old_target?old_target ->
+			Current(id__,
+				 old_target)
+			Current(id__,
+				 old_target)
+			 	   = 
+			 	   target__!TID_PID_t2.in?target_value:{target_value|target_value <- core_int, (target_value!=old_target)} -> Update
+			 	   []
+			 	   target__!TID_PID_t4.in?target_value:{target_value|target_value <- core_int, (target_value==old_target)} -> Update
+			 	   	 
+			 	   	 []
+			 	   	 set_old_target?x__ -> Update
+		within
+			Update
+	)
+	
+	-- Memory cell processes
+	Memory_opt_error(x__) = ( 
+		get_error!x__ -> Memory_opt_error(x__)
+		[]
+		set_error?x__ -> Memory_opt_error(x__)
+	)
+	Memory_opt_integral(x__) = ( 
+		get_integral!x__ -> Memory_opt_integral(x__)
+		[]
+		set_integral?x__ -> Memory_opt_integral(x__)
+	)
+	Memory_opt_target_value(x__) = ( 
+		get_target_value!x__ -> Memory_opt_target_value(x__)
+		[]
+		set_target_value?x__ -> Memory_opt_target_value(x__)
+	)
+	Memory_opt_derivative(x__) = ( 
+		get_derivative!x__ -> Memory_opt_derivative(x__)
+		[]
+		set_derivative?x__ -> Memory_opt_derivative(x__)
+	)
+	Memory_opt_output(x__) = ( 
+		get_output!x__ -> Memory_opt_output(x__)
+		[]
+		set_output?x__ -> Memory_opt_output(x__)
+	)
+	Memory_opt_old_target(x__) = ( 
+		get_old_target!x__ -> Memory_opt_old_target(x__)
+		[]
+		set_old_target?x__ -> Memory_opt_old_target(x__)
+	)
+	Memory_opt_actual_value(x__) = ( 
+		get_actual_value!x__ -> Memory_opt_actual_value(x__)
+		[]
+		set_actual_value?x__ -> Memory_opt_actual_value(x__)
+	)
+	Memory_opt_prior_error(x__) = ( 
+		get_prior_error!x__ -> Memory_opt_prior_error(x__)
+		[]
+		set_prior_error?x__ -> Memory_opt_prior_error(x__)
+	)
+	
+	-- Composition of memory, StateMachine and Memory transition processes
+	
+	MemorySTM_opt(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) =
+		dbisim(
+		  sbisim(Memory_opt_old_target(0)
+		      	[| {|get_old_target,set_old_target|} |] 
+		      	sbisim(	
+		      	  dbisim(
+		      	    sbisim(sbisim(	
+		      	      dbisim(
+		      	        sbisim(dbisim(sbisim(Memory_opt_error(0)
+		      	              	[| {|set_error,get_error|} |] 
+		      	              	dbisim(sbisim(Memory_opt_integral(0)
+		      	              	      	[| {|set_integral,get_integral|} |] 
+		      	              	      	dbisim(sbisim(Memory_opt_target_value(0)
+		      	              	      	      	[| {|get_target_value,set_target_value|} |] 
+		      	              	      	      	dbisim(sbisim(Memory_opt_derivative(0)
+		      	              	      	      	      	[| {|get_derivative,set_derivative|} |] 
+		      	              	      	      	      	dbisim(sbisim(Memory_opt_output(0)
+		      	              	      	      	      	      	[| {|set_output,get_output|} |] 
+		      	              	      	      	      	      	dbisim(sbisim(Memory_opt_actual_value(0)
+		      	              	      	      	      	      	      	[| {|get_actual_value,set_actual_value|} |] 
+		      	              	      	      	      	      	      	dbisim(sbisim(Memory_opt_prior_error(0)
+		      	              	      	      	      	      	      	      	[| {|get_prior_error,set_prior_error|} |] 
+		      	              	      	      	      	      	      	      	STM_core(id__,
+		      	              	      	      	      	      	      	      			    const_PID_kp,
+		      	              	      	      	      	      	      	      			    const_PID_ki,
+		      	              	      	      	      	      	      	      			    const_PID_kd,
+		      	              	      	      	      	      	      	      			    const_PID_step)
+		      	              	      	      	      	      	      	      	)\ {|get_prior_error,set_prior_error|}
+		      	              	      	      	      	      	      	      )
+		      	              	      	      	      	      	      	)\ {|get_actual_value,set_actual_value|}
+		      	              	      	      	      	      	      )
+		      	              	      	      	      	      	)\ {|set_output,get_output|}
+		      	              	      	      	      	      )
+		      	              	      	      	      	)\ {|get_derivative,set_derivative|}
+		      	              	      	      	      )
+		      	              	      	      	)\ {|get_target_value,set_target_value|}
+		      	              	      	      )
+		      	              	      	)\ {|set_integral,get_integral|}
+		      	              	      )
+		      	              	)\ {|set_error,get_error|}
+		      	              )
+		      	          	  [| {|internal__.TID_PID_t0,actual__.TID_PID_t3,internal__.TID_PID_t1,actual__.TID_PID_t5|} |]
+		      	          	  MemoryTransitions_opt_0(id__)
+		      	          	  )\{||})
+		      	          )
+		      	      	  [| {|target__.TID_PID_t2,target__.TID_PID_t4,set_old_target|} |]
+		      	      	  MemoryTransitions_opt_1(id__)
+		      	      	  )\{||})
+		      	      )
+		      	) \ {|get_old_target,set_old_target|}
+		      )
+	
+	-- main process
+	
+	MachineMemorySyncSet = Union({
+		union(
+			union(
+				{|get_prior_error,set_prior_error,
+				get_integral,set_integral,
+				get_error,set_error,
+				get_derivative,set_derivative,
+				get_output,set_output,
+				get_target_value,set_target_value,
+				get_actual_value,set_actual_value,
+				get_old_target,set_old_target|},
+				{||}
+			)
+				
+			,
+			{|internal__.TID_PID_t0,
+			internal__.TID_PID_t1,
+			target__.TID_PID_t4,
+			actual__.TID_PID_t5,
+			target__.TID_PID_t2,
+			actual__.TID_PID_t3|}
+		)
+	})
+	
+	MachineMemoryHidingSet = Union({
+		union(
+			{|get_prior_error,set_prior_error,
+			get_integral,set_integral,
+			get_error,set_error,
+			get_derivative,set_derivative,
+			get_output,set_output,
+			get_target_value,set_target_value,
+			get_actual_value,set_actual_value,
+			get_old_target,set_old_target|},
+			{||}
+		)
+	})
+	
+	MachineInternalEvents = {|
+		internal__
+	|}
+	
+	AUX(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = (
+		(
+			STM(id__,
+					    const_PID_kp,
+					    const_PID_ki,
+					    const_PID_kd,
+					    const_PID_step)
+				[|MachineMemorySyncSet|]
+			sbisim(diamond(MemoryN(id__, const_PID_kp, const_PID_ki, const_PID_kd, const_PID_step)))
+		)[[
+			err_output__.x____ <- err_output,
+			actual__.x____ <- actual,
+			target__.x____ <- target
+			| x____ <- TIDS
+		]]
+		\MachineMemoryHidingSet
+	)
+	[|{|terminate|}|>SKIP\MachineInternalEvents
+	
+	
+	STM_core(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = 
+		sbisim(diamond(STM(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)))
+		
+	AUX_opt(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = 
+		(MemorySTM_opt(id__,
+				    const_PID_kp,
+				    const_PID_ki,
+				    const_PID_kd,
+				    const_PID_step)
+		)[[
+			err_output__.x____ <- err_output,
+			actual__.x____ <- actual,
+			target__.x____ <- target
+			| x____ <- TIDS
+		]]
+		[|{|terminate|}|>SKIP\MachineInternalEvents
+
+	-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+			
+	FVS__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = AUX_opt(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step)
+	Dunopt__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = AUX(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) \ internal_events
+	D__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = AUX_opt(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) \ internal_events
+	O__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = sbisim(diamond(D__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step)))
+	VS__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = ShowV(FVS__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step))
+	VS_O__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = sbisim(diamond(VS__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step)))
+	HEXT__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) = O__(id__,
+			    const_PID_kp,
+			    const_PID_ki,
+			    const_PID_kd,
+			    const_PID_step) [|shared_variable_events|] SKIP	
+endmodule
+
+

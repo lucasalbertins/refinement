@@ -1,0 +1,81 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_AD_temp = {1..1}
+datatype alphabet_AD_temp = DecisionNode_MergeNode0_AD_temp_t_alphabet | init_AD_temp_t_alphabet| moveCall_0_2__AD_temp_t_alphabet| accept_obstacle_1_AD_temp_t_alphabet
+robochart_AD_temp = "SMovement_coreassertions.csp"
+robochart_alphabet_AD_temp = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countGet_AD_temp = {1..1}
+countSet_AD_temp = {1..1}
+countCe_AD_temp = {1..4}
+countUpdate_AD_temp = {1..1}
+countClear_AD_temp = {1..0}
+limiteUpdate_AD_temp = {(1)..(1)}
+channel startActivity_AD_temp: ID_AD_temp
+channel endActivity_AD_temp: ID_AD_temp
+channel ce_AD_temp: ID_AD_temp.countCe_AD_temp
+channel clear_AD_temp: ID_AD_temp.countClear_AD_temp
+channel update_AD_temp: ID_AD_temp.countUpdate_AD_temp.limiteUpdate_AD_temp
+channel endDiagram_AD_temp: ID_AD_temp
+channel dc
+channel begin, end:  {1..1}
+
+alphabet_Astah = {| startActivity_AD_temp, endActivity_AD_temp, ce_AD_temp, clear_AD_temp, update_AD_temp, endDiagram_AD_temp, dc |}
+
+MAIN = normal(AD_temp(1))
+END_DIAGRAM_AD_temp(id) = endDiagram_AD_temp.id -> SKIP
+AD_temp(ID_AD_temp) = (Internal_AD_temp(ID_AD_temp) [|{|update_AD_temp,clear_AD_temp,endDiagram_AD_temp|}|] TokenManager_AD_temp_t(ID_AD_temp,0,0))
+Internal_AD_temp(id) = StartActivity_AD_temp(id); Node_AD_temp(id); EndActivity_AD_temp(id)
+StartActivity_AD_temp(id) = startActivity_AD_temp.id -> SKIP
+EndActivity_AD_temp(id) = endActivity_AD_temp.id -> SKIP
+AlphabetDiagram_AD_temp(id,DecisionNode_MergeNode0_AD_temp_t_alphabet) = {|ce_AD_temp.id.1,null,set__DecisionNode_MergeNode0_AD_temp.id.1,ce_AD_temp.id.2,endDiagram_AD_temp.id|}
+AlphabetDiagram_AD_temp(id,init_AD_temp_t_alphabet) = {|update_AD_temp.id.1,ce_AD_temp.id.1,endDiagram_AD_temp.id|}
+AlphabetDiagram_AD_temp(id,moveCall_0_2__AD_temp_t_alphabet) = {|ce_AD_temp.id.3,SMovement::moveCall.0.2,ce_AD_temp.id.4,endDiagram_AD_temp.id|}
+AlphabetDiagram_AD_temp(id,accept_obstacle_1_AD_temp_t_alphabet) = {|ce_AD_temp.id.2,begin.1,end.1,ce_AD_temp.id.3,endDiagram_AD_temp.id|}
+AlphabetDiagram_AD_temp_t(id) = union(union(union(AlphabetDiagram_AD_temp(id,DecisionNode_MergeNode0_AD_temp_t_alphabet),AlphabetDiagram_AD_temp(id,init_AD_temp_t_alphabet)),AlphabetDiagram_AD_temp(id,moveCall_0_2__AD_temp_t_alphabet)),AlphabetDiagram_AD_temp(id,accept_obstacle_1_AD_temp_t_alphabet))
+
+ProcessDiagram_AD_temp(id,DecisionNode_MergeNode0_AD_temp_t_alphabet) = normal(DecisionNode_MergeNode0_AD_temp_t(id))
+ProcessDiagram_AD_temp(id,init_AD_temp_t_alphabet) = normal(init_AD_temp_t(id))
+ProcessDiagram_AD_temp(id,moveCall_0_2__AD_temp_t_alphabet) = normal(moveCall_0_2__AD_temp_t(id))
+ProcessDiagram_AD_temp(id,accept_obstacle_1_AD_temp_t_alphabet) = normal(accept_obstacle_1_AD_temp_t(id))
+Node_AD_temp(id) = || x:alphabet_AD_temp @ [AlphabetDiagram_AD_temp(id,x)] ProcessDiagram_AD_temp(id,x)
+InitialNode0_AD_temp_t(id) = update_AD_temp.id.1!(1-0) -> ((ce_AD_temp.id.1 -> SKIP))
+accept_obstacle_1_AD_temp(id) = ((ce_AD_temp.id.2 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_AD_temp.id.3 -> SKIP)); accept_obstacle_1_AD_temp(id)
+accept_obstacle_1_AD_temp_t(id) = accept_obstacle_1_AD_temp(id) /\ END_DIAGRAM_AD_temp(id)
+moveCall_0_2__AD_temp(id) = ((ce_AD_temp.id.3 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_AD_temp.id.4 -> SKIP)); moveCall_0_2__AD_temp(id)
+moveCall_0_2__AD_temp_t(id) = moveCall_0_2__AD_temp(id) /\ END_DIAGRAM_AD_temp(id)
+DecisionNode_MergeNode0_AD_temp(id) = ((ce_AD_temp.id.1 -> SKIP) []  ce_AD_temp.id.2 -> DecisionNode_MergeNode0_AD_temp(id)
+DecisionNode_MergeNode0_AD_temp_t(id) = DecisionNode_MergeNode0_AD_temp(id) /\ END_DIAGRAM_AD_temp(id)
+init_AD_temp_t(id) = (InitialNode0_AD_temp_t(id)) /\ END_DIAGRAM_AD_temp(id)
+
+
+TokenManager_AD_temp(id,x,init) = update_AD_temp.id?c?y:limiteUpdate_AD_temp -> x+y < 10 & x+y > -10 & TokenManager_AD_temp(id,x+y,1) [] clear_AD_temp.id?c -> endDiagram_AD_temp.id -> SKIP [] x == 0 & init == 1 & endDiagram_AD_temp.id -> SKIP
+TokenManager_AD_temp_t(id,x,init) = TokenManager_AD_temp(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL
+
+Prop = PROP(Wait_control_processes) 
+
+alphabet_robochart_AD_temp = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP(processes) = (MAIN [|{|begin, end|}|] WAIT_PROCCESSES(processes) ) \ {|begin, end|} /\ endActivity_AD_temp -> SKIP 
+
+Wait_AD_temp_1 = WAIT(alphabet_robochart_AD_temp, SMovement::obstacle.in)
+
+Wait_AD_temp_control_1 = begin.1 -> Wait_AD_temp_1; end.1 -> Wait_AD_temp_control_1
+
+Wait_control_processes = {Wait_AD_temp_control_1}
+
+
+
+
