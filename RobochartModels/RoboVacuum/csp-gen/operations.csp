@@ -1,0 +1,34 @@
+include "defs/operations_defs.csp"
+include "instantiations.csp"
+include "defs/robochart_defs.csp"
+include "defs/core_defs.csp"
+include "defs/interfaces_defs.csp"
+include "defs/ClearSM_defs.csp"
+include "defs/SpeedSM_defs.csp"
+include "defs/types_defs.csp"
+include "defs/AngularSpeedSM_defs.csp"
+include "defs/InputDuplicationSM_defs.csp"
+include "defs/functions_defs.csp"
+include "defs/PathPlanningSM_defs.csp"
+include "defs/DisplacementSM_defs.csp"
+include "defs/PID_defs.csp"
+include "defs/MidLevelSM_defs.csp"
+include "defs/LinearSpeedSM_defs.csp"
+include "defs/robot_defs.csp"
+
+include "defs/output_right_motor.csp"
+include "defs/output_left_motor.csp"
+include "defs/brush.csp"
+include "defs/vacuum.csp"
+
+channel r__
+
+			
+channel brushCall, brushRet
+channel vacuumCall, vacuumRet
+channel output_right_motorCall, output_right_motorRet
+channel output_left_motorCall, output_left_motorRet
+
+transparent diamond
+transparent sbisim
+transparent chase

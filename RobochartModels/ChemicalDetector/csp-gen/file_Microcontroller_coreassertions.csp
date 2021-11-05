@@ -1,0 +1,37 @@
+include "file_Microcontroller.csp"
+
+
+
+-- generate Microcontroller
+P_Microcontroller = let
+	id__ = 0
+	
+	
+	
+	const_Microcontroller_stm_ref0_flagTime = const_Signalling_flagTime
+		
+within
+	Microcontroller::O__(id__,
+			    const_Microcontroller_stm_ref0_flagTime)
+
+assert P_Microcontroller :[deadlock-free]	
+assert P_Microcontroller;RUN({r__}) :[deadlock-free]
+assert P_Microcontroller :[deterministic]
+assert P_Microcontroller :[divergence-free]
+
+-- generate Microcontroller_stm_ref0
+P_Microcontroller_stm_ref0 = let
+	id__ = 0
+	
+	
+	
+within
+	Microcontroller::stm_ref0::O__(
+		id__,
+		const_Signalling_flagTime
+	)
+assert P_Microcontroller_stm_ref0 :[deadlock-free]	
+assert P_Microcontroller_stm_ref0;RUN({r__}) :[deadlock-free]
+assert P_Microcontroller_stm_ref0 :[deterministic]
+assert P_Microcontroller_stm_ref0 :[divergence-free]
+

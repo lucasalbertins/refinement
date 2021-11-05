@@ -1,0 +1,11 @@
+module OP_decr
+exports
+	Timed(OneStep) {
+	D__(id__) = let
+	AUX(N) = if (N == 0) then SKIP else
+		  SKIP
+	      	      	within AUX(decr_BOUND)
+	
+	O__(id__) = D__(id__)
+	}
+endmodule

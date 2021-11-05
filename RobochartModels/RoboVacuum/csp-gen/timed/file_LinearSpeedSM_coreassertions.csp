@@ -1,0 +1,16 @@
+include "file_LinearSpeedSM.csp"
+
+-- generate LinearSpeedSM
+P_LinearSpeedSM = let
+	id = 0
+within
+	LinearSpeedSM::O__(
+		id
+	)
+assert P_LinearSpeedSM :[deadlock-free]	
+assert P_LinearSpeedSM;RUN({r__}) :[deadlock-free]
+assert P_LinearSpeedSM :[deterministic]
+assert P_LinearSpeedSM :[divergence-free]
+
+
+

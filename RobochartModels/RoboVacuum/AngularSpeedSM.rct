@@ -1,0 +1,61 @@
+stm AngularSpeedSM {
+	const t : int
+	var speed : int
+	var turn_angle : real
+	var direction : Direction
+	var al : TripleAxis
+	var ar : TripleAxis
+	initial i0
+
+	state wait_input {
+	}
+	state wait_ar {
+	}
+	state wait_al {
+	}
+	state update_value {
+		entry turn_angle = turn_angle + sqrt ( abs ( al . Y - ar . Y ) / acc_distance ) 
+		* t
+	}
+	transition t0 {
+		from i0
+		to wait_input
+		trigger
+		action turn_angle = 0
+	}
+	transition t2 {
+		from wait_input
+		to wait_ar
+		trigger acc_l ? al
+	}
+	transition t3 {
+		from wait_input
+		to wait_al
+		trigger acc_r ? ar
+	}
+	transition t4 {
+		from wait_ar
+		to update_value
+		trigger acc_r ? ar
+	}
+	transition t5 {
+		from wait_al
+		to update_value
+		trigger acc_l ? al
+	}
+	transition t6 {
+		from update_value
+		to wait_input
+		trigger
+		action 
+	
+	
+	
+	angle ! ( get_sign ( al . Y ) * floor ( turn_angle ) ) ; wait ( t )
+	}
+	const acc_distance : int
+	event acc_l : TripleAxis
+	event acc_r : TripleAxis
+
+	event angle : int
+}

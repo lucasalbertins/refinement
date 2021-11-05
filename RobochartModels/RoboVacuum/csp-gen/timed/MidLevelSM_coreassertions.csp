@@ -1,0 +1,6 @@
+-- generate includes
+include "defs/output_left_motor_coreassertions.csp"
+include "defs/MidLevelSM_coreassertions.csp"
+include "MidLevelSM.csp"
+include "defs/output_right_motor_coreassertions.csp"
+

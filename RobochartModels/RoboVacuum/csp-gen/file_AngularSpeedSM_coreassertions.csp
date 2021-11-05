@@ -1,0 +1,20 @@
+include "file_AngularSpeedSM.csp"
+
+-- generate AngularSpeedSM
+P_AngularSpeedSM = let
+	id = 0
+	const_AngularSpeedSM_t = 0
+	const_AngularSpeedSM_acc_distance = 0
+within
+	AngularSpeedSM::O__(
+		id,
+		const_AngularSpeedSM_t,
+		const_AngularSpeedSM_acc_distance
+	)
+assert P_AngularSpeedSM :[deadlock-free]	
+assert P_AngularSpeedSM;RUN({r__}) :[deadlock-free]
+assert P_AngularSpeedSM :[deterministic]
+assert P_AngularSpeedSM :[divergence-free]
+
+
+

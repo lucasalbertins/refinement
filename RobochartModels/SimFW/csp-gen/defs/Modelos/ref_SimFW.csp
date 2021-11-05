@@ -1,0 +1,64 @@
+--SMovement::
+--USAR tock dentro de /timed/defs/SMovement_coreassertions
+
+{- EXERCÍCIO
+O processo WaitSimFW está permitindo praticamente qualquer 
+implementação (que não diverge nem tenha deadlock), não é o 
+que queremos. Precisamos pensar em uma alternativa.
+-}
+
+include "SMovement_coreassertions.csp"
+--include "..\SimFW.csp"
+
+Recurse(S, P) = [] ev : S @ ev -> P --'Traces Model only'
+NRecurse(S, P) = |~| ev : S @ ev -> P --'failures and Divergences Model only'
+
+-- ALPHABET = {|SMovement::obstacle, SMovement::moveCall, SMovement::moveRet|}	
+
+Wait = Recurse({|SMovement::moveCall, SMovement::moveRet|}, Wait)
+		[]
+		checkObstacle
+
+checkObstacle = SMovement::obstacle.in -> Wait	
+
+Wait2 = NRecurse({|SMovement::moveCall, SMovement::moveRet|}, Wait2)
+		|~|
+		checkObstacle2	
+
+checkObstacle2 = SMovement::obstacle.in -> Wait2
+
+--beginCicle = Wait
+
+assert Wait [T= P_SMovement
+assert Wait2 [FD= P_SMovement
+
+--assert Property [FD= Sistem_SimFW
+
+{-
+	-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+	transparent diamond
+	transparent sbisim
+	transparent chase
+			
+	FVS__(id__) = AUX(id__)
+	D__(id__) = AUX(id__) \ internal_events
+	O__(id__) = sbisim(diamond(D__(id__)))
+	VS__(id__) = ShowV(FVS__(id__))
+	VS_O__(id__) = sbisim(diamond(VS__(id__)))
+	HEXT__(id__) = O__(id__) [|shared_variable_events|] SKIP
+
+	PROPRIEDADE SUGERIDA: Quando obstacle acontece em seguida bem 'move(0,lv)', depois de 'move' o padrão reinicia
+-}
+
+
+alphabet = {|SMovement::obstacle, SMovement::moveCall, SMovement::moveRet|}
+
+
+WaitSimFW = NRecurse(diff(alphabet, {SMovement::obstacle.in}), WaitSimFW)
+			|~|
+			checkObstacle_ 
+
+	checkObstacle_ = SMovement::obstacle.in -> WaitSimFW
+
+assert WaitSimFW [FD= P_SMovement
+

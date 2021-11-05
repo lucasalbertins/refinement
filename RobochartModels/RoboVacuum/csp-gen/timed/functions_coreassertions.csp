@@ -1,0 +1,3 @@
+-- generate includes
+include "functions.csp"
+

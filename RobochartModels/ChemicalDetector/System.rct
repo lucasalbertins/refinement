@@ -1,0 +1,44 @@
+diagram System module ChemicalDetectorSoftware {
+	robotic platform SensorVehicle {
+		event gas
+		event turn : real
+		event flag
+		event siren
+		event cd : Command
+		event light : Color
+		provides Speed
+	}
+
+	connection ctrl_ref0 on turn to SensorVehicle on turn (_async)
+
+	connection ctrl_ref0 on detect to ctrl_ref1 on alarm
+	
+	cref ctrl_ref0 = MainComputer
+
+	connection SensorVehicle on gas to ctrl_ref0 on gas ( _async )
+
+	connection SensorVehicle on cd to ctrl_ref0 on command ( _async )
+	
+	cref ctrl_ref1 = Microcontroller
+	
+	connection ctrl_ref1 on flag to SensorVehicle on flag ( _async )
+
+	connection ctrl_ref1 on siren to SensorVehicle on siren ( _async )
+
+	connection ctrl_ref1 on lights to SensorVehicle on light ( _async )
+}
+
+enumeration Command { faster left right back slower } enumeration Color { green amber
+red } enumeration Chemical {  anomaly danger innocuous } interface Speed {
+	incr()
+	decr()
+}
+
+operation incr () {
+	terminates 
+}
+
+operation decr () {
+	terminates
+}
+

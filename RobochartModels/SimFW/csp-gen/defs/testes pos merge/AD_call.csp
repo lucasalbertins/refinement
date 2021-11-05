@@ -1,0 +1,87 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_AD_call = {1..1}
+datatype alphabet_AD_call = ActivityFinal0_AD_call_t_alphabet | move_0_2__1_AD_call_t_alphabet| InitialNode0_AD_call_t_alphabet| accept_obstacle_1_AD_call_t_alphabet
+robochart_AD_call = "SMovement_coreassertions.csp"
+robochart_alphabet_AD_call = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_AD_call = {1..3}
+countUpdate_AD_call = {1..1}
+countClear_AD_call = {1..1}
+limiteUpdate_AD_call = {(1)..(1)}
+channel startActivity_AD_call: ID_AD_call
+channel endActivity_AD_call: ID_AD_call
+channel ce_AD_call: ID_AD_call.countCe_AD_call
+channel clear_AD_call: ID_AD_call.countClear_AD_call
+channel update_AD_call: ID_AD_call.countUpdate_AD_call.limiteUpdate_AD_call
+channel endDiagram_AD_call: ID_AD_call
+channel dc
+channel begin, end:  {1..1}
+
+alphabet_Astah_AD_call = {| startActivity_AD_call, endActivity_AD_call, ce_AD_call, clear_AD_call, update_AD_call, endDiagram_AD_call, dc |}
+
+MAIN = normal(AD_call(1))
+END_DIAGRAM_AD_call(id) = endDiagram_AD_call.id -> SKIP
+AD_call(ID_AD_call) = (Internal_AD_call(ID_AD_call) [|{|update_AD_call,clear_AD_call,endDiagram_AD_call|}|] TokenManager_AD_call_t(ID_AD_call,0,0))
+Internal_AD_call(id) = StartActivity_AD_call(id); Node_AD_call(id); EndActivity_AD_call(id)
+StartActivity_AD_call(id) = startActivity_AD_call.id -> SKIP
+EndActivity_AD_call(id) = endActivity_AD_call.id -> SKIP
+AlphabetDiagram_AD_call(id,ActivityFinal0_AD_call_t_alphabet) = {|ce_AD_call.id.3,clear_AD_call.id.1,endDiagram_AD_call.id|}
+AlphabetDiagram_AD_call(id,move_0_2__1_AD_call_t_alphabet) = {|ce_AD_call.id.2,ce_AD_call.id.3,endDiagram_AD_call.id|}
+AlphabetDiagram_AD_call(id,InitialNode0_AD_call_t_alphabet) = {|ce_AD_call.id.1,endDiagram_AD_call.id|}
+AlphabetDiagram_AD_call(id,accept_obstacle_1_AD_call_t_alphabet) = {|ce_AD_call.id.1,ce_AD_call.id.2,endDiagram_AD_call.id|}
+AlphabetDiagram_AD_call_t(id) = union(union(union(AlphabetDiagram_AD_call(id,ActivityFinal0_AD_call_t_alphabet),AlphabetDiagram_AD_call(id,move_0_2__1_AD_call_t_alphabet)),AlphabetDiagram_AD_call(id,InitialNode0_AD_call_t_alphabet)),AlphabetDiagram_AD_call(id,accept_obstacle_1_AD_call_t_alphabet))
+
+ProcessDiagram_AD_call(id,ActivityFinal0_AD_call_t_alphabet) = normal(ActivityFinal0_AD_call_t(id))
+ProcessDiagram_AD_call(id,move_0_2__1_AD_call_t_alphabet) = normal(move_0_2__1_AD_call_t(id))
+ProcessDiagram_AD_call(id,InitialNode0_AD_call_t_alphabet) = normal(InitialNode0_AD_call_t(id))
+ProcessDiagram_AD_call(id,accept_obstacle_1_AD_call_t_alphabet) = normal(accept_obstacle_1_AD_call_t(id))
+InitialNode0_AD_call(id) = update_AD_call.id.1!(1-0) -> ((ce_AD_call.id.1 -> SKIP))
+InitialNode0_AD_call_t(id) = InitialNode0_AD_call(id) /\ END_DIAGRAM_AD_call(id)
+move_0_2__1_AD_call(id) = ((ce_AD_call.id.2 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_AD_call.id.3 -> SKIP)); move_0_2__1_AD_call(id)
+move_0_2__1_AD_call_t(id) = move_0_2__1_AD_call(id) /\ END_DIAGRAM_AD_call(id)
+accept_obstacle_1_AD_call(id) = ((ce_AD_call.id.1 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_AD_call.id.2 -> SKIP)); accept_obstacle_1_AD_call(id)
+accept_obstacle_1_AD_call_t(id) = accept_obstacle_1_AD_call(id) /\ END_DIAGRAM_AD_call(id)
+ActivityFinal0_AD_call(id) = ((ce_AD_call.id.3 -> SKIP)); clear_AD_call.id.1 -> SKIP
+ActivityFinal0_AD_call_t(id) = ActivityFinal0_AD_call(id) /\ END_DIAGRAM_AD_call(id)
+
+TokenManager_AD_call(id,x,init) = update_AD_call.id?c?y:limiteUpdate_AD_call -> x+y < 10 & x+y > -10 & TokenManager_AD_call(id,x+y,1) [] clear_AD_call.id?c -> endDiagram_AD_call.id -> SKIP [] x == 0 & init == 1 & endDiagram_AD_call.id -> SKIP
+TokenManager_AD_call_t(id,x,init) = TokenManager_AD_call(id,x,init)
+
+assert Prop_AD_call [T= P_SMovement
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_AD_call(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_AD_call?id -> SKIP
+
+Prop_AD_call = PROP_AD_call(Wait_control_processes_AD_call) \ alphabet_Astah_AD_call 
+
+alphabet_robochart_AD_call = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP_AD_call(processes) = (MAIN [|{|begin, end, endDiagram_AD_call|}|] WAIT_PROCCESSES_AD_call(processes) ) \ {|begin, end|}
+
+Wait_AD_call_1 = WAIT(alphabet_robochart_AD_call, SMovement::obstacle.in)
+
+Wait_AD_call_control_1 = begin.1 -> Wait_AD_call_1; end.1 -> Wait_AD_call_control_1
+
+Wait_control_processes_AD_call = {Wait_AD_call_control_1}
+
+Node_AD_call(id) = composeNodes_AD_call(id)
+
+composeNodes_AD_call(id) = 
+	let
+	    alphabet_AD_call_s = seq(alphabet_AD_call)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_AD_call(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_AD_call(id,ev) 
+				[|union(diff(AlphabetDiagram_AD_call(id,ev),past),{endDiagram_AD_call.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_AD_call(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_AD_call_s,{})
+

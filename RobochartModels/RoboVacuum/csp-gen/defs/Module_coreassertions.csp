@@ -1,0 +1,338 @@
+include "core_defs.csp"
+include "Module.csp"
+include "file_robot_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate Module
+P_Module = let
+	id__ = 0
+
+
+	const_CleanSM_voltage = 0
+	const_DisplacementSM_t = 0
+	const_AngularSpeedSM_t = 0
+	const_AngularSpeedSM_acc_distance = 0
+	const_PathPlanningSM_cliff = 0
+	const_PathPlanningSM_nozzle = 0
+	const_PathPlanningSM_battery_low = 0
+	const_PathPlanningSM_sleep_time = 0
+	const_PathPlanningSM_acc_distance = 0
+	const_PID_kp = 0
+	const_PID_ki = 0
+	const_PID_kd = 0
+	const_PID_step = 0
+	const_MidLevelSM_step = 0
+	const_MidLevelSM_climb_speed = 0
+	const_MidLevelSM_descent_speed = 0
+	const_MidLevelSM_side_speed = 0
+	const_MidLevelSM_forward_angle = 0
+	const_MidLevelSM_left_angle = 0
+	const_MidLevelSM_right_angle = 0
+	const_MidLevelSM_turn_speed = 0
+	const_MidLevelSM_movesp = 0
+	const_MidLevelSM_stopsp = 0
+	const_SpeedSM_t = 0
+	
+	
+within
+	Module::O__(id__,
+			    const_Module_PathPlanningController_stm_ref6_kp,
+			    const_Module_PathPlanningController_stm_ref6_ki,
+			    const_Module_PathPlanningController_stm_ref6_kd,
+			    const_Module_PathPlanningController_stm_ref6_step,
+			    const_Module_PathPlanningController_stm_ref3_t,
+			    const_Module_PathPlanningController_stm_ref7_kp,
+			    const_Module_PathPlanningController_stm_ref7_ki,
+			    const_Module_PathPlanningController_stm_ref7_kd,
+			    const_Module_PathPlanningController_stm_ref7_step,
+			    const_Module_PathPlanningController_stm_ref8_step,
+			    const_Module_PathPlanningController_stm_ref8_climb_speed,
+			    const_Module_PathPlanningController_stm_ref8_descent_speed,
+			    const_Module_PathPlanningController_stm_ref8_side_speed,
+			    const_Module_PathPlanningController_stm_ref8_forward_angle,
+			    const_Module_PathPlanningController_stm_ref8_left_angle,
+			    const_Module_PathPlanningController_stm_ref8_right_angle,
+			    const_Module_PathPlanningController_stm_ref8_turn_speed,
+			    const_Module_PathPlanningController_stm_ref8_movesp,
+			    const_Module_PathPlanningController_stm_ref8_stopsp,
+			    const_Module_PathPlanningController_stm_ref1_t,
+			    const_Module_PathPlanningController_stm_ref2_t,
+			    const_Module_PathPlanningController_stm_ref4_voltage,
+			    const_Module_PathPlanningController_stm_ref0_cliff,
+			    const_Module_PathPlanningController_stm_ref0_nozzle,
+			    const_Module_PathPlanningController_stm_ref0_battery_low,
+			    const_Module_PathPlanningController_stm_ref0_sleep_time,
+			    const_Module_PathPlanningController_stm_ref0_acc_distance,
+			    const_Module_PathPlanningController_stm_ref5_t,
+			    const_Module_PathPlanningController_stm_ref5_acc_distance)
+assert P_Module :[deadlock-free]	
+assert P_Module;RUN({r__}) :[deadlock-free]
+assert P_Module :[deterministic]
+assert P_Module :[divergence-free]
+
+-- generate Module_PathPlanningController
+P_Module_PathPlanningController = let
+	id__ = 0
+	const_PathPlanningSM_cliff = 0
+	const_PathPlanningSM_nozzle = 0
+	const_PathPlanningSM_battery_low = 0
+	const_PathPlanningSM_sleep_time = 0
+	const_PathPlanningSM_acc_distance = 0
+	const_SpeedSM_t = 0
+	const_DisplacementSM_t = 0
+	const_CleanSM_voltage = 0
+	const_AngularSpeedSM_t = 0
+	const_AngularSpeedSM_acc_distance = 0
+	const_PID_kp = 0
+	const_PID_ki = 0
+	const_PID_kd = 0
+	const_PID_step = 0
+	const_MidLevelSM_step = 0
+	const_MidLevelSM_climb_speed = 0
+	const_MidLevelSM_descent_speed = 0
+	const_MidLevelSM_side_speed = 0
+	const_MidLevelSM_forward_angle = 0
+	const_MidLevelSM_left_angle = 0
+	const_MidLevelSM_right_angle = 0
+	const_MidLevelSM_turn_speed = 0
+	const_MidLevelSM_movesp = 0
+	const_MidLevelSM_stopsp = 0
+within
+	Module::PathPlanningController::O__(id__,
+			    const_Module_PathPlanningController_stm_ref0_cliff,
+			    const_Module_PathPlanningController_stm_ref0_nozzle,
+			    const_Module_PathPlanningController_stm_ref0_battery_low,
+			    const_Module_PathPlanningController_stm_ref0_sleep_time,
+			    const_Module_PathPlanningController_stm_ref0_acc_distance,
+			    const_Module_PathPlanningController_stm_ref1_t,
+			    const_Module_PathPlanningController_stm_ref2_t,
+			    const_Module_PathPlanningController_stm_ref3_t,
+			    const_Module_PathPlanningController_stm_ref4_voltage,
+			    const_Module_PathPlanningController_stm_ref5_t,
+			    const_Module_PathPlanningController_stm_ref5_acc_distance,
+			    const_Module_PathPlanningController_stm_ref6_kp,
+			    const_Module_PathPlanningController_stm_ref6_ki,
+			    const_Module_PathPlanningController_stm_ref6_kd,
+			    const_Module_PathPlanningController_stm_ref6_step,
+			    const_Module_PathPlanningController_stm_ref7_kp,
+			    const_Module_PathPlanningController_stm_ref7_ki,
+			    const_Module_PathPlanningController_stm_ref7_kd,
+			    const_Module_PathPlanningController_stm_ref7_step,
+			    const_Module_PathPlanningController_stm_ref8_step,
+			    const_Module_PathPlanningController_stm_ref8_climb_speed,
+			    const_Module_PathPlanningController_stm_ref8_descent_speed,
+			    const_Module_PathPlanningController_stm_ref8_side_speed,
+			    const_Module_PathPlanningController_stm_ref8_forward_angle,
+			    const_Module_PathPlanningController_stm_ref8_left_angle,
+			    const_Module_PathPlanningController_stm_ref8_right_angle,
+			    const_Module_PathPlanningController_stm_ref8_turn_speed,
+			    const_Module_PathPlanningController_stm_ref8_movesp,
+			    const_Module_PathPlanningController_stm_ref8_stopsp)
+
+assert P_Module_PathPlanningController :[deadlock-free]	
+assert P_Module_PathPlanningController;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController :[deterministic]
+assert P_Module_PathPlanningController :[divergence-free]
+
+-- generate Module_PathPlanningController_stm_ref0
+P_Module_PathPlanningController_stm_ref0 = let
+	id = 0
+	const_PathPlanningSM_cliff = 0
+	const_PathPlanningSM_nozzle = 0
+	const_PathPlanningSM_battery_low = 0
+	const_PathPlanningSM_sleep_time = 0
+	const_PathPlanningSM_acc_distance = 0
+within
+	Module::PathPlanningController::stm_ref0::O__(
+		id,
+		const_PathPlanningSM_cliff,
+		const_PathPlanningSM_nozzle,
+		const_PathPlanningSM_battery_low,
+		const_PathPlanningSM_sleep_time,
+		const_PathPlanningSM_acc_distance
+	)
+assert P_Module_PathPlanningController_stm_ref0 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref0;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref0 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref0 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref1
+P_Module_PathPlanningController_stm_ref1 = let
+	id = 0
+	const_SpeedSM_t = 0
+within
+	Module::PathPlanningController::stm_ref1::O__(
+		id,
+		const_SpeedSM_t
+	)
+assert P_Module_PathPlanningController_stm_ref1 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref1;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref1 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref1 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref2
+P_Module_PathPlanningController_stm_ref2 = let
+	id = 0
+	const_SpeedSM_t = 0
+within
+	Module::PathPlanningController::stm_ref2::O__(
+		id,
+		const_SpeedSM_t
+	)
+assert P_Module_PathPlanningController_stm_ref2 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref2;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref2 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref2 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref3
+P_Module_PathPlanningController_stm_ref3 = let
+	id = 0
+	const_DisplacementSM_t = 0
+within
+	Module::PathPlanningController::stm_ref3::O__(
+		id,
+		const_DisplacementSM_t
+	)
+assert P_Module_PathPlanningController_stm_ref3 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref3;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref3 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref3 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref4
+P_Module_PathPlanningController_stm_ref4 = let
+	id = 0
+	const_CleanSM_voltage = 0
+within
+	Module::PathPlanningController::stm_ref4::O__(
+		id,
+		const_CleanSM_voltage
+	)
+assert P_Module_PathPlanningController_stm_ref4 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref4;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref4 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref4 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref5
+P_Module_PathPlanningController_stm_ref5 = let
+	id = 0
+	const_AngularSpeedSM_t = 0
+	const_AngularSpeedSM_acc_distance = 0
+within
+	Module::PathPlanningController::stm_ref5::O__(
+		id,
+		const_AngularSpeedSM_t,
+		const_AngularSpeedSM_acc_distance
+	)
+assert P_Module_PathPlanningController_stm_ref5 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref5;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref5 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref5 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref6
+P_Module_PathPlanningController_stm_ref6 = let
+	id = 0
+	const_PID_kp = 0
+	const_PID_ki = 0
+	const_PID_kd = 0
+	const_PID_step = 0
+within
+	Module::PathPlanningController::stm_ref6::O__(
+		id,
+		const_PID_kp,
+		const_PID_ki,
+		const_PID_kd,
+		const_PID_step
+	)
+assert P_Module_PathPlanningController_stm_ref6 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref6;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref6 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref6 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref7
+P_Module_PathPlanningController_stm_ref7 = let
+	id = 0
+	const_PID_kp = 0
+	const_PID_ki = 0
+	const_PID_kd = 0
+	const_PID_step = 0
+within
+	Module::PathPlanningController::stm_ref7::O__(
+		id,
+		const_PID_kp,
+		const_PID_ki,
+		const_PID_kd,
+		const_PID_step
+	)
+assert P_Module_PathPlanningController_stm_ref7 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref7;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref7 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref7 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref8
+P_Module_PathPlanningController_stm_ref8 = let
+	id = 0
+	const_MidLevelSM_step = 0
+	const_MidLevelSM_climb_speed = 0
+	const_MidLevelSM_descent_speed = 0
+	const_MidLevelSM_side_speed = 0
+	const_MidLevelSM_forward_angle = 0
+	const_MidLevelSM_left_angle = 0
+	const_MidLevelSM_right_angle = 0
+	const_MidLevelSM_turn_speed = 0
+	const_MidLevelSM_movesp = 0
+	const_MidLevelSM_stopsp = 0
+within
+	Module::PathPlanningController::stm_ref8::O__(
+		id,
+		const_MidLevelSM_step,
+		const_MidLevelSM_climb_speed,
+		const_MidLevelSM_descent_speed,
+		const_MidLevelSM_side_speed,
+		const_MidLevelSM_forward_angle,
+		const_MidLevelSM_left_angle,
+		const_MidLevelSM_right_angle,
+		const_MidLevelSM_turn_speed,
+		const_MidLevelSM_movesp,
+		const_MidLevelSM_stopsp
+	)
+assert P_Module_PathPlanningController_stm_ref8 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref8;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref8 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref8 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref9
+P_Module_PathPlanningController_stm_ref9 = let
+	id = 0
+within
+	Module::PathPlanningController::stm_ref9::O__(
+		id
+	)
+assert P_Module_PathPlanningController_stm_ref9 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref9;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref9 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref9 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref10
+P_Module_PathPlanningController_stm_ref10 = let
+	id = 0
+within
+	Module::PathPlanningController::stm_ref10::O__(
+		id
+	)
+assert P_Module_PathPlanningController_stm_ref10 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref10;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref10 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref10 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref11
+P_Module_PathPlanningController_stm_ref11 = let
+	id = 0
+within
+	Module::PathPlanningController::stm_ref11::O__(
+		id
+	)
+assert P_Module_PathPlanningController_stm_ref11 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref11;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref11 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref11 :[divergence-free]
+-- generate Module_PathPlanningController_stm_ref12
+P_Module_PathPlanningController_stm_ref12 = let
+	id = 0
+within
+	Module::PathPlanningController::stm_ref12::O__(
+		id
+	)
+assert P_Module_PathPlanningController_stm_ref12 :[deadlock-free]	
+assert P_Module_PathPlanningController_stm_ref12;RUN({r__}) :[deadlock-free]
+assert P_Module_PathPlanningController_stm_ref12 :[deterministic]
+assert P_Module_PathPlanningController_stm_ref12 :[divergence-free]

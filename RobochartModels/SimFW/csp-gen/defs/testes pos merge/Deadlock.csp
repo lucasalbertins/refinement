@@ -1,0 +1,88 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_Deadlock = {1..1}
+datatype alphabet_Deadlock = DecisionNode_MergeNode0_Deadlock_t_alphabet | ActivityFinal1_Deadlock_t_alphabet| accept_obstacle_1_Deadlock_t_alphabet| move_0_2__1_Deadlock_t_alphabet| InitialNode0_Deadlock_t_alphabet
+robochart_Deadlock = "SMovement_coreassertions.csp"
+robochart_alphabet_Deadlock = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_Deadlock = {1..5}
+countUpdate_Deadlock = {1..2}
+countClear_Deadlock = {1..1}
+limiteUpdate_Deadlock = {(-1)..(1)}
+channel startActivity_Deadlock: ID_Deadlock
+channel endActivity_Deadlock: ID_Deadlock
+channel ce_Deadlock: ID_Deadlock.countCe_Deadlock
+channel clear_Deadlock: ID_Deadlock.countClear_Deadlock
+channel update_Deadlock: ID_Deadlock.countUpdate_Deadlock.limiteUpdate_Deadlock
+channel endDiagram_Deadlock: ID_Deadlock
+channel dc
+
+alphabet_Astah_Deadlock = {| startActivity_Deadlock, endActivity_Deadlock, ce_Deadlock, clear_Deadlock, update_Deadlock, endDiagram_Deadlock, dc |}
+
+MAIN = normal(Deadlock(1))
+END_DIAGRAM_Deadlock(id) = endDiagram_Deadlock.id -> SKIP
+Deadlock(ID_Deadlock) = (Internal_Deadlock(ID_Deadlock) [|{|update_Deadlock,clear_Deadlock,endDiagram_Deadlock|}|] TokenManager_Deadlock_t(ID_Deadlock,0,0))
+Internal_Deadlock(id) = StartActivity_Deadlock(id); Node_Deadlock(id); EndActivity_Deadlock(id)
+StartActivity_Deadlock(id) = startActivity_Deadlock.id -> SKIP
+EndActivity_Deadlock(id) = endActivity_Deadlock.id -> SKIP
+AlphabetDiagram_Deadlock(id,DecisionNode_MergeNode0_Deadlock_t_alphabet) = {|ce_Deadlock.id.4,dc,ce_Deadlock.id.5,ce_Deadlock.id.2,endDiagram_Deadlock.id|}
+AlphabetDiagram_Deadlock(id,ActivityFinal1_Deadlock_t_alphabet) = {|ce_Deadlock.id.5,clear_Deadlock.id.1,endDiagram_Deadlock.id|}
+AlphabetDiagram_Deadlock(id,accept_obstacle_1_Deadlock_t_alphabet) = {|ce_Deadlock.id.2,ce_Deadlock.id.1,ce_Deadlock.id.3,endDiagram_Deadlock.id|}
+AlphabetDiagram_Deadlock(id,move_0_2__1_Deadlock_t_alphabet) = {|ce_Deadlock.id.3,ce_Deadlock.id.4,endDiagram_Deadlock.id|}
+AlphabetDiagram_Deadlock(id,InitialNode0_Deadlock_t_alphabet) = {|ce_Deadlock.id.1,endDiagram_Deadlock.id|}
+AlphabetDiagram_Deadlock_t(id) = union(union(union(union(AlphabetDiagram_Deadlock(id,DecisionNode_MergeNode0_Deadlock_t_alphabet),AlphabetDiagram_Deadlock(id,ActivityFinal1_Deadlock_t_alphabet)),AlphabetDiagram_Deadlock(id,accept_obstacle_1_Deadlock_t_alphabet)),AlphabetDiagram_Deadlock(id,move_0_2__1_Deadlock_t_alphabet)),AlphabetDiagram_Deadlock(id,InitialNode0_Deadlock_t_alphabet))
+
+ProcessDiagram_Deadlock(id,DecisionNode_MergeNode0_Deadlock_t_alphabet) = normal(DecisionNode_MergeNode0_Deadlock_t(id))
+ProcessDiagram_Deadlock(id,ActivityFinal1_Deadlock_t_alphabet) = normal(ActivityFinal1_Deadlock_t(id))
+ProcessDiagram_Deadlock(id,accept_obstacle_1_Deadlock_t_alphabet) = normal(accept_obstacle_1_Deadlock_t(id))
+ProcessDiagram_Deadlock(id,move_0_2__1_Deadlock_t_alphabet) = normal(move_0_2__1_Deadlock_t(id))
+ProcessDiagram_Deadlock(id,InitialNode0_Deadlock_t_alphabet) = normal(InitialNode0_Deadlock_t(id))
+InitialNode0_Deadlock(id) = update_Deadlock.id.1!(1-0) -> ((ce_Deadlock.id.1 -> SKIP))
+InitialNode0_Deadlock_t(id) = InitialNode0_Deadlock(id) /\ END_DIAGRAM_Deadlock(id)
+accept_obstacle_1_Deadlock(id) = ((ce_Deadlock.id.2 -> SKIP) ||| (ce_Deadlock.id.1 -> SKIP)); SMovement::obstacle.in -> update_Deadlock.id.2!(1-2) -> ((ce_Deadlock.id.3 -> SKIP)); accept_obstacle_1_Deadlock(id)
+accept_obstacle_1_Deadlock_t(id) = accept_obstacle_1_Deadlock(id) /\ END_DIAGRAM_Deadlock(id)
+move_0_2__1_Deadlock(id) = ((ce_Deadlock.id.3 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_Deadlock.id.4 -> SKIP)); move_0_2__1_Deadlock(id)
+move_0_2__1_Deadlock_t(id) = move_0_2__1_Deadlock(id) /\ END_DIAGRAM_Deadlock(id)
+ActivityFinal1_Deadlock(id) = ((ce_Deadlock.id.5 -> SKIP)); clear_Deadlock.id.1 -> SKIP
+ActivityFinal1_Deadlock_t(id) = ActivityFinal1_Deadlock(id) /\ END_DIAGRAM_Deadlock(id)
+DecisionNode_MergeNode0_Deadlock(id) = ce_Deadlock.id.4 -> ((dc -> ce_Deadlock.id.5 -> SKIP) [] (dc -> ce_Deadlock.id.2 -> SKIP)); DecisionNode_MergeNode0_Deadlock(id)
+DecisionNode_MergeNode0_Deadlock_t(id) = DecisionNode_MergeNode0_Deadlock(id) /\ END_DIAGRAM_Deadlock(id) \{|dc|}
+
+TokenManager_Deadlock(id,x,init) = update_Deadlock.id?c?y:limiteUpdate_Deadlock -> x+y < 10 & x+y > -10 & TokenManager_Deadlock(id,x+y,1) [] clear_Deadlock.id?c -> endDiagram_Deadlock.id -> SKIP [] x == 0 & init == 1 & endDiagram_Deadlock.id -> SKIP
+TokenManager_Deadlock_t(id,x,init) = TokenManager_Deadlock(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_Deadlock(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_Deadlock?id -> SKIP
+
+Prop_Deadlock = PROP_Deadlock(Wait_control_processes_Deadlock) \ alphabet_Astah_Deadlock 
+
+alphabet_robochart_Deadlock = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP_Deadlock(processes) = (MAIN)
+
+Wait_control_processes_Deadlock = {}
+
+Node_Deadlock(id) = composeNodes_Deadlock(id)
+
+composeNodes_Deadlock(id) = 
+	let
+	    alphabet_Deadlock_s = seq(alphabet_Deadlock)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_Deadlock(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_Deadlock(id,ev) 
+				[|union(diff(AlphabetDiagram_Deadlock(id,ev),past),{endDiagram_Deadlock.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_Deadlock(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_Deadlock_s,{})
+

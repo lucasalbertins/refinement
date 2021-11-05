@@ -1,0 +1,68 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_DA_ = {1..1}
+datatype alphabet_DA_ = init_DA__t_alphabet | chaos_DA__t_alphabet
+robochart_DA_ = "SMovement_coreassertions.csp"
+robochart_alphabet_DA_ = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_DA_ = {1..1}
+countUpdate_DA_ = {1..1}
+countClear_DA_ = {1..0}
+limiteUpdate_DA_ = {(1)..(1)}
+channel startActivity_DA_: ID_DA_
+channel endActivity_DA_: ID_DA_
+channel ce_DA_: ID_DA_.countCe_DA_
+channel clear_DA_: ID_DA_.countClear_DA_
+channel update_DA_: ID_DA_.countUpdate_DA_.limiteUpdate_DA_
+channel endDiagram_DA_: ID_DA_
+channel dc
+channel chaos:  {1..1}
+
+alphabet_Astah = {| startActivity_DA_, endActivity_DA_, ce_DA_, clear_DA_, update_DA_, endDiagram_DA_, dc |}
+
+MAIN = normal(DA_(1))
+END_DIAGRAM_DA_(id) = endDiagram_DA_.id -> SKIP
+DA_(ID_DA_) = (Internal_DA_(ID_DA_) [|{|update_DA_,clear_DA_,endDiagram_DA_|}|] TokenManager_DA__t(ID_DA_,0,0))
+Internal_DA_(id) = StartActivity_DA_(id); Node_DA_(id); EndActivity_DA_(id)
+StartActivity_DA_(id) = startActivity_DA_.id -> SKIP
+EndActivity_DA_(id) = endActivity_DA_.id -> SKIP
+AlphabetDiagram_DA_(id,init_DA__t_alphabet) = {|update_DA_.id.1,ce_DA_.id.1,endDiagram_DA_.id|}
+AlphabetDiagram_DA_(id,chaos_DA__t_alphabet) = {|ce_DA_.id.1,chaos.1,endDiagram_DA_.id|}
+AlphabetDiagram_DA__t(id) = union(AlphabetDiagram_DA_(id,init_DA__t_alphabet),AlphabetDiagram_DA_(id,chaos_DA__t_alphabet))
+
+ProcessDiagram_DA_(id,init_DA__t_alphabet) = normal(init_DA__t(id))
+ProcessDiagram_DA_(id,chaos_DA__t_alphabet) = normal(chaos_DA__t(id))
+Node_DA_(id) = || x:alphabet_DA_ @ [AlphabetDiagram_DA_(id,x)] ProcessDiagram_DA_(id,x)
+InitialNode0_DA__t(id) = update_DA_.id.1!(1-0) -> ((ce_DA_.id.1 -> SKIP))
+chaos_DA_(id) = ((ce_DA_.id.1 -> SKIP)); chaos.1 -> SKIP;chaos_DA_(id)
+chaos_DA__t(id) = chaos_DA_(id) /\ END_DIAGRAM_DA_(id)
+init_DA__t(id) = (InitialNode0_DA__t(id)) /\ END_DIAGRAM_DA_(id)
+AlphabetMemchaos_DA_(id) = {|endDiagram_DA_.id|}
+
+TokenManager_DA_(id,x,init) = update_DA_.id?c?y:limiteUpdate_DA_ -> x+y < 10 & x+y > -10 & TokenManager_DA_(id,x+y,1) [] clear_DA_.id?c -> endDiagram_DA_.id -> SKIP [] x == 0 & init == 1 & endDiagram_DA_.id -> SKIP
+TokenManager_DA__t(id,x,init) = TokenManager_DA_(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL
+
+Prop = PROP(Wait_control_processes) 
+
+alphabet_robochart_DA_ = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP(processes) = (MAIN [|{|chaos|}|] WAIT_PROCCESSES(processes) ) \ {|chaos|}
+
+Wait_DA__chaos_1 = chaos.1 -> CHAOS(alphabet_robochart_DA_)
+
+Wait_control_processes = {Wait_DA__chaos_1}
+
+assert Prop \ alphabet_Astah [FD= CHAOS(alphabet_robochart_DA_)
+assert CHAOS(alphabet_robochart_DA_) [FD= Prop \ alphabet_Astah
