@@ -1,0 +1,21 @@
+include "file_operations_defs.csp"
+include "vacuum.csp"
+include "core_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate OP_vacuum
+P_OP_vacuum = let
+	id__ = 0
+	
+	voltage = 0
+	
+	
+	
+within
+	OP_vacuum::O__(id__,
+				voltage)
+assert P_OP_vacuum :[deadlock-free]	
+assert P_OP_vacuum;RUN({r__}) :[deadlock-free]
+assert P_OP_vacuum :[deterministic]
+assert P_OP_vacuum :[divergence-free]

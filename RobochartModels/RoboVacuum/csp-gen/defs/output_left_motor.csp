@@ -1,0 +1,17 @@
+	module OP_output_left_motor
+	exports
+		
+	-- These definitions are needed to make the structure of an incompletely defined operation compatible with that of fully defined operations
+	MemoryTransitions(id__) = STOP -- this is STOP because MemoryTransitions is put in a choice with the state machine's MemoryTransitions. if it were SKIP, a divergence would be introduced.
+	MemoryVariablesProcesses_output_left_motor = {}
+	MemoryVariablesSyncSet = {}
+	MemoryVariablesHideSet = {}
+	MachineMemorySyncSet = {}
+	MachineMemoryHidingSet = {}
+	channel internal__
+	D__(id__, x) = let
+		AUX(N) = 
+			if (N == 0) then SKIP else SKIP
+	within AUX(output_left_motor_BOUND)
+	O__(id__, x) = D__(id__, x)
+endmodule
