@@ -90,11 +90,12 @@ public class ADDefineDecision {
             
             // output channels
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                
+                // ===================================================
             	if (!(outFlows[i] instanceof IObjectFlow)) {
 					throw new ParsingException("As the incoming edge of the decision node "+ activityNode.getName() + " is an ObjectFlow, then all outgoing edges\r\n" + 
 							"shall be ObjectFlows");
 				}
+            	// ===================================================
             	
             	String outputType;
             	try {

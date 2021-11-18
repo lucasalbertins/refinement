@@ -96,8 +96,10 @@ public class ADDefineMerge {
 			for (int i = 0; i < inFlows.length; i++) {
 				Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inFlows[i].getId());
 				if (inFlows[i] instanceof IObjectFlow) {
-					throw new ParsingException("Merge Node " + activityNode.getName()
-							+ ": if the outgoing edge is a ControlFlow, all incoming edges must be ControlFlows.");
+					// =======================================================
+//					throw new ParsingException("Merge Node " + activityNode.getName()
+//							+ ": if the outgoing edge is a ControlFlow, all incoming edges must be ControlFlows.");
+					// =======================================================
 				} else {
 
 					String ceIn;

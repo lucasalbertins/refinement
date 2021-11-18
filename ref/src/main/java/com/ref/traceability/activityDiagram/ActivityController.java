@@ -117,7 +117,7 @@ public class ActivityController {
 
 	public HashMap<IActivity, List<String>> checkProperty(Activity activity,
 			ActivityDiagram activityDiagram, VerificationType type, CheckingProgressBar progressBar) throws Exception{
-		WellFormedness.WellFormed();
+//		WellFormedness.WellFormed();
 
 		settingFDR();
 		String roboPath = prop.getProperty(ROBOCHART_CSP_LOCATION_PROPERTY);
