@@ -9,6 +9,7 @@ import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
+import com.ref.interfaces.activityDiagram.IObjectNode;
 
 public class ADDefineMerge {
 
@@ -99,6 +100,44 @@ public class ADDefineMerge {
 					// =======================================================
 //					throw new ParsingException("Merge Node " + activityNode.getName()
 //							+ ": if the outgoing edge is a ControlFlow, all incoming edges must be ControlFlows.");
+					// =======================================================
+					String typeObject;
+					try {
+						typeObject = ((IObjectFlow) inFlows[i]).getBase().getName();
+					} catch (NullPointerException e) {
+						throw new ParsingException("Object flow does not have a type.");
+					}
+//					if (!typeObject.equals((((IObjectFlow)outFlows[0]).getBase().getName()))) {
+//						throw new ParsingException("Merge Node " + activityNode.getName() + ": incompatible types of incoming and outgoing edges.");
+//					}
+
+					String oeIn;
+					if (syncObjectsEdge.containsKey(key)) {
+						oeIn = syncObjectsEdge.get(key);
+//						if (!objectEdges.containsKey(oeIn)) {
+//							objectEdges.put(oeIn, typeObject);
+//						}
+					} else {
+						oeIn = adUtils.createOE();
+						syncObjectsEdge.put(key, oeIn);
+//						objectEdges.put(oeIn, typeObject);
+					}
+					
+					IFlow obEdge = inFlows[i];
+		        	while (!(obEdge.getSource() instanceof IObjectNode)) {
+		        		obEdge = obEdge.getSource().getIncomings()[0];
+		        	}
+
+		        	merge.append("(");
+		        	
+					String input = ADUtils.nameResolver(obEdge.getSource().getName());
+					adUtils.oe(alphabet, merge, oeIn, "?" + input, " -> ");
+
+					if (i >= 0 && i < inFlows.length - 1) {
+						merge.append("SKIP) [] ");
+					} else {
+						merge.append("SKIP)");
+					}
 					// =======================================================
 				} else {
 
