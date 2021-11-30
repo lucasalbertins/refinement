@@ -1,0 +1,81 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_test_ce = {1..1}
+datatype alphabet_test_ce = InitialNode0_test_ce_t_alphabet | DecisionNode_MergeNode0_test_ce_t_alphabet| accept_obstacle_1_test_ce_t_alphabet| moveCall_0_2__1_test_ce_t_alphabet
+robochart_test_ce = "SMovement_coreassertions.csp"
+robochart_alphabet_test_ce = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_test_ce = {1..4}
+countUpdate_test_ce = {1..1}
+countClear_test_ce = {1..0}
+limiteUpdate_test_ce = {(1)..(1)}
+channel startActivity_test_ce: ID_test_ce
+channel endActivity_test_ce: ID_test_ce
+channel ce_test_ce: ID_test_ce.countCe_test_ce
+channel clear_test_ce: ID_test_ce.countClear_test_ce
+channel update_test_ce: ID_test_ce.countUpdate_test_ce.limiteUpdate_test_ce
+channel endDiagram_test_ce: ID_test_ce
+channel dc
+
+alphabet_Astah_test_ce = {| startActivity_test_ce, endActivity_test_ce, ce_test_ce, clear_test_ce, update_test_ce, endDiagram_test_ce, dc |}
+
+MAIN = normal(test_ce(1))
+END_DIAGRAM_test_ce(id) = endDiagram_test_ce.id -> SKIP
+test_ce(ID_test_ce) = (Internal_test_ce(ID_test_ce) [|{|update_test_ce,clear_test_ce,endDiagram_test_ce|}|] TokenManager_test_ce_t(ID_test_ce,0,0))
+Internal_test_ce(id) = StartActivity_test_ce(id); Node_test_ce(id); EndActivity_test_ce(id)
+StartActivity_test_ce(id) = startActivity_test_ce.id -> SKIP
+EndActivity_test_ce(id) = endActivity_test_ce.id -> SKIP
+AlphabetDiagram_test_ce(id,InitialNode0_test_ce_t_alphabet) = {|ce_test_ce.id.1,endDiagram_test_ce.id|}
+AlphabetDiagram_test_ce(id,DecisionNode_MergeNode0_test_ce_t_alphabet) = {|ce_test_ce.id.1,ce_test_ce.id.2,ce_test_ce.id.3,endDiagram_test_ce.id|}
+AlphabetDiagram_test_ce(id,accept_obstacle_1_test_ce_t_alphabet) = {|ce_test_ce.id.3,ce_test_ce.id.4,endDiagram_test_ce.id|}
+AlphabetDiagram_test_ce(id,moveCall_0_2__1_test_ce_t_alphabet) = {|ce_test_ce.id.4,ce_test_ce.id.2,endDiagram_test_ce.id|}
+AlphabetDiagram_test_ce_t(id) = union(union(union(AlphabetDiagram_test_ce(id,InitialNode0_test_ce_t_alphabet),AlphabetDiagram_test_ce(id,DecisionNode_MergeNode0_test_ce_t_alphabet)),AlphabetDiagram_test_ce(id,accept_obstacle_1_test_ce_t_alphabet)),AlphabetDiagram_test_ce(id,moveCall_0_2__1_test_ce_t_alphabet))
+
+ProcessDiagram_test_ce(id,InitialNode0_test_ce_t_alphabet) = normal(InitialNode0_test_ce_t(id))
+ProcessDiagram_test_ce(id,DecisionNode_MergeNode0_test_ce_t_alphabet) = normal(DecisionNode_MergeNode0_test_ce_t(id))
+ProcessDiagram_test_ce(id,accept_obstacle_1_test_ce_t_alphabet) = normal(accept_obstacle_1_test_ce_t(id))
+ProcessDiagram_test_ce(id,moveCall_0_2__1_test_ce_t_alphabet) = normal(moveCall_0_2__1_test_ce_t(id))
+InitialNode0_test_ce(id) = update_test_ce.id.1!(1-0) -> ((ce_test_ce.id.1 -> SKIP))
+InitialNode0_test_ce_t(id) = InitialNode0_test_ce(id) /\ END_DIAGRAM_test_ce(id)
+DecisionNode_MergeNode0_test_ce(id) = ((ce_test_ce.id.1 -> SKIP) [] (ce_test_ce.id.2 -> SKIP)); ce_test_ce.id.3 -> DecisionNode_MergeNode0_test_ce(id)
+DecisionNode_MergeNode0_test_ce_t(id) = DecisionNode_MergeNode0_test_ce(id) /\ END_DIAGRAM_test_ce(id)
+moveCall_0_2__1_test_ce(id) = ((ce_test_ce.id.4 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_test_ce.id.2 -> SKIP)); moveCall_0_2__1_test_ce(id)
+moveCall_0_2__1_test_ce_t(id) = moveCall_0_2__1_test_ce(id) /\ END_DIAGRAM_test_ce(id)
+accept_obstacle_1_test_ce(id) = ((ce_test_ce.id.3 -> SKIP)); SMovement::obstacle.in -> ((ce_test_ce.id.4 -> SKIP)); accept_obstacle_1_test_ce(id)
+accept_obstacle_1_test_ce_t(id) = accept_obstacle_1_test_ce(id) /\ END_DIAGRAM_test_ce(id)
+
+TokenManager_test_ce(id,x,init) = update_test_ce.id?c?y:limiteUpdate_test_ce -> x+y < 10 & x+y > -10 & TokenManager_test_ce(id,x+y,1) [] clear_test_ce.id?c -> endDiagram_test_ce.id -> SKIP [] x == 0 & init == 1 & endDiagram_test_ce.id -> SKIP
+TokenManager_test_ce_t(id,x,init) = TokenManager_test_ce(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT_test_ce(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT_test_ce(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_test_ce(processes) = ||| CONTROL : processes @ CONTROL
+
+Prop_test_ce = PROP_test_ce(Wait_control_processes_test_ce) \ alphabet_Astah_test_ce
+
+alphabet_robochart_test_ce = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP_test_ce(processes) = (MAIN)
+
+Wait_control_processes_test_ce = {}
+
+Node_test_ce(id) = composeNodes_test_ce(id)
+
+composeNodes_test_ce(id) = 
+	let
+	    alphabet_test_ce_s = seq(alphabet_test_ce)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_test_ce(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_test_ce(id,ev) 
+				[|union(diff(AlphabetDiagram_test_ce(id,ev),past),{endDiagram_test_ce.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_test_ce(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_test_ce_s,{})

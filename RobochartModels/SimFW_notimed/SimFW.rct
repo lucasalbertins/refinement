@@ -1,0 +1,69 @@
+interface MovementI {
+	move( lv : real , av : real)
+	
+}
+
+interface ObstacleI {
+	
+event obstacle
+
+}
+
+
+module CFootBot {
+	
+	robotic platform FootBot {
+		provides MovementI
+		uses ObstacleI
+	}
+	cref ctrl_ref0 = Movement 
+	connection FootBot on obstacle to ctrl_ref0 on obstacle
+( _async )
+}
+
+controller Movement {
+	requires MovementI
+	uses ObstacleI
+	sref stm_ref0 = SMovement
+	
+	
+connection Movement on obstacle to stm_ref0 on obstacle
+}
+
+
+stm SMovement {
+	requires MovementI
+	uses ObstacleI
+	const lv : real
+
+	const av : real
+	initial i1
+	state Moving {
+		entry move ( lv , 0 )
+	}
+	state Turning {
+		
+	
+	entry move( 0 , av )
+	}
+	transition t1 {
+		from i1
+		to Moving
+	}
+	transition t2 {
+		from Moving
+		to Turning
+		trigger  
+	obstacle
+	}
+	transition t3 {
+		from Turning
+		to Moving
+		}
+}
+
+
+operation move( lv : real , av : real) {
+	terminates
+}
+

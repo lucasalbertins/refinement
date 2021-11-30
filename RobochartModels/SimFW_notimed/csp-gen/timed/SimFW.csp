@@ -1,0 +1,10 @@
+include "defs/timed_definitions.csp"
+include "defs/robochart_defs.csp"
+include "defs/core_defs.csp"
+include "defs/SimFW_defs.csp"
+include "defs/SimFW.csp"
+include "instantiations.csp"
+--transparent wbisim -- <<-- essa linha foi comentada para funcionar
+transparent chase
+		
+channel r__

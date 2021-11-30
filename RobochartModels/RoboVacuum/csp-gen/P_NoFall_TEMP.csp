@@ -1,0 +1,150 @@
+transparent normal
+include "file_PathPlanningSM_coreassertions.csp"
+ID_P_NoFall_TEMP = {1..1}
+datatype alphabet_P_NoFall_TEMP = signal_move_forward_1_P_NoFall_TEMP_t_alphabet | DecisionNode_MergeNode7_P_NoFall_TEMP_t_alphabet| signal_move_forward_2_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode8_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode9_P_NoFall_TEMP_t_alphabet| InitialNode0_P_NoFall_TEMP_t_alphabet| accept_ultrasonic_1_P_NoFall_TEMP_t_alphabet| signal_turn_Direction_left__3_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode0_P_NoFall_TEMP_t_alphabet| signal_turn_Direction_left__2_P_NoFall_TEMP_t_alphabet| signal_turn_Direction_left__1_P_NoFall_TEMP_t_alphabet| signal_turn_Direction_right__1_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode1_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode2_P_NoFall_TEMP_t_alphabet| signal_turn_Direction_right__2_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode5_P_NoFall_TEMP_t_alphabet| DecisionNode_MergeNode6_P_NoFall_TEMP_t_alphabet
+core_int_P_NoFall_TEMP = {(-2)..2}
+robochart_P_NoFall_TEMP = "file_PathPlanningSM_coreassertions.csp"
+robochart_alphabet_P_NoFall_TEMP = {|PathPlanningSM::move_forward.out,PathPlanningSM::turn.out.Direction_left,PathPlanningSM::turn.out.Direction_right,PathPlanningSM::clean.out.true,PathPlanningSM::clean.out.false,PathPlanningSM::charging.in,PathPlanningSM::stop.out,PathPlanningSM::displacement.out,PathPlanningSM::displacement.in,PathPlanningSM::ultrasonic.in,PathPlanningSM::battery_level.in|}
+countGet_P_NoFall_TEMP = {1..1}
+countSet_P_NoFall_TEMP = {1..1}
+countCe_P_NoFall_TEMP = {1..17}
+countOe_P_NoFall_TEMP = {1..5}
+countUpdate_P_NoFall_TEMP = {1..1}
+countClear_P_NoFall_TEMP = {1..0}
+limiteUpdate_P_NoFall_TEMP = {(1)..(1)}
+channel startActivity_P_NoFall_TEMP: ID_P_NoFall_TEMP
+channel endActivity_P_NoFall_TEMP: ID_P_NoFall_TEMP
+channel get_u_ultrasonic_P_NoFall_TEMP: ID_P_NoFall_TEMP.countGet_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel set_u_ultrasonic_P_NoFall_TEMP: ID_P_NoFall_TEMP.countSet_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel ce_P_NoFall_TEMP: ID_P_NoFall_TEMP.countCe_P_NoFall_TEMP
+channel oe_3_P_NoFall_TEMP: ID_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel oe_2_P_NoFall_TEMP: ID_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel oe_5_P_NoFall_TEMP: ID_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel oe_1_P_NoFall_TEMP: ID_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel oe_4_P_NoFall_TEMP: ID_P_NoFall_TEMP.core_int_P_NoFall_TEMP
+channel clear_P_NoFall_TEMP: ID_P_NoFall_TEMP.countClear_P_NoFall_TEMP
+channel update_P_NoFall_TEMP: ID_P_NoFall_TEMP.countUpdate_P_NoFall_TEMP.limiteUpdate_P_NoFall_TEMP
+channel endDiagram_P_NoFall_TEMP: ID_P_NoFall_TEMP
+channel dc
+
+alphabet_Astah_P_NoFall_TEMP = {| startActivity_P_NoFall_TEMP, endActivity_P_NoFall_TEMP, ce_P_NoFall_TEMP, oe_3_P_NoFall_TEMP, oe_2_P_NoFall_TEMP, oe_5_P_NoFall_TEMP, oe_1_P_NoFall_TEMP, oe_4_P_NoFall_TEMP, clear_P_NoFall_TEMP, update_P_NoFall_TEMP, endDiagram_P_NoFall_TEMP, dc |}
+
+MAIN = normal(P_NoFall_TEMP(1))
+END_DIAGRAM_P_NoFall_TEMP(id) = endDiagram_P_NoFall_TEMP.id -> SKIP
+P_NoFall_TEMP(ID_P_NoFall_TEMP) = (Internal_P_NoFall_TEMP(ID_P_NoFall_TEMP) [|{|update_P_NoFall_TEMP,clear_P_NoFall_TEMP,endDiagram_P_NoFall_TEMP|}|] TokenManager_P_NoFall_TEMP_t(ID_P_NoFall_TEMP,0,0))
+Internal_P_NoFall_TEMP(id) = StartActivity_P_NoFall_TEMP(id); Node_P_NoFall_TEMP(id); EndActivity_P_NoFall_TEMP(id)
+StartActivity_P_NoFall_TEMP(id) = startActivity_P_NoFall_TEMP.id -> SKIP
+EndActivity_P_NoFall_TEMP(id) = endActivity_P_NoFall_TEMP.id -> SKIP
+AlphabetDiagram_P_NoFall_TEMP(id,signal_move_forward_1_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.8,ce_P_NoFall_TEMP.id.3,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode7_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.9,ce_P_NoFall_TEMP.id.10,ce_P_NoFall_TEMP.id.8,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,signal_move_forward_2_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.14,ce_P_NoFall_TEMP.id.4,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode8_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.13,ce_P_NoFall_TEMP.id.17,ce_P_NoFall_TEMP.id.15,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode9_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.15,dc,ce_P_NoFall_TEMP.id.16,ce_P_NoFall_TEMP.id.14,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,InitialNode0_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.1,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,accept_ultrasonic_1_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.2,oe_1_P_NoFall_TEMP.id,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__3_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.16,ce_P_NoFall_TEMP.id.5,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode0_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.1,ce_P_NoFall_TEMP.id.3,ce_P_NoFall_TEMP.id.4,ce_P_NoFall_TEMP.id.5,oe_2_P_NoFall_TEMP.id,ce_P_NoFall_TEMP.id.2,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__2_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.11,ce_P_NoFall_TEMP.id.13,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__1_P_NoFall_TEMP_t_alphabet) = {|oe_4_P_NoFall_TEMP.id,ce_P_NoFall_TEMP.id.6,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_right__1_P_NoFall_TEMP_t_alphabet) = {|oe_5_P_NoFall_TEMP.id,ce_P_NoFall_TEMP.id.7,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode1_P_NoFall_TEMP_t_alphabet) = {|oe_1_P_NoFall_TEMP.id,dc,oe_2_P_NoFall_TEMP.id,oe_3_P_NoFall_TEMP.id,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode2_P_NoFall_TEMP_t_alphabet) = {|oe_3_P_NoFall_TEMP.id,dc,oe_4_P_NoFall_TEMP.id,oe_5_P_NoFall_TEMP.id,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_right__2_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.12,ce_P_NoFall_TEMP.id.17,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode5_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.6,dc,ce_P_NoFall_TEMP.id.9,ce_P_NoFall_TEMP.id.11,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode6_P_NoFall_TEMP_t_alphabet) = {|ce_P_NoFall_TEMP.id.7,dc,ce_P_NoFall_TEMP.id.10,ce_P_NoFall_TEMP.id.12,endDiagram_P_NoFall_TEMP.id|}
+AlphabetDiagram_P_NoFall_TEMP_t(id) = union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(AlphabetDiagram_P_NoFall_TEMP(id,signal_move_forward_1_P_NoFall_TEMP_t_alphabet),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode7_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,signal_move_forward_2_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode8_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode9_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,InitialNode0_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,accept_ultrasonic_1_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__3_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode0_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__2_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__1_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_right__1_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode1_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode2_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,signal_turn_Direction_right__2_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode5_P_NoFall_TEMP_t_alphabet)),AlphabetDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode6_P_NoFall_TEMP_t_alphabet))
+
+ProcessDiagram_P_NoFall_TEMP(id,signal_move_forward_1_P_NoFall_TEMP_t_alphabet) = normal(signal_move_forward_1_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode7_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode7_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,signal_move_forward_2_P_NoFall_TEMP_t_alphabet) = normal(signal_move_forward_2_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode8_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode8_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode9_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode9_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,InitialNode0_P_NoFall_TEMP_t_alphabet) = normal(InitialNode0_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,accept_ultrasonic_1_P_NoFall_TEMP_t_alphabet) = normal(accept_ultrasonic_1_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__3_P_NoFall_TEMP_t_alphabet) = normal(signal_turn_Direction_left__3_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode0_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode0_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__2_P_NoFall_TEMP_t_alphabet) = normal(signal_turn_Direction_left__2_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,signal_turn_Direction_left__1_P_NoFall_TEMP_t_alphabet) = normal(signal_turn_Direction_left__1_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,signal_turn_Direction_right__1_P_NoFall_TEMP_t_alphabet) = normal(signal_turn_Direction_right__1_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode1_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode1_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode2_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode2_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,signal_turn_Direction_right__2_P_NoFall_TEMP_t_alphabet) = normal(signal_turn_Direction_right__2_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode5_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode5_P_NoFall_TEMP_t(id))
+ProcessDiagram_P_NoFall_TEMP(id,DecisionNode_MergeNode6_P_NoFall_TEMP_t_alphabet) = normal(DecisionNode_MergeNode6_P_NoFall_TEMP_t(id))
+InitialNode0_P_NoFall_TEMP(id) = update_P_NoFall_TEMP.id.1!(1-0) -> ((ce_P_NoFall_TEMP.id.1 -> SKIP))
+InitialNode0_P_NoFall_TEMP_t(id) = InitialNode0_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+accept_ultrasonic_1_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.2 -> SKIP)); WAIT_accept_ultrasonic_1(id, alphabet_robochart_P_NoFall_TEMP) [| {|set_u_ultrasonic_P_NoFall_TEMP.id |} |> get_u_ultrasonic_P_NoFall_TEMP.id.1?u -> ((oe_1_P_NoFall_TEMP.id!u -> SKIP)); accept_ultrasonic_1_P_NoFall_TEMP(id)
+accept_ultrasonic_1_P_NoFall_TEMP_t(id) = ((accept_ultrasonic_1_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)) [|{|get_u_ultrasonic_P_NoFall_TEMP.id,set_u_ultrasonic_P_NoFall_TEMP.id,endDiagram_P_NoFall_TEMP.id|}|] Mem_ultrasonic_P_NoFall_TEMP_u_t(id,-2)) \{|get_u_ultrasonic_P_NoFall_TEMP.id,set_u_ultrasonic_P_NoFall_TEMP.id|}
+DecisionNode_MergeNode0_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.1 -> SKIP) [] (ce_P_NoFall_TEMP.id.3 -> SKIP) [] (ce_P_NoFall_TEMP.id.4 -> SKIP) [] (ce_P_NoFall_TEMP.id.5 -> SKIP) [] (oe_2_P_NoFall_TEMP.id?u -> SKIP)); ce_P_NoFall_TEMP.id.2 -> DecisionNode_MergeNode0_P_NoFall_TEMP(id)
+DecisionNode_MergeNode0_P_NoFall_TEMP_t(id) = DecisionNode_MergeNode0_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+DecisionNode_MergeNode2_P_NoFall_TEMP(id) = oe_3_P_NoFall_TEMP.id?u -> (true & (dc -> oe_4_P_NoFall_TEMP.id!u -> SKIP) [] true & (dc -> oe_5_P_NoFall_TEMP.id!u -> SKIP)); DecisionNode_MergeNode2_P_NoFall_TEMP(id)
+DecisionNode_MergeNode2_P_NoFall_TEMP_t(id) = (DecisionNode_MergeNode2_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)) \{|dc|}
+signal_turn_Direction_left__1_P_NoFall_TEMP(id) = ((oe_4_P_NoFall_TEMP.id?x -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_NoFall_TEMP.id.6 -> SKIP)); signal_turn_Direction_left__1_P_NoFall_TEMP(id)
+signal_turn_Direction_left__1_P_NoFall_TEMP_t(id) = signal_turn_Direction_left__1_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+signal_turn_Direction_right__1_P_NoFall_TEMP(id) = ((oe_5_P_NoFall_TEMP.id?x -> SKIP)); PathPlanningSM::turn.out.Direction_right -> ((ce_P_NoFall_TEMP.id.7 -> SKIP)); signal_turn_Direction_right__1_P_NoFall_TEMP(id)
+signal_turn_Direction_right__1_P_NoFall_TEMP_t(id) = signal_turn_Direction_right__1_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+DecisionNode_MergeNode1_P_NoFall_TEMP(id) = oe_1_P_NoFall_TEMP.id?u -> (u<1 & (dc -> oe_2_P_NoFall_TEMP.id!u -> SKIP) [] u>=1 & (dc -> oe_3_P_NoFall_TEMP.id!u -> SKIP)); DecisionNode_MergeNode1_P_NoFall_TEMP(id)
+DecisionNode_MergeNode1_P_NoFall_TEMP_t(id) = (DecisionNode_MergeNode1_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)) \{|dc|}
+signal_move_forward_1_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.8 -> SKIP)); PathPlanningSM::move_forward.out -> ((ce_P_NoFall_TEMP.id.3 -> SKIP)); signal_move_forward_1_P_NoFall_TEMP(id)
+signal_move_forward_1_P_NoFall_TEMP_t(id) = signal_move_forward_1_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+DecisionNode_MergeNode7_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.9 -> SKIP) [] (ce_P_NoFall_TEMP.id.10 -> SKIP)); ce_P_NoFall_TEMP.id.8 -> DecisionNode_MergeNode7_P_NoFall_TEMP(id)
+DecisionNode_MergeNode7_P_NoFall_TEMP_t(id) = DecisionNode_MergeNode7_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+DecisionNode_MergeNode5_P_NoFall_TEMP(id) = ce_P_NoFall_TEMP.id.6 -> ((dc -> ce_P_NoFall_TEMP.id.9 -> SKIP) [] (dc -> ce_P_NoFall_TEMP.id.11 -> SKIP)); DecisionNode_MergeNode5_P_NoFall_TEMP(id)
+DecisionNode_MergeNode5_P_NoFall_TEMP_t(id) = DecisionNode_MergeNode5_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id) \{|dc|}
+DecisionNode_MergeNode6_P_NoFall_TEMP(id) = ce_P_NoFall_TEMP.id.7 -> ((dc -> ce_P_NoFall_TEMP.id.10 -> SKIP) [] (dc -> ce_P_NoFall_TEMP.id.12 -> SKIP)); DecisionNode_MergeNode6_P_NoFall_TEMP(id)
+DecisionNode_MergeNode6_P_NoFall_TEMP_t(id) = DecisionNode_MergeNode6_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id) \{|dc|}
+signal_turn_Direction_left__2_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.11 -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_NoFall_TEMP.id.13 -> SKIP)); signal_turn_Direction_left__2_P_NoFall_TEMP(id)
+signal_turn_Direction_left__2_P_NoFall_TEMP_t(id) = signal_turn_Direction_left__2_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+signal_move_forward_2_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.14 -> SKIP)); PathPlanningSM::move_forward.out -> ((ce_P_NoFall_TEMP.id.4 -> SKIP)); signal_move_forward_2_P_NoFall_TEMP(id)
+signal_move_forward_2_P_NoFall_TEMP_t(id) = signal_move_forward_2_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+DecisionNode_MergeNode9_P_NoFall_TEMP(id) = ce_P_NoFall_TEMP.id.15 -> ((dc -> ce_P_NoFall_TEMP.id.16 -> SKIP) [] (dc -> ce_P_NoFall_TEMP.id.14 -> SKIP)); DecisionNode_MergeNode9_P_NoFall_TEMP(id)
+DecisionNode_MergeNode9_P_NoFall_TEMP_t(id) = DecisionNode_MergeNode9_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id) \{|dc|}
+signal_turn_Direction_left__3_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.16 -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_NoFall_TEMP.id.5 -> SKIP)); signal_turn_Direction_left__3_P_NoFall_TEMP(id)
+signal_turn_Direction_left__3_P_NoFall_TEMP_t(id) = signal_turn_Direction_left__3_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+signal_turn_Direction_right__2_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.12 -> SKIP)); PathPlanningSM::turn.out.Direction_right -> ((ce_P_NoFall_TEMP.id.17 -> SKIP)); signal_turn_Direction_right__2_P_NoFall_TEMP(id)
+signal_turn_Direction_right__2_P_NoFall_TEMP_t(id) = signal_turn_Direction_right__2_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+DecisionNode_MergeNode8_P_NoFall_TEMP(id) = ((ce_P_NoFall_TEMP.id.13 -> SKIP) [] (ce_P_NoFall_TEMP.id.17 -> SKIP)); ce_P_NoFall_TEMP.id.15 -> DecisionNode_MergeNode8_P_NoFall_TEMP(id)
+DecisionNode_MergeNode8_P_NoFall_TEMP_t(id) = DecisionNode_MergeNode8_P_NoFall_TEMP(id) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+Mem_ultrasonic_P_NoFall_TEMP_u(id,u) = get_u_ultrasonic_P_NoFall_TEMP.id?c!u -> Mem_ultrasonic_P_NoFall_TEMP_u(id,u) [] set_u_ultrasonic_P_NoFall_TEMP.id?c?u -> Mem_ultrasonic_P_NoFall_TEMP_u(id,u)
+Mem_ultrasonic_P_NoFall_TEMP_u_t(id,u) = Mem_ultrasonic_P_NoFall_TEMP_u(id,u) /\ END_DIAGRAM_P_NoFall_TEMP(id)
+
+TokenManager_P_NoFall_TEMP(id,x,init) = update_P_NoFall_TEMP.id?c?y:limiteUpdate_P_NoFall_TEMP -> x+y < 10 & x+y > -10 & TokenManager_P_NoFall_TEMP(id,x+y,1) [] clear_P_NoFall_TEMP.id?c -> endDiagram_P_NoFall_TEMP.id -> SKIP [] x == 0 & init == 1 & endDiagram_P_NoFall_TEMP.id -> SKIP
+TokenManager_P_NoFall_TEMP_t(id,x,init) = TokenManager_P_NoFall_TEMP(id,x,init)
+
+assert Prop_P_NoFall_TEMP [T= P_PathPlanningSM
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT_accept_ultrasonic_1(id, alphabet) = 
+NRecurse(diff(alphabet, {|PathPlanningSM::ultrasonic.in|}), WAIT_accept_ultrasonic_1(id, alphabet))
+ |~| 
+PathPlanningSM::ultrasonic.in?u -> set_u_ultrasonic_P_NoFall_TEMP.id?c!u -> SKIP
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_P_NoFall_TEMP(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_P_NoFall_TEMP?id -> SKIP
+
+Prop_P_NoFall_TEMP = PROP_P_NoFall_TEMP(Wait_control_processes_P_NoFall_TEMP) \ alphabet_Astah_P_NoFall_TEMP 
+
+alphabet_robochart_P_NoFall_TEMP = {| PathPlanningSM::move_forward.out, PathPlanningSM::turn.out.Direction_left, PathPlanningSM::turn.out.Direction_right, PathPlanningSM::stop.out, PathPlanningSM::ultrasonic.in.-2, PathPlanningSM::ultrasonic.in.-1, PathPlanningSM::ultrasonic.in.0, PathPlanningSM::ultrasonic.in.1, PathPlanningSM::ultrasonic.in.2, PathPlanningSM::battery_level.in.-2, PathPlanningSM::battery_level.in.-1, PathPlanningSM::battery_level.in.0, PathPlanningSM::battery_level.in.1, PathPlanningSM::battery_level.in.2, PathPlanningSM::charging.in, PathPlanningSM::clean.out.false, PathPlanningSM::clean.out.true, PathPlanningSM::displacement.in.-2, PathPlanningSM::displacement.in.-1, PathPlanningSM::displacement.in.0, PathPlanningSM::displacement.in.1, PathPlanningSM::displacement.in.2, PathPlanningSM::displacement.out.0 |}
+
+PROP_P_NoFall_TEMP(processes) = (MAIN)
+
+Wait_control_processes_P_NoFall_TEMP = {}
+
+Node_P_NoFall_TEMP(id) = composeNodes_P_NoFall_TEMP(id)
+
+composeNodes_P_NoFall_TEMP(id) = 
+	let
+	    alphabet_P_NoFall_TEMP_s = seq(alphabet_P_NoFall_TEMP)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_P_NoFall_TEMP(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_P_NoFall_TEMP(id,ev) 
+				[|union(diff(AlphabetDiagram_P_NoFall_TEMP(id,ev),past),{endDiagram_P_NoFall_TEMP.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_P_NoFall_TEMP(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_P_NoFall_TEMP_s,{})
+

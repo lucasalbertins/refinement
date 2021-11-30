@@ -90,12 +90,28 @@ public class ADDefineDecision {
             
             // output channels
             for (int i = 0; i < outFlows.length; i++) {    //creates the parallel output channels
-                // ===================================================
             	if (!(outFlows[i] instanceof IObjectFlow)) {
-					throw new ParsingException("As the incoming edge of the decision node "+ activityNode.getName() + " is an ObjectFlow, then all outgoing edges\r\n" + 
-							"shall be ObjectFlows");
+            		// ===================================================
+//  					 throw new ParsingException("As the incoming edge of the decision node "+ activityNode.getName() + " is an ObjectFlow, then all outgoing edges\r\n" + 
+//  						"shall be ObjectFlows");
+					// ===================================================
+					String ceIn;
+
+					if (syncChannelsEdge.containsKey(key)) {
+						ceIn = syncChannelsEdge.get(key);
+					} else {
+						ceIn = adUtils.createCE();
+						syncChannelsEdge.put(key, ceIn);
+					}
+					decision.append("(");
+
+					if (i >= 0 && i < outFlows.length - 1) {
+						adUtils.ce(alphabet, decision, ceIn, " -> SKIP) [] ");
+					} else {
+						adUtils.ce(alphabet, decision, ceIn, " -> SKIP)");
+					}
+					// ===================================================
 				}
-            	// ===================================================
             	
             	String outputType;
             	try {

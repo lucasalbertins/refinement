@@ -1,0 +1,89 @@
+transparent normal
+include "SMovement_coreassertions.csp"
+ID_DA_1utl_1cb = {1..1}
+datatype alphabet_DA_1utl_1cb = accept_obstacle_1_DA_1utl_1cb_t_alphabet | DecisionNode_MergeNode0_DA_1utl_1cb_t_alphabet| init_DA_1utl_1cb_t_alphabet| moveCall_0_2__DA_1utl_1cb_t_alphabet| chaos_DA_1utl_1cb_t_alphabet
+robochart_DA_1utl_1cb = "SMovement_coreassertions.csp"
+robochart_alphabet_DA_1utl_1cb = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_DA_1utl_1cb = {1..6}
+countUpdate_DA_1utl_1cb = {1..1}
+countClear_DA_1utl_1cb = {1..0}
+limiteUpdate_DA_1utl_1cb = {(1)..(1)}
+channel startActivity_DA_1utl_1cb: ID_DA_1utl_1cb
+channel endActivity_DA_1utl_1cb: ID_DA_1utl_1cb
+channel ce_DA_1utl_1cb: ID_DA_1utl_1cb.countCe_DA_1utl_1cb
+channel clear_DA_1utl_1cb: ID_DA_1utl_1cb.countClear_DA_1utl_1cb
+channel update_DA_1utl_1cb: ID_DA_1utl_1cb.countUpdate_DA_1utl_1cb.limiteUpdate_DA_1utl_1cb
+channel endDiagram_DA_1utl_1cb: ID_DA_1utl_1cb
+--channel SMovement::moveCall.0.2: ID_DA_1utl_1cb
+channel dc
+channel begin, end:  {1..1}
+channel chaos:  {1..1}
+
+alphabet_Astah = {| startActivity_DA_1utl_1cb, endActivity_DA_1utl_1cb, ce_DA_1utl_1cb, clear_DA_1utl_1cb, update_DA_1utl_1cb, endDiagram_DA_1utl_1cb, dc |}
+
+MAIN = normal(DA_1utl_1cb(1))
+END_DIAGRAM_DA_1utl_1cb(id) = endDiagram_DA_1utl_1cb.id -> SKIP
+DA_1utl_1cb(ID_DA_1utl_1cb) = (Internal_DA_1utl_1cb(ID_DA_1utl_1cb) [|{|update_DA_1utl_1cb,clear_DA_1utl_1cb,endDiagram_DA_1utl_1cb|}|] TokenManager_DA_1utl_1cb_t(ID_DA_1utl_1cb,0,0))
+Internal_DA_1utl_1cb(id) = StartActivity_DA_1utl_1cb(id); Node_DA_1utl_1cb(id); EndActivity_DA_1utl_1cb(id)
+StartActivity_DA_1utl_1cb(id) = startActivity_DA_1utl_1cb.id -> SKIP
+EndActivity_DA_1utl_1cb(id) = endActivity_DA_1utl_1cb.id -> SKIP
+AlphabetDiagram_DA_1utl_1cb(id,accept_obstacle_1_DA_1utl_1cb_t_alphabet) = {|ce_DA_1utl_1cb.id.3,begin.1,end.1,ce_DA_1utl_1cb.id.5,endDiagram_DA_1utl_1cb.id|}
+AlphabetDiagram_DA_1utl_1cb(id,DecisionNode_MergeNode0_DA_1utl_1cb_t_alphabet) = {|ce_DA_1utl_1cb.id.2,dc,ce_DA_1utl_1cb.id.3,ce_DA_1utl_1cb.id.4,endDiagram_DA_1utl_1cb.id|}
+AlphabetDiagram_DA_1utl_1cb(id,init_DA_1utl_1cb_t_alphabet) = {|update_DA_1utl_1cb.id.1,ce_DA_1utl_1cb.id.1,endDiagram_DA_1utl_1cb.id|}
+AlphabetDiagram_DA_1utl_1cb(id,moveCall_0_2__DA_1utl_1cb_t_alphabet) = {|ce_DA_1utl_1cb.id.5,SMovement::moveCall.0.2,ce_DA_1utl_1cb.id.6,endDiagram_DA_1utl_1cb.id|}
+AlphabetDiagram_DA_1utl_1cb(id,chaos_DA_1utl_1cb_t_alphabet) = {|ce_DA_1utl_1cb.id.4,chaos.1,endDiagram_DA_1utl_1cb.id|}
+AlphabetDiagram_DA_1utl_1cb_t(id) = union(union(union(union(AlphabetDiagram_DA_1utl_1cb(id,accept_obstacle_1_DA_1utl_1cb_t_alphabet),AlphabetDiagram_DA_1utl_1cb(id,DecisionNode_MergeNode0_DA_1utl_1cb_t_alphabet)),AlphabetDiagram_DA_1utl_1cb(id,init_DA_1utl_1cb_t_alphabet)),AlphabetDiagram_DA_1utl_1cb(id,moveCall_0_2__DA_1utl_1cb_t_alphabet)),AlphabetDiagram_DA_1utl_1cb(id,chaos_DA_1utl_1cb_t_alphabet))
+
+ProcessDiagram_DA_1utl_1cb(id,accept_obstacle_1_DA_1utl_1cb_t_alphabet) = normal(accept_obstacle_1_DA_1utl_1cb_t(id))
+ProcessDiagram_DA_1utl_1cb(id,DecisionNode_MergeNode0_DA_1utl_1cb_t_alphabet) = normal(DecisionNode_MergeNode0_DA_1utl_1cb_t(id))
+ProcessDiagram_DA_1utl_1cb(id,init_DA_1utl_1cb_t_alphabet) = normal(init_DA_1utl_1cb_t(id))
+ProcessDiagram_DA_1utl_1cb(id,moveCall_0_2__DA_1utl_1cb_t_alphabet) = normal(moveCall_0_2__DA_1utl_1cb_t(id))
+ProcessDiagram_DA_1utl_1cb(id,chaos_DA_1utl_1cb_t_alphabet) = normal(chaos_DA_1utl_1cb_t(id))
+Node_DA_1utl_1cb(id) = || x:alphabet_DA_1utl_1cb @ [AlphabetDiagram_DA_1utl_1cb(id,x)] ProcessDiagram_DA_1utl_1cb(id,x)
+InitialNode0_DA_1utl_1cb_t(id) = update_DA_1utl_1cb.id.1!(1-0) -> ((ce_DA_1utl_1cb.id.1 -> SKIP))
+DecisionNode_MergeNode0_DA_1utl_1cb(id) = ce_DA_1utl_1cb.id.2 -> ((dc -> ce_DA_1utl_1cb.id.3 -> SKIP) [] (dc -> ce_DA_1utl_1cb.id.4 -> SKIP)); DecisionNode_MergeNode0_DA_1utl_1cb(id)
+DecisionNode_MergeNode0_DA_1utl_1cb_t(id) = DecisionNode_MergeNode0_DA_1utl_1cb(id) /\ END_DIAGRAM_DA_1utl_1cb(id) \{|dc|}
+accept_obstacle_1_DA_1utl_1cb(id) = ((ce_DA_1utl_1cb.id.3 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_DA_1utl_1cb.id.5 -> SKIP)); accept_obstacle_1_DA_1utl_1cb(id)
+accept_obstacle_1_DA_1utl_1cb_t(id) = accept_obstacle_1_DA_1utl_1cb(id) /\ END_DIAGRAM_DA_1utl_1cb(id)
+moveCall_0_2__DA_1utl_1cb(id) = ((ce_DA_1utl_1cb.id.5 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_DA_1utl_1cb.id.6 -> SKIP)); moveCall_0_2__DA_1utl_1cb(id)
+moveCall_0_2__DA_1utl_1cb_t(id) = moveCall_0_2__DA_1utl_1cb(id) /\ END_DIAGRAM_DA_1utl_1cb(id)
+chaos_DA_1utl_1cb(id) = ((ce_DA_1utl_1cb.id.4 -> SKIP)); chaos.1 -> SKIP;chaos_DA_1utl_1cb(id)
+chaos_DA_1utl_1cb_t(id) = chaos_DA_1utl_1cb(id) /\ END_DIAGRAM_DA_1utl_1cb(id)
+init_DA_1utl_1cb_t(id) = (InitialNode0_DA_1utl_1cb_t(id)) /\ END_DIAGRAM_DA_1utl_1cb(id)
+AlphabetMemchaos_DA_1utl_1cb(id) = {|endDiagram_DA_1utl_1cb.id|}
+
+TokenManager_DA_1utl_1cb(id,x,init) = update_DA_1utl_1cb.id?c?y:limiteUpdate_DA_1utl_1cb -> x+y < 10 & x+y > -10 & TokenManager_DA_1utl_1cb(id,x+y,1) [] clear_DA_1utl_1cb.id?c -> endDiagram_DA_1utl_1cb.id -> SKIP [] x == 0 & init == 1 & endDiagram_DA_1utl_1cb.id -> SKIP
+TokenManager_DA_1utl_1cb_t(id,x,init) = TokenManager_DA_1utl_1cb(id,x,init)
+
+assert MAIN :[deadlock free]
+assert MAIN :[divergence free]
+assert MAIN :[deterministic]
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES(processes) = ||| CONTROL : processes @ CONTROL
+
+Prop = PROP(Wait_control_processes) 
+
+alphabet_robochart_DA_1utl_1cb = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP(processes) = (MAIN [|{|begin, end, chaos|}|] WAIT_PROCCESSES(processes) ) \ {|begin, end, chaos|}
+
+Wait_DA_1utl_1cb_1 = WAIT(alphabet_robochart_DA_1utl_1cb, SMovement::obstacle.in)
+
+Wait_DA_1utl_1cb_control_1 = begin.1 -> Wait_DA_1utl_1cb_1; end.1 -> Wait_DA_1utl_1cb_control_1
+
+Wait_DA_1utl_1cb_chaos_1 = chaos.1 -> CHAOS(alphabet_robochart_DA_1utl_1cb)
+
+Wait_control_processes = {Wait_DA_1utl_1cb_control_1, Wait_DA_1utl_1cb_chaos_1}
+
+assert Wait_DA_1utl_1cb_1 [FD= Prop \ alphabet_Astah
+assert Prop \ alphabet_Astah [FD= Wait_DA_1utl_1cb_1
+
+assert Prop \ alphabet_Astah [FD= CHAOS(alphabet_robochart_DA_1utl_1cb)
+assert CHAOS(alphabet_robochart_DA_1utl_1cb) [FD= Prop \ alphabet_Astah 
