@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:description="http://www.eclipse.org/sirius/description/1.1.0" xmlns:description_1="http://www.eclipse.org/sirius/diagram/description/1.1.0" xmlns:diagram="http://www.eclipse.org/sirius/diagram/1.1.0" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns:robochart="http://www.robocalc.circus/RoboChart" xmlns:style="http://www.eclipse.org/sirius/diagram/description/style/1.1.0" xmlns:viewpoint="http://www.eclipse.org/sirius/1.1.0" xsi:schemaLocation="http://www.eclipse.org/sirius/description/1.1.0 http://www.eclipse.org/sirius/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description http://www.eclipse.org/sirius/diagram/description/style/1.1.0 http://www.eclipse.org/sirius/diagram/1.1.0#//description/style">
-  <viewpoint:DAnalysis uid="_E47uYD6tEeqxn9KO78sDmQ" selectedViews="_H-qJMD6tEeqxn9KO78sDmQ" version="14.5.0.202104161500">
+  <viewpoint:DAnalysis uid="_E47uYD6tEeqxn9KO78sDmQ" selectedViews="_H-qJMD6tEeqxn9KO78sDmQ" version="14.5.1.202106111100">
     <semanticResources>SimFW.rct</semanticResources>
     <semanticResources>platform:/plugin/circus.robocalc.robochart.textual/lib/robochart/sequence_toolkit.rct</semanticResources>
     <semanticResources>platform:/plugin/circus.robocalc.robochart.textual/lib/robochart/core.rct</semanticResources>
@@ -9,7 +9,7 @@
     <semanticResources>platform:/plugin/circus.robocalc.robochart.textual/lib/robochart/function_toolkit.rct</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_H-qJMD6tEeqxn9KO78sDmQ">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/circus.robocalc.robochart.graphical/description/robochart.odesign#//@ownedViewpoints[name='RoboChartID']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_H_RNMD6tEeqxn9KO78sDmQ" name="SimFW.rct" repPath="#_H-yFAD6tEeqxn9KO78sDmQ" changeId="38819fd5-a5a5-4b90-98c3-eae48a7b25c2">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_H_RNMD6tEeqxn9KO78sDmQ" name="SimFW.rct" repPath="#_H-yFAD6tEeqxn9KO78sDmQ" changeId="3f493847-58b7-4d5a-9816-0046f78bdcc8">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/circus.robocalc.robochart.graphical/description/robochart.odesign#//@ownedViewpoints[name='RoboChartID']/@ownedRepresentations[name='SpecificationID']"/>
         <target xmi:type="robochart:RCPackage" href="SimFW.rct#/"/>
       </ownedRepresentationDescriptors>
@@ -392,7 +392,7 @@
           </children>
           <styles xmi:type="notation:ConnectorStyle" xmi:id="_L145cz6tEeqxn9KO78sDmQ" routing="Rectilinear"/>
           <styles xmi:type="notation:FontStyle" xmi:id="_L145dD6tEeqxn9KO78sDmQ" fontName="Ubuntu" fontHeight="10"/>
-          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_L145dT6tEeqxn9KO78sDmQ" points="[-68, 7, 266, 7]$[-283, 7, 51, 7]"/>
+          <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_L145dT6tEeqxn9KO78sDmQ" points="[-81, 33, 266, 24]$[-296, 33, 51, 24]"/>
           <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_L16HkD6tEeqxn9KO78sDmQ" id="(0.5,0.5)"/>
           <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_L16HkT6tEeqxn9KO78sDmQ" id="(0.6554054054054055,0.5)"/>
         </edges>
