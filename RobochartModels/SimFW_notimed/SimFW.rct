@@ -34,9 +34,10 @@ connection Movement on obstacle to stm_ref0 on obstacle
 stm SMovement {
 	requires MovementI
 	uses ObstacleI
-	const lv : real
+	
 
-	const av : real
+	const lv : real = 1
+	const av : real = - 2
 	initial i1
 	state Moving {
 		entry move ( lv , 0 )

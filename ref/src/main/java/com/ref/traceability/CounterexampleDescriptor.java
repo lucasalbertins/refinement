@@ -151,29 +151,33 @@ public class CounterexampleDescriptor {
     	ILinkPresentation msg = null;
     	IMessage m = null;
     	String[] split = events.get(i).split("\\.");
-    	String ev = split[0].toString();
-    	String args = "";
-    	String arg1 = split[split.length-1].toString();
-    	String arg2 = split[split.length-2].toString();
-    	if (!(arg1.equals("in")) && !(arg1.equals("out"))) {
-			args = arg1;
-			if (!(arg2.equals("in")) && !(arg2.equals("out")) && !(arg2.equals(ev))) {
-				args += "," + arg2;
-			}
-		}
+    	String ev = "";
+    	StringBuilder sbArgs = new StringBuilder();
+    	
+    	for (int l = 0; l < split.length; l++) {
+    		if (l == 0) ev = split[l].toString();
+    		else {
+    			if (!(split[l].equals("in")) && !(split[l].equals("out"))) {
+    				if (l != events.size()-1) sbArgs.append(split[l] + ",");
+    				else sbArgs.append(split[l]);
+    			} else {
+    				sbArgs.append("");
+    			}
+    		}
+    	}    		
     	
     	if (events.get(i).contains(".in")) {
     		msg = de.createMessage(ev, myLifelines.get(0), myLifelines.get(1), msgPosition);
     		m = (IMessage) msg.getModel();
-    		m.setArgument(args);
+    		m.setArgument(sbArgs.toString());
 		} else if (events.get(i).contains(".out")) {
 			msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(0), msgPosition);
 			m = (IMessage) msg.getModel();
-			m.setArgument(args);
+			m.setArgument(sbArgs.toString());
 		} else {
 			msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(0), msgPosition);
 			m = (IMessage) msg.getModel();
-			m.setArgument(args);
+			m.setArgument(sbArgs.toString());
 		}    	
     	if (i == events.size()-1) {
 			msg.setProperty("line.color", "#FF0000");
@@ -182,9 +186,48 @@ public class CounterexampleDescriptor {
 		}
 		m.setAsynchronous(true);
 		msgPosition += 50;
-			
+
     	return msgPosition;
     }
+//    private int BuildMessage(int msgPosition, List<String> events, SequenceDiagramEditor de, List<INodePresentation> myLifelines, 
+//    		List<ILinkPresentation> msgs, int i) throws InvalidEditingException {
+//    	ILinkPresentation msg = null;
+//    	IMessage m = null;
+//    	String[] split = events.get(i).split("\\.");
+//    	String ev = split[0].toString();
+//    	String args = "";
+//    	String arg1 = split[split.length-1].toString();
+//    	String arg2 = split[split.length-2].toString();
+//    	if (!(arg1.equals("in")) && !(arg1.equals("out"))) {
+//    		args = arg1;
+//    		if (!(arg2.equals("in")) && !(arg2.equals("out")) && !(arg2.equals(ev))) {
+//    			args += "," + arg2;
+//    		}
+//    	}
+//    	
+//    	if (events.get(i).contains(".in")) {
+//    		msg = de.createMessage(ev, myLifelines.get(0), myLifelines.get(1), msgPosition);
+//    		m = (IMessage) msg.getModel();
+//    		m.setArgument(args);
+//    	} else if (events.get(i).contains(".out")) {
+//    		msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(0), msgPosition);
+//    		m = (IMessage) msg.getModel();
+//    		m.setArgument(args);
+//    	} else {
+//    		msg = de.createMessage(ev, myLifelines.get(1), myLifelines.get(0), msgPosition);
+//    		m = (IMessage) msg.getModel();
+//    		m.setArgument(args);
+//    	}    	
+//    	if (i == events.size()-1) {
+//    		msg.setProperty("line.color", "#FF0000");
+//    		msg.setProperty("font.color", "#FF0000");
+////			msg.setProperty(PresentationPropertyConstants.Key.FONT_COLOR, "#FF0000");
+//    	}
+//    	m.setAsynchronous(true);
+//    	msgPosition += 50;
+//    	
+//    	return msgPosition;
+//    }
     
     private <T extends INamedElement> T findNamedElement(INamedElement[] children, String name, Class<T> clazz) {
         for (INamedElement child : children) {
