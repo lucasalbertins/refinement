@@ -1,0 +1,70 @@
+-- generate --
+
+-- generate nat
+nametype core_nat = union({0..2},{calc_type_min(Union(
+			{{0},{0}}))..calc_type_max(Union({{0},{0}}))})
+
+-- generate const_SMovement_av
+const_SMovement_av = 0
+
+-- generate move_BOUND
+move_BOUND = 2
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- generate string
+nametype core_string = LSeq(Char,2)
+
+-- generate real
+nametype core_real = union({ -2..2},{calc_type_min(Union(
+			{{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{0},{lv|lv <- { -2..2}},{av|av <- { -2..2}},{0}}))..calc_type_max(Union({{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{ -2..2},{0},{lv|lv <- { -2..2}},{av|av <- { -2..2}},{0}}))}) 
+
+-- CLOCKS
+nametype core_clock_type = {0..10}
+
+-- BASIC FUNCTIONS
+
+-- generate const_SMovement_lv
+const_SMovement_lv = 0
+
+-- generate int
+nametype core_int = union({ -2..2},{calc_type_min(Union(
+			{{0},{0}}))..calc_type_max(Union({{0},{0}}))})
+
+-- generate const_Movement_stm_ref0_lv
+const_Movement_stm_ref0_lv = 0
+
+-- generate -- OPERATION BOUNDS
+
+-- generate Div
+Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
+
+-- generate Neg
+Neg(e1,T) = if member(-e1,T) then -e1 else e1
+
+-- generate boolean
+nametype core_boolean = Bool
+
+-- generate Mult
+Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
+
+-- generate Modulus
+Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
+
+-- generate const_Movement_stm_ref0_av
+const_Movement_stm_ref0_av = 0
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate Plus
+Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
+
+-- generate Minus
+Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
+
