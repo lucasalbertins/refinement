@@ -1,0 +1,53 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 03-03-2022 19:11:24
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+include "Movement.csp"
+include "core_defs.csp"
+include "state_defs.csp"
+include "file_SimFW_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate Movement
+P_Movement = let
+	id__ = 0
+	
+	
+	
+	const_Movement_stm_ref0_lv = 1
+	const_Movement_stm_ref0_av = Neg(2, core_int)
+		
+within
+	Movement::O__(id__,
+			    const_Movement_stm_ref0_lv,
+			    const_Movement_stm_ref0_av)
+
+assert P_Movement :[deadlock-free]	
+assert P_Movement;RUN({r__}) :[deadlock-free]
+assert P_Movement :[deterministic]
+assert P_Movement :[divergence-free]
+
+-- generate Movement_stm_ref0
+P_Movement_stm_ref0 = let
+	id__ = 0
+	
+	
+	const_SMovement_lv = 1
+	const_SMovement_av = Neg(2, core_int)
+	
+within
+	Movement::stm_ref0::O__(
+		id__,
+		const_SMovement_lv,
+		const_SMovement_av
+	)
+assert P_Movement_stm_ref0 :[deadlock-free]	
+assert P_Movement_stm_ref0;RUN({r__}) :[deadlock-free]
+assert P_Movement_stm_ref0 :[deterministic]
+assert P_Movement_stm_ref0 :[divergence-free]

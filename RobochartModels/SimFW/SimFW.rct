@@ -34,20 +34,18 @@ connection Movement on obstacle to stm_ref0 on obstacle
 stm SMovement {
 	requires MovementI
 	uses ObstacleI
-	const lv : real
-	const PI: real
-	var x : nat
-	clock MBC
+	
+
+	const lv : real = 1
+	const av : real = - 2
 	initial i1
 	state Moving {
-		
-	
-	entry move( lv , 0) ; wait ( 1 )
+		entry move ( lv , 0 )
 	}
 	state Turning {
 		
 	
-	entry move( 0 , av)
+	entry move( 0 , av )
 	}
 	transition t1 {
 		from i1
@@ -56,19 +54,17 @@ stm SMovement {
 	transition t2 {
 		from Moving
 		to Turning
-		trigger obstacle # MBC
+		trigger  
+	obstacle
 	}
 	transition t3 {
 		from Turning
 		to Moving
-		//trigger
-		condition since ( MBC ) >= PI / av
-	}
-const av : real
-
+		}
 }
 
 
 operation move( lv : real , av : real) {
 	terminates
 }
+
