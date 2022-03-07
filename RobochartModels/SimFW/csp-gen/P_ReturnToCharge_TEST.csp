@@ -1,0 +1,307 @@
+transparent normal
+include "file_SimFW_coreassertions.csp"
+ID_P_ReturnToCharge_TEST = {1..1}
+ID_P_NoFall = {1..1}
+datatype alphabet_P_ReturnToCharge_TEST = signal_move_forward_2_P_ReturnToCharge_TEST_t_alphabet | InitialNode0_P_ReturnToCharge_TEST_t_alphabet| signal_move_forward_1_P_ReturnToCharge_TEST_t_alphabet| accept_ultrasonic_1_P_ReturnToCharge_TEST_t_alphabet| accept_charging_1_P_ReturnToCharge_TEST_t_alphabet| P_NoFall_P_ReturnToCharge_TEST_t_alphabet| x_1_P_ReturnToCharge_TEST_t_alphabet| DecisionNode_MergeNode0_P_ReturnToCharge_TEST_t_alphabet| signal_turn_Direction_left__4_P_ReturnToCharge_TEST_t_alphabet| signal_turn_Direction_left__3_P_ReturnToCharge_TEST_t_alphabet| accept_battery_level_1_P_ReturnToCharge_TEST_t_alphabet| DecisionNode_MergeNode4_P_ReturnToCharge_TEST_t_alphabet| DecisionNode_MergeNode2_P_ReturnToCharge_TEST_t_alphabet| signal_turn_Direction_left__2_P_ReturnToCharge_TEST_t_alphabet| signal_clean_false__1_P_ReturnToCharge_TEST_t_alphabet| signal_turn_Direction_left__1_P_ReturnToCharge_TEST_t_alphabet| DecisionNode_MergeNode3_P_ReturnToCharge_TEST_t_alphabet
+core_int_P_ReturnToCharge_TEST = {(-2)..2}
+robochart_alphabet_P_ReturnToCharge_TEST = {|PathPlanningSM::move_forward.out,PathPlanningSM::turn.out.Direction_left,PathPlanningSM::clean.out.false,PathPlanningSM::charging.in,PathPlanningSM::battery_level.in,PathPlanningSM::ultrasonic.in|}
+countGet_P_ReturnToCharge_TEST = {1..2}
+countSet_P_ReturnToCharge_TEST = {1..1}
+countCe_P_ReturnToCharge_TEST = {1..12}
+countOe_P_ReturnToCharge_TEST = {1..6}
+countUpdate_P_ReturnToCharge_TEST = {1..1}
+countClear_P_ReturnToCharge_TEST = {1..0}
+limiteUpdate_P_ReturnToCharge_TEST = {(1)..(1)}
+channel startActivity_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST
+channel endActivity_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST
+channel get_b_battery_level_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countGet_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel set_b_battery_level_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countSet_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel get_y_x_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countGet_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel set_y_x_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countSet_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel ce_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countCe_P_ReturnToCharge_TEST
+channel oe_2_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel oe_1_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel oe_3_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel oe_5_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel oe_4_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel oe_6_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.core_int_P_ReturnToCharge_TEST
+channel clear_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countClear_P_ReturnToCharge_TEST
+channel update_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST.countUpdate_P_ReturnToCharge_TEST.limiteUpdate_P_ReturnToCharge_TEST
+channel endDiagram_P_ReturnToCharge_TEST: ID_P_ReturnToCharge_TEST
+channel dc
+
+alphabet_Astah_P_ReturnToCharge_TEST = {| startActivity_P_ReturnToCharge_TEST, endActivity_P_ReturnToCharge_TEST, ce_P_ReturnToCharge_TEST, oe_2_P_ReturnToCharge_TEST, oe_1_P_ReturnToCharge_TEST, oe_3_P_ReturnToCharge_TEST, oe_5_P_ReturnToCharge_TEST, oe_4_P_ReturnToCharge_TEST, oe_6_P_ReturnToCharge_TEST, clear_P_ReturnToCharge_TEST, update_P_ReturnToCharge_TEST, endDiagram_P_ReturnToCharge_TEST, dc |}
+
+MAIN = normal(P_ReturnToCharge_TEST(1))
+END_DIAGRAM_P_ReturnToCharge_TEST(id) = endDiagram_P_ReturnToCharge_TEST.id -> SKIP
+P_ReturnToCharge_TEST(ID_P_ReturnToCharge_TEST) = (Internal_P_ReturnToCharge_TEST(ID_P_ReturnToCharge_TEST) [|{|update_P_ReturnToCharge_TEST,clear_P_ReturnToCharge_TEST,endDiagram_P_ReturnToCharge_TEST|}|] TokenManager_P_ReturnToCharge_TEST_t(ID_P_ReturnToCharge_TEST,0,0))
+Internal_P_ReturnToCharge_TEST(id) = StartActivity_P_ReturnToCharge_TEST(id); Node_P_ReturnToCharge_TEST(id); EndActivity_P_ReturnToCharge_TEST(id)
+StartActivity_P_ReturnToCharge_TEST(id) = startActivity_P_ReturnToCharge_TEST.id -> SKIP
+EndActivity_P_ReturnToCharge_TEST(id) = endActivity_P_ReturnToCharge_TEST.id -> SKIP
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_move_forward_2_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.10,ce_P_ReturnToCharge_TEST.id.11,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,InitialNode0_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.1,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_move_forward_1_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.6,ce_P_ReturnToCharge_TEST.id.7,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,accept_ultrasonic_1_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.9,oe_4_P_ReturnToCharge_TEST.id,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,accept_charging_1_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.11,ce_P_ReturnToCharge_TEST.id.3,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,P_NoFall_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.4,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,x_1_P_ReturnToCharge_TEST_t_alphabet) = {|oe_5_P_ReturnToCharge_TEST.id,ce_P_ReturnToCharge_TEST.id.12,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode0_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.1,ce_P_ReturnToCharge_TEST.id.3,ce_P_ReturnToCharge_TEST.id.2,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__4_P_ReturnToCharge_TEST_t_alphabet) = {|oe_3_P_ReturnToCharge_TEST.id,ce_P_ReturnToCharge_TEST.id.5,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__3_P_ReturnToCharge_TEST_t_alphabet) = {|oe_6_P_ReturnToCharge_TEST.id,ce_P_ReturnToCharge_TEST.id.10,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,accept_battery_level_1_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.2,oe_1_P_ReturnToCharge_TEST.id,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode4_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.8,ce_P_ReturnToCharge_TEST.id.12,ce_P_ReturnToCharge_TEST.id.9,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode2_P_ReturnToCharge_TEST_t_alphabet) = {|oe_1_P_ReturnToCharge_TEST.id,dc,oe_2_P_ReturnToCharge_TEST.id,oe_3_P_ReturnToCharge_TEST.id,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__2_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.5,ce_P_ReturnToCharge_TEST.id.6,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_clean_false__1_P_ReturnToCharge_TEST_t_alphabet) = {|ce_P_ReturnToCharge_TEST.id.7,ce_P_ReturnToCharge_TEST.id.8,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__1_P_ReturnToCharge_TEST_t_alphabet) = {|oe_2_P_ReturnToCharge_TEST.id,ce_P_ReturnToCharge_TEST.id.4,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode3_P_ReturnToCharge_TEST_t_alphabet) = {|oe_4_P_ReturnToCharge_TEST.id,dc,oe_5_P_ReturnToCharge_TEST.id,oe_6_P_ReturnToCharge_TEST.id,endDiagram_P_ReturnToCharge_TEST.id|}
+AlphabetDiagram_P_ReturnToCharge_TEST_t(id) = union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_move_forward_2_P_ReturnToCharge_TEST_t_alphabet),AlphabetDiagram_P_ReturnToCharge_TEST(id,InitialNode0_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_move_forward_1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,accept_ultrasonic_1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,accept_charging_1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,P_NoFall_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,x_1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode0_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__4_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__3_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,accept_battery_level_1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode4_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode2_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__2_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_clean_false__1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__1_P_ReturnToCharge_TEST_t_alphabet)),AlphabetDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode3_P_ReturnToCharge_TEST_t_alphabet))
+
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_move_forward_2_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_move_forward_2_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,InitialNode0_P_ReturnToCharge_TEST_t_alphabet) = normal(InitialNode0_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_move_forward_1_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_move_forward_1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,accept_ultrasonic_1_P_ReturnToCharge_TEST_t_alphabet) = normal(accept_ultrasonic_1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,accept_charging_1_P_ReturnToCharge_TEST_t_alphabet) = normal(accept_charging_1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,P_NoFall_P_ReturnToCharge_TEST_t_alphabet) = normal(P_NoFall_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,x_1_P_ReturnToCharge_TEST_t_alphabet) = normal(x_1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode0_P_ReturnToCharge_TEST_t_alphabet) = normal(DecisionNode_MergeNode0_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__4_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_turn_Direction_left__4_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__3_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_turn_Direction_left__3_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,accept_battery_level_1_P_ReturnToCharge_TEST_t_alphabet) = normal(accept_battery_level_1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode4_P_ReturnToCharge_TEST_t_alphabet) = normal(DecisionNode_MergeNode4_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode2_P_ReturnToCharge_TEST_t_alphabet) = normal(DecisionNode_MergeNode2_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__2_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_turn_Direction_left__2_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_clean_false__1_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_clean_false__1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,signal_turn_Direction_left__1_P_ReturnToCharge_TEST_t_alphabet) = normal(signal_turn_Direction_left__1_P_ReturnToCharge_TEST_t(id))
+ProcessDiagram_P_ReturnToCharge_TEST(id,DecisionNode_MergeNode3_P_ReturnToCharge_TEST_t_alphabet) = normal(DecisionNode_MergeNode3_P_ReturnToCharge_TEST_t(id))
+InitialNode0_P_ReturnToCharge_TEST(id) = update_P_ReturnToCharge_TEST.id.1!(1-0) -> ((ce_P_ReturnToCharge_TEST.id.1 -> SKIP))
+InitialNode0_P_ReturnToCharge_TEST_t(id) = InitialNode0_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+accept_battery_level_1_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.2 -> SKIP)); WAIT_accept_battery_level_1(id, alphabet_robochart_P_ReturnToCharge_TEST) [| {|set_b_battery_level_P_ReturnToCharge_TEST.id |} |> get_b_battery_level_P_ReturnToCharge_TEST.id.1?b -> ((oe_1_P_ReturnToCharge_TEST.id!b -> SKIP)); accept_battery_level_1_P_ReturnToCharge_TEST(id)
+accept_battery_level_1_P_ReturnToCharge_TEST_t(id) = ((accept_battery_level_1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)) [|{|get_b_battery_level_P_ReturnToCharge_TEST.id,set_b_battery_level_P_ReturnToCharge_TEST.id,endDiagram_P_ReturnToCharge_TEST.id|}|] Mem_battery_level_P_ReturnToCharge_TEST_b_t(id,-2)) \{|get_b_battery_level_P_ReturnToCharge_TEST.id,set_b_battery_level_P_ReturnToCharge_TEST.id|}
+DecisionNode_MergeNode0_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.1 -> SKIP) [] (ce_P_ReturnToCharge_TEST.id.3 -> SKIP)); ce_P_ReturnToCharge_TEST.id.2 -> DecisionNode_MergeNode0_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode0_P_ReturnToCharge_TEST_t(id) = DecisionNode_MergeNode0_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+signal_turn_Direction_left__1_P_ReturnToCharge_TEST(id) = ((oe_2_P_ReturnToCharge_TEST.id?x -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_ReturnToCharge_TEST.id.4 -> SKIP)); signal_turn_Direction_left__1_P_ReturnToCharge_TEST(id)
+signal_turn_Direction_left__1_P_ReturnToCharge_TEST_t(id) = signal_turn_Direction_left__1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode2_P_ReturnToCharge_TEST(id) = oe_1_P_ReturnToCharge_TEST.id?b -> (b > 0 & (dc -> oe_2_P_ReturnToCharge_TEST.id!b -> SKIP) [] b <= 0 & (dc -> oe_3_P_ReturnToCharge_TEST.id!b -> SKIP)); DecisionNode_MergeNode2_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode2_P_ReturnToCharge_TEST_t(id) = (DecisionNode_MergeNode2_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)) \{|dc|}
+signal_turn_Direction_left__2_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.5 -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_ReturnToCharge_TEST.id.6 -> SKIP)); signal_turn_Direction_left__2_P_ReturnToCharge_TEST(id)
+signal_turn_Direction_left__2_P_ReturnToCharge_TEST_t(id) = signal_turn_Direction_left__2_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+signal_move_forward_1_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.6 -> SKIP)); PathPlanningSM::move_forward.out -> ((ce_P_ReturnToCharge_TEST.id.7 -> SKIP)); signal_move_forward_1_P_ReturnToCharge_TEST(id)
+signal_move_forward_1_P_ReturnToCharge_TEST_t(id) = signal_move_forward_1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+signal_clean_false__1_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.7 -> SKIP)); PathPlanningSM::clean.out.false -> ((ce_P_ReturnToCharge_TEST.id.8 -> SKIP)); signal_clean_false__1_P_ReturnToCharge_TEST(id)
+signal_clean_false__1_P_ReturnToCharge_TEST_t(id) = signal_clean_false__1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+accept_ultrasonic_1_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.9 -> SKIP)); PathPlanningSM::ultrasonic.in?u -> ((oe_4_P_ReturnToCharge_TEST.id!u -> SKIP)); accept_ultrasonic_1_P_ReturnToCharge_TEST(id)
+accept_ultrasonic_1_P_ReturnToCharge_TEST_t(id) = accept_ultrasonic_1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode3_P_ReturnToCharge_TEST(id) = oe_4_P_ReturnToCharge_TEST.id?u -> (u < 1 & (dc -> oe_5_P_ReturnToCharge_TEST.id!u -> SKIP) [] u >= 1 & (dc -> oe_6_P_ReturnToCharge_TEST.id!u -> SKIP)); DecisionNode_MergeNode3_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode3_P_ReturnToCharge_TEST_t(id) = (DecisionNode_MergeNode3_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)) \{|dc|}
+signal_turn_Direction_left__3_P_ReturnToCharge_TEST(id) = ((oe_6_P_ReturnToCharge_TEST.id?x -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_ReturnToCharge_TEST.id.10 -> SKIP)); signal_turn_Direction_left__3_P_ReturnToCharge_TEST(id)
+signal_turn_Direction_left__3_P_ReturnToCharge_TEST_t(id) = signal_turn_Direction_left__3_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+signal_move_forward_2_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.10 -> SKIP)); PathPlanningSM::move_forward.out -> ((ce_P_ReturnToCharge_TEST.id.11 -> SKIP)); signal_move_forward_2_P_ReturnToCharge_TEST(id)
+signal_move_forward_2_P_ReturnToCharge_TEST_t(id) = signal_move_forward_2_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+accept_charging_1_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.11 -> SKIP)); PathPlanningSM::charging.in -> ((ce_P_ReturnToCharge_TEST.id.3 -> SKIP)); accept_charging_1_P_ReturnToCharge_TEST(id)
+accept_charging_1_P_ReturnToCharge_TEST_t(id) = accept_charging_1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode4_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.8 -> SKIP) [] (ce_P_ReturnToCharge_TEST.id.12 -> SKIP)); ce_P_ReturnToCharge_TEST.id.9 -> DecisionNode_MergeNode4_P_ReturnToCharge_TEST(id)
+DecisionNode_MergeNode4_P_ReturnToCharge_TEST_t(id) = DecisionNode_MergeNode4_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+x_1_P_ReturnToCharge_TEST(id) = ((oe_5_P_ReturnToCharge_TEST.id?y -> set_y_x_P_ReturnToCharge_TEST.id.1!y -> SKIP)); get_y_x_P_ReturnToCharge_TEST.id.2?y -> ((ce_P_ReturnToCharge_TEST.id.12 -> SKIP)); x_1_P_ReturnToCharge_TEST(id)
+x_1_P_ReturnToCharge_TEST_t(id) = ((x_1_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)) [|{|get_y_x_P_ReturnToCharge_TEST.id,set_y_x_P_ReturnToCharge_TEST.id,endDiagram_P_ReturnToCharge_TEST.id|}|] Mem_x_P_ReturnToCharge_TEST_y_t(id,-2)) \{|get_y_x_P_ReturnToCharge_TEST.id,set_y_x_P_ReturnToCharge_TEST.id|}
+signal_turn_Direction_left__4_P_ReturnToCharge_TEST(id) = ((oe_3_P_ReturnToCharge_TEST.id?x -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_ReturnToCharge_TEST.id.5 -> SKIP)); signal_turn_Direction_left__4_P_ReturnToCharge_TEST(id)
+signal_turn_Direction_left__4_P_ReturnToCharge_TEST_t(id) = signal_turn_Direction_left__4_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+P_NoFall_P_ReturnToCharge_TEST(id) = ((ce_P_ReturnToCharge_TEST.id.4 -> SKIP)); normal(P_NoFall(1));P_NoFall_P_ReturnToCharge_TEST(id)
+P_NoFall_P_ReturnToCharge_TEST_t(id) = P_NoFall_P_ReturnToCharge_TEST(id) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+Mem_battery_level_P_ReturnToCharge_TEST_b(id,b) = get_b_battery_level_P_ReturnToCharge_TEST.id?c!b -> Mem_battery_level_P_ReturnToCharge_TEST_b(id,b) [] set_b_battery_level_P_ReturnToCharge_TEST.id?c?b -> Mem_battery_level_P_ReturnToCharge_TEST_b(id,b)
+Mem_battery_level_P_ReturnToCharge_TEST_b_t(id,b) = Mem_battery_level_P_ReturnToCharge_TEST_b(id,b) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+Mem_x_P_ReturnToCharge_TEST_y(id,y) = get_y_x_P_ReturnToCharge_TEST.id?c!y -> Mem_x_P_ReturnToCharge_TEST_y(id,y) [] set_y_x_P_ReturnToCharge_TEST.id?c?y -> Mem_x_P_ReturnToCharge_TEST_y(id,y)
+Mem_x_P_ReturnToCharge_TEST_y_t(id,y) = Mem_x_P_ReturnToCharge_TEST_y(id,y) /\ END_DIAGRAM_P_ReturnToCharge_TEST(id)
+AlphabetMemP_NoFall_P_ReturnToCharge_TEST(id) = {|endDiagram_P_ReturnToCharge_TEST.id|}
+
+TokenManager_P_ReturnToCharge_TEST(id,x,init) = update_P_ReturnToCharge_TEST.id?c?y:limiteUpdate_P_ReturnToCharge_TEST -> x+y < 10 & x+y > -10 & TokenManager_P_ReturnToCharge_TEST(id,x+y,1) [] clear_P_ReturnToCharge_TEST.id?c -> endDiagram_P_ReturnToCharge_TEST.id -> SKIP [] x == 0 & init == 1 & endDiagram_P_ReturnToCharge_TEST.id -> SKIP
+TokenManager_P_ReturnToCharge_TEST_t(id,x,init) = TokenManager_P_ReturnToCharge_TEST(id,x,init)
+
+datatype alphabet_P_NoFall = DecisionNode_MergeNode6_P_NoFall_t_alphabet | DecisionNode_MergeNode5_P_NoFall_t_alphabet| DecisionNode_MergeNode2_P_NoFall_t_alphabet| DecisionNode_MergeNode1_P_NoFall_t_alphabet| DecisionNode_MergeNode0_P_NoFall_t_alphabet| signal_move_forward_3_P_NoFall_t_alphabet| signal_move_forward_4_P_NoFall_t_alphabet| InitialNode0_P_NoFall_t_alphabet| accept_ultrasonic_2_P_NoFall_t_alphabet| signal_turn_Direction_right__2_P_NoFall_t_alphabet| signal_turn_Direction_right__1_P_NoFall_t_alphabet| x_1_P_NoFall_t_alphabet| signal_turn_Direction_left__6_P_NoFall_t_alphabet| w_1_P_NoFall_t_alphabet| DecisionNode_MergeNode9_P_NoFall_t_alphabet| signal_turn_Direction_left__7_P_NoFall_t_alphabet| DecisionNode_MergeNode8_P_NoFall_t_alphabet| signal_turn_Direction_left__5_P_NoFall_t_alphabet| DecisionNode_MergeNode7_P_NoFall_t_alphabet
+core_int_P_NoFall = {(-2)..2}
+robochart_alphabet_P_NoFall = {|PathPlanningSM::move_forward.out,PathPlanningSM::turn.out.Direction_left,PathPlanningSM::turn.out.Direction_right,PathPlanningSM::clean.out.true,PathPlanningSM::clean.out.false,PathPlanningSM::charging.in,PathPlanningSM::stop.out,PathPlanningSM::displacement.in,PathPlanningSM::displacement.out,PathPlanningSM::battery_level.in,PathPlanningSM::ultrasonic.in|}
+countGet_P_NoFall = {1..3}
+countSet_P_NoFall = {1..2}
+countCe_P_NoFall = {1..21}
+countOe_P_NoFall = {1..3}
+countUpdate_P_NoFall = {1..1}
+countClear_P_NoFall = {1..0}
+limiteUpdate_P_NoFall = {(1)..(1)}
+channel startActivity_P_NoFall: ID_P_NoFall
+channel endActivity_P_NoFall: ID_P_NoFall
+channel get_y_x_P_NoFall: ID_P_NoFall.countGet_P_NoFall.core_int_P_NoFall
+channel set_y_x_P_NoFall: ID_P_NoFall.countSet_P_NoFall.core_int_P_NoFall
+channel get_z_w_P_NoFall: ID_P_NoFall.countGet_P_NoFall.core_int_P_NoFall
+channel set_z_w_P_NoFall: ID_P_NoFall.countSet_P_NoFall.core_int_P_NoFall
+channel get_u_ultrasonic_P_NoFall: ID_P_NoFall.countGet_P_NoFall.core_int_P_NoFall
+channel set_u_ultrasonic_P_NoFall: ID_P_NoFall.countSet_P_NoFall.core_int_P_NoFall
+channel ce_P_NoFall: ID_P_NoFall.countCe_P_NoFall
+channel oe_3_P_NoFall: ID_P_NoFall.core_int_P_NoFall
+channel oe_1_P_NoFall: ID_P_NoFall.core_int_P_NoFall
+channel oe_2_P_NoFall: ID_P_NoFall.core_int_P_NoFall
+channel clear_P_NoFall: ID_P_NoFall.countClear_P_NoFall
+channel update_P_NoFall: ID_P_NoFall.countUpdate_P_NoFall.limiteUpdate_P_NoFall
+channel endDiagram_P_NoFall: ID_P_NoFall
+
+alphabet_Astah_P_NoFall = {| startActivity_P_NoFall, endActivity_P_NoFall, ce_P_NoFall, oe_3_P_NoFall, oe_1_P_NoFall, oe_2_P_NoFall, clear_P_NoFall, update_P_NoFall, endDiagram_P_NoFall |}
+
+END_DIAGRAM_P_NoFall(id) = endDiagram_P_NoFall.id -> SKIP
+P_NoFall(ID_P_NoFall) = (Internal_P_NoFall(ID_P_NoFall) [|{|update_P_NoFall,clear_P_NoFall,endDiagram_P_NoFall|}|] TokenManager_P_NoFall_t(ID_P_NoFall,0,0))
+Internal_P_NoFall(id) = StartActivity_P_NoFall(id); Node_P_NoFall(id); EndActivity_P_NoFall(id)
+StartActivity_P_NoFall(id) = startActivity_P_NoFall.id -> SKIP
+EndActivity_P_NoFall(id) = endActivity_P_NoFall.id -> SKIP
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode6_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.11,dc,ce_P_NoFall.id.14,ce_P_NoFall.id.16,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode5_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.10,dc,ce_P_NoFall.id.13,ce_P_NoFall.id.15,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode2_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.7,dc,ce_P_NoFall.id.8,ce_P_NoFall.id.9,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode1_P_NoFall_t_alphabet) = {|oe_1_P_NoFall.id,dc,oe_2_P_NoFall.id,oe_3_P_NoFall.id,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode0_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.1,ce_P_NoFall.id.3,ce_P_NoFall.id.4,ce_P_NoFall.id.5,ce_P_NoFall.id.6,ce_P_NoFall.id.2,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_move_forward_3_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.12,ce_P_NoFall.id.3,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_move_forward_4_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.18,ce_P_NoFall.id.4,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,InitialNode0_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.1,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,accept_ultrasonic_2_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.2,oe_1_P_NoFall.id,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_turn_Direction_right__2_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.16,ce_P_NoFall.id.21,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_turn_Direction_right__1_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.9,ce_P_NoFall.id.11,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,x_1_P_NoFall_t_alphabet) = {|oe_2_P_NoFall.id,ce_P_NoFall.id.6,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_turn_Direction_left__6_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.15,ce_P_NoFall.id.17,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,w_1_P_NoFall_t_alphabet) = {|oe_3_P_NoFall.id,ce_P_NoFall.id.7,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode9_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.19,dc,ce_P_NoFall.id.20,ce_P_NoFall.id.18,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_turn_Direction_left__7_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.20,ce_P_NoFall.id.5,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode8_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.17,ce_P_NoFall.id.21,ce_P_NoFall.id.19,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,signal_turn_Direction_left__5_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.8,ce_P_NoFall.id.10,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode7_P_NoFall_t_alphabet) = {|ce_P_NoFall.id.13,ce_P_NoFall.id.14,ce_P_NoFall.id.12,endDiagram_P_NoFall.id|}
+AlphabetDiagram_P_NoFall_t(id) = union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(union(AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode6_P_NoFall_t_alphabet),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode5_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode2_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode1_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode0_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_move_forward_3_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_move_forward_4_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,InitialNode0_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,accept_ultrasonic_2_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_turn_Direction_right__2_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_turn_Direction_right__1_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,x_1_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_turn_Direction_left__6_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,w_1_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode9_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_turn_Direction_left__7_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode8_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,signal_turn_Direction_left__5_P_NoFall_t_alphabet)),AlphabetDiagram_P_NoFall(id,DecisionNode_MergeNode7_P_NoFall_t_alphabet))
+
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode6_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode6_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode5_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode5_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode2_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode2_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode1_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode1_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode0_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode0_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_move_forward_3_P_NoFall_t_alphabet) = normal(signal_move_forward_3_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_move_forward_4_P_NoFall_t_alphabet) = normal(signal_move_forward_4_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,InitialNode0_P_NoFall_t_alphabet) = normal(InitialNode0_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,accept_ultrasonic_2_P_NoFall_t_alphabet) = normal(accept_ultrasonic_2_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_turn_Direction_right__2_P_NoFall_t_alphabet) = normal(signal_turn_Direction_right__2_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_turn_Direction_right__1_P_NoFall_t_alphabet) = normal(signal_turn_Direction_right__1_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,x_1_P_NoFall_t_alphabet) = normal(x_1_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_turn_Direction_left__6_P_NoFall_t_alphabet) = normal(signal_turn_Direction_left__6_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,w_1_P_NoFall_t_alphabet) = normal(w_1_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode9_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode9_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_turn_Direction_left__7_P_NoFall_t_alphabet) = normal(signal_turn_Direction_left__7_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode8_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode8_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,signal_turn_Direction_left__5_P_NoFall_t_alphabet) = normal(signal_turn_Direction_left__5_P_NoFall_t(id))
+ProcessDiagram_P_NoFall(id,DecisionNode_MergeNode7_P_NoFall_t_alphabet) = normal(DecisionNode_MergeNode7_P_NoFall_t(id))
+InitialNode0_P_NoFall(id) = update_P_NoFall.id.1!(1-0) -> ((ce_P_NoFall.id.1 -> SKIP))
+InitialNode0_P_NoFall_t(id) = InitialNode0_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+accept_ultrasonic_2_P_NoFall(id) = ((ce_P_NoFall.id.2 -> SKIP)); WAIT_accept_ultrasonic_2(id, alphabet_robochart_P_NoFall) [| {|set_u_ultrasonic_P_NoFall.id |} |> get_u_ultrasonic_P_NoFall.id.1?u -> ((oe_1_P_NoFall.id!u -> SKIP)); accept_ultrasonic_2_P_NoFall(id)
+accept_ultrasonic_2_P_NoFall_t(id) = ((accept_ultrasonic_2_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)) [|{|get_u_ultrasonic_P_NoFall.id,set_u_ultrasonic_P_NoFall.id,endDiagram_P_NoFall.id|}|] Mem_ultrasonic_P_NoFall_u_t(id,-2)) \{|get_u_ultrasonic_P_NoFall.id,set_u_ultrasonic_P_NoFall.id|}
+DecisionNode_MergeNode0_P_NoFall(id) = ((ce_P_NoFall.id.1 -> SKIP) [] (ce_P_NoFall.id.3 -> SKIP) [] (ce_P_NoFall.id.4 -> SKIP) [] (ce_P_NoFall.id.5 -> SKIP) [] (ce_P_NoFall.id.6 -> SKIP)); ce_P_NoFall.id.2 -> DecisionNode_MergeNode0_P_NoFall(id)
+DecisionNode_MergeNode0_P_NoFall_t(id) = DecisionNode_MergeNode0_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+DecisionNode_MergeNode2_P_NoFall(id) = ce_P_NoFall.id.7 -> ((dc -> ce_P_NoFall.id.8 -> SKIP) [] (dc -> ce_P_NoFall.id.9 -> SKIP)); DecisionNode_MergeNode2_P_NoFall(id)
+DecisionNode_MergeNode2_P_NoFall_t(id) = DecisionNode_MergeNode2_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id) \{|dc|}
+signal_turn_Direction_left__5_P_NoFall(id) = ((ce_P_NoFall.id.8 -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_NoFall.id.10 -> SKIP)); signal_turn_Direction_left__5_P_NoFall(id)
+signal_turn_Direction_left__5_P_NoFall_t(id) = signal_turn_Direction_left__5_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+signal_turn_Direction_right__1_P_NoFall(id) = ((ce_P_NoFall.id.9 -> SKIP)); PathPlanningSM::turn.out.Direction_right -> ((ce_P_NoFall.id.11 -> SKIP)); signal_turn_Direction_right__1_P_NoFall(id)
+signal_turn_Direction_right__1_P_NoFall_t(id) = signal_turn_Direction_right__1_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+DecisionNode_MergeNode1_P_NoFall(id) = oe_1_P_NoFall.id?u -> (u<1 & (dc -> oe_2_P_NoFall.id!u -> SKIP) [] u>=1 & (dc -> oe_3_P_NoFall.id!u -> SKIP)); DecisionNode_MergeNode1_P_NoFall(id)
+DecisionNode_MergeNode1_P_NoFall_t(id) = (DecisionNode_MergeNode1_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)) \{|dc|}
+signal_move_forward_3_P_NoFall(id) = ((ce_P_NoFall.id.12 -> SKIP)); PathPlanningSM::move_forward.out -> ((ce_P_NoFall.id.3 -> SKIP)); signal_move_forward_3_P_NoFall(id)
+signal_move_forward_3_P_NoFall_t(id) = signal_move_forward_3_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+DecisionNode_MergeNode7_P_NoFall(id) = ((ce_P_NoFall.id.13 -> SKIP) [] (ce_P_NoFall.id.14 -> SKIP)); ce_P_NoFall.id.12 -> DecisionNode_MergeNode7_P_NoFall(id)
+DecisionNode_MergeNode7_P_NoFall_t(id) = DecisionNode_MergeNode7_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+DecisionNode_MergeNode5_P_NoFall(id) = ce_P_NoFall.id.10 -> ((dc -> ce_P_NoFall.id.13 -> SKIP) [] (dc -> ce_P_NoFall.id.15 -> SKIP)); DecisionNode_MergeNode5_P_NoFall(id)
+DecisionNode_MergeNode5_P_NoFall_t(id) = DecisionNode_MergeNode5_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id) \{|dc|}
+DecisionNode_MergeNode6_P_NoFall(id) = ce_P_NoFall.id.11 -> ((dc -> ce_P_NoFall.id.14 -> SKIP) [] (dc -> ce_P_NoFall.id.16 -> SKIP)); DecisionNode_MergeNode6_P_NoFall(id)
+DecisionNode_MergeNode6_P_NoFall_t(id) = DecisionNode_MergeNode6_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id) \{|dc|}
+signal_turn_Direction_left__6_P_NoFall(id) = ((ce_P_NoFall.id.15 -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_NoFall.id.17 -> SKIP)); signal_turn_Direction_left__6_P_NoFall(id)
+signal_turn_Direction_left__6_P_NoFall_t(id) = signal_turn_Direction_left__6_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+signal_move_forward_4_P_NoFall(id) = ((ce_P_NoFall.id.18 -> SKIP)); PathPlanningSM::move_forward.out -> ((ce_P_NoFall.id.4 -> SKIP)); signal_move_forward_4_P_NoFall(id)
+signal_move_forward_4_P_NoFall_t(id) = signal_move_forward_4_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+DecisionNode_MergeNode9_P_NoFall(id) = ce_P_NoFall.id.19 -> ((dc -> ce_P_NoFall.id.20 -> SKIP) [] (dc -> ce_P_NoFall.id.18 -> SKIP)); DecisionNode_MergeNode9_P_NoFall(id)
+DecisionNode_MergeNode9_P_NoFall_t(id) = DecisionNode_MergeNode9_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id) \{|dc|}
+signal_turn_Direction_left__7_P_NoFall(id) = ((ce_P_NoFall.id.20 -> SKIP)); PathPlanningSM::turn.out.Direction_left -> ((ce_P_NoFall.id.5 -> SKIP)); signal_turn_Direction_left__7_P_NoFall(id)
+signal_turn_Direction_left__7_P_NoFall_t(id) = signal_turn_Direction_left__7_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+signal_turn_Direction_right__2_P_NoFall(id) = ((ce_P_NoFall.id.16 -> SKIP)); PathPlanningSM::turn.out.Direction_right -> ((ce_P_NoFall.id.21 -> SKIP)); signal_turn_Direction_right__2_P_NoFall(id)
+signal_turn_Direction_right__2_P_NoFall_t(id) = signal_turn_Direction_right__2_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+DecisionNode_MergeNode8_P_NoFall(id) = ((ce_P_NoFall.id.17 -> SKIP) [] (ce_P_NoFall.id.21 -> SKIP)); ce_P_NoFall.id.19 -> DecisionNode_MergeNode8_P_NoFall(id)
+DecisionNode_MergeNode8_P_NoFall_t(id) = DecisionNode_MergeNode8_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)
+x_1_P_NoFall(id) = ((oe_2_P_NoFall.id?y -> set_y_x_P_NoFall.id.1!y -> SKIP)); get_y_x_P_NoFall.id.2?y -> ((ce_P_NoFall.id.6 -> SKIP)); x_1_P_NoFall(id)
+x_1_P_NoFall_t(id) = ((x_1_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)) [|{|get_y_x_P_NoFall.id,set_y_x_P_NoFall.id,endDiagram_P_NoFall.id|}|] Mem_x_P_NoFall_y_t(id,-2)) \{|get_y_x_P_NoFall.id,set_y_x_P_NoFall.id|}
+w_1_P_NoFall(id) = ((oe_3_P_NoFall.id?z -> set_z_w_P_NoFall.id.2!z -> SKIP)); get_z_w_P_NoFall.id.3?z -> ((ce_P_NoFall.id.7 -> SKIP)); w_1_P_NoFall(id)
+w_1_P_NoFall_t(id) = ((w_1_P_NoFall(id) /\ END_DIAGRAM_P_NoFall(id)) [|{|get_z_w_P_NoFall.id,set_z_w_P_NoFall.id,endDiagram_P_NoFall.id|}|] Mem_w_P_NoFall_z_t(id,-2)) \{|get_z_w_P_NoFall.id,set_z_w_P_NoFall.id|}
+Mem_x_P_NoFall_y(id,y) = get_y_x_P_NoFall.id?c!y -> Mem_x_P_NoFall_y(id,y) [] set_y_x_P_NoFall.id?c?y -> Mem_x_P_NoFall_y(id,y)
+Mem_x_P_NoFall_y_t(id,y) = Mem_x_P_NoFall_y(id,y) /\ END_DIAGRAM_P_NoFall(id)
+Mem_w_P_NoFall_z(id,z) = get_z_w_P_NoFall.id?c!z -> Mem_w_P_NoFall_z(id,z) [] set_z_w_P_NoFall.id?c?z -> Mem_w_P_NoFall_z(id,z)
+Mem_w_P_NoFall_z_t(id,z) = Mem_w_P_NoFall_z(id,z) /\ END_DIAGRAM_P_NoFall(id)
+Mem_ultrasonic_P_NoFall_u(id,u) = get_u_ultrasonic_P_NoFall.id?c!u -> Mem_ultrasonic_P_NoFall_u(id,u) [] set_u_ultrasonic_P_NoFall.id?c?u -> Mem_ultrasonic_P_NoFall_u(id,u)
+Mem_ultrasonic_P_NoFall_u_t(id,u) = Mem_ultrasonic_P_NoFall_u(id,u) /\ END_DIAGRAM_P_NoFall(id)
+
+TokenManager_P_NoFall(id,x,init) = update_P_NoFall.id?c?y:limiteUpdate_P_NoFall -> x+y < 10 & x+y > -10 & TokenManager_P_NoFall(id,x+y,1) [] clear_P_NoFall.id?c -> endDiagram_P_NoFall.id -> SKIP [] x == 0 & init == 1 & endDiagram_P_NoFall.id -> SKIP
+TokenManager_P_NoFall_t(id,x,init) = TokenManager_P_NoFall(id,x,init)
+
+
+WAIT_accept_ultrasonic_2(id, alphabet) = 
+NRecurse(diff(alphabet, {|PathPlanningSM::ultrasonic.in|}), WAIT_accept_ultrasonic_2(id, alphabet))
+ |~| 
+PathPlanningSM::ultrasonic.in?u -> set_u_ultrasonic_P_NoFall.id?c!u -> SKIP
+
+WAIT_PROCCESSES_P_NoFall(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_P_NoFall?id -> SKIP
+
+Prop_P_NoFall = PROP_P_NoFall(Wait_control_processes_P_NoFall) \ alphabet_Astah_P_NoFall 
+
+alphabet_robochart_P_NoFall = {|PathPlanningSM::move_forward.out,PathPlanningSM::turn.out.Direction_left,PathPlanningSM::turn.out.Direction_right,PathPlanningSM::clean.out.true,PathPlanningSM::clean.out.false,PathPlanningSM::charging.in,PathPlanningSM::stop.out,PathPlanningSM::displacement.in,PathPlanningSM::displacement.out,PathPlanningSM::battery_level.in,PathPlanningSM::ultrasonic.in|}
+
+PROP_P_NoFall(processes) = (MAIN)
+
+Wait_control_processes_P_NoFall = {}
+
+Node_P_NoFall(id) = composeNodes_P_NoFall(id)
+
+composeNodes_P_NoFall(id) = 
+	let
+	    alphabet_P_NoFall_s = seq(alphabet_P_NoFall)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_P_NoFall(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_P_NoFall(id,ev) 
+				[|union(diff(AlphabetDiagram_P_NoFall(id,ev),past),{endDiagram_P_NoFall.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_P_NoFall(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_P_NoFall_s,{})
+
+
+assert Prop_P_ReturnToCharge_TEST [T= P_PathPlanningSM
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT_accept_battery_level_1(id, alphabet) = 
+NRecurse(diff(alphabet, {|PathPlanningSM::battery_level.in|}), WAIT_accept_battery_level_1(id, alphabet))
+ |~| 
+PathPlanningSM::battery_level.in?b -> set_b_battery_level_P_ReturnToCharge_TEST.id?c!b -> SKIP
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_P_ReturnToCharge_TEST(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_P_ReturnToCharge_TEST?id -> SKIP
+
+Prop_P_ReturnToCharge_TEST = PROP_P_ReturnToCharge_TEST(Wait_control_processes_P_ReturnToCharge_TEST) \ union(alphabet_Astah_P_NoFall, alphabet_Astah_P_ReturnToCharge_TEST) 
+
+alphabet_robochart_P_ReturnToCharge_TEST = {|PathPlanningSM::move_forward.out,PathPlanningSM::turn.out.Direction_left,PathPlanningSM::clean.out.false,PathPlanningSM::charging.in,PathPlanningSM::battery_level.in,PathPlanningSM::ultrasonic.in|}
+
+PROP_P_ReturnToCharge_TEST(processes) = (MAIN)
+
+Wait_control_processes_P_ReturnToCharge_TEST = {}
+
+Node_P_ReturnToCharge_TEST(id) = composeNodes_P_ReturnToCharge_TEST(id)
+
+composeNodes_P_ReturnToCharge_TEST(id) = 
+	let
+	    alphabet_P_ReturnToCharge_TEST_s = seq(alphabet_P_ReturnToCharge_TEST)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_P_ReturnToCharge_TEST(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_P_ReturnToCharge_TEST(id,ev) 
+				[|union(diff(AlphabetDiagram_P_ReturnToCharge_TEST(id,ev),past),{endDiagram_P_ReturnToCharge_TEST.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_P_ReturnToCharge_TEST(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_P_ReturnToCharge_TEST_s,{})
+

@@ -1,6 +1,84 @@
-include "defs/robochart_defs.csp"
-include "defs/core_defs.csp"
-include "defs/SimFW_defs.csp"
-include "defs/SimFW.csp"
-include "instantiations.csp"
-channel r__
+transparent normal
+include "file_SimFW_coreassertions.csp"
+ID_SimFW = {1..1}
+datatype alphabet_SimFW = InitialNode0_SimFW_t_alphabet | accept_obstacle_1_SimFW_t_alphabet| DecisionNode_MergeNode0_SimFW_t_alphabet| move_0_2__1_SimFW_t_alphabet
+robochart_alphabet_SimFW = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+countCe_SimFW = {1..4}
+countUpdate_SimFW = {1..1}
+countClear_SimFW = {1..0}
+limiteUpdate_SimFW = {(1)..(1)}
+channel startActivity_SimFW: ID_SimFW
+channel endActivity_SimFW: ID_SimFW
+channel ce_SimFW: ID_SimFW.countCe_SimFW
+channel clear_SimFW: ID_SimFW.countClear_SimFW
+channel update_SimFW: ID_SimFW.countUpdate_SimFW.limiteUpdate_SimFW
+channel endDiagram_SimFW: ID_SimFW
+channel dc
+channel begin, end:  {1..1}
+
+alphabet_Astah_SimFW = {| startActivity_SimFW, endActivity_SimFW, ce_SimFW, clear_SimFW, update_SimFW, endDiagram_SimFW, dc |}
+
+MAIN = normal(SimFW(1))
+END_DIAGRAM_SimFW(id) = endDiagram_SimFW.id -> SKIP
+SimFW(ID_SimFW) = (Internal_SimFW(ID_SimFW) [|{|update_SimFW,clear_SimFW,endDiagram_SimFW|}|] TokenManager_SimFW_t(ID_SimFW,0,0))
+Internal_SimFW(id) = StartActivity_SimFW(id); Node_SimFW(id); EndActivity_SimFW(id)
+StartActivity_SimFW(id) = startActivity_SimFW.id -> SKIP
+EndActivity_SimFW(id) = endActivity_SimFW.id -> SKIP
+AlphabetDiagram_SimFW(id,InitialNode0_SimFW_t_alphabet) = {|ce_SimFW.id.1,endDiagram_SimFW.id|}
+AlphabetDiagram_SimFW(id,accept_obstacle_1_SimFW_t_alphabet) = {|ce_SimFW.id.3,ce_SimFW.id.4,endDiagram_SimFW.id|}
+AlphabetDiagram_SimFW(id,DecisionNode_MergeNode0_SimFW_t_alphabet) = {|ce_SimFW.id.1,ce_SimFW.id.2,ce_SimFW.id.3,endDiagram_SimFW.id|}
+AlphabetDiagram_SimFW(id,move_0_2__1_SimFW_t_alphabet) = {|ce_SimFW.id.4,ce_SimFW.id.2,endDiagram_SimFW.id|}
+AlphabetDiagram_SimFW_t(id) = union(union(union(AlphabetDiagram_SimFW(id,InitialNode0_SimFW_t_alphabet),AlphabetDiagram_SimFW(id,accept_obstacle_1_SimFW_t_alphabet)),AlphabetDiagram_SimFW(id,DecisionNode_MergeNode0_SimFW_t_alphabet)),AlphabetDiagram_SimFW(id,move_0_2__1_SimFW_t_alphabet))
+
+ProcessDiagram_SimFW(id,InitialNode0_SimFW_t_alphabet) = normal(InitialNode0_SimFW_t(id))
+ProcessDiagram_SimFW(id,accept_obstacle_1_SimFW_t_alphabet) = normal(accept_obstacle_1_SimFW_t(id))
+ProcessDiagram_SimFW(id,DecisionNode_MergeNode0_SimFW_t_alphabet) = normal(DecisionNode_MergeNode0_SimFW_t(id))
+ProcessDiagram_SimFW(id,move_0_2__1_SimFW_t_alphabet) = normal(move_0_2__1_SimFW_t(id))
+InitialNode0_SimFW(id) = update_SimFW.id.1!(1-0) -> ((ce_SimFW.id.1 -> SKIP))
+InitialNode0_SimFW_t(id) = InitialNode0_SimFW(id) /\ END_DIAGRAM_SimFW(id)
+DecisionNode_MergeNode0_SimFW(id) = ((ce_SimFW.id.1 -> SKIP) [] (ce_SimFW.id.2 -> SKIP)); ce_SimFW.id.3 -> DecisionNode_MergeNode0_SimFW(id)
+DecisionNode_MergeNode0_SimFW_t(id) = DecisionNode_MergeNode0_SimFW(id) /\ END_DIAGRAM_SimFW(id)
+accept_obstacle_1_SimFW(id) = ((ce_SimFW.id.3 -> SKIP)); begin.1 -> end.1 -> SKIP; ((ce_SimFW.id.4 -> SKIP)); accept_obstacle_1_SimFW(id)
+accept_obstacle_1_SimFW_t(id) = accept_obstacle_1_SimFW(id) /\ END_DIAGRAM_SimFW(id)
+move_0_2__1_SimFW(id) = ((ce_SimFW.id.4 -> SKIP)); SMovement::moveCall.0.2 -> ((ce_SimFW.id.2 -> SKIP)); move_0_2__1_SimFW(id)
+move_0_2__1_SimFW_t(id) = move_0_2__1_SimFW(id) /\ END_DIAGRAM_SimFW(id)
+
+TokenManager_SimFW(id,x,init) = update_SimFW.id?c?y:limiteUpdate_SimFW -> x+y < 10 & x+y > -10 & TokenManager_SimFW(id,x+y,1) [] clear_SimFW.id?c -> endDiagram_SimFW.id -> SKIP [] x == 0 & init == 1 & endDiagram_SimFW.id -> SKIP
+TokenManager_SimFW_t(id,x,init) = TokenManager_SimFW(id,x,init)
+
+assert Prop_SimFW [T= P_SMovement
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_SimFW(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_SimFW?id -> SKIP
+
+Prop_SimFW = PROP_SimFW(Wait_control_processes_SimFW) \ alphabet_Astah_SimFW 
+
+alphabet_robochart_SimFW = {|SMovement::moveCall,SMovement::obstacle.in,SMovement::obstacle.out|}
+
+PROP_SimFW(processes) = (MAIN [|{|begin, end, endDiagram_SimFW|}|] WAIT_PROCCESSES_SimFW(processes) ) \ {|begin, end|}
+
+Wait_SimFW_1 = WAIT(alphabet_robochart_SimFW, SMovement::obstacle.in)
+
+Wait_SimFW_control_1 = begin.1 -> Wait_SimFW_1; end.1 -> Wait_SimFW_control_1
+
+Wait_control_processes_SimFW = {Wait_SimFW_control_1}
+
+Node_SimFW(id) = composeNodes_SimFW(id)
+
+composeNodes_SimFW(id) = 
+	let
+	    alphabet_SimFW_s = seq(alphabet_SimFW)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_SimFW(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_SimFW(id,ev) 
+				[|union(diff(AlphabetDiagram_SimFW(id,ev),past),{endDiagram_SimFW.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_SimFW(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_SimFW_s,{})
+
