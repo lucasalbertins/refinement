@@ -1,0 +1,30 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 17:58:28
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+include "Detecting.csp"
+include "core_defs.csp"
+include "file_Detect_defs.csp"
+include "state_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+channel r__
+-- generate Detecting
+P_Detecting = let
+	id__ = 0
+	
+	
+	
+within
+	Detecting::O__(
+		id__
+	)
+assert P_Detecting :[deadlock-free]	
+assert P_Detecting;RUN({r__}) :[deadlock-free]
+assert P_Detecting :[deterministic]
+assert P_Detecting :[divergence-free]

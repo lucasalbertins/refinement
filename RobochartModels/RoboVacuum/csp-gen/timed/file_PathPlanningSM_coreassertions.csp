@@ -1,16 +1,23 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:35
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_PathPlanningSM.csp"
 
 -- generate PathPlanningSM
 P_PathPlanningSM = let
-	id = 0
-	const_PathPlanningSM_cliff = 0
-	const_PathPlanningSM_nozzle = 0
-	const_PathPlanningSM_battery_low = 0
-	const_PathPlanningSM_sleep_time = 0
-	const_PathPlanningSM_acc_distance = 0
+	id__ = 0
+	
+	
+	
 within
 	PathPlanningSM::O__(
-		id,
+		id__,
 		const_PathPlanningSM_cliff,
 		const_PathPlanningSM_nozzle,
 		const_PathPlanningSM_battery_low,

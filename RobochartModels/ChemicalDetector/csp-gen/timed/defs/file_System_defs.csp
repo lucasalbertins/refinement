@@ -1,4 +1,13 @@
--- data definitions used by platform:/resource/ChemicalDetector/System.rct
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 17:58:29
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+-- data definitions used by /ChemicalDetector/System.rct
 datatype Command = Command_faster | Command_left | Command_right | Command_back | Command_slower
 Command_is(Command_faster,Command_faster) = true
 Command_is(_,Command_faster) = false

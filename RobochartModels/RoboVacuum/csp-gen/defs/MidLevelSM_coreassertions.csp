@@ -1,25 +1,28 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:35
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "core_defs.csp"
 include "MidLevelSM.csp"
+include "state_defs.csp"
 include "file_MidLevelSM_defs.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
 channel r__
 -- generate MidLevelSM
 P_MidLevelSM = let
-	id = 0
-	const_MidLevelSM_step = 0
-	const_MidLevelSM_climb_speed = 0
-	const_MidLevelSM_descent_speed = 0
-	const_MidLevelSM_side_speed = 0
-	const_MidLevelSM_forward_angle = 0
-	const_MidLevelSM_left_angle = 0
-	const_MidLevelSM_right_angle = 0
-	const_MidLevelSM_turn_speed = 0
-	const_MidLevelSM_movesp = 0
-	const_MidLevelSM_stopsp = 0
+	id__ = 0
+	
+	
+	
 within
 	MidLevelSM::O__(
-		id,
+		id__,
 		const_MidLevelSM_step,
 		const_MidLevelSM_climb_speed,
 		const_MidLevelSM_descent_speed,

@@ -154,7 +154,7 @@ stm MidLevelSM {
 	transition t0 {
 		from i0
 		to Go_up
-		trigger
+//		trigger
 		action orientation = Orientation::up ; lspeed = 0 ; rspeed = 0
 	}
 	transition t15 {
@@ -206,37 +206,37 @@ stm MidLevelSM {
 	transition t22 {
 		from Turn_right
 		to Turn_right
-		trigger
+//		trigger
 		condition sinceEntry ( Turn_right ) >= step
 	}
 	transition t23 {
 		from Go_side
 		to Go_side
-		trigger
+//		trigger
 		condition sinceEntry ( Turn_left ) >= step
 	}
 	transition t24 {
 		from Go_up
 		to Go_up
-		trigger
+//		trigger
 		condition sinceEntry ( Go_up ) >= step
 	}
 	transition t25 {
 		from Turn_left
 		to Turn_left
-		trigger
+//		trigger
 		condition sinceEntry ( Turn_left ) >= step
 	}
 	transition t26 {
 		from Stop
 		to Stop
-		trigger
+//		trigger
 		condition sinceEntry ( Stop ) >= step
 	}
 	transition t27 {
 		from Go_down
 		to Go_down
-		trigger
+//		trigger
 		condition sinceEntry ( Go_down ) >= step
 	}
 }

@@ -57,6 +57,12 @@ turn_left(x) = Orientation_up
 
 -- generate --
 
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
 -- generate const_MidLevelSM_descent_speed
 const_MidLevelSM_descent_speed = 0
 
@@ -182,11 +188,11 @@ const_Module_PathPlanningController_stm_ref7_ki = 0
 -- generate vacuum_BOUND
 vacuum_BOUND = 2
 
--- generate const_PathPlanningSM_sleep_time
-const_PathPlanningSM_sleep_time = 0
-
 -- generate const_PID_kp
 const_PID_kp = 0
+
+-- generate const_PathPlanningSM_sleep_time
+const_PathPlanningSM_sleep_time = 0
 
 -- generate const_Module_PathPlanningController_stm_ref8_side_speed
 const_Module_PathPlanningController_stm_ref8_side_speed = 0

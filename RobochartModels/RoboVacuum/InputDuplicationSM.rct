@@ -11,7 +11,7 @@ stm InputDuplicationSM {
 	transition t0 {
 		from i0
 		to wait_input
-		trigger
+//		trigger
 	}
 	transition t1 {
 		from wait_input
@@ -21,7 +21,7 @@ stm InputDuplicationSM {
 	transition t2 {
 		from send_output
 		to wait_input
-		trigger
+//		trigger
 		action output1 ! x ; output2 ! x
 	}
 }

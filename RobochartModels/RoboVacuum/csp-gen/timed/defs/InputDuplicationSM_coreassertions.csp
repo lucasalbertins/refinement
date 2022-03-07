@@ -1,6 +1,16 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:34
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+include "core_timed_defs.csp"
 include "core_defs.csp"
-include "timed_definitions.csp"
 include "file_InputDuplicationSM_defs.csp"
+include "state_timed_defs.csp"
 include "InputDuplicationSM.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
@@ -9,10 +19,13 @@ transparent wbisim
 channel r__
 -- generate InputDuplicationSM
 P_InputDuplicationSM = let
-	id = 0
+	id__ = 0
+	
+	
+	
 within
 	InputDuplicationSM::O__(
-		id
+		id__
 	)
 assert P_InputDuplicationSM :[deadlock-free]	
 assert P_InputDuplicationSM;RUN({r__}) :[deadlock-free]

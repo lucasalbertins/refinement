@@ -1,9 +1,21 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 17:58:29
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_System_defs.csp"
+include "core_timed_defs.csp"
 include "core_defs.csp"
 include "ChemicalDetectorSoftware.csp"
-include "timed_definitions.csp"
+include "state_timed_defs.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
+
+transparent wbisim
 channel r__
 -- generate ChemicalDetectorSoftware
 P_ChemicalDetectorSoftware = let
@@ -25,6 +37,10 @@ assert P_ChemicalDetectorSoftware :[divergence-free]
 -- generate ChemicalDetectorSoftware_ctrl_ref0
 P_ChemicalDetectorSoftware_ctrl_ref0 = let
 	id__ = 0
+	
+	
+	
+		
 within
 	ChemicalDetectorSoftware::ctrl_ref0::O__(id__)
 
@@ -36,6 +52,11 @@ assert P_ChemicalDetectorSoftware_ctrl_ref0 :[divergence-free]
 -- generate ChemicalDetectorSoftware_ctrl_ref1
 P_ChemicalDetectorSoftware_ctrl_ref1 = let
 	id__ = 0
+	
+	
+	
+	const_Microcontroller_stm_ref0_flagTime = const_Signalling_flagTime
+		
 within
 	ChemicalDetectorSoftware::ctrl_ref1::O__(id__,
 			    const_Microcontroller_stm_ref0_flagTime)

@@ -22,8 +22,8 @@
 class PathPlanningController: public robocalc::Controller 
 {
 public:
-	PathPlanningController(Platform& _robot) : robot(&_robot){};
-	PathPlanningController() : robot(nullptr){};
+	PathPlanningController(Platform& _platform) : platform(&_platform){};
+	PathPlanningController() : platform(nullptr){};
 	
 	~PathPlanningController() = default;
 	
@@ -245,21 +245,20 @@ public:
 	
 	Channels channels{*this};
 	
-private:
-	Platform* robot;
-	PathPlanningSM_StateMachine<Channels> pathPlanningSM{*robot, channels};
-	SpeedSM_StateMachine<Channels> speedSM{*robot, channels};
-	SpeedSM_StateMachine<Channels> speedSM{*robot, channels};
-	DisplacementSM_StateMachine<Channels> displacementSM{*robot, channels};
-	CleanSM_StateMachine<Channels> cleanSM{*robot, channels};
-	AngularSpeedSM_StateMachine<Channels> angularSpeedSM{*robot, channels};
-	PID_StateMachine<Channels> pID{*robot, channels};
-	PID_StateMachine<Channels> pID{*robot, channels};
-	MidLevelSM_StateMachine<Channels> midLevelSM{*robot, channels};
-	LinearSpeedSM_StateMachine<Channels> linearSpeedSM{*robot, channels};
-	InputDuplicationSM_StateMachine<Channels> inputDuplicationSM{*robot, channels};
-	InputDuplicationSM_StateMachine<Channels> inputDuplicationSM{*robot, channels};
-	InputDuplicationSM_StateMachine<Channels> inputDuplicationSM{*robot, channels};
+	Platform* platform;
+	PathPlanningSM_StateMachine<PathPlanningController> pathPlanningSM{*platform, *this, &pathPlanningSM};
+	SpeedSM_StateMachine<PathPlanningController> speedSM{*platform, *this, &speedSM};
+	SpeedSM_StateMachine<PathPlanningController> speedSM{*platform, *this, &speedSM};
+	DisplacementSM_StateMachine<PathPlanningController> displacementSM{*platform, *this, &displacementSM};
+	CleanSM_StateMachine<PathPlanningController> cleanSM{*platform, *this, &cleanSM};
+	AngularSpeedSM_StateMachine<PathPlanningController> angularSpeedSM{*platform, *this, &angularSpeedSM};
+	PID_StateMachine<PathPlanningController> pID{*platform, *this, &pID};
+	PID_StateMachine<PathPlanningController> pID{*platform, *this, &pID};
+	MidLevelSM_StateMachine<PathPlanningController> midLevelSM{*platform, *this, &midLevelSM};
+	LinearSpeedSM_StateMachine<PathPlanningController> linearSpeedSM{*platform, *this, &linearSpeedSM};
+	InputDuplicationSM_StateMachine<PathPlanningController> inputDuplicationSM{*platform, *this, &inputDuplicationSM};
+	InputDuplicationSM_StateMachine<PathPlanningController> inputDuplicationSM{*platform, *this, &inputDuplicationSM};
+	InputDuplicationSM_StateMachine<PathPlanningController> inputDuplicationSM{*platform, *this, &inputDuplicationSM};
 };
 
 #endif

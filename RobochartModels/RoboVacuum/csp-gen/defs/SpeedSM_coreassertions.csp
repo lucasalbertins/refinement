@@ -1,16 +1,28 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:35
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "SpeedSM.csp"
 include "file_SpeedSM_defs.csp"
 include "core_defs.csp"
+include "state_defs.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
 channel r__
 -- generate SpeedSM
 P_SpeedSM = let
-	id = 0
-	const_SpeedSM_t = 0
+	id__ = 0
+	
+	
+	
 within
 	SpeedSM::O__(
-		id,
+		id__,
 		const_SpeedSM_t
 	)
 assert P_SpeedSM :[deadlock-free]	

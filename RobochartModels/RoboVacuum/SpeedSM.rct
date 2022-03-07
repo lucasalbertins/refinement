@@ -18,13 +18,13 @@ stm SpeedSM {
 	transition t0 {
 		from i0
 		to wait_input
-		trigger
+//		trigger
 		action speed . X = 0 ; speed . Y = 0 ; speed . Z = 0
 	}
 	transition t2 {
 		from update_speed
 		to wait_input
-		trigger
+//		trigger
 		action sp ! speed ; wait ( t )
 	}
 }

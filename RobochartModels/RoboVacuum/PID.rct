@@ -15,14 +15,14 @@ stm PID {
 	transition t0 {
 		from i0
 		to Wait_target
-		trigger
+//		trigger
 		action 
 	prior_error = 0 ; integral = 0
 	}
 	transition t1 {
 		from Update
 		to Wait_target 
-		trigger
+//		trigger
 		action wait ( step )
 	}
 	transition t4 {

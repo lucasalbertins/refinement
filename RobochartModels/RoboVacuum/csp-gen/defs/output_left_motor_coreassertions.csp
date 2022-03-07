@@ -1,5 +1,15 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:36
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_operations_defs.csp"
 include "core_defs.csp"
+include "state_defs.csp"
 include "output_left_motor.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
@@ -8,13 +18,13 @@ channel r__
 P_OP_output_left_motor = let
 	id__ = 0
 	
-	x = 0
+	param_x = 0
 	
 	
 	
 within
 	OP_output_left_motor::O__(id__,
-				x)
+				param_x)
 assert P_OP_output_left_motor :[deadlock-free]	
 assert P_OP_output_left_motor;RUN({r__}) :[deadlock-free]
 assert P_OP_output_left_motor :[deterministic]

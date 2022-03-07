@@ -20,7 +20,7 @@ stm AngularSpeedSM {
 	transition t0 {
 		from i0
 		to wait_input
-		trigger
+//		trigger
 		action turn_angle = 0
 	}
 	transition t2 {
@@ -46,7 +46,7 @@ stm AngularSpeedSM {
 	transition t6 {
 		from update_value
 		to wait_input
-		trigger
+//		trigger
 		action 
 	
 	

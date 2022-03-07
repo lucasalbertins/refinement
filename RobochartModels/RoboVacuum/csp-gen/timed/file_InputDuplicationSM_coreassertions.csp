@@ -1,11 +1,23 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:34
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_InputDuplicationSM.csp"
 
 -- generate InputDuplicationSM
 P_InputDuplicationSM = let
-	id = 0
+	id__ = 0
+	
+	
+	
 within
 	InputDuplicationSM::O__(
-		id
+		id__
 	)
 assert P_InputDuplicationSM :[deadlock-free]	
 assert P_InputDuplicationSM;RUN({r__}) :[deadlock-free]

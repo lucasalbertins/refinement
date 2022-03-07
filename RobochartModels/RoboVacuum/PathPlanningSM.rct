@@ -9,7 +9,7 @@ stm PathPlanningSM {
 	transition t0 {
 		from i0
 		to Resume
-		trigger
+		//trigger
 		action cycles = 0
 	}
 	transition t1 {
@@ -112,7 +112,7 @@ var cycles : int
 	transition t13 {
 		from Sleep
 		to Resume
-		trigger
+		//trigger
 		action turn ! Direction::left ; turn ! Direction::left ; move_forward
 	}
 	state Resume {

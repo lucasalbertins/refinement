@@ -1,3 +1,12 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:36
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_operations.csp"
 
 
@@ -5,13 +14,13 @@ include "file_operations.csp"
 P_OP_brush = let
 	id__ = 0
 	
-	voltage = 0
+	param_voltage = 0
 	
 	
 	
 within
 	OP_brush::O__(id__,
-				voltage)
+				param_voltage)
 assert P_OP_brush :[deadlock-free]	
 assert P_OP_brush;RUN({r__}) :[deadlock-free]
 assert P_OP_brush :[deterministic]
@@ -20,13 +29,13 @@ assert P_OP_brush :[divergence-free]
 P_OP_vacuum = let
 	id__ = 0
 	
-	voltage = 0
+	param_voltage = 0
 	
 	
 	
 within
 	OP_vacuum::O__(id__,
-				voltage)
+				param_voltage)
 assert P_OP_vacuum :[deadlock-free]	
 assert P_OP_vacuum;RUN({r__}) :[deadlock-free]
 assert P_OP_vacuum :[deterministic]
@@ -35,13 +44,13 @@ assert P_OP_vacuum :[divergence-free]
 P_OP_output_left_motor = let
 	id__ = 0
 	
-	x = 0
+	param_x = 0
 	
 	
 	
 within
 	OP_output_left_motor::O__(id__,
-				x)
+				param_x)
 assert P_OP_output_left_motor :[deadlock-free]	
 assert P_OP_output_left_motor;RUN({r__}) :[deadlock-free]
 assert P_OP_output_left_motor :[deterministic]
@@ -50,13 +59,13 @@ assert P_OP_output_left_motor :[divergence-free]
 P_OP_output_right_motor = let
 	id__ = 0
 	
-	x = 0
+	param_x = 0
 	
 	
 	
 within
 	OP_output_right_motor::O__(id__,
-				x)
+				param_x)
 assert P_OP_output_right_motor :[deadlock-free]	
 assert P_OP_output_right_motor;RUN({r__}) :[deadlock-free]
 assert P_OP_output_right_motor :[deterministic]

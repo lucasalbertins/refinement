@@ -19,14 +19,14 @@ stm DisplacementSM {
 	transition t3 {
 		from update_displacement
 		to wait_input
-		trigger
+//		trigger
 		action 
 	displacement ! d ; wait ( t )
 	}
 	transition t0 {
 		from i0
 		to j0
-		trigger
+//		trigger
 		action d = 0
 	}
 	transition t1 {

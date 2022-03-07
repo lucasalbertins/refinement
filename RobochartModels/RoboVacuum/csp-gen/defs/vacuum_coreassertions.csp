@@ -1,6 +1,16 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:36
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_operations_defs.csp"
 include "vacuum.csp"
 include "core_defs.csp"
+include "state_defs.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
 channel r__
@@ -8,13 +18,13 @@ channel r__
 P_OP_vacuum = let
 	id__ = 0
 	
-	voltage = 0
+	param_voltage = 0
 	
 	
 	
 within
 	OP_vacuum::O__(id__,
-				voltage)
+				param_voltage)
 assert P_OP_vacuum :[deadlock-free]	
 assert P_OP_vacuum;RUN({r__}) :[deadlock-free]
 assert P_OP_vacuum :[deterministic]

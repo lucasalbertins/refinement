@@ -40,7 +40,7 @@ stm LinearSpeedSM {
 	transition t5 {
 		from send_output
 		to wait_input
-		trigger 
+//		trigger 
 		action linear_speed ! get_linear_speed ( spl . Z , spr . Z )
 	}
 }

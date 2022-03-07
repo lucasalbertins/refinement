@@ -1,17 +1,28 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:33
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "core_defs.csp"
 include "file_AngularSpeedSM_defs.csp"
 include "AngularSpeedSM.csp"
+include "state_defs.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
 channel r__
 -- generate AngularSpeedSM
 P_AngularSpeedSM = let
-	id = 0
-	const_AngularSpeedSM_t = 0
-	const_AngularSpeedSM_acc_distance = 0
+	id__ = 0
+	
+	
+	
 within
 	AngularSpeedSM::O__(
-		id,
+		id__,
 		const_AngularSpeedSM_t,
 		const_AngularSpeedSM_acc_distance
 	)

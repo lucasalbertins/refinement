@@ -13,6 +13,17 @@
 
 LSeq(X,0) = {<>}
 LSeq(X,n) = let s = LSeq(X,n-1) within union(s,{<x>^xs|x<-X,xs<-s})
---
+
 ILSeq(X,0) = {<>}
 ILSeq(X,n) = let s = ILSeq(X,n-1) within union(s,{<x>^xs|x<-X,xs<-s,not elem(x,xs)})
+
+calc_type_max(S) = calc_type_seq_max(seq(S),0)
+calc_type_seq_max(<>,x__) = x__
+calc_type_seq_max(<elem__>^xs,x__) = (if elem__ > x__ then calc_type_seq_max(xs,elem__) else calc_type_seq_max(xs,x__))
+
+calc_type_min(S) = calc_type_seq_min(seq(S),calc_type_max(S))
+calc_type_seq_min(<>,x__) = x__
+calc_type_seq_min(<elem__>^xs,x__) = (if elem__ < x__ then calc_type_seq_min(xs,elem__) else calc_type_seq_min(xs,x__))
+
+no_zero_div(0) = 1
+no_zero_div(x__) = x__

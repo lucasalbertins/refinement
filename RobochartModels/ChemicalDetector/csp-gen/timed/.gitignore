@@ -1,0 +1,13 @@
+/ChemicalDetector_assertions.csp
+/ChemicalDetector_assertions.json
+/file_MainComputer.csp
+/file_MainComputer_coreassertions.csp
+/file_Microcontroller.csp
+/file_Microcontroller_coreassertions.csp
+/file_Move.csp
+/file_Move_coreassertions.csp
+/file_Signal.csp
+/file_Signal_coreassertions.csp
+/file_System.csp
+/file_System_coreassertions.csp
+/instantiations.csp

@@ -1,6 +1,16 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:35
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+include "core_timed_defs.csp"
 include "core_defs.csp"
 include "file_LinearSpeedSM_defs.csp"
-include "timed_definitions.csp"
+include "state_timed_defs.csp"
 include "LinearSpeedSM.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
@@ -9,10 +19,13 @@ transparent wbisim
 channel r__
 -- generate LinearSpeedSM
 P_LinearSpeedSM = let
-	id = 0
+	id__ = 0
+	
+	
+	
 within
 	LinearSpeedSM::O__(
-		id
+		id__
 	)
 assert P_LinearSpeedSM :[deadlock-free]	
 assert P_LinearSpeedSM;RUN({r__}) :[deadlock-free]

@@ -1,9 +1,18 @@
-module ChemicalDetectorSoftware
-exports 
 
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 17:58:29
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+module ChemicalDetectorSoftware
+	exports
+	
 	transparent diamond
 	transparent sbisim
-	transparent wbisim
+	transparent dbisim
 	transparent chase
 	
 	-- declaring channels
@@ -20,2157 +29,2751 @@ exports
 	
 	-- declaring module termination channel
 	channel terminate
-				
+	
 	-- declaring robotic platform variables
 	
+	-- channel set with all visible events
+	sem__events = {|
+		gas,
+		turn,
+		flag,
+		siren,
+		cd,
+		light
+	,	incrCall,
+		decrCall
+	|}
+	
+	-- declaring controller
 		module ctrl_ref0
-			Timed(OneStep) {
-				shared_variable_events = {|
-				|}		
-			}	
+			shared_variable_events = {|
+			|}
+			
 		exports
 			transparent diamond
 			transparent sbisim
-			transparent wbisim
+			transparent dbisim
 			transparent chase
-			
-					module stm_ref0
-					exports
-						-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
-						external prioritise
-						transparent wbisim
-						transparent dbisim
-						transparent sbisim
-					
-						Timed(OneStep) {	
-							-- flow channels
-							channel internal__ : TIDS
-							channel enteredV, enterV, exitV, exitedV : SIDS
-							channel enter, entered: SIDS.SIDS
-							channel exit,exited: SIDS.SIDS
-							channel terminate
-							
-							-- variable channels
-							channel get_c, set_c: Command
-									
-							-- shared variable channels
-							
-							-- local variable channels for defined operations that are required by the state machine
-							
-							-- declaring state machine events
-							channel cd__: TIDS.InOut.Command
-							channel cd: InOut.Command
-							channel turn__: TIDS.InOut.core_real
-							channel turn: InOut.core_real
-							
-							-- declaring call and ret events for undefined operations
-							channel incrCall
-							channel decrCall
-						
-							-- Only the undefined operations are declared here.
-							-- If the state machine is in isolation, all required operations will be undefined.
-							-- If it is in the context of a controller, the required operations not provided by the
-							-- controller will be declared here, and the defined operations will be defined in the
-							-- context of the Controller module, and therefore within scope of the state machien module.
-							CALL__incr(id__) =  EDeadline(incrCall,0)		
-							CALL__decr(id__) =  EDeadline(decrCall,0)		
-							
-							
-							-- definition of functions used to expose flow channels
-							ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
-											   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
-											   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
-											   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
-												 
-							ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
-										[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-										[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
-										[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							
-							-- declaring identifiers of state and final states
-							datatype SIDS = SID_Moving
-							              | SID_Moving_Waiting
-							
-							-- declaring identifiers of transitions
-							datatype TIDS = NULLTRANSITION__
-							              | TID_Moving_t1
-							              | TID_Moving_t2
-							              | TID_Moving_t3
-							              | TID_Moving_t4
-							              | TID_Moving_t5
-							              | TID_Moving_t6
-							
-							-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
-							
-							ITIDS = {
-								TID_Moving_t2,	TID_Moving_t3,	TID_Moving_t4,	TID_Moving_t5,	TID_Moving_t6
-							}
-							
-							int_int = {|
-								cd__.TID_Moving_t2,
-								turn__.TID_Moving_t2,
-								internal__.TID_Moving_t2,
-								cd__.TID_Moving_t3,
-								turn__.TID_Moving_t3,
-								internal__.TID_Moving_t3,
-								cd__.TID_Moving_t4,
-								turn__.TID_Moving_t4,
-								internal__.TID_Moving_t4,
-								cd__.TID_Moving_t5,
-								turn__.TID_Moving_t5,
-								internal__.TID_Moving_t5,
-								cd__.TID_Moving_t6,
-								turn__.TID_Moving_t6,
-								internal__.TID_Moving_t6
-							|}
-								
-							
-							internal_events = {|enter,entered,exit,exited|}
-							shared_variable_events = {|
-							|}
-									
-							
-							-- declaring all states
-							CS_Moving_Waiting_sync = {|
-								enter.y____.x____, 
-								entered.y____.x____, 
-								exit.y____.x____, 
-								exited.y____.x____,
-								enter.x____.y____, 
-								entered.x____.y____, 
-								exit.x____.y____, 
-								exited.x____.y____ |
-								x____ <- {SID_Moving_Waiting},
-								y____ <- {SID_Moving_Waiting}
-							|}
-							
-							
-							Moving_Waiting_triggers = {|
-								cd__.TID_Moving_t3,
-								cd__.TID_Moving_t4,
-								cd__.TID_Moving_t6,
-								cd__.TID_Moving_t2,
-								cd__.TID_Moving_t5
-							|}
-							
-							State_Moving_Waiting(id__) = let
-								T_Moving_t2(id__) = cd__!TID_Moving_t2.in?c -> set_c!c ->  (exit.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													SKIP;exited.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													true&(turn.out!(Neg(90, core_int)) -> SKIP);enter!SID_Moving_Waiting!SID_Moving_Waiting -> State_Moving_Waiting_execute(id__,SID_Moving_Waiting)
-								)
-								T_Moving_t3(id__) = cd__!TID_Moving_t3.in?c -> set_c!c ->  (exit.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													SKIP;exited.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													true&(turn.out.90 -> SKIP);enter!SID_Moving_Waiting!SID_Moving_Waiting -> State_Moving_Waiting_execute(id__,SID_Moving_Waiting)
-								)
-								T_Moving_t4(id__) = cd__!TID_Moving_t4.in?c -> set_c!c ->  (exit.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													SKIP;exited.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													true&(turn.out.180 -> SKIP);enter!SID_Moving_Waiting!SID_Moving_Waiting -> State_Moving_Waiting_execute(id__,SID_Moving_Waiting)
-								)
-								T_Moving_t5(id__) = cd__!TID_Moving_t5.in?c -> set_c!c ->  (exit.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													SKIP;exited.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													true&CALL__incr(
-																id__
-															);enter!SID_Moving_Waiting!SID_Moving_Waiting -> State_Moving_Waiting_execute(id__,SID_Moving_Waiting)
-								)
-								T_Moving_t6(id__) = cd__!TID_Moving_t6.in?c -> set_c!c ->  (exit.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													SKIP;exited.SID_Moving_Waiting.SID_Moving_Waiting -> SKIP;
-													true&CALL__decr(
-																id__
-															);enter!SID_Moving_Waiting!SID_Moving_Waiting -> State_Moving_Waiting_execute(id__,SID_Moving_Waiting)
-								)
-								State_Moving_Waiting_execute(id__,o____) = SKIP; 
-									entered!o____!SID_Moving_Waiting ->
-									(SKIP; STOP /\ (
-										T_Moving_t2(id__)[]
-										T_Moving_t3(id__)[]
-										T_Moving_t4(id__)[]
-										T_Moving_t5(id__)[]
-										T_Moving_t6(id__)
-										[]
-										internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Moving_t3,TID_Moving_t4,TID_Moving_t6,TID_Moving_t2,TID_Moving_t5}) -> exit?y____:diff(SIDS,{SID_Moving_Waiting})!SID_Moving_Waiting -> (
-												SKIP;
-												exited!y____!SID_Moving_Waiting -> SKIP);
-												State_Moving_Waiting(id__)
-										[] cd__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Moving_t3,TID_Moving_t4,TID_Moving_t6,TID_Moving_t2,TID_Moving_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Moving_Waiting})!SID_Moving_Waiting -> (
-												SKIP;
-												exited!y____!SID_Moving_Waiting -> SKIP);
-												State_Moving_Waiting(id__)
-										[] turn__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Moving_t3,TID_Moving_t4,TID_Moving_t6,TID_Moving_t2,TID_Moving_t5})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Moving_Waiting})!SID_Moving_Waiting -> (
-												SKIP;
-												exited!y____!SID_Moving_Waiting -> SKIP);
-												State_Moving_Waiting(id__)
-									))
-							within
-								enter?x____:diff(SIDS,{SID_Moving_Waiting})!SID_Moving_Waiting -> (State_Moving_Waiting_execute(id__,x____))
-							
-							
-							I_Moving_i1(id__) = let
-								T_Moving_t1(id__) = internal__!TID_Moving_t1 -> enter!SID_Moving!SID_Moving_Waiting -> entered!SID_Moving!SID_Moving_Waiting ->
-								SKIP
-							within
-								T_Moving_t1(id__)
-							
-							
-							State_Moving_Waiting_R(id__) = 
-								State_Moving_Waiting(id__)
-									[|diff(int_int,Moving_Waiting_triggers)|]
-								SKIP
-									 		
-								
-							STM(id__) = (
-								I_Moving_i1(id__)
-									[|
-										{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
-											x____ <- diff(SIDS,{SID_Moving_Waiting}),
-											y____ <- {SID_Moving_Waiting}
-									|}|]
-								State_Moving_Waiting_R(id__)
-							)
-							
-							-- optimized memory process
-							channel getV_c: Command
-							
-							-- individual memory processes
-							Memory_c(x__) = ( 
-								get_c!x__ -> Memory_c(x__)
-								[]
-								getV_c!x__ -> Memory_c(x__)
-								[]
-								set_c?x__ -> Memory_c(x__)
-								[]
-								cd__!TID_Moving_t2.in?c -> Memory_c(c)
-								[]
-								cd__!TID_Moving_t3.in?c -> Memory_c(c)
-								[]
-								cd__!TID_Moving_t4.in?c -> Memory_c(c)
-								[]
-								cd__!TID_Moving_t5.in?c -> Memory_c(c)
-								[]
-								cd__!TID_Moving_t6.in?c -> Memory_c(c)
-							)
-							
-							-- processes that read variables and offer transitions
-							MemoryTransitions(id__,
-								 c) = (
-								internal__!TID_Moving_t1 -> SKIP
-								[]
-								cd__!TID_Moving_t2.in?c:{c|c <- Command, (c==Command_left)} -> SKIP
-								[]
-								cd__!TID_Moving_t3.in?c:{c|c <- Command, (c==Command_right)} -> SKIP
-								[]
-								cd__!TID_Moving_t4.in?c:{c|c <- Command, (c==Command_back)} -> SKIP
-								[]
-								cd__!TID_Moving_t5.in?c:{c|c <- Command, (c==Command_faster)} -> SKIP
-								[]
-								cd__!TID_Moving_t6.in?c:{c|c <- Command, (c==Command_slower)} -> SKIP
-							
-								[]
-									set_c?x__ -> SKIP
-							 	)
-							MemoryTransitions_Moving(id__) =
-								(
-								getV_c?c ->
-								 MemoryTransitions(id__,
-								 	 c);
-								 MemoryTransitions_Moving(id__)
-								)
-							
-							-- synchronisation, hiding and process sets 
-							MemoryVariablesProcesses_Moving = Union(
-								{
-									{
-										Memory_c(Command_faster)
-									}
-								}
-							)
-							
-							MemoryVariablesSyncSet = Union({
-								{|
-									cd__.TID_Moving_t6,
-									set_c,
-									cd__.TID_Moving_t4,
-									cd__.TID_Moving_t5,
-									cd__.TID_Moving_t2,
-									cd__.TID_Moving_t3,
-									setWC,
-									getV_c
-								|}	
-							})
-							
-							MemoryVariablesHideSet = Union({
-								{|
-									getWC,
-									getV_c
-								|}
-							})
-							
-							-- combined individual memory processes
-							MemoryVariables = ||| P : MemoryVariablesProcesses_Moving @ P
-							
-							-- complete memory process
-							MemoryN(id__) = (MemoryVariables [| MemoryVariablesSyncSet |] MemoryTransitions_Moving(id__)) \ MemoryVariablesHideSet
-							
-							-- optimised memory
-							-- Sets of named elements identified according to transition conditions:
-							-- {}
-							-- Summary of all identified named elements:
-							-- {
-							-- c
-							-- }
-							
-							-- Allocation plan:
-							-- 0:{}
-							--	=> {
-							--		TID_Moving_t5,
-							--		TID_Moving_t3,
-							--		TID_Moving_t1,
-							--		TID_Moving_t6,
-							--		TID_Moving_t2,
-							--		TID_Moving_t4}
-							
-							-- Memory transition processes
-							MemoryTransitions_opt_0(id__) =
-							(
-								let
-									Update = Current(id__)
-									Current(id__)
-									 	   = 
-									 	   cd__!TID_Moving_t5.in?c:{c|c <- Command, (c==Command_faster)} -> Update
-									 	   []
-									 	   cd__!TID_Moving_t3.in?c:{c|c <- Command, (c==Command_right)} -> Update
-									 	   []
-									 	   internal__!TID_Moving_t1 -> Update
-									 	   []
-									 	   cd__!TID_Moving_t6.in?c:{c|c <- Command, (c==Command_slower)} -> Update
-									 	   []
-									 	   cd__!TID_Moving_t2.in?c:{c|c <- Command, (c==Command_left)} -> Update
-									 	   []
-									 	   cd__!TID_Moving_t4.in?c:{c|c <- Command, (c==Command_back)} -> Update
-								within
-									Update
-							)
-							
-							-- Memory cell processes
-							Memory_opt_c(x__) = ( 
-								get_c!x__ -> Memory_opt_c(x__)
-								[]
-								set_c?x__ -> Memory_opt_c(x__)
-							)
-							
-							-- Composition of memory, StateMachine and Memory transition processes
-							
-							MemorySTM_opt(id__) =
-								sbisim(	
-								  dbisim(
-								    sbisim(dbisim(sbisim(Memory_opt_c(Command_faster)
-								          	[| {|get_c,set_c|} |] 
-								          	STM_core(id__)
-								          	)\ {|get_c,set_c|}
-								          )
-								      	  [| {|internal__.TID_Moving_t1,cd__.TID_Moving_t6,cd__.TID_Moving_t4,cd__.TID_Moving_t5,cd__.TID_Moving_t2,cd__.TID_Moving_t3|} |]
-								      	  MemoryTransitions_opt_0(id__)
-								      	  )\{|internal__.TID_Moving_t1|})
-								      )
-							
-							-- main process
-							
-							MachineMemorySyncSet = Union({
-								union(
-									union(
-										{|get_c,set_c|},
-										{||}
-									)
-										
-									,
-									{|internal__.TID_Moving_t1,
-									cd__.TID_Moving_t2,
-									cd__.TID_Moving_t3,
-									cd__.TID_Moving_t4,
-									cd__.TID_Moving_t5,
-									cd__.TID_Moving_t6|}
-								),
-								{|deadline|},
-								WCresets
-							})
-							
-							MachineMemoryHidingSet = Union({
-								union(
-									{|get_c,set_c|},
-									{||}
-								)
-								,
-								{|deadline|}
-							})
-							
-							MachineInternalEvents = {|
-								internal__
-							|}
-						
-							-- main process
-							AUX(id__) = prioritise((((
-								wbisim(STM(id__))
-									[|MachineMemorySyncSet|]
-								(
-									(MemoryN(id__))
-										[| union(WCsets,WCsync) |]
-									Clocks(id__)
-								)\WCsets
-							)
-							[[
-								cd__.x____ <- cd,
-								turn__.x____ <- turn
-								| x____ <- TIDS
-							]]
-							\MachineMemoryHidingSet)
-							[|{|terminate|}|>SKIP\MachineInternalEvents)
-							,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-							
-							STM_core(id__) = 
-								dbisim(
-									sbisim(
-											(STM(id__)
-											[| union(WCsync,WCresets) |]
-											Clocks(id__))\WCresets
-										  )
-									  )
-							
-							AUX_opt(id__) = 
-								prioritise(
-									(MemorySTM_opt(id__)
-									)[[
-										cd__.x____ <- cd,
-										turn__.x____ <- turn
-										| x____ <- TIDS
-									]]
-								[|{|terminate|}|>SKIP\MachineInternalEvents
-								,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-							
-							internal_(id__) = prioritise((((
-								wbisim(STM(id__))
-									[|MachineMemorySyncSet|]
-								((MemoryN(id__)) [| union(WCsets,WCsync) |] Clocks(id__))\WCsets
-							)
-							\MachineMemoryHidingSet)
-							[|{|terminate|}|>SKIP)
-							,<Union({internal_events, ClockResets, {|internal__,terminate|}}),{tock}>)		
-							-- declare clocks
-							datatype ClockSet = dummyC
-							channel clockReset 				-- no clocks declared
-							
-							-- declare trigger deadlines channel
-							channel deadline : TIDS.Signal
-							
-							-- compile clocks process
-							
-							-- set of strings that uniquely identify the waiting conditions, each of which is 
-							-- used to synchronise with the Memory process to set the correspoding variable in
-							-- the memory process.
-							datatype setWC_identifierSet = dummyWC
-							
-							-- declaring getWC and setWC channel for updating memory variables related to clocks
-							channel setWC : setWC_identifierSet.Bool
-							channel getWC : setWC_identifierSet.Bool
-							
-							-- Set of pairs capturing waiting condition processes and their alphabet.
-							-- It includes the corresponding set of the defined operations.
-							WCset(id__) = Union({
-								{
-								}
-								})
-							
-							-- Auxiliary function to rename the channel set for required clocks.
-							
-							-- Set of transition events for which synchronisation is required between Clocks and the Memory process.
-							-- It includes the corresponding set of the defined operations.
-							WCsync = Union({
-								{||}
-								})
-							-- Set of all clock resets, including 'clockReset.C' events and 'entered.x.y' events where x is drawn
-							-- from the set of all state machine state identifiers. It includes the corresponding set of the defined operations.
-							WCresets = Union({
-								{| | x <- SIDS |}
-								})
-							-- Set of all waiting condition set events. It includes the corresponding set of the defined operations.
-							WCsets = Union({
-								{|setWC|}
-								})
-							
-							
-							
-							-- Clocks process
-							Clocks(id__) = || (alpha, P) : WCset(id__) @ [alpha] wbisim(P)
-			
-							-- collects all clockResets including those of operations
-							ClockResets = Union({
-								{|clockReset|}
-												})
-							
-							-- With no internal events visible
-							Dunopt__(id__) = timed_priority(AUX(id__) \ union(internal_events,ClockResets))
-							
-							D__(id__) = timed_priority(AUX_opt(id__) \ union(internal_events,ClockResets))
-							
-							O__(id__) = D__(id__)
-							
-							-- With enter/entered/exit/exited events visible
-							FVS__(id__) = timed_priority(AUX(id__) \ ClockResets)
-							
-							-- With enterV/enteredV/exitV/exitedV events visible
-							VS__(id__) = ShowV(timed_priority(AUX(id__) \ ClockResets))
-							
-							-- With clock resets visible
-							FVS_C__(id__) = AUX(id__)
-						}
-					endmodule
-					module stm_ref1
-					exports
-						-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
-						external prioritise
-						transparent wbisim
-						transparent dbisim
-						transparent sbisim
-					
-						Timed(OneStep) {	
-							-- flow channels
-							channel internal__ : TIDS
-							channel enteredV, enterV, exitV, exitedV : SIDS
-							channel enter, entered: SIDS.SIDS
-							channel exit,exited: SIDS.SIDS
-							channel terminate
-							
-							-- variable channels
-									
-							-- shared variable channels
-							
-							-- local variable channels for defined operations that are required by the state machine
-							
-							-- declaring state machine events
-							channel gas__: TIDS.InOut
-							channel gas: InOut
-							channel detect__: TIDS.InOut.Chemical
-							channel detect: InOut.Chemical
-							
-							-- declaring call and ret events for undefined operations
-						
-							-- Only the undefined operations are declared here.
-							-- If the state machine is in isolation, all required operations will be undefined.
-							-- If it is in the context of a controller, the required operations not provided by the
-							-- controller will be declared here, and the defined operations will be defined in the
-							-- context of the Controller module, and therefore within scope of the state machien module.
-							
-							
-							-- definition of functions used to expose flow channels
-							ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
-											   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
-											   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
-											   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
-												 
-							ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
-										[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-										[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
-										[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							
-							-- declaring identifiers of state and final states
-							datatype SIDS = SID_Detecting
-							              | SID_Detecting_CleanAir
-							              | SID_Detecting_GasPresent
-							
-							-- declaring identifiers of transitions
-							datatype TIDS = NULLTRANSITION__
-							              | TID_Detecting_t1
-							              | TID_Detecting_t2
-							              | TID_Detecting_t3
-							              | TID_Detecting_t4
-							
-							-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
-							
-							ITIDS = {
-								TID_Detecting_t2,	TID_Detecting_t3,	TID_Detecting_t4
-							}
-							
-							int_int = {|
-								gas__.TID_Detecting_t2,
-								detect__.TID_Detecting_t2,
-								internal__.TID_Detecting_t2,
-								gas__.TID_Detecting_t3,
-								detect__.TID_Detecting_t3,
-								internal__.TID_Detecting_t3,
-								gas__.TID_Detecting_t4,
-								detect__.TID_Detecting_t4,
-								internal__.TID_Detecting_t4
-							|}
-								
-							
-							internal_events = {|enter,entered,exit,exited|}
-							shared_variable_events = {|
-							|}
-									
-							
-							-- declaring all states
-							CS_Detecting_CleanAir_sync = {|
-								enter.y____.x____, 
-								entered.y____.x____, 
-								exit.y____.x____, 
-								exited.y____.x____,
-								enter.x____.y____, 
-								entered.x____.y____, 
-								exit.x____.y____, 
-								exited.x____.y____ |
-								x____ <- {SID_Detecting_CleanAir,SID_Detecting_GasPresent},
-								y____ <- {SID_Detecting_CleanAir}
-							|}
-							
-							
-							Detecting_CleanAir_triggers = {|
-								gas__.TID_Detecting_t2,
-								detect__.TID_Detecting_t4,
-								detect__.TID_Detecting_t3
-							|}
-							
-							State_Detecting_CleanAir(id__) = let
-								T_Detecting_t2(id__) = gas__!TID_Detecting_t2.in ->  (exit.SID_Detecting_CleanAir.SID_Detecting_CleanAir -> SKIP;
-													SKIP;exited.SID_Detecting_CleanAir.SID_Detecting_CleanAir -> SKIP;
-													enter!SID_Detecting_CleanAir!SID_Detecting_GasPresent -> entered!SID_Detecting_CleanAir!SID_Detecting_GasPresent ->
-													State_Detecting_CleanAir(id__)
-								)
-								State_Detecting_CleanAir_execute(id__,o____) = SKIP; 
-									entered!o____!SID_Detecting_CleanAir ->
-									(SKIP; STOP /\ (
-										T_Detecting_t2(id__)
-										[]
-										internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Detecting_t2,TID_Detecting_t4,TID_Detecting_t3}) -> exit?y____:diff(SIDS,{SID_Detecting_CleanAir})!SID_Detecting_CleanAir -> (
-												SKIP;
-												exited!y____!SID_Detecting_CleanAir -> SKIP);
-												State_Detecting_CleanAir(id__)
-										[] gas__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Detecting_t2,TID_Detecting_t4,TID_Detecting_t3})?d____ ->	exit?y____:diff(SIDS,{SID_Detecting_CleanAir})!SID_Detecting_CleanAir -> (
-												SKIP;
-												exited!y____!SID_Detecting_CleanAir -> SKIP);
-												State_Detecting_CleanAir(id__)
-										[] detect__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Detecting_t2,TID_Detecting_t4,TID_Detecting_t3})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Detecting_CleanAir})!SID_Detecting_CleanAir -> (
-												SKIP;
-												exited!y____!SID_Detecting_CleanAir -> SKIP);
-												State_Detecting_CleanAir(id__)
-									))
-							within
-								enter?x____:diff(SIDS,{SID_Detecting_CleanAir})!SID_Detecting_CleanAir -> (State_Detecting_CleanAir_execute(id__,x____))
-							
-							CS_Detecting_GasPresent_sync = {|
-								enter.y____.x____, 
-								entered.y____.x____, 
-								exit.y____.x____, 
-								exited.y____.x____,
-								enter.x____.y____, 
-								entered.x____.y____, 
-								exit.x____.y____, 
-								exited.x____.y____ |
-								x____ <- {SID_Detecting_CleanAir,SID_Detecting_GasPresent},
-								y____ <- {SID_Detecting_GasPresent}
-							|}
-							
-							
-							Detecting_GasPresent_triggers = {|
-								detect__.TID_Detecting_t4,
-								gas__.TID_Detecting_t2,
-								detect__.TID_Detecting_t3
-							|}
-							
-							State_Detecting_GasPresent(id__) = let
-								T_Detecting_t3(id__) = detect__!TID_Detecting_t3.in?aux____ ->  (exit.SID_Detecting_GasPresent.SID_Detecting_GasPresent -> SKIP;
-													SKIP;exited.SID_Detecting_GasPresent.SID_Detecting_GasPresent -> SKIP;
-													enter!SID_Detecting_GasPresent!SID_Detecting_CleanAir -> entered!SID_Detecting_GasPresent!SID_Detecting_CleanAir ->
-													State_Detecting_GasPresent(id__)
-								)
-								T_Detecting_t4(id__) = detect__!TID_Detecting_t4.in?aux____ ->  (exit.SID_Detecting_GasPresent.SID_Detecting_GasPresent -> SKIP;
-													SKIP;exited.SID_Detecting_GasPresent.SID_Detecting_GasPresent -> SKIP;
-													enter!SID_Detecting_GasPresent!SID_Detecting_CleanAir -> entered!SID_Detecting_GasPresent!SID_Detecting_CleanAir ->
-													State_Detecting_GasPresent(id__)
-								)
-								State_Detecting_GasPresent_execute(id__,o____) = SKIP; 
-									entered!o____!SID_Detecting_GasPresent ->
-									(SKIP; STOP /\ (
-										T_Detecting_t3(id__)[]
-										T_Detecting_t4(id__)
-										[]
-										internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Detecting_t4,TID_Detecting_t2,TID_Detecting_t3}) -> exit?y____:diff(SIDS,{SID_Detecting_GasPresent})!SID_Detecting_GasPresent -> (
-												SKIP;
-												exited!y____!SID_Detecting_GasPresent -> SKIP);
-												State_Detecting_GasPresent(id__)
-										[] gas__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Detecting_t4,TID_Detecting_t2,TID_Detecting_t3})?d____ ->	exit?y____:diff(SIDS,{SID_Detecting_GasPresent})!SID_Detecting_GasPresent -> (
-												SKIP;
-												exited!y____!SID_Detecting_GasPresent -> SKIP);
-												State_Detecting_GasPresent(id__)
-										[] detect__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Detecting_t4,TID_Detecting_t2,TID_Detecting_t3})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Detecting_GasPresent})!SID_Detecting_GasPresent -> (
-												SKIP;
-												exited!y____!SID_Detecting_GasPresent -> SKIP);
-												State_Detecting_GasPresent(id__)
-									))
-							within
-								enter?x____:diff(SIDS,{SID_Detecting_GasPresent})!SID_Detecting_GasPresent -> (State_Detecting_GasPresent_execute(id__,x____))
-							
-							
-							I_Detecting_i1(id__) = let
-								T_Detecting_t1(id__) = internal__!TID_Detecting_t1 -> enter!SID_Detecting!SID_Detecting_CleanAir -> entered!SID_Detecting!SID_Detecting_CleanAir ->
-								SKIP
-							within
-								T_Detecting_t1(id__)
-							
-							
-							State_Detecting_CleanAir_R(id__) = 
-								State_Detecting_CleanAir(id__)
-									[|diff(int_int,Detecting_CleanAir_triggers)|]
-								SKIP
-									 		
-							State_Detecting_GasPresent_R(id__) = 
-								State_Detecting_GasPresent(id__)
-									[|diff(int_int,Detecting_GasPresent_triggers)|]
-								SKIP
-									 		
-								
-							STM(id__) = (
-								I_Detecting_i1(id__)
-									[|
-										{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
-											x____ <- diff(SIDS,{SID_Detecting_CleanAir,SID_Detecting_GasPresent}),
-											y____ <- {SID_Detecting_CleanAir,SID_Detecting_GasPresent}
-									|}|]
-								(
-									State_Detecting_CleanAir_R(id__)
-										[|inter(CS_Detecting_CleanAir_sync,CS_Detecting_GasPresent_sync)|]
-									State_Detecting_GasPresent_R(id__)
-								)
-							)
-							
-							-- optimized memory process
-							
-							-- individual memory processes
-							
-							-- processes that read variables and offer transitions
-							MemoryTransitions(id__) = (
-								internal__!TID_Detecting_t1 -> SKIP
-								[]
-								gas__!TID_Detecting_t2.in -> SKIP
-								[]
-								detect__!TID_Detecting_t3.in.Chemical_innocuous -> SKIP
-								[]
-								detect__!TID_Detecting_t4.in.Chemical_anomaly -> SKIP
-							 	)
-							MemoryTransitions_Detecting(id__) =
-								(
-								 MemoryTransitions(id__);
-								 MemoryTransitions_Detecting(id__)
-								)
-							
-							-- synchronisation, hiding and process sets 
-							MemoryVariablesProcesses_Detecting = Union(
-								{
-									{
-									}
-								}
-							)
-							
-							MemoryVariablesSyncSet = Union({
-								{|
-									setWC
-								|}	
-							})
-							
-							MemoryVariablesHideSet = Union({
-								{|
-									getWC
-								|}
-							})
-							
-							-- combined individual memory processes
-							MemoryVariables = ||| P : MemoryVariablesProcesses_Detecting @ P
-							
-							-- complete memory process
-							MemoryN(id__) = (MemoryVariables [| MemoryVariablesSyncSet |] MemoryTransitions_Detecting(id__)) \ MemoryVariablesHideSet
-							
-							-- optimised memory
-							-- Sets of named elements identified according to transition conditions:
-							-- {}
-							-- Summary of all identified named elements:
-							-- {-- }
-							
-							-- Allocation plan:
-							-- 0:{}
-							--	=> {
-							--		TID_Detecting_t1,
-							--		TID_Detecting_t3,
-							--		TID_Detecting_t4,
-							--		TID_Detecting_t2}
-							
-							-- Memory transition processes
-							MemoryTransitions_opt_0(id__) =
-							(
-								let
-									Update = Current(id__)
-									Current(id__)
-									 	   = 
-									 	   internal__!TID_Detecting_t1 -> Update
-									 	   []
-									 	   detect__!TID_Detecting_t3.in?x__ -> Update
-									 	   []
-									 	   detect__!TID_Detecting_t4.in?x__ -> Update
-									 	   []
-									 	   gas__!TID_Detecting_t2.in -> Update
-								within
-									Update
-							)
-							
-							-- Memory cell processes
-							
-							-- Composition of memory, StateMachine and Memory transition processes
-							
-							MemorySTM_opt(id__) =
-								sbisim(	
-								  dbisim(
-								    sbisim(STM_core(id__)
-								      	  [| {|gas__.TID_Detecting_t2,internal__.TID_Detecting_t1,detect__.TID_Detecting_t4,detect__.TID_Detecting_t3|} |]
-								      	  MemoryTransitions_opt_0(id__)
-								      	  )\{|internal__.TID_Detecting_t1|})
-								      )
-							
-							-- main process
-							
-							MachineMemorySyncSet = Union({
-								union(
-									union(
-										{||},
-										{||}
-									)
-										
-									,
-									{|internal__.TID_Detecting_t1,
-									gas__.TID_Detecting_t2,
-									detect__.TID_Detecting_t3,
-									detect__.TID_Detecting_t4|}
-								),
-								{|deadline|},
-								WCresets
-							})
-							
-							MachineMemoryHidingSet = Union({
-								union(
-									{||},
-									{||}
-								)
-								,
-								{|deadline|}
-							})
-							
-							MachineInternalEvents = {|
-								internal__
-							|}
-						
-							-- main process
-							AUX(id__) = prioritise((((
-								wbisim(STM(id__))
-									[|MachineMemorySyncSet|]
-								(
-									(MemoryN(id__))
-										[| union(WCsets,WCsync) |]
-									Clocks(id__)
-								)\WCsets
-							)
-							[[
-								gas__.x____ <- gas,
-								detect__.x____ <- detect
-								| x____ <- TIDS
-							]]
-							\MachineMemoryHidingSet)
-							[|{|terminate|}|>SKIP\MachineInternalEvents)
-							,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-							
-							STM_core(id__) = 
-								dbisim(
-									sbisim(
-											(STM(id__)
-											[| union(WCsync,WCresets) |]
-											Clocks(id__))\WCresets
-										  )
-									  )
-							
-							AUX_opt(id__) = 
-								prioritise(
-									(MemorySTM_opt(id__)
-									)[[
-										gas__.x____ <- gas,
-										detect__.x____ <- detect
-										| x____ <- TIDS
-									]]
-								[|{|terminate|}|>SKIP\MachineInternalEvents
-								,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-							
-							internal_(id__) = prioritise((((
-								wbisim(STM(id__))
-									[|MachineMemorySyncSet|]
-								((MemoryN(id__)) [| union(WCsets,WCsync) |] Clocks(id__))\WCsets
-							)
-							\MachineMemoryHidingSet)
-							[|{|terminate|}|>SKIP)
-							,<Union({internal_events, ClockResets, {|internal__,terminate|}}),{tock}>)		
-							-- declare clocks
-							datatype ClockSet = dummyC
-							channel clockReset 				-- no clocks declared
-							
-							-- declare trigger deadlines channel
-							channel deadline : TIDS.Signal
-							
-							-- compile clocks process
-							
-							-- set of strings that uniquely identify the waiting conditions, each of which is 
-							-- used to synchronise with the Memory process to set the correspoding variable in
-							-- the memory process.
-							datatype setWC_identifierSet = dummyWC
-							
-							-- declaring getWC and setWC channel for updating memory variables related to clocks
-							channel setWC : setWC_identifierSet.Bool
-							channel getWC : setWC_identifierSet.Bool
-							
-							-- Set of pairs capturing waiting condition processes and their alphabet.
-							-- It includes the corresponding set of the defined operations.
-							WCset(id__) = Union({
-								{
-								}
-								})
-							
-							-- Auxiliary function to rename the channel set for required clocks.
-							
-							-- Set of transition events for which synchronisation is required between Clocks and the Memory process.
-							-- It includes the corresponding set of the defined operations.
-							WCsync = Union({
-								{||}
-								})
-							-- Set of all clock resets, including 'clockReset.C' events and 'entered.x.y' events where x is drawn
-							-- from the set of all state machine state identifiers. It includes the corresponding set of the defined operations.
-							WCresets = Union({
-								{| | x <- SIDS |}
-								})
-							-- Set of all waiting condition set events. It includes the corresponding set of the defined operations.
-							WCsets = Union({
-								{|setWC|}
-								})
-							
-							
-							
-							-- Clocks process
-							Clocks(id__) = || (alpha, P) : WCset(id__) @ [alpha] wbisim(P)
-			
-							-- collects all clockResets including those of operations
-							ClockResets = Union({
-								{|clockReset|}
-												})
-							
-							-- With no internal events visible
-							Dunopt__(id__) = timed_priority(AUX(id__) \ union(internal_events,ClockResets))
-							
-							D__(id__) = timed_priority(AUX_opt(id__) \ union(internal_events,ClockResets))
-							
-							O__(id__) = D__(id__)
-							
-							-- With enter/entered/exit/exited events visible
-							FVS__(id__) = timed_priority(AUX(id__) \ ClockResets)
-							
-							-- With enterV/enteredV/exitV/exitedV events visible
-							VS__(id__) = ShowV(timed_priority(AUX(id__) \ ClockResets))
-							
-							-- With clock resets visible
-							FVS_C__(id__) = AUX(id__)
-						}
-					endmodule
-		
-		
-			Timed(OneStep) {
-				-- declaring call and ret events for undefined operations
-				channel incrCall
-				channel decrCall
-		
-				CALL__incr(id__) =  EDeadline(incrCall,0)		
-				CALL__decr(id__) =  EDeadline(decrCall,0)		
-							
-				-- declaring controller events
-				channel gas: InOut
-				channel turn: InOut.core_real
-				channel command: InOut.Command
-				channel detect: InOut.Chemical
-								
 	
+			-- declaring controller events
+			channel gas: InOut
+			channel turn: InOut.core_real
+			channel command: InOut.Command
+			channel detect: InOut.Chemical
 			
-				-- declaring controller memory
-				Memory(id__) = SKIP
-				-- declaring controller termination channel
+			
+			
+			-- declaring call and ret events for undefined operations
+			channel decrCall
+			channel incrCall
+			
+			-- declaring controller termination channel
+			channel terminate
+			
+			-- channel set with all visible events
+			sem__events = {|
+				terminate
+			,	gas,
+				turn,
+				command,
+				detect
+			,	decrCall,
+				incrCall
+			|}
+			
+			-- set of visible memory events
+			visibleMemoryEvents = {||}
+	
+			-- defined operations
+		
+			-- declaring machines
+			module stm_ref0
+			exports
+				transparent diamond
+				transparent sbisim
+				transparent dbisim
+				transparent chase
+			
+				-- Transition identifiers
+				-- declaring identifiers of transitions
+				datatype NIDS = 
+				              NID_i1|
+				              NID_Waiting
+				
+				channel internal__ : NIDS
+				
+				-- Flow channels		
+				channel interrupt
+				channel exited
+				channel exit
 				channel terminate
 				
-				-- set of visible memory events
-				visibleMemoryEvents = {||}
-			
-				D__(id__) = prioritise(wbisim(
-					(
-						(
-							stm_ref0::D__(id__)[[
-								stm_ref0::terminate <- terminate,
-								stm_ref0::cd <- command,
-								stm_ref0::turn <- turn,
-								stm_ref0::incrCall <- incrCall,
-								stm_ref0::decrCall <- decrCall
-							]]
-						)
-							[|{|terminate|}|]
-						(
-							stm_ref1::D__(id__)[[
-								stm_ref1::terminate <- terminate,
-								stm_ref1::gas <- gas,
-								stm_ref1::detect <- detect
-							]]
-						)
-					)
-					\diff(
-						{|terminate|},
-						{|terminate|}
-					)
-						[|
-							union(
-								{|
-								|},
-								{|
-								|}
-							)
-						|]
-					Memory(id__)
-				)
-				\ union(
-					{|
-					|},
-					{|
-					|}
-				)
-				[|{|terminate|}|>SKIP,
-				<union(visibleMemoryEvents,{terminate}),{tock}>)
+				-- Variable channels
+				channel get_c, set_c, setL_c, setR_c: Command
 				
-				O__(id__) = D__(id__)
+				-- Shared variable channels
 				
-				-- VS version
-				VS__(id__) = prioritise(wbisim(
-					(
-						(
-							stm_ref0::VS__(id__)[[
-								stm_ref0::terminate <- terminate,
-								stm_ref0::cd <- command,
-								stm_ref0::turn <- turn,
-								stm_ref0::incrCall <- incrCall,
-								stm_ref0::decrCall <- decrCall
-							]]
-						)
-							[|{|terminate|}|]
-						(
-							stm_ref1::VS__(id__)[[
-								stm_ref1::terminate <- terminate,
-								stm_ref1::gas <- gas,
-								stm_ref1::detect <- detect
-							]]
-						)
-					)
-					\diff(
-						{|terminate|},
-						{|terminate|}
-					)
-						[|
-							union(
-								{|
-								|},
-								{|
-								|}
-							)
-						|]
-					Memory(id__)
-				)
-				\ union(
-					{|
-					|},
-					{|
+				-- Local variable channels for defined operations that are required by the state machine
+				
+				-- Declaring state machine events
+				channel cd__: NIDS.InOut.Command
+				channel cd: InOut.Command
+				channel turn__: NIDS.InOut.core_real
+				channel turn: InOut.core_real
+				
+				-- Declaring call and ret events for undefined operations
+				channel decrCall
+				channel incrCall
+				
+				enterSS = {|
+				i1::enter,
+				Waiting::enter
+				|}
+				
+				enteredSS = 	{|
+				Waiting::entered
+				|}
+				
+				internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+				
+				shared_variable_events = {|
+				|}
+				
+				-- channel set with all visible events
+				sem__events = {|
+					terminate
+				,	cd,
+					turn
+				,	decrCall,
+					incrCall
 					|}
-				)
-				[|{|terminate|}|>SKIP,
-				<union(visibleMemoryEvents,{terminate}),{tock}>)
+				
+				channel clockReset, clockResetL, clockResetR 
+				
+				localClockResets = {||}
+				
+				
+				channel get_CLID_Waiting : core_clock_type 
+				--channel increment__
+				
+				CLID_Waiting_clock_type(id__) = 
+					let
+						max = (clock_type_max(Union({
+				{}
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+				
+				
 			
-				HEXT(id__) = D__(id__) [|shared_variable_events|] SKIP
+					-- Nodes --
+					-- declaring all nodes
+					
+					----------------------------------------------------------------------
+					-- Initial: i1
+					module i1
+					exports
+					
+						channel enter, interrupt
+						
+						Timed(OneStep) {
+							D__(id__) = 
+								dbisim(let
+									Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+									
+									Termination = terminate -> SKIP
+									
+									Active 		= share__choice(interrupt -> SKIP) ; Inactive
+								within
+									Inactive [| {terminate} |> SKIP)
+							
+							VS_O__(id__) = D__(id__)
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					
+					----------------------------------------------------------------------
+					-- State: Waiting
+					module Waiting
+					
+					enterSS = {}
+					
+					enteredSS = {}
+					
+					exports
+					
+						--  Declarations
+						
+						channel enter, entered, interrupt
+						channel enteredL, enteredR
+						
+										
+						
+						--channel increment__
+						
+						
+						--	Nodes
+						-- declaring all nodes
+						
+						
+						Timed(OneStep) {
+							--	Rule: behaviours(Node)
+							--  Note that FDR has problems with efficiently compiling the process below
+							-- 	if using a different recursion pattern.
+							D__(id__) = 
+							dbisim(let
+								-- IMPLEMENTATION NOTE: 
+								-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+								-- however FDR struggles with that form in certain cases. So we use the exception operator
+								-- instead to 'terminate'.
+								
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= SKIP ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+								
+							VS_O__(id__) = 
+							dbisim(let
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= SKIP ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+							
+							
+							-- Clocks
+							
+							StateClocks(id__) = terminate -> SKIP
+							
+							stateClockSync = {||}
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					-- END of Nodes --
+					
+					Timed(OneStep) {
+					-- Operation calls --
+					-- Only the undefined operations are declared here.
+					-- If the state machine is in isolation, all required operations will be undefined.
+					-- If it is in the context of a controller, the required operations not provided by the
+					-- controller will be declared here, and the defined operations will be defined in the
+					-- context of the Controller module, and therefore within scope of the state machine module.
+					CALL__decr(id__) = EDeadline(decrCall,0)
+					CALL__incr(id__) = EDeadline(incrCall,0)
+					
+					-- END of Operation calls --
+				
+					-- STM processes
+					STM(id__) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+					( 
+						(
+							(
+								(IteratedStateful(id__) \ {terminate} ; share__choice(terminate -> SKIP))
+							 	[[ share__ <- x__ | x__ <- {||} ]]
+							)
+						[| {share__} |]
+						SKIP
+						)
+						[| union(sharedVarSync,{terminate}) |]
+						dbisim(sharedVarMemory(id__))
+					)\sharedVarHide
+					,<{terminate},{tock}>)
+					
+					STM_VS_O(id__) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+					( 
+						(
+							(
+								(IteratedStateful_VS_O(id__) \ {terminate} ; share__choice(terminate -> SKIP))
+							 	[[ share__ <- x__ | x__ <- {||} ]]
+							)
+						[| {share__} |]
+						SKIP
+						)
+						[| union(sharedVarSync,{terminate}) |]
+						dbisim(sharedVarMemory(id__))
+					)\sharedVarHide
+					,<{terminate},{tock}>)
+					
+					-- Transitions
+					Transitions(id__) = ((let
+						Trans = share__choice(get_c?c -> TimeOut_1(
+							 (share__ -> SKIP
+							 [] dbisim((true)&(internal__!NID_i1 -> SKIP ;  ((SKIP ; Waiting::enter -> SKIP))))
+							 [] dbisim((cd__!NID_Waiting.in?c:{c|c <- Command, (c==Command_left)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&(share__choice(turn.out!(Neg(90, core_int)) -> SKIP)) ; Waiting::enter -> SKIP)))
+							 [] dbisim((cd__!NID_Waiting.in?c:{c|c <- Command, (c==Command_right)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&(share__choice(turn.out.90 -> SKIP)) ; Waiting::enter -> SKIP)))
+							 [] dbisim((cd__!NID_Waiting.in?c:{c|c <- Command, (c==Command_back)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&(share__choice(turn.out.180 -> SKIP)) ; Waiting::enter -> SKIP)))
+							 [] dbisim((cd__!NID_Waiting.in?c:{c|c <- Command, (c==Command_faster)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&CALL__incr(
+							 			id__
+							 		) ; Waiting::enter -> SKIP)))
+							 [] dbisim((cd__!NID_Waiting.in?c:{c|c <- Command, (c==Command_slower)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&CALL__decr(
+							 			id__
+							 		) ; Waiting::enter -> SKIP)))
+							 []
+							 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
+							 []
+							 terminate -> SKIP
+							 )
+						,SKIP);Trans
+						)
+					within
+						Trans [|{terminate}|> SKIP
+					)
+					)
+					
+					-- Stateful
+					-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+					
+					-- Named process definitions
+					MachineBody(id__) = 
+						dbisim((
+						let
+							finalNodesEntered = {||}
+						within
+							(dbisim((dbisim((let
+								-- IMPLEMENTATION NOTE:
+								-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+								-- modules for defining the semantics of each node.
+								enterSS = {|
+								i1::enter,
+								Waiting::enter
+								|}
+								hideSet = union(enterSS,{|exit,exited,internal__|})
+							within 
+								((let
+									-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+									-- because CSPM modules are used for the semantics of Node.
+									flowevts = union(enterSS,{|exit,exited,interrupt|})
+									transSync = {|internal__.NID_i1,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in|}
+								within
+									((
+									 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+									   i1::D__(id__)
+									   [| { share__, terminate } |] (
+									   Waiting::D__(id__)
+									   )
+									 )
+									 [[Waiting::interrupt <- x__ | x__ <- {|interrupt,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in|}]]
+									 [[i1::interrupt <- x__ | x__ <- {|internal__.NID_i1|}]]
+									 )
+									  [[ share__ <- x__ | x__ <- {| share__,setR_c |} ]] 
+									  [[set_c <- setL_c]]
+									 )
+									 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+									 			,setL_c
+									 			,setR_c
+									 			|}) |]
+									 ((i1::enter -> Transitions(id__))
+									  [[ share__ <- x__ | x__ <- {| share__,setL_c |} ]]
+									  [[set_c <- setR_c]]
+									 )
+									)[[setL_c <- set_c]]
+									 [[setR_c <- set_c]]
+									)
+								)
+								 \ hideSet)
+								[[
+									cd__.x____ <- cd,
+									turn__.x____ <- turn
+									| x____ <- NIDS
+								]]
+							)
+							)
+							 [| union(stateClockSync,{terminate}) |]
+							 StateClocks(id__)
+							)\diff(stateClockSync,enteredSS))
+							 [| {| interrupt |} |] SKIP)
+						)
+						)
+					
+					Behaviour(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered|}
+						 within
+							(MachineBody(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ union(stateClockSync,enteredSS)
+						)
+						)
+					
+					IteratedBehaviour(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered|}
+						 within
+							(dbisim(
+								sbisim(
+									MachineBody(id__)
+									[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+									dbisim(Clock_CLID_Waiting(id__,0))
+								)\{|get_CLID_Waiting|}
+							)
+							) \ union(stateClockSync,enteredSS)
+						)
+						)
+					
+					Stateful(id__) = 
+						((let
+							getsetLocalChannels = {|get_c,set_c|}
+							clockSync = {||}
+						within
+							(Behaviour(id__) 
+							 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+							 (varMemory(id__) [| {terminate} |] Clocks(id__))
+						 	)\union(getsetLocalChannels,clockSync)
+						)
+						)
+					
+					IteratedStateful(id__) =
+						(dbisim(
+							sbisim(
+								IteratedBehaviour(id__)
+								[| {|get_c,set_c,terminate|} |]
+								Memory_c(Command_faster)
+							)\{|get_c,set_c|}
+						)
+						)
+					
+					-- Visible counterparts
+					MachineBody_VS_O(id__) = 
+						dbisim((
+						let
+							finalNodesEntered = {||}
+						within
+							(dbisim((dbisim((let
+								-- IMPLEMENTATION NOTE:
+								-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+								-- modules for defining the semantics of each node.
+								enterSS = {|
+								i1::enter,
+								Waiting::enter
+								|}
+								hideSet = union(enterSS,{|exit,exited,internal__|})
+							within 
+								((let
+									-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+									-- because CSPM modules are used for the semantics of Node.
+									flowevts = union(enterSS,{|exit,exited,interrupt|})
+									transSync = {|internal__.NID_i1,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in|}
+								within
+									((
+									 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+									   i1::VS_O__(id__)
+									   [| { share__, terminate } |] (
+									   Waiting::VS_O__(id__)
+									   )
+									 )
+									 [[Waiting::interrupt <- x__ | x__ <- {|interrupt,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in,cd__.NID_Waiting.in|}]]
+									 [[i1::interrupt <- x__ | x__ <- {|internal__.NID_i1|}]]
+									 )
+									  [[ share__ <- x__ | x__ <- {| share__,setR_c |} ]] 
+									  [[set_c <- setL_c]]
+									 )
+									 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+									 			,setL_c
+									 			,setR_c
+									 			|}) |]
+									 ((i1::enter -> Transitions(id__))
+									  [[ share__ <- x__ | x__ <- {| share__,setL_c |} ]]
+									  [[set_c <- setR_c]]
+									 )
+									)[[setL_c <- set_c]]
+									 [[setR_c <- set_c]]
+									)
+								)
+								 \ hideSet)
+								[[
+									cd__.x____ <- cd,
+									turn__.x____ <- turn
+									| x____ <- NIDS
+								]]
+							)
+							)
+							 [| union(stateClockSync,{terminate}) |]
+							 StateClocks(id__)
+							)\diff(stateClockSync,enteredSS))
+							 [| {| interrupt |} |] SKIP)
+						)
+						)
+					
+					Behaviour_VS_O(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered|}
+						 within
+							(MachineBody_VS_O(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ diff(union(stateClockSync,enteredSS),enteredSS)
+						)
+						)
+					
+					IteratedBehaviour_VS_O(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered|}
+						 within
+							(dbisim(
+								sbisim(
+									MachineBody_VS_O(id__)
+									[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+									dbisim(Clock_CLID_Waiting(id__,0))
+								)\{|get_CLID_Waiting|}
+							)
+							) \ diff(union(stateClockSync,enteredSS),enteredSS)
+						)
+						)
+					
+					Stateful_VS_O(id__) = 
+						dbisim((let
+							getsetLocalChannels = {|get_c,set_c|}
+							clockSync = {||}
+						within
+							(Behaviour_VS_O(id__) 
+							 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+							 (varMemory(id__) [| {terminate} |] Clocks(id__))
+						 	)\union(getsetLocalChannels,clockSync)
+						)
+						)
+					
+					IteratedStateful_VS_O(id__) =
+						(dbisim(
+							sbisim(
+								IteratedBehaviour_VS_O(id__)
+								[| {|get_c,set_c,terminate|} |]
+								Memory_c(Command_faster)
+							)\{|get_c,set_c|}
+						)
+						)
+					
+					-- END
+					
+					-- Memory
+					-- Memory variables
+					Memory_c(c) =
+						get_c!c -> Memory_c(c)
+						[]
+						set_c?x__ -> Memory_c(x__)
+						[]
+						terminate -> SKIP
+					
+					-- varMemory process
+					varMemory(id__) = Memory_c(Command_faster)
+					
+					getsetLocalChannels = {|get_c,set_c|}
+					
+					-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+					FVS__(id__) = STM_VS_O(id__) \ localClockResets
+					D__(id__) = timed_priority(STM(id__) \ union(internal_events,localClockResets))
+					O__(id__) = dbisim(D__(id__))
+					VS__(id__) = FVS__(id__)
+					VS_O__(id__) = dbisim(FVS__(id__))
+					HEXT__(id__) = O__(id__) [|shared_variable_events|] SKIP
+					FVS_C__(id__) = dbisim(timed_priority(STM(id__) \ internal_events))
+					HUP__(id__) = timed_priority(O__(id__) [|{share__}|] SKIP)
+					
+					-- Clocks
+					
+					Clocks(id__) = terminate -> SKIP
+					
+					clockSync = {||}
+					
+					Clock_CLID_Waiting(id__,x__) = 
+						TimeOut_1(
+							Waiting::entered -> Clock_CLID_Waiting(id__,0)
+							[]
+							get_CLID_Waiting!x__ -> Clock_CLID_Waiting(id__,x__)
+							[]
+							terminate -> SKIP,Clock_CLID_Waiting(id__,clock_type_plus(x__,1,CLID_Waiting_clock_type(id__))))
+					
+					StateClocks(id__) = dbisim(Clock_CLID_Waiting(id__,0))
+					
+					stateClockSync = {|get_CLID_Waiting,Waiting::entered|}
+					
+					-- Shared memory
+					-- Shared memory variables
+					
+					-- sharedVarMemory process
+					sharedVarMemory(id__) = terminate -> SKIP
+					
+					sharedVarSync = {||}
+					
+					sharedVarHide = {||}
+					}
+			endmodule
+			module stm_ref1
+			exports
+				transparent diamond
+				transparent sbisim
+				transparent dbisim
+				transparent chase
+			
+				-- Transition identifiers
+				-- declaring identifiers of transitions
+				datatype NIDS = 
+				              NID_i1|
+				              NID_CleanAir|
+				              NID_GasPresent
+				
+				channel internal__ : NIDS
+				
+				-- Flow channels		
+				channel interrupt
+				channel exited
+				channel exit
+				channel terminate
+				
+				-- Variable channels
+				
+				-- Shared variable channels
+				
+				-- Local variable channels for defined operations that are required by the state machine
+				
+				-- Declaring state machine events
+				channel gas__: NIDS.InOut
+				channel gas: InOut
+				channel detect__: NIDS.InOut.Chemical
+				channel detect: InOut.Chemical
+				
+				-- Declaring call and ret events for undefined operations
+				
+				enterSS = {|
+				i1::enter,
+				CleanAir::enter,
+				GasPresent::enter
+				|}
+				
+				enteredSS = 	{|
+				CleanAir::entered,
+				GasPresent::entered
+				|}
+				
+				internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+				
+				shared_variable_events = {|
+				|}
+				
+				-- channel set with all visible events
+				sem__events = {|
+					terminate
+				,	gas,
+					detect
+					|}
+				
+				channel clockReset, clockResetL, clockResetR 
+				
+				localClockResets = {||}
+				
+				
+				channel get_CLID_CleanAir : core_clock_type 
+				channel get_CLID_GasPresent : core_clock_type 
+				--channel increment__
+				
+				CLID_CleanAir_clock_type(id__) = 
+					let
+						max = (clock_type_max(Union({
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+				
+				CLID_GasPresent_clock_type(id__) = 
+					let
+						max = (clock_type_max(Union({
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+				
+				
+			
+					-- Nodes --
+					-- declaring all nodes
+					
+					----------------------------------------------------------------------
+					-- Initial: i1
+					module i1
+					exports
+					
+						channel enter, interrupt
+						
+						Timed(OneStep) {
+							D__(id__) = 
+								dbisim(let
+									Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+									
+									Termination = terminate -> SKIP
+									
+									Active 		= share__choice(interrupt -> SKIP) ; Inactive
+								within
+									Inactive [| {terminate} |> SKIP)
+							
+							VS_O__(id__) = D__(id__)
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					
+					----------------------------------------------------------------------
+					-- State: CleanAir
+					module CleanAir
+					
+					enterSS = {}
+					
+					enteredSS = {}
+					
+					exports
+					
+						--  Declarations
+						
+						channel enter, entered, interrupt
+						channel enteredL, enteredR
+						
+										
+						
+						--channel increment__
+						
+						
+						--	Nodes
+						-- declaring all nodes
+						
+						
+						Timed(OneStep) {
+							--	Rule: behaviours(Node)
+							--  Note that FDR has problems with efficiently compiling the process below
+							-- 	if using a different recursion pattern.
+							D__(id__) = 
+							dbisim(let
+								-- IMPLEMENTATION NOTE: 
+								-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+								-- however FDR struggles with that form in certain cases. So we use the exception operator
+								-- instead to 'terminate'.
+								
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= SKIP ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+								
+							VS_O__(id__) = 
+							dbisim(let
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= SKIP ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+							
+							
+							-- Clocks
+							
+							StateClocks(id__) = terminate -> SKIP
+							
+							stateClockSync = {||}
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					
+					----------------------------------------------------------------------
+					-- State: GasPresent
+					module GasPresent
+					
+					enterSS = {}
+					
+					enteredSS = {}
+					
+					exports
+					
+						--  Declarations
+						
+						channel enter, entered, interrupt
+						channel enteredL, enteredR
+						
+										
+						
+						--channel increment__
+						
+						
+						--	Nodes
+						-- declaring all nodes
+						
+						
+						Timed(OneStep) {
+							--	Rule: behaviours(Node)
+							--  Note that FDR has problems with efficiently compiling the process below
+							-- 	if using a different recursion pattern.
+							D__(id__) = 
+							dbisim(let
+								-- IMPLEMENTATION NOTE: 
+								-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+								-- however FDR struggles with that form in certain cases. So we use the exception operator
+								-- instead to 'terminate'.
+								
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= SKIP ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+								
+							VS_O__(id__) = 
+							dbisim(let
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= SKIP ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+							
+							
+							-- Clocks
+							
+							StateClocks(id__) = terminate -> SKIP
+							
+							stateClockSync = {||}
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					-- END of Nodes --
+					
+					Timed(OneStep) {
+					-- Operation calls --
+					-- Only the undefined operations are declared here.
+					-- If the state machine is in isolation, all required operations will be undefined.
+					-- If it is in the context of a controller, the required operations not provided by the
+					-- controller will be declared here, and the defined operations will be defined in the
+					-- context of the Controller module, and therefore within scope of the state machine module.
+					
+					-- END of Operation calls --
+				
+					-- STM processes
+					STM(id__) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+					( 
+						(
+							(
+								(IteratedStateful(id__) \ {terminate} ; share__choice(terminate -> SKIP))
+							 	[[ share__ <- x__ | x__ <- {||} ]]
+							)
+						[| {share__} |]
+						SKIP
+						)
+						[| union(sharedVarSync,{terminate}) |]
+						dbisim(sharedVarMemory(id__))
+					)\sharedVarHide
+					,<{terminate},{tock}>)
+					
+					STM_VS_O(id__) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+					( 
+						(
+							(
+								(IteratedStateful_VS_O(id__) \ {terminate} ; share__choice(terminate -> SKIP))
+							 	[[ share__ <- x__ | x__ <- {||} ]]
+							)
+						[| {share__} |]
+						SKIP
+						)
+						[| union(sharedVarSync,{terminate}) |]
+						dbisim(sharedVarMemory(id__))
+					)\sharedVarHide
+					,<{terminate},{tock}>)
+					
+					-- Transitions
+					Transitions(id__) = ((let
+						Trans = TimeOut_1(
+							 (share__ -> SKIP
+							 [] dbisim((true)&(internal__!NID_i1 -> SKIP ;  ((SKIP ; CleanAir::enter -> SKIP))))
+							 [] dbisim((true)&(gas__!NID_CleanAir.in -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; GasPresent::enter -> SKIP)))
+							 [] dbisim((true)&(internal__!NID_GasPresent -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&(share__choice(detect.out.Chemical_innocuous -> SKIP)) ; CleanAir::enter -> SKIP)))
+							 [] dbisim((true)&(internal__!NID_GasPresent -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; true&(share__choice(detect.out.Chemical_anomaly -> SKIP)) ; CleanAir::enter -> SKIP)))
+							 [] dbisim((true)&(internal__!NID_GasPresent -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; Deadline(true&(share__choice(detect.out.Chemical_danger -> SKIP)),1);Deadline(true&(share__choice(detect.out.Chemical_danger -> SKIP)),2) ; CleanAir::enter -> SKIP)))
+							 []
+							 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
+							 []
+							 terminate -> SKIP
+							 )
+						,SKIP);Trans
+					within
+						Trans [|{terminate}|> SKIP
+					)
+					)
+					
+					-- Stateful
+					-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+					
+					-- Named process definitions
+					MachineBody(id__) = 
+						dbisim((
+						let
+							finalNodesEntered = {||}
+						within
+							(dbisim((dbisim((let
+								-- IMPLEMENTATION NOTE:
+								-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+								-- modules for defining the semantics of each node.
+								enterSS = {|
+								i1::enter,
+								CleanAir::enter,
+								GasPresent::enter
+								|}
+								hideSet = union(enterSS,{|exit,exited,internal__|})
+							within 
+								((let
+									-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+									-- because CSPM modules are used for the semantics of Node.
+									flowevts = union(enterSS,{|exit,exited,interrupt|})
+									transSync = {|internal__.NID_i1,gas__.NID_CleanAir.in,internal__.NID_GasPresent,internal__.NID_GasPresent,internal__.NID_GasPresent|}
+								within
+									((
+									 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+									   i1::D__(id__)
+									   [| { share__, terminate } |] (
+									   CleanAir::D__(id__)
+									   [| { share__, terminate } |] (
+									   GasPresent::D__(id__)
+									   )
+									   )
+									 )
+									 [[CleanAir::interrupt <- x__ | x__ <- {|interrupt,gas__.NID_CleanAir.in|}]]
+									 [[GasPresent::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_GasPresent,internal__.NID_GasPresent,internal__.NID_GasPresent|}]]
+									 [[i1::interrupt <- x__ | x__ <- {|internal__.NID_i1|}]]
+									 )
+									  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+									 )
+									 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+									|}) |]
+									 ((i1::enter -> Transitions(id__))
+									  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+									 )
+									)
+									)
+								)
+								 \ hideSet)
+								[[
+									gas__.x____ <- gas,
+									detect__.x____ <- detect
+									| x____ <- NIDS
+								]]
+							)
+							)
+							 [| union(stateClockSync,{terminate}) |]
+							 StateClocks(id__)
+							)\diff(stateClockSync,enteredSS))
+							 [| {| interrupt |} |] SKIP)
+						)
+						)
+					
+					Behaviour(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+						 within
+							(MachineBody(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ union(stateClockSync,enteredSS)
+						)
+						)
+					
+					IteratedBehaviour(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+						 within
+							(dbisim(
+								sbisim(
+									dbisim(
+										sbisim(
+											MachineBody(id__)
+											[| {|get_CLID_GasPresent,GasPresent::entered,terminate|} |]
+											dbisim(Clock_CLID_GasPresent(id__,0))
+										)\{|get_CLID_GasPresent|}
+									)
+									[| {|get_CLID_CleanAir,CleanAir::entered,terminate|} |]
+									dbisim(Clock_CLID_CleanAir(id__,0))
+								)\{|get_CLID_CleanAir|}
+							)
+							) \ union(stateClockSync,enteredSS)
+						)
+						)
+					
+					Stateful(id__) = 
+						((let
+							getsetLocalChannels = {||}
+							clockSync = {||}
+						within
+							(Behaviour(id__) 
+							 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+							 (varMemory(id__) [| {terminate} |] Clocks(id__))
+						 	)\union(getsetLocalChannels,clockSync)
+						)
+						)
+					
+					IteratedStateful(id__) =
+						(IteratedBehaviour(id__))
+					
+					-- Visible counterparts
+					MachineBody_VS_O(id__) = 
+						dbisim((
+						let
+							finalNodesEntered = {||}
+						within
+							(dbisim((dbisim((let
+								-- IMPLEMENTATION NOTE:
+								-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+								-- modules for defining the semantics of each node.
+								enterSS = {|
+								i1::enter,
+								CleanAir::enter,
+								GasPresent::enter
+								|}
+								hideSet = union(enterSS,{|exit,exited,internal__|})
+							within 
+								((let
+									-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+									-- because CSPM modules are used for the semantics of Node.
+									flowevts = union(enterSS,{|exit,exited,interrupt|})
+									transSync = {|internal__.NID_i1,gas__.NID_CleanAir.in,internal__.NID_GasPresent,internal__.NID_GasPresent,internal__.NID_GasPresent|}
+								within
+									((
+									 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+									   i1::VS_O__(id__)
+									   [| { share__, terminate } |] (
+									   CleanAir::VS_O__(id__)
+									   [| { share__, terminate } |] (
+									   GasPresent::VS_O__(id__)
+									   )
+									   )
+									 )
+									 [[CleanAir::interrupt <- x__ | x__ <- {|interrupt,gas__.NID_CleanAir.in|}]]
+									 [[GasPresent::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_GasPresent,internal__.NID_GasPresent,internal__.NID_GasPresent|}]]
+									 [[i1::interrupt <- x__ | x__ <- {|internal__.NID_i1|}]]
+									 )
+									  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+									 )
+									 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+									|}) |]
+									 ((i1::enter -> Transitions(id__))
+									  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+									 )
+									)
+									)
+								)
+								 \ hideSet)
+								[[
+									gas__.x____ <- gas,
+									detect__.x____ <- detect
+									| x____ <- NIDS
+								]]
+							)
+							)
+							 [| union(stateClockSync,{terminate}) |]
+							 StateClocks(id__)
+							)\diff(stateClockSync,enteredSS))
+							 [| {| interrupt |} |] SKIP)
+						)
+						)
+					
+					Behaviour_VS_O(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+						 within
+							(MachineBody_VS_O(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ diff(union(stateClockSync,enteredSS),enteredSS)
+						)
+						)
+					
+					IteratedBehaviour_VS_O(id__) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+						 within
+							(dbisim(
+								sbisim(
+									dbisim(
+										sbisim(
+											MachineBody_VS_O(id__)
+											[| {|get_CLID_GasPresent,GasPresent::entered,terminate|} |]
+											dbisim(Clock_CLID_GasPresent(id__,0))
+										)\{|get_CLID_GasPresent|}
+									)
+									[| {|get_CLID_CleanAir,CleanAir::entered,terminate|} |]
+									dbisim(Clock_CLID_CleanAir(id__,0))
+								)\{|get_CLID_CleanAir|}
+							)
+							) \ diff(union(stateClockSync,enteredSS),enteredSS)
+						)
+						)
+					
+					Stateful_VS_O(id__) = 
+						dbisim((let
+							getsetLocalChannels = {||}
+							clockSync = {||}
+						within
+							(Behaviour_VS_O(id__) 
+							 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+							 (varMemory(id__) [| {terminate} |] Clocks(id__))
+						 	)\union(getsetLocalChannels,clockSync)
+						)
+						)
+					
+					IteratedStateful_VS_O(id__) =
+						(IteratedBehaviour_VS_O(id__))
+					
+					-- END
+					
+					-- Memory
+					-- Memory variables
+					
+					-- varMemory process
+					varMemory(id__) = terminate -> SKIP
+					
+					getsetLocalChannels = {||}
+					
+					-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+					FVS__(id__) = STM_VS_O(id__) \ localClockResets
+					D__(id__) = timed_priority(STM(id__) \ union(internal_events,localClockResets))
+					O__(id__) = dbisim(D__(id__))
+					VS__(id__) = FVS__(id__)
+					VS_O__(id__) = dbisim(FVS__(id__))
+					HEXT__(id__) = O__(id__) [|shared_variable_events|] SKIP
+					FVS_C__(id__) = dbisim(timed_priority(STM(id__) \ internal_events))
+					HUP__(id__) = timed_priority(O__(id__) [|{share__}|] SKIP)
+					
+					-- Clocks
+					
+					Clocks(id__) = terminate -> SKIP
+					
+					clockSync = {||}
+					
+					Clock_CLID_CleanAir(id__,x__) = 
+						TimeOut_1(
+							CleanAir::entered -> Clock_CLID_CleanAir(id__,0)
+							[]
+							get_CLID_CleanAir!x__ -> Clock_CLID_CleanAir(id__,x__)
+							[]
+							terminate -> SKIP,Clock_CLID_CleanAir(id__,clock_type_plus(x__,1,CLID_CleanAir_clock_type(id__))))
+					Clock_CLID_GasPresent(id__,x__) = 
+						TimeOut_1(
+							GasPresent::entered -> Clock_CLID_GasPresent(id__,0)
+							[]
+							get_CLID_GasPresent!x__ -> Clock_CLID_GasPresent(id__,x__)
+							[]
+							terminate -> SKIP,Clock_CLID_GasPresent(id__,clock_type_plus(x__,1,CLID_GasPresent_clock_type(id__))))
+					
+					StateClocks(id__) = dbisim(Clock_CLID_CleanAir(id__,0))
+					[| { terminate } |] (
+					dbisim(Clock_CLID_GasPresent(id__,0))
+					)
+					
+					stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+					
+					-- Shared memory
+					-- Shared memory variables
+					
+					-- sharedVarMemory process
+					sharedVarMemory(id__) = terminate -> SKIP
+					
+					sharedVarSync = {||}
+					
+					sharedVarHide = {||}
+					}
+			endmodule
+			
+			Timed(OneStep) {
+					-- undefined operations
+					CALL__decr(id__) 	= decrCall -> SKIP
+					CALL__incr(id__) 	= incrCall -> SKIP
+					
+					-- declaring controller memory
+					Memory(id__) = SKIP
+					
+					D__(id__) = prioritise(	((
+							(
+								stm_ref0::D__(id__)[[
+									stm_ref0::terminate <- terminate,
+									stm_ref0::cd <- command,
+									stm_ref0::turn <- turn,
+									stm_ref0::decrCall <- decrCall,
+									stm_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate|}|]
+							(
+								stm_ref1::D__(id__)[[
+									stm_ref1::terminate <- terminate,
+									stm_ref1::gas <- gas,
+									stm_ref1::detect <- detect
+								]]
+							)
+						)
+						\diff(
+							{|terminate|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						Memory(id__)
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>)
+					
+					-- VS version
+					VS__(id__) = prioritise(	((
+							(
+								stm_ref0::VS__(id__)[[
+									stm_ref0::terminate <- terminate,
+									stm_ref0::cd <- command,
+									stm_ref0::turn <- turn,
+									stm_ref0::decrCall <- decrCall,
+									stm_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate|}|]
+							(
+								stm_ref1::VS__(id__)[[
+									stm_ref1::terminate <- terminate,
+									stm_ref1::gas <- gas,
+									stm_ref1::detect <- detect
+								]]
+							)
+						)
+						\diff(
+							{|terminate|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						Memory(id__)
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>)
+				
+					-- O version (optimised) THESE TWO PROCESSES SHOULD BE KEPT IN SYNC WITH THE ABOVE TWO
+					O__(id__) = dbisim(prioritise(	((
+							(
+								stm_ref0::O__(id__)[[
+									stm_ref0::terminate <- terminate,
+									stm_ref0::cd <- command,
+									stm_ref0::turn <- turn,
+									stm_ref0::decrCall <- decrCall,
+									stm_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate|}|]
+							(
+								stm_ref1::O__(id__)[[
+									stm_ref1::terminate <- terminate,
+									stm_ref1::gas <- gas,
+									stm_ref1::detect <- detect
+								]]
+							)
+						)
+						\diff(
+							{|terminate|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>))
+									
+					-- VS_O version
+					VS_O__(id__) = dbisim(prioritise(	((
+							(
+								stm_ref0::VS_O__(id__)[[
+									stm_ref0::terminate <- terminate,
+									stm_ref0::cd <- command,
+									stm_ref0::turn <- turn,
+									stm_ref0::decrCall <- decrCall,
+									stm_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate|}|]
+							(
+								stm_ref1::VS_O__(id__)[[
+									stm_ref1::terminate <- terminate,
+									stm_ref1::gas <- gas,
+									stm_ref1::detect <- detect
+								]]
+							)
+						)
+						\diff(
+							{|terminate|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>))
+				
+					HEXT(id__) = O__(id__) [|shared_variable_events|] SKIP			
 			}
+	
 		endmodule
 		module ctrl_ref1
-			Timed(OneStep) {
-				shared_variable_events = {|
-				|}		
-			}	
+			shared_variable_events = {|
+			|}
+			
 		exports
 			transparent diamond
 			transparent sbisim
-			transparent wbisim
+			transparent dbisim
 			transparent chase
-			
-					module stm_ref0
-					exports
-						-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
-						external prioritise
-						transparent wbisim
-						transparent dbisim
-						transparent sbisim
-					
-						Timed(OneStep) {	
-							-- flow channels
-							channel internal__ : TIDS
-							channel enteredV, enterV, exitV, exitedV : SIDS
-							channel enter, entered: SIDS.SIDS
-							channel exit,exited: SIDS.SIDS
-							channel terminate
-							
-							-- variable channels
-							channel get_c, set_c: Chemical
-									
-							-- shared variable channels
-							
-							-- local variable channels for defined operations that are required by the state machine
-							
-							-- declaring state machine events
-							channel detect__: TIDS.InOut.Chemical
-							channel detect: InOut.Chemical
-							channel light__: TIDS.InOut.Color
-							channel light: InOut.Color
-							channel siren__: TIDS.InOut
-							channel siren: InOut
-							channel flag__: TIDS.InOut
-							channel flag: InOut
-							
-							-- declaring call and ret events for undefined operations
-						
-							-- Only the undefined operations are declared here.
-							-- If the state machine is in isolation, all required operations will be undefined.
-							-- If it is in the context of a controller, the required operations not provided by the
-							-- controller will be declared here, and the defined operations will be defined in the
-							-- context of the Controller module, and therefore within scope of the state machien module.
-							
-							
-							-- definition of functions used to expose flow channels
-							ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
-											   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
-											   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
-											   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
-												 
-							ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
-										[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-										[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
-										[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							
-							-- declaring identifiers of state and final states
-							datatype SIDS = SID_Signalling
-							              | SID_Signalling_Waiting
-							              | SID_Signalling_AnomalousGas
-							              | SID_Signalling_DangerousGas
-							
-							-- declaring identifiers of transitions
-							datatype TIDS = NULLTRANSITION__
-							              | TID_Signalling_t1
-							              | TID_Signalling_t3
-							              | TID_Signalling_t4a
-							              | TID_Signalling_t4
-							              | TID_Signalling_t5
-							              | TID_Signalling_t6
-							              | TID_Signalling_t7
-							              | TID_Signalling_t0
-							              | TID_Signalling_t2
-							              | TID_Signalling_t8
-							
-							-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
-							
-							ITIDS = {
-								TID_Signalling_t3,	TID_Signalling_t4a,	TID_Signalling_t4,	TID_Signalling_t5,	TID_Signalling_t6,	TID_Signalling_t7,	TID_Signalling_t0,	TID_Signalling_t2,	TID_Signalling_t8
-							}
-							
-							int_int = {|
-								detect__.TID_Signalling_t3,
-								light__.TID_Signalling_t3,
-								siren__.TID_Signalling_t3,
-								flag__.TID_Signalling_t3,
-								internal__.TID_Signalling_t3,
-								detect__.TID_Signalling_t4a,
-								light__.TID_Signalling_t4a,
-								siren__.TID_Signalling_t4a,
-								flag__.TID_Signalling_t4a,
-								internal__.TID_Signalling_t4a,
-								detect__.TID_Signalling_t4,
-								light__.TID_Signalling_t4,
-								siren__.TID_Signalling_t4,
-								flag__.TID_Signalling_t4,
-								internal__.TID_Signalling_t4,
-								detect__.TID_Signalling_t5,
-								light__.TID_Signalling_t5,
-								siren__.TID_Signalling_t5,
-								flag__.TID_Signalling_t5,
-								internal__.TID_Signalling_t5,
-								detect__.TID_Signalling_t6,
-								light__.TID_Signalling_t6,
-								siren__.TID_Signalling_t6,
-								flag__.TID_Signalling_t6,
-								internal__.TID_Signalling_t6,
-								detect__.TID_Signalling_t7,
-								light__.TID_Signalling_t7,
-								siren__.TID_Signalling_t7,
-								flag__.TID_Signalling_t7,
-								internal__.TID_Signalling_t7,
-								detect__.TID_Signalling_t0,
-								light__.TID_Signalling_t0,
-								siren__.TID_Signalling_t0,
-								flag__.TID_Signalling_t0,
-								internal__.TID_Signalling_t0,
-								detect__.TID_Signalling_t2,
-								light__.TID_Signalling_t2,
-								siren__.TID_Signalling_t2,
-								flag__.TID_Signalling_t2,
-								internal__.TID_Signalling_t2,
-								detect__.TID_Signalling_t8,
-								light__.TID_Signalling_t8,
-								siren__.TID_Signalling_t8,
-								flag__.TID_Signalling_t8,
-								internal__.TID_Signalling_t8
-							|}
-								
-							
-							internal_events = {|enter,entered,exit,exited|}
-							shared_variable_events = {|
-							|}
-									
-							
-							-- declaring all states
-							CS_Signalling_Waiting_sync = {|
-								enter.y____.x____, 
-								entered.y____.x____, 
-								exit.y____.x____, 
-								exited.y____.x____,
-								enter.x____.y____, 
-								entered.x____.y____, 
-								exit.x____.y____, 
-								exited.x____.y____ |
-								x____ <- {SID_Signalling_Waiting,SID_Signalling_AnomalousGas,SID_Signalling_DangerousGas},
-								y____ <- {SID_Signalling_Waiting}
-							|}
-							
-							
-							Signalling_Waiting_triggers = {|
-								detect__.TID_Signalling_t3,
-								detect__.TID_Signalling_t4a,
-								detect__.TID_Signalling_t5,
-								detect__.TID_Signalling_t2,
-								detect__.TID_Signalling_t8,
-								detect__.TID_Signalling_t7,
-								detect__.TID_Signalling_t4,
-								detect__.TID_Signalling_t0,
-								detect__.TID_Signalling_t6
-							|}
-							
-							State_Signalling_Waiting(id__,
-									    const_Signalling_flagTime) = let
-								T_Signalling_t3(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t3.in?c -> set_c!c ->  (exit.SID_Signalling_Waiting.SID_Signalling_Waiting -> SKIP;
-													SKIP;exited.SID_Signalling_Waiting.SID_Signalling_Waiting -> SKIP;
-													enter!SID_Signalling_Waiting!SID_Signalling_AnomalousGas -> entered!SID_Signalling_Waiting!SID_Signalling_AnomalousGas ->
-													State_Signalling_Waiting(id__,
-															    const_Signalling_flagTime)
-								)
-								T_Signalling_t4(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t4.in?c -> set_c!c ->  (exit.SID_Signalling_Waiting.SID_Signalling_Waiting -> SKIP;
-													SKIP;exited.SID_Signalling_Waiting.SID_Signalling_Waiting -> SKIP;
-													enter!SID_Signalling_Waiting!SID_Signalling_DangerousGas -> entered!SID_Signalling_Waiting!SID_Signalling_DangerousGas ->
-													State_Signalling_Waiting(id__,
-															    const_Signalling_flagTime)
-								)
-								T_Signalling_t0(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t0.in?c -> set_c!c ->  (exit.SID_Signalling_Waiting.SID_Signalling_Waiting -> SKIP;
-													SKIP;exited.SID_Signalling_Waiting.SID_Signalling_Waiting -> SKIP;
-													enter!SID_Signalling_Waiting!SID_Signalling_Waiting -> State_Signalling_Waiting_execute(id__,SID_Signalling_Waiting)
-								)
-								State_Signalling_Waiting_execute(id__,o____) = true&(light.out!Color_green -> SKIP); 
-									entered!o____!SID_Signalling_Waiting ->
-									(SKIP; STOP /\ (
-										T_Signalling_t3(id__,
-												    const_Signalling_flagTime)[]
-										T_Signalling_t4(id__,
-												    const_Signalling_flagTime)[]
-										T_Signalling_t0(id__,
-												    const_Signalling_flagTime)
-										[]
-										internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6}) -> exit?y____:diff(SIDS,{SID_Signalling_Waiting})!SID_Signalling_Waiting -> (
-												SKIP;
-												exited!y____!SID_Signalling_Waiting -> SKIP);
-												State_Signalling_Waiting(id__,
-														    const_Signalling_flagTime)
-										[] detect__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Signalling_Waiting})!SID_Signalling_Waiting -> (
-												SKIP;
-												exited!y____!SID_Signalling_Waiting -> SKIP);
-												State_Signalling_Waiting(id__,
-														    const_Signalling_flagTime)
-										[] light__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Signalling_Waiting})!SID_Signalling_Waiting -> (
-												SKIP;
-												exited!y____!SID_Signalling_Waiting -> SKIP);
-												State_Signalling_Waiting(id__,
-														    const_Signalling_flagTime)
-										[] siren__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____ ->	exit?y____:diff(SIDS,{SID_Signalling_Waiting})!SID_Signalling_Waiting -> (
-												SKIP;
-												exited!y____!SID_Signalling_Waiting -> SKIP);
-												State_Signalling_Waiting(id__,
-														    const_Signalling_flagTime)
-										[] flag__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____ ->	exit?y____:diff(SIDS,{SID_Signalling_Waiting})!SID_Signalling_Waiting -> (
-												SKIP;
-												exited!y____!SID_Signalling_Waiting -> SKIP);
-												State_Signalling_Waiting(id__,
-														    const_Signalling_flagTime)
-									))
-							within
-								enter?x____:diff(SIDS,{SID_Signalling_Waiting})!SID_Signalling_Waiting -> (State_Signalling_Waiting_execute(id__,x____))
-							
-							CS_Signalling_AnomalousGas_sync = {|
-								enter.y____.x____, 
-								entered.y____.x____, 
-								exit.y____.x____, 
-								exited.y____.x____,
-								enter.x____.y____, 
-								entered.x____.y____, 
-								exit.x____.y____, 
-								exited.x____.y____ |
-								x____ <- {SID_Signalling_Waiting,SID_Signalling_AnomalousGas,SID_Signalling_DangerousGas},
-								y____ <- {SID_Signalling_AnomalousGas}
-							|}
-							
-							
-							Signalling_AnomalousGas_triggers = {|
-								detect__.TID_Signalling_t3,
-								detect__.TID_Signalling_t4a,
-								detect__.TID_Signalling_t5,
-								detect__.TID_Signalling_t2,
-								detect__.TID_Signalling_t8,
-								detect__.TID_Signalling_t7,
-								detect__.TID_Signalling_t4,
-								detect__.TID_Signalling_t0,
-								detect__.TID_Signalling_t6
-							|}
-							
-							State_Signalling_AnomalousGas(id__,
-									    const_Signalling_flagTime) = let
-								T_Signalling_t4a(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t4a.in?c -> set_c!c ->  (exit.SID_Signalling_AnomalousGas.SID_Signalling_AnomalousGas -> SKIP;
-													SKIP;exited.SID_Signalling_AnomalousGas.SID_Signalling_AnomalousGas -> SKIP;
-													enter!SID_Signalling_AnomalousGas!SID_Signalling_Waiting -> entered!SID_Signalling_AnomalousGas!SID_Signalling_Waiting ->
-													State_Signalling_AnomalousGas(id__,
-															    const_Signalling_flagTime)
-								)
-								T_Signalling_t7(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t7.in?c -> set_c!c ->  (exit.SID_Signalling_AnomalousGas.SID_Signalling_AnomalousGas -> SKIP;
-													SKIP;exited.SID_Signalling_AnomalousGas.SID_Signalling_AnomalousGas -> SKIP;
-													enter!SID_Signalling_AnomalousGas!SID_Signalling_DangerousGas -> entered!SID_Signalling_AnomalousGas!SID_Signalling_DangerousGas ->
-													State_Signalling_AnomalousGas(id__,
-															    const_Signalling_flagTime)
-								)
-								T_Signalling_t2(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t2.in?c -> set_c!c ->  (exit.SID_Signalling_AnomalousGas.SID_Signalling_AnomalousGas -> SKIP;
-													SKIP;exited.SID_Signalling_AnomalousGas.SID_Signalling_AnomalousGas -> SKIP;
-													enter!SID_Signalling_AnomalousGas!SID_Signalling_AnomalousGas -> State_Signalling_AnomalousGas_execute(id__,SID_Signalling_AnomalousGas)
-								)
-								State_Signalling_AnomalousGas_execute(id__,o____) = true&(light.out.Color_amber -> SKIP); 
-									entered!o____!SID_Signalling_AnomalousGas ->
-									(SKIP; STOP /\ (
-										T_Signalling_t4a(id__,
-												    const_Signalling_flagTime)[]
-										T_Signalling_t7(id__,
-												    const_Signalling_flagTime)[]
-										T_Signalling_t2(id__,
-												    const_Signalling_flagTime)
-										[]
-										internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6}) -> exit?y____:diff(SIDS,{SID_Signalling_AnomalousGas})!SID_Signalling_AnomalousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_AnomalousGas -> SKIP);
-												State_Signalling_AnomalousGas(id__,
-														    const_Signalling_flagTime)
-										[] detect__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Signalling_AnomalousGas})!SID_Signalling_AnomalousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_AnomalousGas -> SKIP);
-												State_Signalling_AnomalousGas(id__,
-														    const_Signalling_flagTime)
-										[] light__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Signalling_AnomalousGas})!SID_Signalling_AnomalousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_AnomalousGas -> SKIP);
-												State_Signalling_AnomalousGas(id__,
-														    const_Signalling_flagTime)
-										[] siren__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____ ->	exit?y____:diff(SIDS,{SID_Signalling_AnomalousGas})!SID_Signalling_AnomalousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_AnomalousGas -> SKIP);
-												State_Signalling_AnomalousGas(id__,
-														    const_Signalling_flagTime)
-										[] flag__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t2,TID_Signalling_t8,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____ ->	exit?y____:diff(SIDS,{SID_Signalling_AnomalousGas})!SID_Signalling_AnomalousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_AnomalousGas -> SKIP);
-												State_Signalling_AnomalousGas(id__,
-														    const_Signalling_flagTime)
-									))
-							within
-								enter?x____:diff(SIDS,{SID_Signalling_AnomalousGas})!SID_Signalling_AnomalousGas -> (State_Signalling_AnomalousGas_execute(id__,x____))
-							
-							CS_Signalling_DangerousGas_sync = {|
-								enter.y____.x____, 
-								entered.y____.x____, 
-								exit.y____.x____, 
-								exited.y____.x____,
-								enter.x____.y____, 
-								entered.x____.y____, 
-								exit.x____.y____, 
-								exited.x____.y____ |
-								x____ <- {SID_Signalling_Waiting,SID_Signalling_AnomalousGas,SID_Signalling_DangerousGas},
-								y____ <- {SID_Signalling_DangerousGas}
-							|}
-							
-							
-							Signalling_DangerousGas_triggers = {|
-								detect__.TID_Signalling_t3,
-								detect__.TID_Signalling_t4a,
-								detect__.TID_Signalling_t5,
-								detect__.TID_Signalling_t8,
-								detect__.TID_Signalling_t2,
-								detect__.TID_Signalling_t7,
-								detect__.TID_Signalling_t4,
-								detect__.TID_Signalling_t0,
-								detect__.TID_Signalling_t6
-							|}
-							
-							State_Signalling_DangerousGas(id__,
-									    const_Signalling_flagTime) = let
-								T_Signalling_t5(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t5.in?c -> set_c!c ->  (exit.SID_Signalling_DangerousGas.SID_Signalling_DangerousGas -> SKIP;
-													SKIP;exited.SID_Signalling_DangerousGas.SID_Signalling_DangerousGas -> SKIP;
-													enter!SID_Signalling_DangerousGas!SID_Signalling_AnomalousGas -> entered!SID_Signalling_DangerousGas!SID_Signalling_AnomalousGas ->
-													State_Signalling_DangerousGas(id__,
-															    const_Signalling_flagTime)
-								)
-								T_Signalling_t6(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t6.in?c -> set_c!c ->  (exit.SID_Signalling_DangerousGas.SID_Signalling_DangerousGas -> SKIP;
-													SKIP;exited.SID_Signalling_DangerousGas.SID_Signalling_DangerousGas -> SKIP;
-													enter!SID_Signalling_DangerousGas!SID_Signalling_Waiting -> entered!SID_Signalling_DangerousGas!SID_Signalling_Waiting ->
-													State_Signalling_DangerousGas(id__,
-															    const_Signalling_flagTime)
-								)
-								T_Signalling_t8(id__,
-										    const_Signalling_flagTime) = detect__!TID_Signalling_t8.in?c -> set_c!c ->  (exit.SID_Signalling_DangerousGas.SID_Signalling_DangerousGas -> SKIP;
-													SKIP;exited.SID_Signalling_DangerousGas.SID_Signalling_DangerousGas -> SKIP;
-													enter!SID_Signalling_DangerousGas!SID_Signalling_DangerousGas -> State_Signalling_DangerousGas_execute(id__,SID_Signalling_DangerousGas)
-								)
-								State_Signalling_DangerousGas_execute(id__,o____) = true&(light.out!Color_red -> SKIP);true&(siren.out -> SKIP);WAIT(const_Signalling_flagTime);true&(flag.out -> SKIP); 
-									entered!o____!SID_Signalling_DangerousGas ->
-									(SKIP; STOP /\ (
-										T_Signalling_t5(id__,
-												    const_Signalling_flagTime)[]
-										T_Signalling_t6(id__,
-												    const_Signalling_flagTime)[]
-										T_Signalling_t8(id__,
-												    const_Signalling_flagTime)
-										[]
-										internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t8,TID_Signalling_t2,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6}) -> exit?y____:diff(SIDS,{SID_Signalling_DangerousGas})!SID_Signalling_DangerousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_DangerousGas -> SKIP);
-												State_Signalling_DangerousGas(id__,
-														    const_Signalling_flagTime)
-										[] detect__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t8,TID_Signalling_t2,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Signalling_DangerousGas})!SID_Signalling_DangerousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_DangerousGas -> SKIP);
-												State_Signalling_DangerousGas(id__,
-														    const_Signalling_flagTime)
-										[] light__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t8,TID_Signalling_t2,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_Signalling_DangerousGas})!SID_Signalling_DangerousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_DangerousGas -> SKIP);
-												State_Signalling_DangerousGas(id__,
-														    const_Signalling_flagTime)
-										[] siren__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t8,TID_Signalling_t2,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____ ->	exit?y____:diff(SIDS,{SID_Signalling_DangerousGas})!SID_Signalling_DangerousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_DangerousGas -> SKIP);
-												State_Signalling_DangerousGas(id__,
-														    const_Signalling_flagTime)
-										[] flag__?x____:diff(ITIDS,{NULLTRANSITION__,TID_Signalling_t3,TID_Signalling_t4a,TID_Signalling_t5,TID_Signalling_t8,TID_Signalling_t2,TID_Signalling_t7,TID_Signalling_t4,TID_Signalling_t0,TID_Signalling_t6})?d____ ->	exit?y____:diff(SIDS,{SID_Signalling_DangerousGas})!SID_Signalling_DangerousGas -> (
-												SKIP;
-												exited!y____!SID_Signalling_DangerousGas -> SKIP);
-												State_Signalling_DangerousGas(id__,
-														    const_Signalling_flagTime)
-									))
-							within
-								enter?x____:diff(SIDS,{SID_Signalling_DangerousGas})!SID_Signalling_DangerousGas -> (State_Signalling_DangerousGas_execute(id__,x____))
-							
-							
-							I_Signalling_i1(id__,
-									    const_Signalling_flagTime) = let
-								T_Signalling_t1(id__,
-										    const_Signalling_flagTime) = internal__!TID_Signalling_t1 -> enter!SID_Signalling!SID_Signalling_Waiting -> entered!SID_Signalling!SID_Signalling_Waiting ->
-								SKIP
-							within
-								T_Signalling_t1(id__,
-										    const_Signalling_flagTime)
-							
-							
-							State_Signalling_Waiting_R(id__,
-									    const_Signalling_flagTime) = 
-								State_Signalling_Waiting(id__,
-										    const_Signalling_flagTime)
-									[|diff(int_int,Signalling_Waiting_triggers)|]
-								SKIP
-									 		
-							State_Signalling_AnomalousGas_R(id__,
-									    const_Signalling_flagTime) = 
-								State_Signalling_AnomalousGas(id__,
-										    const_Signalling_flagTime)
-									[|diff(int_int,Signalling_AnomalousGas_triggers)|]
-								SKIP
-									 		
-							State_Signalling_DangerousGas_R(id__,
-									    const_Signalling_flagTime) = 
-								State_Signalling_DangerousGas(id__,
-										    const_Signalling_flagTime)
-									[|diff(int_int,Signalling_DangerousGas_triggers)|]
-								SKIP
-									 		
-								
-							STM(id__,
-									    const_Signalling_flagTime) = (
-								I_Signalling_i1(id__,
-										    const_Signalling_flagTime)
-									[|
-										{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
-											x____ <- diff(SIDS,{SID_Signalling_Waiting,SID_Signalling_AnomalousGas,SID_Signalling_DangerousGas}),
-											y____ <- {SID_Signalling_Waiting,SID_Signalling_AnomalousGas,SID_Signalling_DangerousGas}
-									|}|]
-								(
-									State_Signalling_Waiting_R(id__,
-											    const_Signalling_flagTime)
-										[|inter(CS_Signalling_Waiting_sync,union(CS_Signalling_AnomalousGas_sync,CS_Signalling_DangerousGas_sync))|]
-									(
-										State_Signalling_AnomalousGas_R(id__,
-												    const_Signalling_flagTime)
-											[|inter(CS_Signalling_AnomalousGas_sync,CS_Signalling_DangerousGas_sync)|]
-										State_Signalling_DangerousGas_R(id__,
-												    const_Signalling_flagTime)
-									)
-								)
-							)
-							
-							-- optimized memory process
-							channel getV_c: Chemical
-							
-							-- individual memory processes
-							Memory_c(x__) = ( 
-								get_c!x__ -> Memory_c(x__)
-								[]
-								getV_c!x__ -> Memory_c(x__)
-								[]
-								set_c?x__ -> Memory_c(x__)
-								[]
-								detect__!TID_Signalling_t3.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t4a.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t4.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t5.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t6.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t7.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t0.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t2.in?c -> Memory_c(c)
-								[]
-								detect__!TID_Signalling_t8.in?c -> Memory_c(c)
-							)
-							
-							-- processes that read variables and offer transitions
-							MemoryTransitions(id__,
-								 c,
-								 const_Signalling_flagTime) = (
-								internal__!TID_Signalling_t1 -> SKIP
-								[]
-								detect__!TID_Signalling_t3.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> SKIP
-								[]
-								detect__!TID_Signalling_t4a.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> SKIP
-								[]
-								detect__!TID_Signalling_t4.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> SKIP
-								[]
-								detect__!TID_Signalling_t5.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> SKIP
-								[]
-								detect__!TID_Signalling_t6.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> SKIP
-								[]
-								detect__!TID_Signalling_t7.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> SKIP
-								[]
-								detect__!TID_Signalling_t0.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> SKIP
-								[]
-								detect__!TID_Signalling_t2.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> SKIP
-								[]
-								detect__!TID_Signalling_t8.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> SKIP
-							
-								[]
-									set_c?x__ -> SKIP
-							 	)
-							MemoryTransitions_Signalling(id__,
-								 const_Signalling_flagTime) =
-								(
-								getV_c?c ->
-								 MemoryTransitions(id__,
-								 	 c,
-								 	 const_Signalling_flagTime);
-								 MemoryTransitions_Signalling(id__,
-								 	 const_Signalling_flagTime)
-								)
-							
-							-- synchronisation, hiding and process sets 
-							MemoryVariablesProcesses_Signalling = Union(
-								{
-									{
-										Memory_c(Chemical_anomaly)
-									}
-								}
-							)
-							
-							MemoryVariablesSyncSet = Union({
-								{|
-									detect__.TID_Signalling_t4a,
-									set_c,
-									detect__.TID_Signalling_t7,
-									detect__.TID_Signalling_t6,
-									detect__.TID_Signalling_t8,
-									detect__.TID_Signalling_t3,
-									detect__.TID_Signalling_t2,
-									detect__.TID_Signalling_t5,
-									setWC,
-									detect__.TID_Signalling_t4,
-									getV_c,
-									detect__.TID_Signalling_t0
-								|}	
-							})
-							
-							MemoryVariablesHideSet = Union({
-								{|
-									getWC,
-									getV_c
-								|}
-							})
-							
-							-- combined individual memory processes
-							MemoryVariables = ||| P : MemoryVariablesProcesses_Signalling @ P
-							
-							-- complete memory process
-							MemoryN(id__,
-								 const_Signalling_flagTime) = (MemoryVariables [| MemoryVariablesSyncSet |] MemoryTransitions_Signalling(id__,
-								 const_Signalling_flagTime)) \ MemoryVariablesHideSet
-							
-							-- optimised memory
-							-- Sets of named elements identified according to transition conditions:
-							-- {}
-							-- Summary of all identified named elements:
-							-- {
-							-- c
-							-- }
-							
-							-- Allocation plan:
-							-- 0:{}
-							--	=> {
-							--		TID_Signalling_t3,
-							--		TID_Signalling_t4,
-							--		TID_Signalling_t8,
-							--		TID_Signalling_t6,
-							--		TID_Signalling_t0,
-							--		TID_Signalling_t1,
-							--		TID_Signalling_t7,
-							--		TID_Signalling_t2,
-							--		TID_Signalling_t5,
-							--		TID_Signalling_t4a}
-							
-							-- Memory transition processes
-							MemoryTransitions_opt_0(id__) =
-							(
-								let
-									Update = Current(id__)
-									Current(id__)
-									 	   = 
-									 	   detect__!TID_Signalling_t3.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t4.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t8.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t6.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t0.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> Update
-									 	   []
-									 	   internal__!TID_Signalling_t1 -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t7.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t2.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t5.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> Update
-									 	   []
-									 	   detect__!TID_Signalling_t4a.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> Update
-								within
-									Update
-							)
-							
-							-- Memory cell processes
-							Memory_opt_c(x__) = ( 
-								get_c!x__ -> Memory_opt_c(x__)
-								[]
-								set_c?x__ -> Memory_opt_c(x__)
-							)
-							
-							-- Composition of memory, StateMachine and Memory transition processes
-							
-							MemorySTM_opt(id__,
-									    const_Signalling_flagTime) =
-								sbisim(	
-								  dbisim(
-								    sbisim(dbisim(sbisim(Memory_opt_c(Chemical_anomaly)
-								          	[| {|get_c,set_c|} |] 
-								          	STM_core(id__,
-								          			    const_Signalling_flagTime)
-								          	)\ {|get_c,set_c|}
-								          )
-								      	  [| {|internal__.TID_Signalling_t1,detect__.TID_Signalling_t4a,detect__.TID_Signalling_t7,detect__.TID_Signalling_t6,detect__.TID_Signalling_t8,detect__.TID_Signalling_t3,detect__.TID_Signalling_t2,detect__.TID_Signalling_t5,detect__.TID_Signalling_t4,detect__.TID_Signalling_t0|} |]
-								      	  MemoryTransitions_opt_0(id__)
-								      	  )\{|internal__.TID_Signalling_t1|})
-								      )
-							
-							-- main process
-							
-							MachineMemorySyncSet = Union({
-								union(
-									union(
-										{|get_c,set_c|},
-										{||}
-									)
-										
-									,
-									{|internal__.TID_Signalling_t1,
-									detect__.TID_Signalling_t3,
-									detect__.TID_Signalling_t4a,
-									detect__.TID_Signalling_t4,
-									detect__.TID_Signalling_t5,
-									detect__.TID_Signalling_t6,
-									detect__.TID_Signalling_t7,
-									detect__.TID_Signalling_t0,
-									detect__.TID_Signalling_t2,
-									detect__.TID_Signalling_t8|}
-								),
-								{|deadline|},
-								WCresets
-							})
-							
-							MachineMemoryHidingSet = Union({
-								union(
-									{|get_c,set_c|},
-									{||}
-								)
-								,
-								{|deadline|}
-							})
-							
-							MachineInternalEvents = {|
-								internal__
-							|}
-						
-							-- main process
-							AUX(id__,
-									    const_Signalling_flagTime) = prioritise((((
-								wbisim(STM(id__,
-										    const_Signalling_flagTime))
-									[|MachineMemorySyncSet|]
-								(
-									(MemoryN(id__,
-										 const_Signalling_flagTime))
-										[| union(WCsets,WCsync) |]
-									Clocks(id__,
-											    const_Signalling_flagTime)
-								)\WCsets
-							)
-							[[
-								detect__.x____ <- detect,
-								light__.x____ <- light,
-								siren__.x____ <- siren,
-								flag__.x____ <- flag
-								| x____ <- TIDS
-							]]
-							\MachineMemoryHidingSet)
-							[|{|terminate|}|>SKIP\MachineInternalEvents)
-							,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-							
-							STM_core(id__,
-									    const_Signalling_flagTime) = 
-								dbisim(
-									sbisim(
-											(STM(id__,
-													    const_Signalling_flagTime)
-											[| union(WCsync,WCresets) |]
-											Clocks(id__,
-													    const_Signalling_flagTime))\WCresets
-										  )
-									  )
-							
-							AUX_opt(id__,
-									    const_Signalling_flagTime) = 
-								prioritise(
-									(MemorySTM_opt(id__,
-											    const_Signalling_flagTime)
-									)[[
-										detect__.x____ <- detect,
-										light__.x____ <- light,
-										siren__.x____ <- siren,
-										flag__.x____ <- flag
-										| x____ <- TIDS
-									]]
-								[|{|terminate|}|>SKIP\MachineInternalEvents
-								,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-							
-							internal_(id__,
-									    const_Signalling_flagTime) = prioritise((((
-								wbisim(STM(id__,
-										    const_Signalling_flagTime))
-									[|MachineMemorySyncSet|]
-								((MemoryN(id__,
-									 const_Signalling_flagTime)) [| union(WCsets,WCsync) |] Clocks(id__,
-										    const_Signalling_flagTime))\WCsets
-							)
-							\MachineMemoryHidingSet)
-							[|{|terminate|}|>SKIP)
-							,<Union({internal_events, ClockResets, {|internal__,terminate|}}),{tock}>)		
-							-- declare clocks
-							datatype ClockSet = dummyC
-							channel clockReset 				-- no clocks declared
-							
-							-- declare trigger deadlines channel
-							channel deadline : TIDS.Signal
-							
-							-- compile clocks process
-							
-							-- set of strings that uniquely identify the waiting conditions, each of which is 
-							-- used to synchronise with the Memory process to set the correspoding variable in
-							-- the memory process.
-							datatype setWC_identifierSet = dummyWC
-							
-							-- declaring getWC and setWC channel for updating memory variables related to clocks
-							channel setWC : setWC_identifierSet.Bool
-							channel getWC : setWC_identifierSet.Bool
-							
-							-- Set of pairs capturing waiting condition processes and their alphabet.
-							-- It includes the corresponding set of the defined operations.
-							WCset(id__,
-									    const_Signalling_flagTime) = Union({
-								{
-								}
-								})
-							
-							-- Auxiliary function to rename the channel set for required clocks.
-							
-							-- Set of transition events for which synchronisation is required between Clocks and the Memory process.
-							-- It includes the corresponding set of the defined operations.
-							WCsync = Union({
-								{||}
-								})
-							-- Set of all clock resets, including 'clockReset.C' events and 'entered.x.y' events where x is drawn
-							-- from the set of all state machine state identifiers. It includes the corresponding set of the defined operations.
-							WCresets = Union({
-								{| | x <- SIDS |}
-								})
-							-- Set of all waiting condition set events. It includes the corresponding set of the defined operations.
-							WCsets = Union({
-								{|setWC|}
-								})
-							
-							
-							
-							-- Clocks process
-							Clocks(id__,
-									    const_Signalling_flagTime) = || (alpha, P) : WCset(id__,
-									    const_Signalling_flagTime) @ [alpha] wbisim(P)
-			
-							-- collects all clockResets including those of operations
-							ClockResets = Union({
-								{|clockReset|}
-												})
-							
-							-- With no internal events visible
-							Dunopt__(id__,
-									    const_Signalling_flagTime) = timed_priority(AUX(id__,
-									    const_Signalling_flagTime) \ union(internal_events,ClockResets))
-							
-							D__(id__,
-									    const_Signalling_flagTime) = timed_priority(AUX_opt(id__,
-									    const_Signalling_flagTime) \ union(internal_events,ClockResets))
-							
-							O__(id__,
-									    const_Signalling_flagTime) = D__(id__,
-									    const_Signalling_flagTime)
-							
-							-- With enter/entered/exit/exited events visible
-							FVS__(id__,
-									    const_Signalling_flagTime) = timed_priority(AUX(id__,
-									    const_Signalling_flagTime) \ ClockResets)
-							
-							-- With enterV/enteredV/exitV/exitedV events visible
-							VS__(id__,
-									    const_Signalling_flagTime) = ShowV(timed_priority(AUX(id__,
-									    const_Signalling_flagTime) \ ClockResets))
-							
-							-- With clock resets visible
-							FVS_C__(id__,
-									    const_Signalling_flagTime) = AUX(id__,
-									    const_Signalling_flagTime)
-						}
-					endmodule
-		
-		
-			Timed(OneStep) {
-				-- declaring call and ret events for undefined operations
-		
-							
-				-- declaring controller events
-				channel flag: InOut
-				channel siren: InOut
-				channel lights: InOut.Color
-				channel alarm: InOut.Chemical
-								
 	
+			-- declaring controller events
+			channel flag: InOut
+			channel siren: InOut
+			channel lights: InOut.Color
+			channel alarm: InOut.Chemical
 			
-				-- declaring controller memory
-				Memory(id__) = SKIP
-				-- declaring controller termination channel
+			
+			
+			-- declaring call and ret events for undefined operations
+			
+			-- declaring controller termination channel
+			channel terminate
+			
+			-- channel set with all visible events
+			sem__events = {|
+				terminate
+			,	flag,
+				siren,
+				lights,
+				alarm
+			|}
+			
+			-- set of visible memory events
+			visibleMemoryEvents = {||}
+	
+			-- defined operations
+		
+			-- declaring machines
+			module stm_ref0
+			exports
+				transparent diamond
+				transparent sbisim
+				transparent dbisim
+				transparent chase
+			
+				-- Transition identifiers
+				-- declaring identifiers of transitions
+				datatype NIDS = 
+				              NID_i1|
+				              NID_Waiting|
+				              NID_AnomalousGas|
+				              NID_DangerousGas
+				
+				channel internal__ : NIDS
+				
+				-- Flow channels		
+				channel interrupt
+				channel exited
+				channel exit
 				channel terminate
 				
-				-- set of visible memory events
-				visibleMemoryEvents = {||}
-			
-				D__(id__,
-						    const_Microcontroller_stm_ref0_flagTime) = prioritise(wbisim(
-					(
-						let
-							const_Signalling_flagTime = const_Microcontroller_stm_ref0_flagTime
-						within 
-						stm_ref0::D__(id__,
-								    const_Signalling_flagTime)[[
-							stm_ref0::terminate <- terminate,
-							stm_ref0::detect <- alarm,
-							stm_ref0::flag <- flag,
-							stm_ref0::siren <- siren,
-							stm_ref0::light <- lights
-						]]
-					)
-						[|
-							union(
-								{|
-								|},
-								{|
-								|}
-							)
-						|]
-					Memory(id__)
-				)
-				\ union(
-					{|
-					|},
-					{|
-					|}
-				)
-				[|{|terminate|}|>SKIP,
-				<union(visibleMemoryEvents,{terminate}),{tock}>)
+				-- Variable channels
+				channel get_c, set_c, setL_c, setR_c: Chemical
 				
-				O__(id__,
-						    const_Microcontroller_stm_ref0_flagTime) = D__(id__,
-						    const_Microcontroller_stm_ref0_flagTime)
+				-- Shared variable channels
 				
-				-- VS version
-				VS__(id__,
-						    const_Microcontroller_stm_ref0_flagTime) = prioritise(wbisim(
-					(
-						let
-							const_Signalling_flagTime = const_Microcontroller_stm_ref0_flagTime
-						within 
-						stm_ref0::VS__(id__,
-								    const_Signalling_flagTime)[[
-							stm_ref0::terminate <- terminate,
-							stm_ref0::detect <- alarm,
-							stm_ref0::flag <- flag,
-							stm_ref0::siren <- siren,
-							stm_ref0::light <- lights
-						]]
-					)
-						[|
-							union(
-								{|
-								|},
-								{|
-								|}
-							)
-						|]
-					Memory(id__)
-				)
-				\ union(
-					{|
-					|},
-					{|
+				-- Local variable channels for defined operations that are required by the state machine
+				
+				-- Declaring state machine events
+				channel detect__: NIDS.InOut.Chemical
+				channel detect: InOut.Chemical
+				channel light__: NIDS.InOut.Color
+				channel light: InOut.Color
+				channel siren__: NIDS.InOut
+				channel siren: InOut
+				channel flag__: NIDS.InOut
+				channel flag: InOut
+				
+				-- Declaring call and ret events for undefined operations
+				
+				enterSS = {|
+				i1::enter,
+				Waiting::enter,
+				AnomalousGas::enter,
+				DangerousGas::enter
+				|}
+				
+				enteredSS = 	{|
+				Waiting::entered,
+				AnomalousGas::entered,
+				DangerousGas::entered
+				|}
+				
+				internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+				
+				shared_variable_events = {|
+				|}
+				
+				-- channel set with all visible events
+				sem__events = {|
+					terminate
+				,	detect,
+					light,
+					siren,
+					flag
 					|}
-				)
-				[|{|terminate|}|>SKIP,
-				<union(visibleMemoryEvents,{terminate}),{tock}>)
+				
+				channel clockReset, clockResetL, clockResetR 
+				
+				localClockResets = {||}
+				
+				
+				channel get_CLID_DangerousGas : core_clock_type 
+				channel get_CLID_AnomalousGas : core_clock_type 
+				channel get_CLID_Waiting : core_clock_type 
+				--channel increment__
+				
+				CLID_DangerousGas_clock_type(id__,
+						          const_Signalling_flagTime) = 
+					let
+						max = (clock_type_max(Union({
+				{}
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+				
+				CLID_AnomalousGas_clock_type(id__,
+						          const_Signalling_flagTime) = 
+					let
+						max = (clock_type_max(Union({
+				{}
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+				
+				CLID_Waiting_clock_type(id__,
+						          const_Signalling_flagTime) = 
+					let
+						max = (clock_type_max(Union({
+				{}
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+				
+				
 			
-				HEXT(id__,
-						    const_Microcontroller_stm_ref0_flagTime) = D__(id__,
-						    const_Microcontroller_stm_ref0_flagTime) [|shared_variable_events|] SKIP
+					-- Nodes --
+					-- declaring all nodes
+					
+					----------------------------------------------------------------------
+					-- Initial: i1
+					module i1
+					exports
+					
+						channel enter, interrupt
+						
+						Timed(OneStep) {
+							D__(id__,
+									    const_Signalling_flagTime) = 
+								dbisim(let
+									Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+									
+									Termination = terminate -> SKIP
+									
+									Active 		= share__choice(interrupt -> SKIP) ; Inactive
+								within
+									Inactive [| {terminate} |> SKIP)
+							
+							VS_O__(id__,
+									    const_Signalling_flagTime) = D__(id__,
+									    const_Signalling_flagTime)
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					
+					----------------------------------------------------------------------
+					-- State: Waiting
+					module Waiting
+					
+					enterSS = {}
+					
+					enteredSS = {}
+					
+					exports
+					
+						--  Declarations
+						
+						channel enter, entered, interrupt
+						channel enteredL, enteredR
+						
+										
+						
+						--channel increment__
+						
+						
+						--	Nodes
+						-- declaring all nodes
+						
+						
+						Timed(OneStep) {
+							--	Rule: behaviours(Node)
+							--  Note that FDR has problems with efficiently compiling the process below
+							-- 	if using a different recursion pattern.
+							D__(id__,
+									    const_Signalling_flagTime) = 
+							dbisim(let
+								-- IMPLEMENTATION NOTE: 
+								-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+								-- however FDR struggles with that form in certain cases. So we use the exception operator
+								-- instead to 'terminate'.
+								
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= true&(share__choice(light.out!Color_green -> SKIP)) ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+								
+							VS_O__(id__,
+									    const_Signalling_flagTime) = 
+							dbisim(let
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= true&(share__choice(light.out!Color_green -> SKIP)) ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+							
+							
+							-- Clocks
+							
+							StateClocks(id__,
+									          const_Signalling_flagTime) = terminate -> SKIP
+							
+							stateClockSync = {||}
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					
+					----------------------------------------------------------------------
+					-- State: AnomalousGas
+					module AnomalousGas
+					
+					enterSS = {}
+					
+					enteredSS = {}
+					
+					exports
+					
+						--  Declarations
+						
+						channel enter, entered, interrupt
+						channel enteredL, enteredR
+						
+										
+						
+						--channel increment__
+						
+						
+						--	Nodes
+						-- declaring all nodes
+						
+						
+						Timed(OneStep) {
+							--	Rule: behaviours(Node)
+							--  Note that FDR has problems with efficiently compiling the process below
+							-- 	if using a different recursion pattern.
+							D__(id__,
+									    const_Signalling_flagTime) = 
+							dbisim(let
+								-- IMPLEMENTATION NOTE: 
+								-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+								-- however FDR struggles with that form in certain cases. So we use the exception operator
+								-- instead to 'terminate'.
+								
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= true&(share__choice(light.out.Color_amber -> SKIP)) ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+								
+							VS_O__(id__,
+									    const_Signalling_flagTime) = 
+							dbisim(let
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= true&(share__choice(light.out.Color_amber -> SKIP)) ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+							
+							
+							-- Clocks
+							
+							StateClocks(id__,
+									          const_Signalling_flagTime) = terminate -> SKIP
+							
+							stateClockSync = {||}
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					
+					----------------------------------------------------------------------
+					-- State: DangerousGas
+					module DangerousGas
+					
+					enterSS = {}
+					
+					enteredSS = {}
+					
+					exports
+					
+						--  Declarations
+						
+						channel enter, entered, interrupt
+						channel enteredL, enteredR
+						
+										
+						
+						--channel increment__
+						
+						
+						--	Nodes
+						-- declaring all nodes
+						
+						
+						Timed(OneStep) {
+							--	Rule: behaviours(Node)
+							--  Note that FDR has problems with efficiently compiling the process below
+							-- 	if using a different recursion pattern.
+							D__(id__,
+									    const_Signalling_flagTime) = 
+							dbisim(let
+								-- IMPLEMENTATION NOTE: 
+								-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+								-- however FDR struggles with that form in certain cases. So we use the exception operator
+								-- instead to 'terminate'.
+								
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= true&(share__choice(light.out!Color_red -> SKIP));true&(share__choice(siren.out -> SKIP));SHARE_WAIT(const_Signalling_flagTime);true&(share__choice(flag.out -> SKIP)) ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+								
+							VS_O__(id__,
+									    const_Signalling_flagTime) = 
+							dbisim(let
+								Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+								
+								Termination = terminate -> SKIP
+								
+								Active 		= true&(share__choice(light.out!Color_red -> SKIP));true&(share__choice(siren.out -> SKIP));SHARE_WAIT(const_Signalling_flagTime);true&(share__choice(flag.out -> SKIP)) ; 
+										 	  Behaviour ; 
+										 	  share__choice(exit -> SKIP) ; SKIP ; 
+										 	  share__choice(exited -> SKIP) ; Inactive
+							
+								Behaviour 	= entered -> During
+								During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+							within
+								Inactive [| {terminate} |> SKIP)
+							
+							
+							-- Clocks
+							
+							StateClocks(id__,
+									          const_Signalling_flagTime) = terminate -> SKIP
+							
+							stateClockSync = {||}
+						}
+					
+					endmodule
+					----------------------------------------------------------------------
+					
+					-- END of Nodes --
+					
+					Timed(OneStep) {
+					-- Operation calls --
+					-- Only the undefined operations are declared here.
+					-- If the state machine is in isolation, all required operations will be undefined.
+					-- If it is in the context of a controller, the required operations not provided by the
+					-- controller will be declared here, and the defined operations will be defined in the
+					-- context of the Controller module, and therefore within scope of the state machine module.
+					
+					-- END of Operation calls --
+				
+					-- STM processes
+					STM(id__,
+							    const_Signalling_flagTime) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+					( 
+						(
+							(
+								(IteratedStateful(id__,
+										    const_Signalling_flagTime) \ {terminate} ; share__choice(terminate -> SKIP))
+							 	[[ share__ <- x__ | x__ <- {||} ]]
+							)
+						[| {share__} |]
+						SKIP
+						)
+						[| union(sharedVarSync,{terminate}) |]
+						dbisim(sharedVarMemory(id__,
+								    const_Signalling_flagTime))
+					)\sharedVarHide
+					,<{terminate},{tock}>)
+					
+					STM_VS_O(id__,
+							    const_Signalling_flagTime) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+					( 
+						(
+							(
+								(IteratedStateful_VS_O(id__,
+										    const_Signalling_flagTime) \ {terminate} ; share__choice(terminate -> SKIP))
+							 	[[ share__ <- x__ | x__ <- {||} ]]
+							)
+						[| {share__} |]
+						SKIP
+						)
+						[| union(sharedVarSync,{terminate}) |]
+						dbisim(sharedVarMemory(id__,
+								    const_Signalling_flagTime))
+					)\sharedVarHide
+					,<{terminate},{tock}>)
+					
+					-- Transitions
+					Transitions(id__,
+							    const_Signalling_flagTime) = ((let
+						Trans = share__choice(get_c?c -> TimeOut_1(
+							 (share__ -> SKIP
+							 [] dbisim((true)&(internal__!NID_i1 -> SKIP ;  ((SKIP ; Waiting::enter -> SKIP))))
+							 [] dbisim((detect__!NID_Waiting.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; AnomalousGas::enter -> SKIP)))
+							 [] dbisim((detect__!NID_AnomalousGas.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; Waiting::enter -> SKIP)))
+							 [] dbisim((detect__!NID_Waiting.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; DangerousGas::enter -> SKIP)))
+							 [] dbisim((detect__!NID_DangerousGas.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; AnomalousGas::enter -> SKIP)))
+							 [] dbisim((detect__!NID_DangerousGas.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; Waiting::enter -> SKIP)))
+							 [] dbisim((detect__!NID_AnomalousGas.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; DangerousGas::enter -> SKIP)))
+							 [] dbisim((detect__!NID_Waiting.in?c:{c|c <- Chemical, (c==Chemical_innocuous)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; Waiting::enter -> SKIP)))
+							 [] dbisim((detect__!NID_AnomalousGas.in?c:{c|c <- Chemical, (c==Chemical_anomaly)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; AnomalousGas::enter -> SKIP)))
+							 [] dbisim((detect__!NID_DangerousGas.in?c:{c|c <- Chemical, (c==Chemical_danger)} -> share__choice(set_c!c -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; DangerousGas::enter -> SKIP)))
+							 []
+							 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
+							 []
+							 terminate -> SKIP
+							 )
+						,SKIP);Trans
+						)
+					within
+						Trans [|{terminate}|> SKIP
+					)
+					)
+					
+					-- Stateful
+					-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+					
+					-- Named process definitions
+					MachineBody(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((
+						let
+							finalNodesEntered = {||}
+						within
+							(dbisim((dbisim((let
+								-- IMPLEMENTATION NOTE:
+								-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+								-- modules for defining the semantics of each node.
+								enterSS = {|
+								i1::enter,
+								Waiting::enter,
+								AnomalousGas::enter,
+								DangerousGas::enter
+								|}
+								hideSet = union(enterSS,{|exit,exited,internal__|})
+							within 
+								((let
+									-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+									-- because CSPM modules are used for the semantics of Node.
+									flowevts = union(enterSS,{|exit,exited,interrupt|})
+									transSync = {|internal__.NID_i1,detect__.NID_Waiting.in,detect__.NID_AnomalousGas.in,detect__.NID_Waiting.in,detect__.NID_DangerousGas.in,detect__.NID_DangerousGas.in,detect__.NID_AnomalousGas.in,detect__.NID_Waiting.in,detect__.NID_AnomalousGas.in,detect__.NID_DangerousGas.in|}
+								within
+									((
+									 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+									   i1::D__(id__,
+									   		    const_Signalling_flagTime)
+									   [| { share__, terminate } |] (
+									   Waiting::D__(id__,
+									   		    const_Signalling_flagTime)
+									   [| { share__, terminate } |] (
+									   AnomalousGas::D__(id__,
+									   		    const_Signalling_flagTime)
+									   [| { share__, terminate } |] (
+									   DangerousGas::D__(id__,
+									   		    const_Signalling_flagTime)
+									   )
+									   )
+									   )
+									 )
+									 [[Waiting::interrupt <- x__ | x__ <- {|interrupt,detect__.NID_Waiting.in,detect__.NID_Waiting.in,detect__.NID_Waiting.in|}]]
+									 [[AnomalousGas::interrupt <- x__ | x__ <- {|interrupt,detect__.NID_AnomalousGas.in,detect__.NID_AnomalousGas.in,detect__.NID_AnomalousGas.in|}]]
+									 [[DangerousGas::interrupt <- x__ | x__ <- {|interrupt,detect__.NID_DangerousGas.in,detect__.NID_DangerousGas.in,detect__.NID_DangerousGas.in|}]]
+									 [[i1::interrupt <- x__ | x__ <- {|internal__.NID_i1|}]]
+									 )
+									  [[ share__ <- x__ | x__ <- {| share__,setR_c |} ]] 
+									  [[set_c <- setL_c]]
+									 )
+									 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+									 			,setL_c
+									 			,setR_c
+									 			|}) |]
+									 ((i1::enter -> Transitions(id__,
+									 		    const_Signalling_flagTime))
+									  [[ share__ <- x__ | x__ <- {| share__,setL_c |} ]]
+									  [[set_c <- setR_c]]
+									 )
+									)[[setL_c <- set_c]]
+									 [[setR_c <- set_c]]
+									)
+								)
+								 \ hideSet)
+								[[
+									detect__.x____ <- detect,
+									light__.x____ <- light,
+									siren__.x____ <- siren,
+									flag__.x____ <- flag
+									| x____ <- NIDS
+								]]
+							)
+							)
+							 [| union(stateClockSync,{terminate}) |]
+							 StateClocks(id__,
+							 		          const_Signalling_flagTime)
+							)\diff(stateClockSync,enteredSS))
+							 [| {| interrupt |} |] SKIP)
+						)
+						)
+					
+					Behaviour(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						 within
+							(MachineBody(id__,
+									    const_Signalling_flagTime) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
+									          const_Signalling_flagTime)) \ union(stateClockSync,enteredSS)
+						)
+						)
+					
+					IteratedBehaviour(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						 within
+							(dbisim(
+								sbisim(
+									dbisim(
+										sbisim(
+											dbisim(
+												sbisim(
+													MachineBody(id__,
+															    const_Signalling_flagTime)
+													[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+													dbisim(Clock_CLID_Waiting(id__,0,
+															          const_Signalling_flagTime))
+												)\{|get_CLID_Waiting|}
+											)
+											[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
+											dbisim(Clock_CLID_AnomalousGas(id__,0,
+													          const_Signalling_flagTime))
+										)\{|get_CLID_AnomalousGas|}
+									)
+									[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
+									dbisim(Clock_CLID_DangerousGas(id__,0,
+											          const_Signalling_flagTime))
+								)\{|get_CLID_DangerousGas|}
+							)
+							) \ union(stateClockSync,enteredSS)
+						)
+						)
+					
+					Stateful(id__,
+							    const_Signalling_flagTime) = 
+						((let
+							getsetLocalChannels = {|get_c,set_c|}
+							clockSync = {||}
+						within
+							(Behaviour(id__,
+									    const_Signalling_flagTime) 
+							 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+							 (varMemory(id__,
+							 		    const_Signalling_flagTime) [| {terminate} |] Clocks(id__,
+							 		          const_Signalling_flagTime))
+						 	)\union(getsetLocalChannels,clockSync)
+						)
+						)
+					
+					IteratedStateful(id__,
+							    const_Signalling_flagTime) =
+						(dbisim(
+							sbisim(
+								IteratedBehaviour(id__,
+										    const_Signalling_flagTime)
+								[| {|get_c,set_c,terminate|} |]
+								Memory_c(Chemical_anomaly)
+							)\{|get_c,set_c|}
+						)
+						)
+					
+					-- Visible counterparts
+					MachineBody_VS_O(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((
+						let
+							finalNodesEntered = {||}
+						within
+							(dbisim((dbisim((let
+								-- IMPLEMENTATION NOTE:
+								-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+								-- modules for defining the semantics of each node.
+								enterSS = {|
+								i1::enter,
+								Waiting::enter,
+								AnomalousGas::enter,
+								DangerousGas::enter
+								|}
+								hideSet = union(enterSS,{|exit,exited,internal__|})
+							within 
+								((let
+									-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+									-- because CSPM modules are used for the semantics of Node.
+									flowevts = union(enterSS,{|exit,exited,interrupt|})
+									transSync = {|internal__.NID_i1,detect__.NID_Waiting.in,detect__.NID_AnomalousGas.in,detect__.NID_Waiting.in,detect__.NID_DangerousGas.in,detect__.NID_DangerousGas.in,detect__.NID_AnomalousGas.in,detect__.NID_Waiting.in,detect__.NID_AnomalousGas.in,detect__.NID_DangerousGas.in|}
+								within
+									((
+									 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+									   i1::VS_O__(id__,
+									   		    const_Signalling_flagTime)
+									   [| { share__, terminate } |] (
+									   Waiting::VS_O__(id__,
+									   		    const_Signalling_flagTime)
+									   [| { share__, terminate } |] (
+									   AnomalousGas::VS_O__(id__,
+									   		    const_Signalling_flagTime)
+									   [| { share__, terminate } |] (
+									   DangerousGas::VS_O__(id__,
+									   		    const_Signalling_flagTime)
+									   )
+									   )
+									   )
+									 )
+									 [[Waiting::interrupt <- x__ | x__ <- {|interrupt,detect__.NID_Waiting.in,detect__.NID_Waiting.in,detect__.NID_Waiting.in|}]]
+									 [[AnomalousGas::interrupt <- x__ | x__ <- {|interrupt,detect__.NID_AnomalousGas.in,detect__.NID_AnomalousGas.in,detect__.NID_AnomalousGas.in|}]]
+									 [[DangerousGas::interrupt <- x__ | x__ <- {|interrupt,detect__.NID_DangerousGas.in,detect__.NID_DangerousGas.in,detect__.NID_DangerousGas.in|}]]
+									 [[i1::interrupt <- x__ | x__ <- {|internal__.NID_i1|}]]
+									 )
+									  [[ share__ <- x__ | x__ <- {| share__,setR_c |} ]] 
+									  [[set_c <- setL_c]]
+									 )
+									 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+									 			,setL_c
+									 			,setR_c
+									 			|}) |]
+									 ((i1::enter -> Transitions(id__,
+									 		    const_Signalling_flagTime))
+									  [[ share__ <- x__ | x__ <- {| share__,setL_c |} ]]
+									  [[set_c <- setR_c]]
+									 )
+									)[[setL_c <- set_c]]
+									 [[setR_c <- set_c]]
+									)
+								)
+								 \ hideSet)
+								[[
+									detect__.x____ <- detect,
+									light__.x____ <- light,
+									siren__.x____ <- siren,
+									flag__.x____ <- flag
+									| x____ <- NIDS
+								]]
+							)
+							)
+							 [| union(stateClockSync,{terminate}) |]
+							 StateClocks(id__,
+							 		          const_Signalling_flagTime)
+							)\diff(stateClockSync,enteredSS))
+							 [| {| interrupt |} |] SKIP)
+						)
+						)
+					
+					Behaviour_VS_O(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						 within
+							(MachineBody_VS_O(id__,
+									    const_Signalling_flagTime) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
+									          const_Signalling_flagTime)) \ diff(union(stateClockSync,enteredSS),enteredSS)
+						)
+						)
+					
+					IteratedBehaviour_VS_O(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((let
+							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						 within
+							(dbisim(
+								sbisim(
+									dbisim(
+										sbisim(
+											dbisim(
+												sbisim(
+													MachineBody_VS_O(id__,
+															    const_Signalling_flagTime)
+													[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+													dbisim(Clock_CLID_Waiting(id__,0,
+															          const_Signalling_flagTime))
+												)\{|get_CLID_Waiting|}
+											)
+											[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
+											dbisim(Clock_CLID_AnomalousGas(id__,0,
+													          const_Signalling_flagTime))
+										)\{|get_CLID_AnomalousGas|}
+									)
+									[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
+									dbisim(Clock_CLID_DangerousGas(id__,0,
+											          const_Signalling_flagTime))
+								)\{|get_CLID_DangerousGas|}
+							)
+							) \ diff(union(stateClockSync,enteredSS),enteredSS)
+						)
+						)
+					
+					Stateful_VS_O(id__,
+							    const_Signalling_flagTime) = 
+						dbisim((let
+							getsetLocalChannels = {|get_c,set_c|}
+							clockSync = {||}
+						within
+							(Behaviour_VS_O(id__,
+									    const_Signalling_flagTime) 
+							 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+							 (varMemory(id__,
+							 		    const_Signalling_flagTime) [| {terminate} |] Clocks(id__,
+							 		          const_Signalling_flagTime))
+						 	)\union(getsetLocalChannels,clockSync)
+						)
+						)
+					
+					IteratedStateful_VS_O(id__,
+							    const_Signalling_flagTime) =
+						(dbisim(
+							sbisim(
+								IteratedBehaviour_VS_O(id__,
+										    const_Signalling_flagTime)
+								[| {|get_c,set_c,terminate|} |]
+								Memory_c(Chemical_anomaly)
+							)\{|get_c,set_c|}
+						)
+						)
+					
+					-- END
+					
+					-- Memory
+					-- Memory variables
+					Memory_c(c) =
+						get_c!c -> Memory_c(c)
+						[]
+						set_c?x__ -> Memory_c(x__)
+						[]
+						terminate -> SKIP
+					
+					-- varMemory process
+					varMemory(id__,
+							    const_Signalling_flagTime) = Memory_c(Chemical_anomaly)
+					
+					getsetLocalChannels = {|get_c,set_c|}
+					
+					-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+					FVS__(id__,
+							    const_Signalling_flagTime) = STM_VS_O(id__,
+							    const_Signalling_flagTime) \ localClockResets
+					D__(id__,
+							    const_Signalling_flagTime) = timed_priority(STM(id__,
+							    const_Signalling_flagTime) \ union(internal_events,localClockResets))
+					O__(id__,
+							    const_Signalling_flagTime) = dbisim(D__(id__,
+							    const_Signalling_flagTime))
+					VS__(id__,
+							    const_Signalling_flagTime) = FVS__(id__,
+							    const_Signalling_flagTime)
+					VS_O__(id__,
+							    const_Signalling_flagTime) = dbisim(FVS__(id__,
+							    const_Signalling_flagTime))
+					HEXT__(id__,
+							    const_Signalling_flagTime) = O__(id__,
+							    const_Signalling_flagTime) [|shared_variable_events|] SKIP
+					FVS_C__(id__,
+							    const_Signalling_flagTime) = dbisim(timed_priority(STM(id__,
+							    const_Signalling_flagTime) \ internal_events))
+					HUP__(id__,
+							    const_Signalling_flagTime) = timed_priority(O__(id__,
+							    const_Signalling_flagTime) [|{share__}|] SKIP)
+					
+					-- Clocks
+					
+					Clocks(id__,
+							          const_Signalling_flagTime) = terminate -> SKIP
+					
+					clockSync = {||}
+					
+					Clock_CLID_DangerousGas(id__,x__,
+							          const_Signalling_flagTime) = 
+						TimeOut_1(
+							DangerousGas::entered -> Clock_CLID_DangerousGas(id__,0,
+									          const_Signalling_flagTime)
+							[]
+							get_CLID_DangerousGas!x__ -> Clock_CLID_DangerousGas(id__,x__,
+									          const_Signalling_flagTime)
+							[]
+							terminate -> SKIP,Clock_CLID_DangerousGas(id__,clock_type_plus(x__,1,CLID_DangerousGas_clock_type(id__,
+									          const_Signalling_flagTime)),
+									          const_Signalling_flagTime))
+					Clock_CLID_AnomalousGas(id__,x__,
+							          const_Signalling_flagTime) = 
+						TimeOut_1(
+							AnomalousGas::entered -> Clock_CLID_AnomalousGas(id__,0,
+									          const_Signalling_flagTime)
+							[]
+							get_CLID_AnomalousGas!x__ -> Clock_CLID_AnomalousGas(id__,x__,
+									          const_Signalling_flagTime)
+							[]
+							terminate -> SKIP,Clock_CLID_AnomalousGas(id__,clock_type_plus(x__,1,CLID_AnomalousGas_clock_type(id__,
+									          const_Signalling_flagTime)),
+									          const_Signalling_flagTime))
+					Clock_CLID_Waiting(id__,x__,
+							          const_Signalling_flagTime) = 
+						TimeOut_1(
+							Waiting::entered -> Clock_CLID_Waiting(id__,0,
+									          const_Signalling_flagTime)
+							[]
+							get_CLID_Waiting!x__ -> Clock_CLID_Waiting(id__,x__,
+									          const_Signalling_flagTime)
+							[]
+							terminate -> SKIP,Clock_CLID_Waiting(id__,clock_type_plus(x__,1,CLID_Waiting_clock_type(id__,
+									          const_Signalling_flagTime)),
+									          const_Signalling_flagTime))
+					
+					StateClocks(id__,
+							          const_Signalling_flagTime) = dbisim(Clock_CLID_DangerousGas(id__,0,
+							          const_Signalling_flagTime))
+					[| { terminate } |] (
+					dbisim(Clock_CLID_AnomalousGas(id__,0,
+							          const_Signalling_flagTime))
+					[| { terminate } |] (
+					dbisim(Clock_CLID_Waiting(id__,0,
+							          const_Signalling_flagTime))
+					)
+					)
+					
+					stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+					
+					-- Shared memory
+					-- Shared memory variables
+					
+					-- sharedVarMemory process
+					sharedVarMemory(id__,
+							    const_Signalling_flagTime) = terminate -> SKIP
+					
+					sharedVarSync = {||}
+					
+					sharedVarHide = {||}
+					}
+			endmodule
+			
+			Timed(OneStep) {
+					-- undefined operations
+					
+					-- declaring controller memory
+					Memory(id__) = SKIP
+					
+					D__(id__,
+							    const_Microcontroller_stm_ref0_flagTime) = prioritise(	((
+							let
+								const_Signalling_flagTime = const_Microcontroller_stm_ref0_flagTime
+							within 
+							stm_ref0::D__(id__,
+									    const_Signalling_flagTime)[[
+								stm_ref0::terminate <- terminate,
+								stm_ref0::detect <- alarm,
+								stm_ref0::flag <- flag,
+								stm_ref0::siren <- siren,
+								stm_ref0::light <- lights
+							]]
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						Memory(id__)
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>)
+					
+					-- VS version
+					VS__(id__,
+							    const_Microcontroller_stm_ref0_flagTime) = prioritise(	((
+							let
+								const_Signalling_flagTime = const_Microcontroller_stm_ref0_flagTime
+							within 
+							stm_ref0::VS__(id__,
+									    const_Signalling_flagTime)[[
+								stm_ref0::terminate <- terminate,
+								stm_ref0::detect <- alarm,
+								stm_ref0::flag <- flag,
+								stm_ref0::siren <- siren,
+								stm_ref0::light <- lights
+							]]
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						Memory(id__)
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>)
+				
+					-- O version (optimised) THESE TWO PROCESSES SHOULD BE KEPT IN SYNC WITH THE ABOVE TWO
+					O__(id__,
+							    const_Microcontroller_stm_ref0_flagTime) = dbisim(prioritise(	((
+							let
+								const_Signalling_flagTime = const_Microcontroller_stm_ref0_flagTime
+							within 
+							stm_ref0::O__(id__,
+									    const_Signalling_flagTime)[[
+								stm_ref0::terminate <- terminate,
+								stm_ref0::detect <- alarm,
+								stm_ref0::flag <- flag,
+								stm_ref0::siren <- siren,
+								stm_ref0::light <- lights
+							]]
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>))
+									
+					-- VS_O version
+					VS_O__(id__,
+							    const_Microcontroller_stm_ref0_flagTime) = dbisim(prioritise(	((
+							let
+								const_Signalling_flagTime = const_Microcontroller_stm_ref0_flagTime
+							within 
+							stm_ref0::VS_O__(id__,
+									    const_Signalling_flagTime)[[
+								stm_ref0::terminate <- terminate,
+								stm_ref0::detect <- alarm,
+								stm_ref0::flag <- flag,
+								stm_ref0::siren <- siren,
+								stm_ref0::light <- lights
+							]]
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+					\ union(
+						{|
+						|},
+						{|
+						|}
+					)
+					[|{|terminate|}|>SKIP
+					,<union(visibleMemoryEvents,{terminate}),{tock}>))
+				
+					HEXT(id__,
+							    const_Microcontroller_stm_ref0_flagTime) = O__(id__,
+							    const_Microcontroller_stm_ref0_flagTime) [|shared_variable_events|] SKIP			
 			}
+	
 		endmodule
 	
 	Timed(OneStep) {
-			
+		visibleMemoryEvents = {||}
+		
 		-- declaring module memory
 		Memory(id__) = SKIP
 		
-		visibleMemoryEvents = {||}
-		
 		D__(id__,
-				    const_Microcontroller_stm_ref0_flagTime) = prioritise(
-			(				(
+				    const_Microcontroller_stm_ref0_flagTime) = prioritise(	(
+				(
+					(SKIP)
+						[|{||}|]
 					(
-						(SKIP)
-							[|{||}|]
 						(
 							(
-								(
-									ctrl_ref0::D__(id__)[[
-										ctrl_ref0::terminate <- terminate,
-										ctrl_ref0::turn <- turn,
-										ctrl_ref0::gas <- gas,
-										ctrl_ref0::command <- cd,
-										ctrl_ref0::incrCall <- incrCall,
-										ctrl_ref0::decrCall <- decrCall
-									]]
-								)
-									[|{|terminate, ctrl_ref0::detect|}|]
-								(
-									ctrl_ref1::D__(id__,
-											    const_Microcontroller_stm_ref0_flagTime)[[
-										ctrl_ref1::terminate <- terminate,
-										ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
-										ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
-										ctrl_ref1::flag <- flag,
-										ctrl_ref1::siren <- siren,
-										ctrl_ref1::lights <- light
-									]]
-								)
+								ctrl_ref0::D__(id__)[[
+									ctrl_ref0::terminate <- terminate,
+									ctrl_ref0::turn <- turn,
+									ctrl_ref0::gas <- gas,
+									ctrl_ref0::command <- cd,
+									ctrl_ref0::decrCall <- decrCall,
+									ctrl_ref0::incrCall <- incrCall
+								]]
 							)
-							\
-							diff(
-								{|terminate, ctrl_ref0::detect|},
-								{|terminate|}
+								[|{|terminate, ctrl_ref0::detect|}|]
+							(
+								ctrl_ref1::D__(id__,
+										    const_Microcontroller_stm_ref0_flagTime)[[
+									ctrl_ref1::terminate <- terminate,
+									ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
+									ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
+									ctrl_ref1::flag <- flag,
+									ctrl_ref1::siren <- siren,
+									ctrl_ref1::lights <- light
+								]]
 							)
-								[|
-									union(
-										{|
-										|},
-										{|
-										|}
-									)
-								|]
-							Memory(id__)
 						)
+						\
+						diff(
+							{|terminate, ctrl_ref0::detect|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						Memory(id__)
 					)
-					\ Union({
-						{|
-						|},
-						{|
-						|},
-						{|
-						|}
-					})
-					[|{|terminate|}|>SKIP
-				)\{|terminate|}
-			),
-			<visibleMemoryEvents,{tock}>
-		)
-		
-		O__(id__,
-				    const_Microcontroller_stm_ref0_flagTime) = D__(id__,
-				    const_Microcontroller_stm_ref0_flagTime)
+				)
+				\ Union({
+					{|
+					|},
+					{|
+					|},
+					{|
+					|}
+				})
+				[|{|terminate|}|>SKIP
+			)
+			\{|terminate|}
+		,<visibleMemoryEvents,{tock}>)
 		
 		-- visible state equivalent
+		
 		VS__(id__,
-				    const_Microcontroller_stm_ref0_flagTime) = prioritise(
-			(				(
+				    const_Microcontroller_stm_ref0_flagTime) = prioritise(	(
+				(
+					(SKIP)
+						[|{||}|]
 					(
-						(SKIP)
-							[|{||}|]
 						(
 							(
-								(
-									ctrl_ref0::VS__(id__)[[
-										ctrl_ref0::terminate <- terminate,
-										ctrl_ref0::turn <- turn,
-										ctrl_ref0::gas <- gas,
-										ctrl_ref0::command <- cd,
-										ctrl_ref0::incrCall <- incrCall,
-										ctrl_ref0::decrCall <- decrCall
-									]]
-								)
-									[|{|terminate, ctrl_ref0::detect|}|]
-								(
-									ctrl_ref1::VS__(id__,
-											    const_Microcontroller_stm_ref0_flagTime)[[
-										ctrl_ref1::terminate <- terminate,
-										ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
-										ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
-										ctrl_ref1::flag <- flag,
-										ctrl_ref1::siren <- siren,
-										ctrl_ref1::lights <- light
-									]]
-								)
+								ctrl_ref0::VS__(id__)[[
+									ctrl_ref0::terminate <- terminate,
+									ctrl_ref0::turn <- turn,
+									ctrl_ref0::gas <- gas,
+									ctrl_ref0::command <- cd,
+									ctrl_ref0::decrCall <- decrCall,
+									ctrl_ref0::incrCall <- incrCall
+								]]
 							)
-							\
-							diff(
-								{|terminate, ctrl_ref0::detect|},
-								{|terminate|}
+								[|{|terminate, ctrl_ref0::detect|}|]
+							(
+								ctrl_ref1::VS__(id__,
+										    const_Microcontroller_stm_ref0_flagTime)[[
+									ctrl_ref1::terminate <- terminate,
+									ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
+									ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
+									ctrl_ref1::flag <- flag,
+									ctrl_ref1::siren <- siren,
+									ctrl_ref1::lights <- light
+								]]
 							)
-								[|
-									union(
-										{|
-										|},
-										{|
-										|}
-									)
-								|]
-							Memory(id__)
 						)
+						\
+						diff(
+							{|terminate, ctrl_ref0::detect|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						Memory(id__)
 					)
-					\ Union({
-						{|
-						|},
-						{|
-						|},
-						{|
-						|}
-					})							
-					[|{|terminate|}|>SKIP
-				)\{|terminate|}
+				)
+				\ Union({
+					{|
+					|},
+					{|
+					|},
+					{|
+					|}
+				})
+				[|{|terminate|}|>SKIP
 			)
-			,<visibleMemoryEvents,{tock}>
+			\{|terminate|}
+		,<visibleMemoryEvents,{tock}>)
+		
+		-- O version (optimised)
+		
+		O__(id__,
+				    const_Microcontroller_stm_ref0_flagTime) = dbisim(prioritise(	(
+				(
+					(SKIP)
+						[|{||}|]
+					(
+						(
+							(
+								ctrl_ref0::O__(id__)[[
+									ctrl_ref0::terminate <- terminate,
+									ctrl_ref0::turn <- turn,
+									ctrl_ref0::gas <- gas,
+									ctrl_ref0::command <- cd,
+									ctrl_ref0::decrCall <- decrCall,
+									ctrl_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate, ctrl_ref0::detect|}|]
+							(
+								ctrl_ref1::O__(id__,
+										    const_Microcontroller_stm_ref0_flagTime)[[
+									ctrl_ref1::terminate <- terminate,
+									ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
+									ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
+									ctrl_ref1::flag <- flag,
+									ctrl_ref1::siren <- siren,
+									ctrl_ref1::lights <- light
+								]]
+							)
+						)
+						\
+						diff(
+							{|terminate, ctrl_ref0::detect|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+				)
+				\ Union({
+					{|
+					|},
+					{|
+					|},
+					{|
+					|}
+				})
+				[|{|terminate|}|>SKIP
+			)
+			\{|terminate|}
+		,<visibleMemoryEvents,{tock}>))
+		
+		-- visible state optimised equivalent
+		
+		VS_O__(id__,
+				    const_Microcontroller_stm_ref0_flagTime) = dbisim(prioritise(	(
+				(
+					(SKIP)
+						[|{||}|]
+					(
+						(
+							(
+								ctrl_ref0::VS_O__(id__)[[
+									ctrl_ref0::terminate <- terminate,
+									ctrl_ref0::turn <- turn,
+									ctrl_ref0::gas <- gas,
+									ctrl_ref0::command <- cd,
+									ctrl_ref0::decrCall <- decrCall,
+									ctrl_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate, ctrl_ref0::detect|}|]
+							(
+								ctrl_ref1::VS_O__(id__,
+										    const_Microcontroller_stm_ref0_flagTime)[[
+									ctrl_ref1::terminate <- terminate,
+									ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
+									ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
+									ctrl_ref1::flag <- flag,
+									ctrl_ref1::siren <- siren,
+									ctrl_ref1::lights <- light
+								]]
+							)
+						)
+						\
+						diff(
+							{|terminate, ctrl_ref0::detect|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+				)
+				\ Union({
+					{|
+					|},
+					{|
+					|},
+					{|
+					|}
+				})
+				[|{|terminate|}|>SKIP
+			)
+			\{|terminate|}
+		,<visibleMemoryEvents,{tock}>))
+		
+		-- O version (optimised) with visible assignments
+		
+		AS_O__(id__,
+				    const_Microcontroller_stm_ref0_flagTime) = dbisim(	(
+				(
+					(SKIP)
+						[|{||}|]
+					(
+						(
+							(
+								ctrl_ref0::O__(id__)[[
+									ctrl_ref0::terminate <- terminate,
+									ctrl_ref0::turn <- turn,
+									ctrl_ref0::gas <- gas,
+									ctrl_ref0::command <- cd,
+									ctrl_ref0::decrCall <- decrCall,
+									ctrl_ref0::incrCall <- incrCall
+								]]
+							)
+								[|{|terminate, ctrl_ref0::detect|}|]
+							(
+								ctrl_ref1::O__(id__,
+										    const_Microcontroller_stm_ref0_flagTime)[[
+									ctrl_ref1::terminate <- terminate,
+									ctrl_ref1::alarm.in <- ctrl_ref0::detect.out,
+									ctrl_ref1::alarm.out <- ctrl_ref0::detect.in,
+									ctrl_ref1::flag <- flag,
+									ctrl_ref1::siren <- siren,
+									ctrl_ref1::lights <- light
+								]]
+							)
+						)
+						\
+						diff(
+							{|terminate, ctrl_ref0::detect|},
+							{|terminate|}
+						)
+							[|
+								union(
+									{|
+									|},
+									{|
+									|}
+								)
+							|]
+						dbisim(Memory(id__))
+					)
+				)
+				\ Union({
+					{|
+					|},
+					{|
+					|},
+					{|
+					|}
+				})
+				[|{|terminate|}|>SKIP
+			)
+			\{|terminate|}
 		)
 	}
+	
 endmodule

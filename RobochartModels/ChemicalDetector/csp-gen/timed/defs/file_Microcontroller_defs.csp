@@ -1,3 +1,12 @@
--- data definitions used by platform:/resource/ChemicalDetector/Microcontroller.rct
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 17:58:28
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+-- data definitions used by /ChemicalDetector/Microcontroller.rct
 
 	

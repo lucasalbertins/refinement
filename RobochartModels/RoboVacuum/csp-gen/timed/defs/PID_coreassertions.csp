@@ -1,7 +1,17 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:35
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 include "file_PID_defs.csp"
 include "PID.csp"
+include "core_timed_defs.csp"
 include "core_defs.csp"
-include "timed_definitions.csp"
+include "state_timed_defs.csp"
 include "robochart_defs.csp"
 include "../instantiations.csp"
 
@@ -9,14 +19,13 @@ transparent wbisim
 channel r__
 -- generate PID
 P_PID = let
-	id = 0
-	const_PID_kp = 0
-	const_PID_ki = 0
-	const_PID_kd = 0
-	const_PID_step = 0
+	id__ = 0
+	
+	
+	
 within
 	PID::O__(
-		id,
+		id__,
 		const_PID_kp,
 		const_PID_ki,
 		const_PID_kd,

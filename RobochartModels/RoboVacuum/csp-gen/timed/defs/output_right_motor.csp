@@ -1,14 +1,34 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:36
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
 module OP_output_right_motor
 exports
 	Timed(OneStep) {
-	D__(id__,
-				x) = let
-	AUX(N) = if (N == 0) then SKIP else
-		  SKIP
-	      	      	within AUX(output_right_motor_BOUND)
-	
-	O__(id__,
-				x) = D__(id__,
-				x)
+		-- These definitions are needed to make the structure of an incompletely defined operation compatible with that of fully defined operations
+		MemoryTransitions(id__) = STOP -- this is STOP because MemoryTransitions is put in a choice with the state machine's MemoryTransitions. if it were SKIP, a divergence would be introduced.
+		MemoryVariablesSyncSet = {}
+		MemoryVariablesHideSet = {}
+		MachineMemorySyncSet = {}
+		MachineMemoryHidingSet = {}
+		channel internal__
+		D__(id__,
+					param_x) = let
+			AUX(N) = 
+				if (N == 0) then SKIP else SKIP
+				
+		within AUX(output_right_motor_BOUND)
+		
+		O__(id__,
+					param_x) = D__(id__,
+					param_x)
+		HUP__(id__,
+					param_x) = D__(id__,
+					param_x)
 	}
 endmodule

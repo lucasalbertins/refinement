@@ -1,571 +1,755 @@
 
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 04-03-2022 10:59:35
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
 
 
-		module SpeedSM
-		exports
-			-- definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
-			external prioritise
-			transparent wbisim
-			transparent dbisim
-			transparent sbisim
+
+
+module SpeedSM
+exports
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+
+	-- Transition identifiers
+	-- declaring identifiers of transitions
+	datatype NIDS = 
+	              NID_i0|
+	              NID_wait_input|
+	              NID_update_speed
+	
+	channel internal__ : NIDS
+	
+	-- Flow channels		
+	channel interrupt
+	channel exited
+	channel exit
+	channel terminate
+	
+	-- Variable channels
+	channel get_acceleration, set_acceleration, setL_acceleration, setR_acceleration: TripleAxis
+	channel get_speed, set_speed, setL_speed, setR_speed: TripleAxis
+	
+	-- Shared variable channels
+	
+	-- Local variable channels for defined operations that are required by the state machine
+	
+	-- Declaring state machine events
+	channel acc__: NIDS.InOut.TripleAxis
+	channel acc: InOut.TripleAxis
+	channel sp__: NIDS.InOut.TripleAxis
+	channel sp: InOut.TripleAxis
+	
+	-- Declaring call and ret events for undefined operations
+	
+	enterSS = {|
+	i0::enter,
+	wait_input::enter,
+	update_speed::enter
+	|}
+	
+	enteredSS = 	{|
+	wait_input::entered,
+	update_speed::entered
+	|}
+	
+	internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+	
+	shared_variable_events = {|
+	|}
+	
+	-- channel set with all visible events
+	sem__events = {|
+		terminate
+	,	acc,
+		sp
+		|}
+	
+	channel clockReset, clockResetL, clockResetR 
+	
+	localClockResets = {||}
+	
+	
+	channel get_CLID_wait_input : core_clock_type 
+	channel get_CLID_update_speed : core_clock_type 
+	--channel increment__
+	
+	CLID_wait_input_clock_type(id__,
+			          const_SpeedSM_t) = 
+		let
+			max = (clock_type_max(Union({
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_update_speed_clock_type(id__,
+			          const_SpeedSM_t) = 
+		let
+			max = (clock_type_max(Union({
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	
+
+		-- Nodes --
+		-- declaring all nodes
 		
-			Timed(OneStep) {	
-				-- flow channels
-				channel internal__ : TIDS
-				channel enteredV, enterV, exitV, exitedV : SIDS
-				channel enter, entered: SIDS.SIDS
-				channel exit,exited: SIDS.SIDS
-				channel terminate
-				
-				-- variable channels
-				channel get_acceleration, set_acceleration: TripleAxis
-				channel get_speed, set_speed: TripleAxis
-						
-				-- shared variable channels
-				
-				-- local variable channels for defined operations that are required by the state machine
-				
-				-- declaring state machine events
-				channel acc__: TIDS.InOut.TripleAxis
-				channel acc: InOut.TripleAxis
-				channel sp__: TIDS.InOut.TripleAxis
-				channel sp: InOut.TripleAxis
-				
-				-- declaring call and ret events for undefined operations
+		----------------------------------------------------------------------
+		-- Initial: i0
+		module i0
+		exports
+		
+			channel enter, interrupt
 			
-				-- Only the undefined operations are declared here.
-				-- If the state machine is in isolation, all required operations will be undefined.
-				-- If it is in the context of a controller, the required operations not provided by the
-				-- controller will be declared here, and the defined operations will be defined in the
-				-- context of the Controller module, and therefore within scope of the state machien module.
-				
-				
-				-- definition of functions used to expose flow channels
-				ShowEvents(P,E) = P[[ entered.x____.y____ <- enteredV.y____ | entered.x____.y____ <- E]]
-								   [[ enter.x____.y____ <- enterV.y____ | enter.x____.y____ <- E]]
-								   [[ exit.x____.y____ <- exitV.y____ | exit.x____.y____ <- E]]
-								   [[ exited.x____.y____ <- exitedV.y____ | exited.x____.y____ <- E ]]
-									 
-				ShowEnteredV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-				ShowEnterV(P) = P[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-				ShowExitV(P) = P[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-				ShowExitedV(P) = P[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-				ShowV(P) = P[[ entered.x____.y____ <- enteredV.y____ | x____ <- SIDS, y____ <- SIDS]]
-							[[ enter.x____.y____ <- enterV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-							[[ exit.x____.y____ <- exitV.y____ | x____ <- SIDS, y____ <- SIDS]]
-							[[ exited.x____.y____ <- exitedV.y____ | x____ <- SIDS, y____ <- SIDS ]]
-				
-				-- declaring identifiers of state and final states
-				datatype SIDS = SID_SpeedSM
-				              | SID_SpeedSM_wait_input
-				              | SID_SpeedSM_update_speed
-				
-				-- declaring identifiers of transitions
-				datatype TIDS = NULLTRANSITION__
-				              | TID_SpeedSM_t1
-				              | TID_SpeedSM_t0
-				              | TID_SpeedSM_t2
-				
-				-- declaring identifiers of transitions that can interupt a state (excludes transitions from junctions)
-				
-				ITIDS = {
-					TID_SpeedSM_t1,	TID_SpeedSM_t2
-				}
-				
-				int_int = {|
-					acc__.TID_SpeedSM_t1,
-					sp__.TID_SpeedSM_t1,
-					internal__.TID_SpeedSM_t1,
-					acc__.TID_SpeedSM_t2,
-					sp__.TID_SpeedSM_t2,
-					internal__.TID_SpeedSM_t2
-				|}
-					
-				
-				internal_events = {|enter,entered,exit,exited|}
-				shared_variable_events = {|
-				|}
-						
-				
-				-- declaring all states
-				CS_SpeedSM_wait_input_sync = {|
-					enter.y____.x____, 
-					entered.y____.x____, 
-					exit.y____.x____, 
-					exited.y____.x____,
-					enter.x____.y____, 
-					entered.x____.y____, 
-					exit.x____.y____, 
-					exited.x____.y____ |
-					x____ <- {SID_SpeedSM_wait_input,SID_SpeedSM_update_speed},
-					y____ <- {SID_SpeedSM_wait_input}
-				|}
-				
-				
-				SpeedSM_wait_input_triggers = {|
-					internal__.TID_SpeedSM_t2,
-					acc__.TID_SpeedSM_t1
-				|}
-				
-				State_SpeedSM_wait_input(id__,
-						    const_SpeedSM_t) = let
-					T_SpeedSM_t1(id__,
-							    const_SpeedSM_t) = acc__!TID_SpeedSM_t1.in?acceleration -> set_acceleration!acceleration ->  (exit.SID_SpeedSM_wait_input.SID_SpeedSM_wait_input -> SKIP;
-										SKIP;exited.SID_SpeedSM_wait_input.SID_SpeedSM_wait_input -> SKIP;
-										enter!SID_SpeedSM_wait_input!SID_SpeedSM_update_speed -> entered!SID_SpeedSM_wait_input!SID_SpeedSM_update_speed ->
-										State_SpeedSM_wait_input(id__,
-												    const_SpeedSM_t)
-					)
-					State_SpeedSM_wait_input_execute(id__,o____) = SKIP; 
-						entered!o____!SID_SpeedSM_wait_input ->
-						(SKIP; STOP /\ (
-							T_SpeedSM_t1(id__,
-									    const_SpeedSM_t)
-							[]
-							internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_SpeedSM_t2,TID_SpeedSM_t1}) -> exit?y____:diff(SIDS,{SID_SpeedSM_wait_input})!SID_SpeedSM_wait_input -> (
-									SKIP;
-									exited!y____!SID_SpeedSM_wait_input -> SKIP);
-									State_SpeedSM_wait_input(id__,
-											    const_SpeedSM_t)
-							[] acc__?x____:diff(ITIDS,{NULLTRANSITION__,TID_SpeedSM_t2,TID_SpeedSM_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_SpeedSM_wait_input})!SID_SpeedSM_wait_input -> (
-									SKIP;
-									exited!y____!SID_SpeedSM_wait_input -> SKIP);
-									State_SpeedSM_wait_input(id__,
-											    const_SpeedSM_t)
-							[] sp__?x____:diff(ITIDS,{NULLTRANSITION__,TID_SpeedSM_t2,TID_SpeedSM_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_SpeedSM_wait_input})!SID_SpeedSM_wait_input -> (
-									SKIP;
-									exited!y____!SID_SpeedSM_wait_input -> SKIP);
-									State_SpeedSM_wait_input(id__,
-											    const_SpeedSM_t)
-						))
-				within
-					enter?x____:diff(SIDS,{SID_SpeedSM_wait_input})!SID_SpeedSM_wait_input -> (State_SpeedSM_wait_input_execute(id__,x____))
-				
-				CS_SpeedSM_update_speed_sync = {|
-					enter.y____.x____, 
-					entered.y____.x____, 
-					exit.y____.x____, 
-					exited.y____.x____,
-					enter.x____.y____, 
-					entered.x____.y____, 
-					exit.x____.y____, 
-					exited.x____.y____ |
-					x____ <- {SID_SpeedSM_wait_input,SID_SpeedSM_update_speed},
-					y____ <- {SID_SpeedSM_update_speed}
-				|}
-				
-				
-				SpeedSM_update_speed_triggers = {|
-					internal__.TID_SpeedSM_t2,
-					acc__.TID_SpeedSM_t1
-				|}
-				
-				State_SpeedSM_update_speed(id__,
-						    const_SpeedSM_t) = let
-					T_SpeedSM_t2(id__,
-							    const_SpeedSM_t) = internal__!TID_SpeedSM_t2 ->  exit.SID_SpeedSM_update_speed.SID_SpeedSM_update_speed -> SKIP;
-										SKIP;exited.SID_SpeedSM_update_speed.SID_SpeedSM_update_speed -> SKIP;
-										get_speed?speed -> true&(sp.out!speed -> SKIP);WAIT(const_SpeedSM_t);enter!SID_SpeedSM_update_speed!SID_SpeedSM_wait_input -> entered!SID_SpeedSM_update_speed!SID_SpeedSM_wait_input ->
-										State_SpeedSM_update_speed(id__,
-												    const_SpeedSM_t)
-					State_SpeedSM_update_speed_execute(id__,o____) = get_speed?speed -> get_acceleration?acceleration -> true & (set_speed!update_TripleAxis_X(speed,Plus(TripleAxis_X(speed), Mult(TripleAxis_X(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP);get_speed?speed -> get_acceleration?acceleration -> true & (set_speed!update_TripleAxis_Y(speed,Plus(TripleAxis_Y(speed), Mult(TripleAxis_Y(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP);get_speed?speed -> get_acceleration?acceleration -> true & (set_speed!update_TripleAxis_Z(speed,Plus(TripleAxis_Z(speed), Mult(TripleAxis_Z(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP); 
-						entered!o____!SID_SpeedSM_update_speed ->
-						(SKIP; STOP /\ (
-							T_SpeedSM_t2(id__,
-									    const_SpeedSM_t)
-							[]
-							internal__?x____:diff(ITIDS,{NULLTRANSITION__,TID_SpeedSM_t2,TID_SpeedSM_t1}) -> exit?y____:diff(SIDS,{SID_SpeedSM_update_speed})!SID_SpeedSM_update_speed -> (
-									SKIP;
-									exited!y____!SID_SpeedSM_update_speed -> SKIP);
-									State_SpeedSM_update_speed(id__,
-											    const_SpeedSM_t)
-							[] acc__?x____:diff(ITIDS,{NULLTRANSITION__,TID_SpeedSM_t2,TID_SpeedSM_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_SpeedSM_update_speed})!SID_SpeedSM_update_speed -> (
-									SKIP;
-									exited!y____!SID_SpeedSM_update_speed -> SKIP);
-									State_SpeedSM_update_speed(id__,
-											    const_SpeedSM_t)
-							[] sp__?x____:diff(ITIDS,{NULLTRANSITION__,TID_SpeedSM_t2,TID_SpeedSM_t1})?d____?aux____ ->	exit?y____:diff(SIDS,{SID_SpeedSM_update_speed})!SID_SpeedSM_update_speed -> (
-									SKIP;
-									exited!y____!SID_SpeedSM_update_speed -> SKIP);
-									State_SpeedSM_update_speed(id__,
-											    const_SpeedSM_t)
-						))
-				within
-					enter?x____:diff(SIDS,{SID_SpeedSM_update_speed})!SID_SpeedSM_update_speed -> (State_SpeedSM_update_speed_execute(id__,x____))
-				
-				
-				I_SpeedSM_i0(id__,
-						    const_SpeedSM_t) = let
-					T_SpeedSM_t0(id__,
-							    const_SpeedSM_t) = internal__!TID_SpeedSM_t0 -> get_speed?speed -> true & (set_speed!update_TripleAxis_X(speed,0) -> SKIP);get_speed?speed -> true & (set_speed!update_TripleAxis_Y(speed,0) -> SKIP);get_speed?speed -> true & (set_speed!update_TripleAxis_Z(speed,0) -> SKIP);enter!SID_SpeedSM!SID_SpeedSM_wait_input -> entered!SID_SpeedSM!SID_SpeedSM_wait_input ->
-					SKIP
-				within
-					T_SpeedSM_t0(id__,
-							    const_SpeedSM_t)
-				
-				
-				State_SpeedSM_wait_input_R(id__,
-						    const_SpeedSM_t) = 
-					State_SpeedSM_wait_input(id__,
-							    const_SpeedSM_t)
-						[|diff(int_int,SpeedSM_wait_input_triggers)|]
-					SKIP
-						 		
-				State_SpeedSM_update_speed_R(id__,
-						    const_SpeedSM_t) = 
-					State_SpeedSM_update_speed(id__,
-							    const_SpeedSM_t)
-						[|diff(int_int,SpeedSM_update_speed_triggers)|]
-					SKIP
-						 		
-					
-				STM(id__,
-						    const_SpeedSM_t) = (
-					I_SpeedSM_i0(id__,
-							    const_SpeedSM_t)
-						[|
-							{|enter.x____.y____, entered.x____.y____, exit.x____.y____, exited.x____.y____ |
-								x____ <- diff(SIDS,{SID_SpeedSM_wait_input,SID_SpeedSM_update_speed}),
-								y____ <- {SID_SpeedSM_wait_input,SID_SpeedSM_update_speed}
-						|}|]
-					(
-						State_SpeedSM_wait_input_R(id__,
-								    const_SpeedSM_t)
-							[|inter(CS_SpeedSM_wait_input_sync,CS_SpeedSM_update_speed_sync)|]
-						State_SpeedSM_update_speed_R(id__,
-								    const_SpeedSM_t)
-					)
-				)
-				
-				-- optimized memory process
-				channel getV_acceleration: TripleAxis
-				channel getV_speed: TripleAxis
-				
-				-- individual memory processes
-				Memory_acceleration(x__) = ( 
-					get_acceleration!x__ -> Memory_acceleration(x__)
-					[]
-					getV_acceleration!x__ -> Memory_acceleration(x__)
-					[]
-					set_acceleration?x__ -> Memory_acceleration(x__)
-					[]
-					acc__!TID_SpeedSM_t1.in?acceleration -> Memory_acceleration(acceleration)
-				)
-				Memory_speed(x__) = ( 
-					get_speed!x__ -> Memory_speed(x__)
-					[]
-					getV_speed!x__ -> Memory_speed(x__)
-					[]
-					set_speed?x__ -> Memory_speed(x__)
-				)
-				
-				-- processes that read variables and offer transitions
-				MemoryTransitions(id__,
-					 acceleration,
-					 speed,
-					 const_SpeedSM_t) = (
-					acc__!TID_SpeedSM_t1.in?acceleration -> SKIP
-					[]
-					internal__!TID_SpeedSM_t0 -> SKIP
-					[]
-					internal__!TID_SpeedSM_t2 -> SKIP
-				
-					[]
-						set_acceleration?x__ -> SKIP
-					[]
-					set_speed?x__ -> SKIP
-				 	)
-				MemoryTransitions_SpeedSM(id__,
-					 const_SpeedSM_t) =
-					(
-					getV_acceleration?acceleration ->	
-					getV_speed?speed ->
-					 MemoryTransitions(id__,
-					 	 acceleration,
-					 	 speed,
-					 	 const_SpeedSM_t);
-					 MemoryTransitions_SpeedSM(id__,
-					 	 const_SpeedSM_t)
-					)
-				
-				-- synchronisation, hiding and process sets 
-				MemoryVariablesProcesses_SpeedSM = Union(
-					{
-						{
-							Memory_acceleration((0,0,0)),
-							Memory_speed((0,0,0))
-						}
-					}
-				)
-				
-				MemoryVariablesSyncSet = Union({
-					{|
-						set_speed,
-						acc__.TID_SpeedSM_t1,
-						getV_speed,
-						set_acceleration,
-						setWC,
-						getV_acceleration
-					|}	
-				})
-				
-				MemoryVariablesHideSet = Union({
-					{|
-						getV_speed,
-						getWC,
-						getV_acceleration
-					|}
-				})
-				
-				-- combined individual memory processes
-				MemoryVariables = ||| P : MemoryVariablesProcesses_SpeedSM @ P
-				
-				-- complete memory process
-				MemoryN(id__,
-					 const_SpeedSM_t) = (MemoryVariables [| MemoryVariablesSyncSet |] MemoryTransitions_SpeedSM(id__,
-					 const_SpeedSM_t)) \ MemoryVariablesHideSet
-				
-				-- optimised memory
-				-- Sets of named elements identified according to transition conditions:
-				-- {}
-				-- Summary of all identified named elements:
-				-- {
-				-- speed
-				-- acceleration
-				-- }
-				
-				-- Allocation plan:
-				-- 0:{}
-				--	=> {
-				--		TID_SpeedSM_t1,
-				--		TID_SpeedSM_t0,
-				--		TID_SpeedSM_t2}
-				
-				-- Memory transition processes
-				MemoryTransitions_opt_0(id__) =
-				(
-					let
-						Update = Current(id__)
-						Current(id__)
-						 	   = 
-						 	   acc__!TID_SpeedSM_t1.in?acceleration -> Update
-						 	   []
-						 	   internal__!TID_SpeedSM_t0 -> Update
-						 	   []
-						 	   internal__!TID_SpeedSM_t2 -> Update
-					within
-						Update
-				)
-				
-				-- Memory cell processes
-				Memory_opt_speed(x__) = ( 
-					get_speed!x__ -> Memory_opt_speed(x__)
-					[]
-					set_speed?x__ -> Memory_opt_speed(x__)
-				)
-				Memory_opt_acceleration(x__) = ( 
-					get_acceleration!x__ -> Memory_opt_acceleration(x__)
-					[]
-					set_acceleration?x__ -> Memory_opt_acceleration(x__)
-				)
-				
-				-- Composition of memory, StateMachine and Memory transition processes
-				
-				MemorySTM_opt(id__,
-						    const_SpeedSM_t) =
-					sbisim(	
-					  dbisim(
-					    sbisim(dbisim(sbisim(Memory_opt_speed((0,0,0))
-					          	[| {|set_speed,get_speed|} |] 
-					          	dbisim(sbisim(Memory_opt_acceleration((0,0,0))
-					          	      	[| {|get_acceleration,set_acceleration|} |] 
-					          	      	STM_core(id__,
-					          	      			    const_SpeedSM_t)
-					          	      	)\ {|get_acceleration,set_acceleration|}
-					          	      )
-					          	)\ {|set_speed,get_speed|}
-					          )
-					      	  [| {|internal__.TID_SpeedSM_t0,internal__.TID_SpeedSM_t2,acc__.TID_SpeedSM_t1|} |]
-					      	  MemoryTransitions_opt_0(id__)
-					      	  )\{||})
-					      )
-				
-				-- main process
-				
-				MachineMemorySyncSet = Union({
-					union(
-						union(
-							{|get_acceleration,set_acceleration,
-							get_speed,set_speed|},
-							{||}
-						)
-							
-						,
-						{|acc__.TID_SpeedSM_t1,
-						internal__.TID_SpeedSM_t0,
-						internal__.TID_SpeedSM_t2|}
-					),
-					{|deadline|},
-					WCresets
-				})
-				
-				MachineMemoryHidingSet = Union({
-					union(
-						{|get_acceleration,set_acceleration,
-						get_speed,set_speed|},
-						{||}
-					)
-					,
-					{|deadline|}
-				})
-				
-				MachineInternalEvents = {|
-					internal__
-				|}
-			
-				-- main process
-				AUX(id__,
-						    const_SpeedSM_t) = prioritise((((
-					wbisim(STM(id__,
-							    const_SpeedSM_t))
-						[|MachineMemorySyncSet|]
-					(
-						(MemoryN(id__,
-							 const_SpeedSM_t))
-							[| union(WCsets,WCsync) |]
-						Clocks(id__,
-								    const_SpeedSM_t)
-					)\WCsets
-				)
-				[[
-					acc__.x____ <- acc,
-					sp__.x____ <- sp
-					| x____ <- TIDS
-				]]
-				\MachineMemoryHidingSet)
-				[|{|terminate|}|>SKIP\MachineInternalEvents)
-				,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-				
-				STM_core(id__,
-						    const_SpeedSM_t) = 
-					dbisim(
-						sbisim(
-								(STM(id__,
-										    const_SpeedSM_t)
-								[| union(WCsync,WCresets) |]
-								Clocks(id__,
-										    const_SpeedSM_t))\WCresets
-							  )
-						  )
-				
-				AUX_opt(id__,
-						    const_SpeedSM_t) = 
-					prioritise(
-						(MemorySTM_opt(id__,
-								    const_SpeedSM_t)
-						)[[
-							acc__.x____ <- acc,
-							sp__.x____ <- sp
-							| x____ <- TIDS
-						]]
-					[|{|terminate|}|>SKIP\MachineInternalEvents
-					,<Union({internal_events, ClockResets, {|terminate|}}),{tock}>)
-				
-				internal_(id__,
-						    const_SpeedSM_t) = prioritise((((
-					wbisim(STM(id__,
-							    const_SpeedSM_t))
-						[|MachineMemorySyncSet|]
-					((MemoryN(id__,
-						 const_SpeedSM_t)) [| union(WCsets,WCsync) |] Clocks(id__,
-							    const_SpeedSM_t))\WCsets
-				)
-				\MachineMemoryHidingSet)
-				[|{|terminate|}|>SKIP)
-				,<Union({internal_events, ClockResets, {|internal__,terminate|}}),{tock}>)		
-				-- declare clocks
-				datatype ClockSet = dummyC
-				channel clockReset 				-- no clocks declared
-				
-				-- declare trigger deadlines channel
-				channel deadline : TIDS.Signal
-				
-				-- compile clocks process
-				
-				-- set of strings that uniquely identify the waiting conditions, each of which is 
-				-- used to synchronise with the Memory process to set the correspoding variable in
-				-- the memory process.
-				datatype setWC_identifierSet = dummyWC
-				
-				-- declaring getWC and setWC channel for updating memory variables related to clocks
-				channel setWC : setWC_identifierSet.Bool
-				channel getWC : setWC_identifierSet.Bool
-				
-				-- Set of pairs capturing waiting condition processes and their alphabet.
-				-- It includes the corresponding set of the defined operations.
-				WCset(id__,
-						    const_SpeedSM_t) = Union({
-					{
-					}
-					})
-				
-				-- Auxiliary function to rename the channel set for required clocks.
-				
-				-- Set of transition events for which synchronisation is required between Clocks and the Memory process.
-				-- It includes the corresponding set of the defined operations.
-				WCsync = Union({
-					{||}
-					})
-				-- Set of all clock resets, including 'clockReset.C' events and 'entered.x.y' events where x is drawn
-				-- from the set of all state machine state identifiers. It includes the corresponding set of the defined operations.
-				WCresets = Union({
-					{| | x <- SIDS |}
-					})
-				-- Set of all waiting condition set events. It includes the corresponding set of the defined operations.
-				WCsets = Union({
-					{|setWC|}
-					})
-				
-				
-				
-				-- Clocks process
-				Clocks(id__,
-						    const_SpeedSM_t) = || (alpha, P) : WCset(id__,
-						    const_SpeedSM_t) @ [alpha] wbisim(P)
-
-				-- collects all clockResets including those of operations
-				ClockResets = Union({
-					{|clockReset|}
-									})
-				
-				-- With no internal events visible
-				Dunopt__(id__,
-						    const_SpeedSM_t) = timed_priority(AUX(id__,
-						    const_SpeedSM_t) \ union(internal_events,ClockResets))
-				
+			Timed(OneStep) {
 				D__(id__,
-						    const_SpeedSM_t) = timed_priority(AUX_opt(id__,
-						    const_SpeedSM_t) \ union(internal_events,ClockResets))
+						    const_SpeedSM_t) = 
+					dbisim(let
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(interrupt -> SKIP) ; Inactive
+					within
+						Inactive [| {terminate} |> SKIP)
 				
-				O__(id__,
+				VS_O__(id__,
 						    const_SpeedSM_t) = D__(id__,
 						    const_SpeedSM_t)
-				
-				-- With enter/entered/exit/exited events visible
-				FVS__(id__,
-						    const_SpeedSM_t) = timed_priority(AUX(id__,
-						    const_SpeedSM_t) \ ClockResets)
-				
-				-- With enterV/enteredV/exitV/exitedV events visible
-				VS__(id__,
-						    const_SpeedSM_t) = ShowV(timed_priority(AUX(id__,
-						    const_SpeedSM_t) \ ClockResets))
-				
-				-- With clock resets visible
-				FVS_C__(id__,
-						    const_SpeedSM_t) = AUX(id__,
-						    const_SpeedSM_t)
 			}
+		
 		endmodule
+		----------------------------------------------------------------------
+		
+		
+		----------------------------------------------------------------------
+		-- State: wait_input
+		module wait_input
+		
+		enterSS = {}
+		
+		enteredSS = {}
+		
+		exports
+		
+			--  Declarations
+			
+			channel enter, entered, interrupt
+			channel enteredL, enteredR
+			
+							
+			
+			--channel increment__
+			
+			
+			--	Nodes
+			-- declaring all nodes
+			
+			
+			Timed(OneStep) {
+				--	Rule: behaviours(Node)
+				--  Note that FDR has problems with efficiently compiling the process below
+				-- 	if using a different recursion pattern.
+				D__(id__,
+						    const_SpeedSM_t) = 
+				dbisim(let
+					-- IMPLEMENTATION NOTE: 
+					-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+					-- however FDR struggles with that form in certain cases. So we use the exception operator
+					-- instead to 'terminate'.
+					
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= SKIP ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+					Behaviour 	= entered -> During
+					During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+				within
+					Inactive [| {terminate} |> SKIP)
+					
+				VS_O__(id__,
+						    const_SpeedSM_t) = 
+				dbisim(let
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= SKIP ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+					Behaviour 	= entered -> During
+					During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+				within
+					Inactive [| {terminate} |> SKIP)
+				
+				
+				-- Clocks
+				
+				StateClocks(id__,
+						          const_SpeedSM_t) = terminate -> SKIP
+				
+				stateClockSync = {||}
+			}
+		
+		endmodule
+		----------------------------------------------------------------------
+		
+		
+		----------------------------------------------------------------------
+		-- State: update_speed
+		module update_speed
+		
+		enterSS = {}
+		
+		enteredSS = {}
+		
+		exports
+		
+			--  Declarations
+			
+			channel enter, entered, interrupt
+			channel enteredL, enteredR
+			
+							
+			
+			--channel increment__
+			
+			
+			--	Nodes
+			-- declaring all nodes
+			
+			
+			Timed(OneStep) {
+				--	Rule: behaviours(Node)
+				--  Note that FDR has problems with efficiently compiling the process below
+				-- 	if using a different recursion pattern.
+				D__(id__,
+						    const_SpeedSM_t) = 
+				dbisim(let
+					-- IMPLEMENTATION NOTE: 
+					-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+					-- however FDR struggles with that form in certain cases. So we use the exception operator
+					-- instead to 'terminate'.
+					
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= share__choice(share__choice(get_speed?speed -> share__choice(get_acceleration?acceleration -> true & (share__choice(set_speed!update_TripleAxis_X(speed,Plus(TripleAxis_X(speed), Mult(TripleAxis_X(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP)))));share__choice(share__choice(get_speed?speed -> share__choice(get_acceleration?acceleration -> true & (share__choice(set_speed!update_TripleAxis_Y(speed,Plus(TripleAxis_Y(speed), Mult(TripleAxis_Y(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP)))));share__choice(share__choice(get_speed?speed -> share__choice(get_acceleration?acceleration -> true & (share__choice(set_speed!update_TripleAxis_Z(speed,Plus(TripleAxis_Z(speed), Mult(TripleAxis_Z(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP))))) ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+					Behaviour 	= entered -> During
+					During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+				within
+					Inactive [| {terminate} |> SKIP)
+					
+				VS_O__(id__,
+						    const_SpeedSM_t) = 
+				dbisim(let
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= share__choice(share__choice(get_speed?speed -> share__choice(get_acceleration?acceleration -> true & (share__choice(set_speed!update_TripleAxis_X(speed,Plus(TripleAxis_X(speed), Mult(TripleAxis_X(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP)))));share__choice(share__choice(get_speed?speed -> share__choice(get_acceleration?acceleration -> true & (share__choice(set_speed!update_TripleAxis_Y(speed,Plus(TripleAxis_Y(speed), Mult(TripleAxis_Y(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP)))));share__choice(share__choice(get_speed?speed -> share__choice(get_acceleration?acceleration -> true & (share__choice(set_speed!update_TripleAxis_Z(speed,Plus(TripleAxis_Z(speed), Mult(TripleAxis_Z(acceleration), const_SpeedSM_t, core_int), core_int)) -> SKIP))))) ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+					Behaviour 	= entered -> During
+					During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+				within
+					Inactive [| {terminate} |> SKIP)
+				
+				
+				-- Clocks
+				
+				StateClocks(id__,
+						          const_SpeedSM_t) = terminate -> SKIP
+				
+				stateClockSync = {||}
+			}
+		
+		endmodule
+		----------------------------------------------------------------------
+		
+		-- END of Nodes --
+		
+		Timed(OneStep) {
+		-- Operation calls --
+		-- Only the undefined operations are declared here.
+		-- If the state machine is in isolation, all required operations will be undefined.
+		-- If it is in the context of a controller, the required operations not provided by the
+		-- controller will be declared here, and the defined operations will be defined in the
+		-- context of the Controller module, and therefore within scope of the state machine module.
+		
+		-- END of Operation calls --
+	
+		-- STM processes
+		STM(id__,
+				    const_SpeedSM_t) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+		( 
+			(
+				(
+					(IteratedStateful(id__,
+							    const_SpeedSM_t) \ {terminate} ; share__choice(terminate -> SKIP))
+				 	[[ share__ <- x__ | x__ <- {||} ]]
+				)
+			[| {share__} |]
+			SKIP
+			)
+			[| union(sharedVarSync,{terminate}) |]
+			dbisim(sharedVarMemory(id__,
+					    const_SpeedSM_t))
+		)\sharedVarHide
+		,<{terminate},{tock}>)
+		
+		STM_VS_O(id__,
+				    const_SpeedSM_t) = prioritise(-- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+		( 
+			(
+				(
+					(IteratedStateful_VS_O(id__,
+							    const_SpeedSM_t) \ {terminate} ; share__choice(terminate -> SKIP))
+				 	[[ share__ <- x__ | x__ <- {||} ]]
+				)
+			[| {share__} |]
+			SKIP
+			)
+			[| union(sharedVarSync,{terminate}) |]
+			dbisim(sharedVarMemory(id__,
+					    const_SpeedSM_t))
+		)\sharedVarHide
+		,<{terminate},{tock}>)
+		
+		-- Transitions
+		Transitions(id__,
+				    const_SpeedSM_t) = ((let
+			Trans = TimeOut_1(
+				 (share__ -> SKIP
+				 [] dbisim((true)&(acc__!NID_wait_input.in?acceleration:{acceleration|acceleration <- TripleAxis, true} -> share__choice(set_acceleration!acceleration -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_speed::enter -> SKIP)))
+				 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((share__choice(share__choice(get_speed?speed -> true & (share__choice(set_speed!update_TripleAxis_X(speed,0) -> SKIP))));share__choice(share__choice(get_speed?speed -> true & (share__choice(set_speed!update_TripleAxis_Y(speed,0) -> SKIP))));share__choice(share__choice(get_speed?speed -> true & (share__choice(set_speed!update_TripleAxis_Z(speed,0) -> SKIP)))) ; wait_input::enter -> SKIP))))
+				 [] dbisim((true)&(internal__!NID_update_speed -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_speed?speed -> true&(share__choice(sp.out!speed -> SKIP)));SHARE_WAIT(const_SpeedSM_t) ; wait_input::enter -> SKIP)))
+				 []
+				 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
+				 []
+				 terminate -> SKIP
+				 )
+			,SKIP);Trans
+		within
+			Trans [|{terminate}|> SKIP
+		)
+		)
+		
+		-- Stateful
+		-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+		
+		-- Named process definitions
+		MachineBody(id__,
+				    const_SpeedSM_t) = 
+			dbisim((
+			let
+				finalNodesEntered = {||}
+			within
+				(dbisim((dbisim((let
+					-- IMPLEMENTATION NOTE:
+					-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+					-- modules for defining the semantics of each node.
+					enterSS = {|
+					i0::enter,
+					wait_input::enter,
+					update_speed::enter
+					|}
+					hideSet = union(enterSS,{|exit,exited,internal__|})
+				within 
+					((let
+						-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+						-- because CSPM modules are used for the semantics of Node.
+						flowevts = union(enterSS,{|exit,exited,interrupt|})
+						transSync = {|acc__.NID_wait_input.in,internal__.NID_i0,internal__.NID_update_speed|}
+					within
+						((
+						 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+						   i0::D__(id__,
+						   		    const_SpeedSM_t)
+						   [| { share__, terminate } |] (
+						   wait_input::D__(id__,
+						   		    const_SpeedSM_t)
+						   [| { share__, terminate } |] (
+						   update_speed::D__(id__,
+						   		    const_SpeedSM_t)
+						   )
+						   )
+						 )
+						 [[wait_input::interrupt <- x__ | x__ <- {|interrupt,acc__.NID_wait_input.in|}]]
+						 [[update_speed::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_update_speed|}]]
+						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+						 )
+						  [[ share__ <- x__ | x__ <- {| share__,setR_acceleration |} ]] 
+						 )
+						 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+						 			,setR_acceleration
+						 			|}) |]
+						 ((i0::enter -> Transitions(id__,
+						 		    const_SpeedSM_t))
+						  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+						  [[set_acceleration <- setR_acceleration]]
+						 )
+						)
+						 [[setR_acceleration <- set_acceleration]]
+						)
+					)
+					 \ hideSet)
+					[[
+						acc__.x____ <- acc,
+						sp__.x____ <- sp
+						| x____ <- NIDS
+					]]
+				)
+				)
+				 [| union(stateClockSync,{terminate}) |]
+				 StateClocks(id__,
+				 		          const_SpeedSM_t)
+				)\diff(stateClockSync,enteredSS))
+				 [| {| interrupt |} |] SKIP)
+			)
+			)
+		
+		Behaviour(id__,
+				    const_SpeedSM_t) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_speed,update_speed::entered|}
+			 within
+				(MachineBody(id__,
+						    const_SpeedSM_t) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
+						          const_SpeedSM_t)) \ union(stateClockSync,enteredSS)
+			)
+			)
+		
+		IteratedBehaviour(id__,
+				    const_SpeedSM_t) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_speed,update_speed::entered|}
+			 within
+				(dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								MachineBody(id__,
+										    const_SpeedSM_t)
+								[| {|get_CLID_update_speed,update_speed::entered,terminate|} |]
+								dbisim(Clock_CLID_update_speed(id__,0,
+										          const_SpeedSM_t))
+							)\{|get_CLID_update_speed|}
+						)
+						[| {|get_CLID_wait_input,wait_input::entered,terminate|} |]
+						dbisim(Clock_CLID_wait_input(id__,0,
+								          const_SpeedSM_t))
+					)\{|get_CLID_wait_input|}
+				)
+				) \ union(stateClockSync,enteredSS)
+			)
+			)
+		
+		Stateful(id__,
+				    const_SpeedSM_t) = 
+			((let
+				getsetLocalChannels = {|get_acceleration,set_acceleration,
+				get_speed,set_speed|}
+				clockSync = {||}
+			within
+				(Behaviour(id__,
+						    const_SpeedSM_t) 
+				 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+				 (varMemory(id__,
+				 		    const_SpeedSM_t) [| {terminate} |] Clocks(id__,
+				 		          const_SpeedSM_t))
+			 	)\union(getsetLocalChannels,clockSync)
+			)
+			)
+		
+		IteratedStateful(id__,
+				    const_SpeedSM_t) =
+			(dbisim(
+				sbisim(
+					dbisim(
+						sbisim(
+							IteratedBehaviour(id__,
+									    const_SpeedSM_t)
+							[| {|get_speed,set_speed,terminate|} |]
+							Memory_speed((0,0,0))
+						)\{|get_speed,set_speed|}
+					)
+					[| {|get_acceleration,set_acceleration,terminate|} |]
+					Memory_acceleration((0,0,0))
+				)\{|get_acceleration,set_acceleration|}
+			)
+			)
+		
+		-- Visible counterparts
+		MachineBody_VS_O(id__,
+				    const_SpeedSM_t) = 
+			dbisim((
+			let
+				finalNodesEntered = {||}
+			within
+				(dbisim((dbisim((let
+					-- IMPLEMENTATION NOTE:
+					-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+					-- modules for defining the semantics of each node.
+					enterSS = {|
+					i0::enter,
+					wait_input::enter,
+					update_speed::enter
+					|}
+					hideSet = union(enterSS,{|exit,exited,internal__|})
+				within 
+					((let
+						-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+						-- because CSPM modules are used for the semantics of Node.
+						flowevts = union(enterSS,{|exit,exited,interrupt|})
+						transSync = {|acc__.NID_wait_input.in,internal__.NID_i0,internal__.NID_update_speed|}
+					within
+						((
+						 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+						   i0::VS_O__(id__,
+						   		    const_SpeedSM_t)
+						   [| { share__, terminate } |] (
+						   wait_input::VS_O__(id__,
+						   		    const_SpeedSM_t)
+						   [| { share__, terminate } |] (
+						   update_speed::VS_O__(id__,
+						   		    const_SpeedSM_t)
+						   )
+						   )
+						 )
+						 [[wait_input::interrupt <- x__ | x__ <- {|interrupt,acc__.NID_wait_input.in|}]]
+						 [[update_speed::interrupt <- x__ | x__ <- {|interrupt,internal__.NID_update_speed|}]]
+						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+						 )
+						  [[ share__ <- x__ | x__ <- {| share__,setR_acceleration |} ]] 
+						 )
+						 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+						 			,setR_acceleration
+						 			|}) |]
+						 ((i0::enter -> Transitions(id__,
+						 		    const_SpeedSM_t))
+						  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+						  [[set_acceleration <- setR_acceleration]]
+						 )
+						)
+						 [[setR_acceleration <- set_acceleration]]
+						)
+					)
+					 \ hideSet)
+					[[
+						acc__.x____ <- acc,
+						sp__.x____ <- sp
+						| x____ <- NIDS
+					]]
+				)
+				)
+				 [| union(stateClockSync,{terminate}) |]
+				 StateClocks(id__,
+				 		          const_SpeedSM_t)
+				)\diff(stateClockSync,enteredSS))
+				 [| {| interrupt |} |] SKIP)
+			)
+			)
+		
+		Behaviour_VS_O(id__,
+				    const_SpeedSM_t) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_speed,update_speed::entered|}
+			 within
+				(MachineBody_VS_O(id__,
+						    const_SpeedSM_t) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
+						          const_SpeedSM_t)) \ diff(union(stateClockSync,enteredSS),enteredSS)
+			)
+			)
+		
+		IteratedBehaviour_VS_O(id__,
+				    const_SpeedSM_t) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_speed,update_speed::entered|}
+			 within
+				(dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								MachineBody_VS_O(id__,
+										    const_SpeedSM_t)
+								[| {|get_CLID_update_speed,update_speed::entered,terminate|} |]
+								dbisim(Clock_CLID_update_speed(id__,0,
+										          const_SpeedSM_t))
+							)\{|get_CLID_update_speed|}
+						)
+						[| {|get_CLID_wait_input,wait_input::entered,terminate|} |]
+						dbisim(Clock_CLID_wait_input(id__,0,
+								          const_SpeedSM_t))
+					)\{|get_CLID_wait_input|}
+				)
+				) \ diff(union(stateClockSync,enteredSS),enteredSS)
+			)
+			)
+		
+		Stateful_VS_O(id__,
+				    const_SpeedSM_t) = 
+			dbisim((let
+				getsetLocalChannels = {|get_acceleration,set_acceleration,
+				get_speed,set_speed|}
+				clockSync = {||}
+			within
+				(Behaviour_VS_O(id__,
+						    const_SpeedSM_t) 
+				 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+				 (varMemory(id__,
+				 		    const_SpeedSM_t) [| {terminate} |] Clocks(id__,
+				 		          const_SpeedSM_t))
+			 	)\union(getsetLocalChannels,clockSync)
+			)
+			)
+		
+		IteratedStateful_VS_O(id__,
+				    const_SpeedSM_t) =
+			(dbisim(
+				sbisim(
+					dbisim(
+						sbisim(
+							IteratedBehaviour_VS_O(id__,
+									    const_SpeedSM_t)
+							[| {|get_speed,set_speed,terminate|} |]
+							Memory_speed((0,0,0))
+						)\{|get_speed,set_speed|}
+					)
+					[| {|get_acceleration,set_acceleration,terminate|} |]
+					Memory_acceleration((0,0,0))
+				)\{|get_acceleration,set_acceleration|}
+			)
+			)
+		
+		-- END
+		
+		-- Memory
+		-- Memory variables
+		Memory_acceleration(acceleration) =
+			get_acceleration!acceleration -> Memory_acceleration(acceleration)
+			[]
+			set_acceleration?x__ -> Memory_acceleration(x__)
+			[]
+			terminate -> SKIP
+		Memory_speed(speed) =
+			get_speed!speed -> Memory_speed(speed)
+			[]
+			set_speed?x__ -> Memory_speed(x__)
+			[]
+			terminate -> SKIP
+		
+		-- varMemory process
+		varMemory(id__,
+				    const_SpeedSM_t) = Memory_acceleration((0,0,0))
+		[| { terminate } |] (
+		Memory_speed((0,0,0))
+		)
+		
+		getsetLocalChannels = {|get_acceleration,set_acceleration,get_speed,set_speed|}
+		
+		-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+		FVS__(id__,
+				    const_SpeedSM_t) = STM_VS_O(id__,
+				    const_SpeedSM_t) \ localClockResets
+		D__(id__,
+				    const_SpeedSM_t) = timed_priority(STM(id__,
+				    const_SpeedSM_t) \ union(internal_events,localClockResets))
+		O__(id__,
+				    const_SpeedSM_t) = dbisim(D__(id__,
+				    const_SpeedSM_t))
+		VS__(id__,
+				    const_SpeedSM_t) = FVS__(id__,
+				    const_SpeedSM_t)
+		VS_O__(id__,
+				    const_SpeedSM_t) = dbisim(FVS__(id__,
+				    const_SpeedSM_t))
+		HEXT__(id__,
+				    const_SpeedSM_t) = O__(id__,
+				    const_SpeedSM_t) [|shared_variable_events|] SKIP
+		FVS_C__(id__,
+				    const_SpeedSM_t) = dbisim(timed_priority(STM(id__,
+				    const_SpeedSM_t) \ internal_events))
+		HUP__(id__,
+				    const_SpeedSM_t) = timed_priority(O__(id__,
+				    const_SpeedSM_t) [|{share__}|] SKIP)
+		
+		-- Clocks
+		
+		Clocks(id__,
+				          const_SpeedSM_t) = terminate -> SKIP
+		
+		clockSync = {||}
+		
+		Clock_CLID_wait_input(id__,x__,
+				          const_SpeedSM_t) = 
+			TimeOut_1(
+				wait_input::entered -> Clock_CLID_wait_input(id__,0,
+						          const_SpeedSM_t)
+				[]
+				get_CLID_wait_input!x__ -> Clock_CLID_wait_input(id__,x__,
+						          const_SpeedSM_t)
+				[]
+				terminate -> SKIP,Clock_CLID_wait_input(id__,clock_type_plus(x__,1,CLID_wait_input_clock_type(id__,
+						          const_SpeedSM_t)),
+						          const_SpeedSM_t))
+		Clock_CLID_update_speed(id__,x__,
+				          const_SpeedSM_t) = 
+			TimeOut_1(
+				update_speed::entered -> Clock_CLID_update_speed(id__,0,
+						          const_SpeedSM_t)
+				[]
+				get_CLID_update_speed!x__ -> Clock_CLID_update_speed(id__,x__,
+						          const_SpeedSM_t)
+				[]
+				terminate -> SKIP,Clock_CLID_update_speed(id__,clock_type_plus(x__,1,CLID_update_speed_clock_type(id__,
+						          const_SpeedSM_t)),
+						          const_SpeedSM_t))
+		
+		StateClocks(id__,
+				          const_SpeedSM_t) = dbisim(Clock_CLID_wait_input(id__,0,
+				          const_SpeedSM_t))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_update_speed(id__,0,
+				          const_SpeedSM_t))
+		)
+		
+		stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_speed,update_speed::entered|}
+		
+		-- Shared memory
+		-- Shared memory variables
+		
+		-- sharedVarMemory process
+		sharedVarMemory(id__,
+				    const_SpeedSM_t) = terminate -> SKIP
+		
+		sharedVarSync = {||}
+		
+		sharedVarHide = {||}
+		}
+endmodule
 
 

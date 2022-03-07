@@ -9,7 +9,7 @@
     <semanticResources>platform:/plugin/circus.robocalc.robochart.textual/lib/robochart/function_toolkit.rct</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_H-qJMD6tEeqxn9KO78sDmQ">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/circus.robocalc.robochart.graphical/description/robochart.odesign#//@ownedViewpoints[name='RoboChartID']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_H_RNMD6tEeqxn9KO78sDmQ" name="SimFW.rct" repPath="#_H-yFAD6tEeqxn9KO78sDmQ" changeId="11227b37-e3f3-457b-8bb9-2b037ea94330">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_H_RNMD6tEeqxn9KO78sDmQ" name="SimFW.rct" repPath="#_H-yFAD6tEeqxn9KO78sDmQ" changeId="d2077224-9f90-4893-9761-962ff15df38d">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/circus.robocalc.robochart.graphical/description/robochart.odesign#//@ownedViewpoints[name='RoboChartID']/@ownedRepresentations[name='SpecificationID']"/>
         <target xmi:type="robochart:RCPackage" href="SimFW.rct#/"/>
       </ownedRepresentationDescriptors>
@@ -414,7 +414,7 @@
         </edges>
         <edges xmi:type="notation:Edge" xmi:id="_L17VsD6tEeqxn9KO78sDmQ" type="4001" element="_Lqzq1D6tEeqxn9KO78sDmQ" source="_L0GwwD6tEeqxn9KO78sDmQ" target="_L0gZYD6tEeqxn9KO78sDmQ">
           <children xmi:type="notation:Node" xmi:id="_L17VtD6tEeqxn9KO78sDmQ" type="6001">
-            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_L17VtT6tEeqxn9KO78sDmQ" x="25" y="18"/>
+            <layoutConstraint xmi:type="notation:Bounds" xmi:id="_L17VtT6tEeqxn9KO78sDmQ" x="2" y="12"/>
           </children>
           <children xmi:type="notation:Node" xmi:id="_L17Vtj6tEeqxn9KO78sDmQ" type="6002">
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_L17Vtz6tEeqxn9KO78sDmQ" x="34"/>

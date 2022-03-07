@@ -109,11 +109,11 @@ const_Module_PathPlanningController_stm_ref8_movesp = 0
 -- generate vacuum_BOUND
 vacuum_BOUND = 2
 
--- generate const_PathPlanningSM_sleep_time
-const_PathPlanningSM_sleep_time = 0
-
 -- generate const_PID_kp
 const_PID_kp = 0
+
+-- generate const_PathPlanningSM_sleep_time
+const_PathPlanningSM_sleep_time = 0
 
 -- generate const_Module_PathPlanningController_stm_ref8_side_speed
 const_Module_PathPlanningController_stm_ref8_side_speed = 0
@@ -194,6 +194,12 @@ Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
 MidLevelSM_turn_speed = 0
 
 -- generate --
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
 
 -- generate MidLevelSM_step
 MidLevelSM_step = 0
