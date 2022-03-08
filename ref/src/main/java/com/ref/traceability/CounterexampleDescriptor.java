@@ -158,7 +158,8 @@ public class CounterexampleDescriptor {
     		if (l == 0) ev = split[l].toString();
     		else {
     			if (!(split[l].equals("in")) && !(split[l].equals("out"))) {
-    				if (l != events.size()-1) sbArgs.append(split[l] + ",");
+//    				if (l != events.size()-1) sbArgs.append(split[l] + ",");
+    				if (l != split.length-1) sbArgs.append(split[l] + ",");
     				else sbArgs.append(split[l]);
     			} else {
     				sbArgs.append("");
