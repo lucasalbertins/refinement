@@ -38,3 +38,11 @@
 /SpeedSM_coreassertions.csp
 /file_SpeedSM.csp
 /file_SpeedSM_defs.csp
+/file_ClearSM.csp
+/file_ClearSM_defs.csp
+/file_PathPlanningSM.csp
+/file_PathPlanningSM_defs.csp
+/file_interfaces.csp
+/file_interfaces_defs.csp
+/file_types.csp
+/file_types_defs.csp

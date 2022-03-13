@@ -1,0 +1,98 @@
+transparent normal
+include "file_System_coreassertions.csp"
+ID_P_Commands_1 = {1..1}
+datatype alphabet_P_Commands_1 = DecisionNode_MergeNode0_P_Commands_1_t_alphabet | InitialNode0_P_Commands_1_t_alphabet| accept_cd_1_P_Commands_1_t_alphabet| DecisionNode_MergeNode2_P_Commands_1_t_alphabet| DecisionNode_MergeNode3_P_Commands_1_t_alphabet| decrCall_1_P_Commands_1_t_alphabet| signal_turn_1_P_Commands_1_t_alphabet| incrCall_1_P_Commands_1_t_alphabet
+core_int_P_Commands_1 = {(-2)..2}
+robochart_P_Commands_1 = "file_System.csp"
+robochart_alphabet_P_Commands_1 = {|ChemicalDetectorSoftware::cd.in,ChemicalDetectorSoftware::turn.out,ChemicalDetectorSoftware::incrCall,ChemicalDetectorSoftware::decrCall|}
+cmd_P_Commands_1 = {Command_faster,Command_slower,Command_left,Command_right,Command_back}
+countCe_P_Commands_1 = {1..10}
+countUpdate_P_Commands_1 = {1..1}
+countClear_P_Commands_1 = {1..0}
+limiteUpdate_P_Commands_1 = {(1)..(1)}
+channel startActivity_P_Commands_1: ID_P_Commands_1
+channel endActivity_P_Commands_1: ID_P_Commands_1
+channel ce_P_Commands_1: ID_P_Commands_1.countCe_P_Commands_1
+channel clear_P_Commands_1: ID_P_Commands_1.countClear_P_Commands_1
+channel update_P_Commands_1: ID_P_Commands_1.countUpdate_P_Commands_1.limiteUpdate_P_Commands_1
+channel endDiagram_P_Commands_1: ID_P_Commands_1
+channel dc
+
+alphabet_Astah_P_Commands_1 = {| startActivity_P_Commands_1, endActivity_P_Commands_1, ce_P_Commands_1, clear_P_Commands_1, update_P_Commands_1, endDiagram_P_Commands_1, dc |}
+
+MAIN = normal(P_Commands_1(1))
+END_DIAGRAM_P_Commands_1(id) = endDiagram_P_Commands_1.id -> SKIP
+P_Commands_1(ID_P_Commands_1) = (Internal_P_Commands_1(ID_P_Commands_1) [|{|update_P_Commands_1,clear_P_Commands_1,endDiagram_P_Commands_1|}|] TokenManager_P_Commands_1_t(ID_P_Commands_1,0,0))
+Internal_P_Commands_1(id) = StartActivity_P_Commands_1(id); Node_P_Commands_1(id); EndActivity_P_Commands_1(id)
+StartActivity_P_Commands_1(id) = startActivity_P_Commands_1.id -> SKIP
+EndActivity_P_Commands_1(id) = endActivity_P_Commands_1.id -> SKIP
+AlphabetDiagram_P_Commands_1(id,DecisionNode_MergeNode0_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.1,ce_P_Commands_1.id.2,ce_P_Commands_1.id.3,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,InitialNode0_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.1,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,accept_cd_1_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.3,ce_P_Commands_1.id.4,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,DecisionNode_MergeNode2_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.4,dc,ce_P_Commands_1.id.5,ce_P_Commands_1.id.6,ce_P_Commands_1.id.7,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,DecisionNode_MergeNode3_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.8,ce_P_Commands_1.id.9,ce_P_Commands_1.id.10,ce_P_Commands_1.id.2,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,decrCall_1_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.7,ce_P_Commands_1.id.10,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,signal_turn_1_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.6,ce_P_Commands_1.id.8,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1(id,incrCall_1_P_Commands_1_t_alphabet) = {|ce_P_Commands_1.id.5,ce_P_Commands_1.id.9,endDiagram_P_Commands_1.id|}
+AlphabetDiagram_P_Commands_1_t(id) = union(union(union(union(union(union(union(AlphabetDiagram_P_Commands_1(id,DecisionNode_MergeNode0_P_Commands_1_t_alphabet),AlphabetDiagram_P_Commands_1(id,InitialNode0_P_Commands_1_t_alphabet)),AlphabetDiagram_P_Commands_1(id,accept_cd_1_P_Commands_1_t_alphabet)),AlphabetDiagram_P_Commands_1(id,DecisionNode_MergeNode2_P_Commands_1_t_alphabet)),AlphabetDiagram_P_Commands_1(id,DecisionNode_MergeNode3_P_Commands_1_t_alphabet)),AlphabetDiagram_P_Commands_1(id,decrCall_1_P_Commands_1_t_alphabet)),AlphabetDiagram_P_Commands_1(id,signal_turn_1_P_Commands_1_t_alphabet)),AlphabetDiagram_P_Commands_1(id,incrCall_1_P_Commands_1_t_alphabet))
+
+ProcessDiagram_P_Commands_1(id,DecisionNode_MergeNode0_P_Commands_1_t_alphabet) = normal(DecisionNode_MergeNode0_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,InitialNode0_P_Commands_1_t_alphabet) = normal(InitialNode0_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,accept_cd_1_P_Commands_1_t_alphabet) = normal(accept_cd_1_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,DecisionNode_MergeNode2_P_Commands_1_t_alphabet) = normal(DecisionNode_MergeNode2_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,DecisionNode_MergeNode3_P_Commands_1_t_alphabet) = normal(DecisionNode_MergeNode3_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,decrCall_1_P_Commands_1_t_alphabet) = normal(decrCall_1_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,signal_turn_1_P_Commands_1_t_alphabet) = normal(signal_turn_1_P_Commands_1_t(id))
+ProcessDiagram_P_Commands_1(id,incrCall_1_P_Commands_1_t_alphabet) = normal(incrCall_1_P_Commands_1_t(id))
+InitialNode0_P_Commands_1(id) = update_P_Commands_1.id.1!(1-0) -> ((ce_P_Commands_1.id.1 -> SKIP))
+InitialNode0_P_Commands_1_t(id) = InitialNode0_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+DecisionNode_MergeNode0_P_Commands_1(id) = ((ce_P_Commands_1.id.1 -> SKIP) [] (ce_P_Commands_1.id.2 -> SKIP)); ce_P_Commands_1.id.3 -> DecisionNode_MergeNode0_P_Commands_1(id)
+DecisionNode_MergeNode0_P_Commands_1_t(id) = DecisionNode_MergeNode0_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+accept_cd_1_P_Commands_1(id) = ((ce_P_Commands_1.id.3 -> SKIP)); ChemicalDetectorSoftware::cd.in?x -> ((ce_P_Commands_1.id.4 -> SKIP)); accept_cd_1_P_Commands_1(id)
+accept_cd_1_P_Commands_1_t(id) = accept_cd_1_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+DecisionNode_MergeNode2_P_Commands_1(id) = ce_P_Commands_1.id.4 -> ((dc -> ce_P_Commands_1.id.5 -> SKIP) [] (dc -> ce_P_Commands_1.id.6 -> SKIP) [] (dc -> ce_P_Commands_1.id.7 -> SKIP)); DecisionNode_MergeNode2_P_Commands_1(id)
+DecisionNode_MergeNode2_P_Commands_1_t(id) = DecisionNode_MergeNode2_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id) \{|dc|}
+signal_turn_1_P_Commands_1(id) = ((ce_P_Commands_1.id.6 -> SKIP)); ChemicalDetectorSoftware::turn.out?d -> ((ce_P_Commands_1.id.8 -> SKIP)); signal_turn_1_P_Commands_1(id)
+signal_turn_1_P_Commands_1_t(id) = signal_turn_1_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+incrCall_1_P_Commands_1(id) = ((ce_P_Commands_1.id.5 -> SKIP)); ChemicalDetectorSoftware::incrCall -> ((ce_P_Commands_1.id.9 -> SKIP)); incrCall_1_P_Commands_1(id)
+incrCall_1_P_Commands_1_t(id) = incrCall_1_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+decrCall_1_P_Commands_1(id) = ((ce_P_Commands_1.id.7 -> SKIP)); ChemicalDetectorSoftware::decrCall -> ((ce_P_Commands_1.id.10 -> SKIP)); decrCall_1_P_Commands_1(id)
+decrCall_1_P_Commands_1_t(id) = decrCall_1_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+DecisionNode_MergeNode3_P_Commands_1(id) = ((ce_P_Commands_1.id.8 -> SKIP) [] (ce_P_Commands_1.id.9 -> SKIP) [] (ce_P_Commands_1.id.10 -> SKIP)); ce_P_Commands_1.id.2 -> DecisionNode_MergeNode3_P_Commands_1(id)
+DecisionNode_MergeNode3_P_Commands_1_t(id) = DecisionNode_MergeNode3_P_Commands_1(id) /\ END_DIAGRAM_P_Commands_1(id)
+
+TokenManager_P_Commands_1(id,x,init) = update_P_Commands_1.id?c?y:limiteUpdate_P_Commands_1 -> x+y < 10 & x+y > -10 & TokenManager_P_Commands_1(id,x+y,1) [] clear_P_Commands_1.id?c -> endDiagram_P_Commands_1.id -> SKIP [] x == 0 & init == 1 & endDiagram_P_Commands_1.id -> SKIP
+TokenManager_P_Commands_1_t(id,x,init) = TokenManager_P_Commands_1(id,x,init)
+
+assert Prop_P_Commands_1 [T= P_ChemicalDetectorSoftware
+
+NRecurse(S, P) = |~| ev : S @ ev -> P
+
+WAIT(alphabet,event) = 
+	NRecurse(diff(alphabet, {event}), WAIT(alphabet,event))
+	|~|
+	event -> SKIP
+
+WAIT_PROCCESSES_P_Commands_1(processes) = ( ||| CONTROL : processes @ CONTROL )  /\ endDiagram_P_Commands_1?id -> SKIP
+
+Prop_P_Commands_1 = PROP_P_Commands_1(Wait_control_processes_P_Commands_1) \ alphabet_Astah_P_Commands_1 
+
+alphabet_robochart_P_Commands_1 = {| ChemicalDetectorSoftware::gas.in, ChemicalDetectorSoftware::turn.out.90, ChemicalDetectorSoftware::turn.out.180, ChemicalDetectorSoftware::cd.in.Command_faster, ChemicalDetectorSoftware::cd.in.Command_left, ChemicalDetectorSoftware::cd.in.Command_right, ChemicalDetectorSoftware::cd.in.Command_back, ChemicalDetectorSoftware::cd.in.Command_slower, ChemicalDetectorSoftware::incrCall, ChemicalDetectorSoftware::decrCall, ChemicalDetectorSoftware::flag.out, ChemicalDetectorSoftware::siren.out, ChemicalDetectorSoftware::light.out.Color_green, ChemicalDetectorSoftware::light.out.Color_amber, ChemicalDetectorSoftware::light.out.Color_red |}
+
+PROP_P_Commands_1(processes) = (MAIN)
+
+Wait_control_processes_P_Commands_1 = {}
+
+Node_P_Commands_1(id) = composeNodes_P_Commands_1(id)
+
+composeNodes_P_Commands_1(id) = 
+	let
+	    alphabet_P_Commands_1_s = seq(alphabet_P_Commands_1)
+		composeNodes_(id,<ev>,_) = ProcessDiagram_P_Commands_1(id,ev)
+		composeNodes_(id,<ev>^tail,past) = 
+			ProcessDiagram_P_Commands_1(id,ev) 
+				[|union(diff(AlphabetDiagram_P_Commands_1(id,ev),past),{endDiagram_P_Commands_1.id})|] 
+			( composeNodes_(id,tail,union(past,AlphabetDiagram_P_Commands_1(id,ev))) )
+	within 
+		composeNodes_(id,alphabet_P_Commands_1_s,{})
+

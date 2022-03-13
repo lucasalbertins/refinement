@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:35
+-- Automatically generated on 08-03-2022 18:58:35
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -120,17 +120,87 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_Go_right : core_clock_type 
+	channel get_CLID_Return : core_clock_type 
 	channel get_CLID_Dock : core_clock_type 
+	channel get_CLID_Sleep : core_clock_type 
+	channel get_CLID_Check_end : core_clock_type 
+	channel get_CLID_Check_battery : core_clock_type 
+	channel get_CLID_Go_right : core_clock_type 
+	channel get_CLID_Resume : core_clock_type 
+	channel get_CLID_Go_right_again : core_clock_type 
 	channel get_CLID_Go_down : core_clock_type 
 	channel get_CLID_Go_up : core_clock_type 
-	channel get_CLID_Check_end : core_clock_type 
-	channel get_CLID_Resume : core_clock_type 
-	channel get_CLID_Check_battery : core_clock_type 
-	channel get_CLID_Go_right_again : core_clock_type 
-	channel get_CLID_Sleep : core_clock_type 
-	channel get_CLID_Return : core_clock_type 
 	--channel increment__
+	
+	CLID_Return_clock_type(id__,
+			          const_PathPlanningSM_cliff,
+			          const_PathPlanningSM_nozzle,
+			          const_PathPlanningSM_battery_low,
+			          const_PathPlanningSM_sleep_time,
+			          const_PathPlanningSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Dock_clock_type(id__,
+			          const_PathPlanningSM_cliff,
+			          const_PathPlanningSM_nozzle,
+			          const_PathPlanningSM_battery_low,
+			          const_PathPlanningSM_sleep_time,
+			          const_PathPlanningSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Sleep_clock_type(id__,
+			          const_PathPlanningSM_cliff,
+			          const_PathPlanningSM_nozzle,
+			          const_PathPlanningSM_battery_low,
+			          const_PathPlanningSM_sleep_time,
+			          const_PathPlanningSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Check_end_clock_type(id__,
+			          const_PathPlanningSM_cliff,
+			          const_PathPlanningSM_nozzle,
+			          const_PathPlanningSM_battery_low,
+			          const_PathPlanningSM_sleep_time,
+			          const_PathPlanningSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Check_battery_clock_type(id__,
+			          const_PathPlanningSM_cliff,
+			          const_PathPlanningSM_nozzle,
+			          const_PathPlanningSM_battery_low,
+			          const_PathPlanningSM_sleep_time,
+			          const_PathPlanningSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_Go_right_clock_type(id__,
 			          const_PathPlanningSM_cliff,
@@ -146,7 +216,21 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_Dock_clock_type(id__,
+	CLID_Resume_clock_type(id__,
+			          const_PathPlanningSM_cliff,
+			          const_PathPlanningSM_nozzle,
+			          const_PathPlanningSM_battery_low,
+			          const_PathPlanningSM_sleep_time,
+			          const_PathPlanningSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Go_right_again_clock_type(id__,
 			          const_PathPlanningSM_cliff,
 			          const_PathPlanningSM_nozzle,
 			          const_PathPlanningSM_battery_low,
@@ -175,90 +259,6 @@ exports
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_Go_up_clock_type(id__,
-			          const_PathPlanningSM_cliff,
-			          const_PathPlanningSM_nozzle,
-			          const_PathPlanningSM_battery_low,
-			          const_PathPlanningSM_sleep_time,
-			          const_PathPlanningSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_Check_end_clock_type(id__,
-			          const_PathPlanningSM_cliff,
-			          const_PathPlanningSM_nozzle,
-			          const_PathPlanningSM_battery_low,
-			          const_PathPlanningSM_sleep_time,
-			          const_PathPlanningSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_Resume_clock_type(id__,
-			          const_PathPlanningSM_cliff,
-			          const_PathPlanningSM_nozzle,
-			          const_PathPlanningSM_battery_low,
-			          const_PathPlanningSM_sleep_time,
-			          const_PathPlanningSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_Check_battery_clock_type(id__,
-			          const_PathPlanningSM_cliff,
-			          const_PathPlanningSM_nozzle,
-			          const_PathPlanningSM_battery_low,
-			          const_PathPlanningSM_sleep_time,
-			          const_PathPlanningSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_Go_right_again_clock_type(id__,
-			          const_PathPlanningSM_cliff,
-			          const_PathPlanningSM_nozzle,
-			          const_PathPlanningSM_battery_low,
-			          const_PathPlanningSM_sleep_time,
-			          const_PathPlanningSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_Sleep_clock_type(id__,
-			          const_PathPlanningSM_cliff,
-			          const_PathPlanningSM_nozzle,
-			          const_PathPlanningSM_battery_low,
-			          const_PathPlanningSM_sleep_time,
-			          const_PathPlanningSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_Return_clock_type(id__,
 			          const_PathPlanningSM_cliff,
 			          const_PathPlanningSM_nozzle,
 			          const_PathPlanningSM_battery_low,
@@ -1316,7 +1316,7 @@ exports
 				    const_PathPlanningSM_battery_low,
 				    const_PathPlanningSM_sleep_time,
 				    const_PathPlanningSM_acc_distance) = ((let
-			Trans = share__choice(get_u?u -> get_cycles?cycles -> get_b?b -> get_d?d -> TimeOut_1(
+			Trans = share__choice(get_d?d -> get_u?u -> get_cycles?cycles -> get_b?b -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((share__choice(true & (share__choice(set_cycles!0 -> SKIP))) ; Resume::enter -> SKIP))))
 				 [] dbisim((ultrasonic__!NID_Go_up.in?u:{u|u <- core_int, (u>=const_PathPlanningSM_cliff)} -> share__choice(set_u!u -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; Go_right::enter -> SKIP)))
@@ -1485,17 +1485,17 @@ exports
 						 [[Resume::interrupt <- x__ | x__ <- {|interrupt,displacement__.NID_Resume.in|}]]
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
-						  [[ share__ <- x__ | x__ <- {| share__,setR_u,setR_b,setR_d |} ]] 
-						  [[set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b,set_d <- setL_d]]
+						  [[ share__ <- x__ | x__ <- {| share__,setR_b,setR_d,setR_u |} ]] 
+						  [[set_d <- setL_d,set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b]]
 						 )
 						 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+						 			,setL_d
 						 			,setL_u
 						 			,setL_cycles
 						 			,setL_b
-						 			,setL_d
-						 			,setR_u
-						 			 			,setR_b
+						 			,setR_b
 						 			 			,setR_d
+						 			 			,setR_u
 						 			|}) |]
 						 ((i0::enter -> Transitions(id__,
 						 		    const_PathPlanningSM_cliff,
@@ -1503,11 +1503,11 @@ exports
 						 		    const_PathPlanningSM_battery_low,
 						 		    const_PathPlanningSM_sleep_time,
 						 		    const_PathPlanningSM_acc_distance))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_u,setL_cycles,setL_b,setL_d |} ]]
-						  [[set_u <- setR_u,set_b <- setR_b,set_d <- setR_d]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_d,setL_u,setL_cycles,setL_b |} ]]
+						  [[set_b <- setR_b,set_d <- setR_d,set_u <- setR_u]]
 						 )
-						)[[setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b,setL_d <- set_d]]
-						 [[setR_u <- set_u,setR_b <- set_b,setR_d <- set_d]]
+						)[[setL_d <- set_d,setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b]]
+						 [[setR_b <- set_b,setR_d <- set_d,setR_u <- set_u]]
 						)
 					)
 					 \ hideSet)
@@ -1543,7 +1543,7 @@ exports
 				    const_PathPlanningSM_sleep_time,
 				    const_PathPlanningSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Go_right,Go_right::entered,get_CLID_Dock,Dock::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Resume,Resume::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Return,Return::entered|}
+				stateClockSync = {|get_CLID_Return,Return::entered,get_CLID_Dock,Dock::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right,Go_right::entered,get_CLID_Resume,Resume::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered|}
 			 within
 				(MachineBody(id__,
 						    const_PathPlanningSM_cliff,
@@ -1566,7 +1566,7 @@ exports
 				    const_PathPlanningSM_sleep_time,
 				    const_PathPlanningSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Go_right,Go_right::entered,get_CLID_Dock,Dock::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Resume,Resume::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Return,Return::entered|}
+				stateClockSync = {|get_CLID_Return,Return::entered,get_CLID_Dock,Dock::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right,Go_right::entered,get_CLID_Resume,Resume::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1594,23 +1594,23 @@ exports
 																										    const_PathPlanningSM_battery_low,
 																										    const_PathPlanningSM_sleep_time,
 																										    const_PathPlanningSM_acc_distance)
-																								[| {|get_CLID_Return,Return::entered,terminate|} |]
-																								dbisim(Clock_CLID_Return(id__,0,
+																								[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
+																								dbisim(Clock_CLID_Go_up(id__,0,
 																										          const_PathPlanningSM_cliff,
 																										          const_PathPlanningSM_nozzle,
 																										          const_PathPlanningSM_battery_low,
 																										          const_PathPlanningSM_sleep_time,
 																										          const_PathPlanningSM_acc_distance))
-																							)\{|get_CLID_Return|}
+																							)\{|get_CLID_Go_up|}
 																						)
-																						[| {|get_CLID_Sleep,Sleep::entered,terminate|} |]
-																						dbisim(Clock_CLID_Sleep(id__,0,
+																						[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
+																						dbisim(Clock_CLID_Go_down(id__,0,
 																								          const_PathPlanningSM_cliff,
 																								          const_PathPlanningSM_nozzle,
 																								          const_PathPlanningSM_battery_low,
 																								          const_PathPlanningSM_sleep_time,
 																								          const_PathPlanningSM_acc_distance))
-																					)\{|get_CLID_Sleep|}
+																					)\{|get_CLID_Go_down|}
 																				)
 																				[| {|get_CLID_Go_right_again,Go_right_again::entered,terminate|} |]
 																				dbisim(Clock_CLID_Go_right_again(id__,0,
@@ -1621,50 +1621,50 @@ exports
 																						          const_PathPlanningSM_acc_distance))
 																			)\{|get_CLID_Go_right_again|}
 																		)
-																		[| {|get_CLID_Check_battery,Check_battery::entered,terminate|} |]
-																		dbisim(Clock_CLID_Check_battery(id__,0,
+																		[| {|get_CLID_Resume,Resume::entered,terminate|} |]
+																		dbisim(Clock_CLID_Resume(id__,0,
 																				          const_PathPlanningSM_cliff,
 																				          const_PathPlanningSM_nozzle,
 																				          const_PathPlanningSM_battery_low,
 																				          const_PathPlanningSM_sleep_time,
 																				          const_PathPlanningSM_acc_distance))
-																	)\{|get_CLID_Check_battery|}
+																	)\{|get_CLID_Resume|}
 																)
-																[| {|get_CLID_Resume,Resume::entered,terminate|} |]
-																dbisim(Clock_CLID_Resume(id__,0,
+																[| {|get_CLID_Go_right,Go_right::entered,terminate|} |]
+																dbisim(Clock_CLID_Go_right(id__,0,
 																		          const_PathPlanningSM_cliff,
 																		          const_PathPlanningSM_nozzle,
 																		          const_PathPlanningSM_battery_low,
 																		          const_PathPlanningSM_sleep_time,
 																		          const_PathPlanningSM_acc_distance))
-															)\{|get_CLID_Resume|}
+															)\{|get_CLID_Go_right|}
 														)
-														[| {|get_CLID_Check_end,Check_end::entered,terminate|} |]
-														dbisim(Clock_CLID_Check_end(id__,0,
+														[| {|get_CLID_Check_battery,Check_battery::entered,terminate|} |]
+														dbisim(Clock_CLID_Check_battery(id__,0,
 																          const_PathPlanningSM_cliff,
 																          const_PathPlanningSM_nozzle,
 																          const_PathPlanningSM_battery_low,
 																          const_PathPlanningSM_sleep_time,
 																          const_PathPlanningSM_acc_distance))
-													)\{|get_CLID_Check_end|}
+													)\{|get_CLID_Check_battery|}
 												)
-												[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
-												dbisim(Clock_CLID_Go_up(id__,0,
+												[| {|get_CLID_Check_end,Check_end::entered,terminate|} |]
+												dbisim(Clock_CLID_Check_end(id__,0,
 														          const_PathPlanningSM_cliff,
 														          const_PathPlanningSM_nozzle,
 														          const_PathPlanningSM_battery_low,
 														          const_PathPlanningSM_sleep_time,
 														          const_PathPlanningSM_acc_distance))
-											)\{|get_CLID_Go_up|}
+											)\{|get_CLID_Check_end|}
 										)
-										[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
-										dbisim(Clock_CLID_Go_down(id__,0,
+										[| {|get_CLID_Sleep,Sleep::entered,terminate|} |]
+										dbisim(Clock_CLID_Sleep(id__,0,
 												          const_PathPlanningSM_cliff,
 												          const_PathPlanningSM_nozzle,
 												          const_PathPlanningSM_battery_low,
 												          const_PathPlanningSM_sleep_time,
 												          const_PathPlanningSM_acc_distance))
-									)\{|get_CLID_Go_down|}
+									)\{|get_CLID_Sleep|}
 								)
 								[| {|get_CLID_Dock,Dock::entered,terminate|} |]
 								dbisim(Clock_CLID_Dock(id__,0,
@@ -1675,14 +1675,14 @@ exports
 										          const_PathPlanningSM_acc_distance))
 							)\{|get_CLID_Dock|}
 						)
-						[| {|get_CLID_Go_right,Go_right::entered,terminate|} |]
-						dbisim(Clock_CLID_Go_right(id__,0,
+						[| {|get_CLID_Return,Return::entered,terminate|} |]
+						dbisim(Clock_CLID_Return(id__,0,
 								          const_PathPlanningSM_cliff,
 								          const_PathPlanningSM_nozzle,
 								          const_PathPlanningSM_battery_low,
 								          const_PathPlanningSM_sleep_time,
 								          const_PathPlanningSM_acc_distance))
-					)\{|get_CLID_Go_right|}
+					)\{|get_CLID_Return|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -1898,17 +1898,17 @@ exports
 						 [[Resume::interrupt <- x__ | x__ <- {|interrupt,displacement__.NID_Resume.in|}]]
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
-						  [[ share__ <- x__ | x__ <- {| share__,setR_u,setR_b,setR_d |} ]] 
-						  [[set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b,set_d <- setL_d]]
+						  [[ share__ <- x__ | x__ <- {| share__,setR_b,setR_d,setR_u |} ]] 
+						  [[set_d <- setL_d,set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b]]
 						 )
 						 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+						 			,setL_d
 						 			,setL_u
 						 			,setL_cycles
 						 			,setL_b
-						 			,setL_d
-						 			,setR_u
-						 			 			,setR_b
+						 			,setR_b
 						 			 			,setR_d
+						 			 			,setR_u
 						 			|}) |]
 						 ((i0::enter -> Transitions(id__,
 						 		    const_PathPlanningSM_cliff,
@@ -1916,11 +1916,11 @@ exports
 						 		    const_PathPlanningSM_battery_low,
 						 		    const_PathPlanningSM_sleep_time,
 						 		    const_PathPlanningSM_acc_distance))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_u,setL_cycles,setL_b,setL_d |} ]]
-						  [[set_u <- setR_u,set_b <- setR_b,set_d <- setR_d]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_d,setL_u,setL_cycles,setL_b |} ]]
+						  [[set_b <- setR_b,set_d <- setR_d,set_u <- setR_u]]
 						 )
-						)[[setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b,setL_d <- set_d]]
-						 [[setR_u <- set_u,setR_b <- set_b,setR_d <- set_d]]
+						)[[setL_d <- set_d,setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b]]
+						 [[setR_b <- set_b,setR_d <- set_d,setR_u <- set_u]]
 						)
 					)
 					 \ hideSet)
@@ -1956,7 +1956,7 @@ exports
 				    const_PathPlanningSM_sleep_time,
 				    const_PathPlanningSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Go_right,Go_right::entered,get_CLID_Dock,Dock::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Resume,Resume::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Return,Return::entered|}
+				stateClockSync = {|get_CLID_Return,Return::entered,get_CLID_Dock,Dock::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right,Go_right::entered,get_CLID_Resume,Resume::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered|}
 			 within
 				(MachineBody_VS_O(id__,
 						    const_PathPlanningSM_cliff,
@@ -1979,7 +1979,7 @@ exports
 				    const_PathPlanningSM_sleep_time,
 				    const_PathPlanningSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Go_right,Go_right::entered,get_CLID_Dock,Dock::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Resume,Resume::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Return,Return::entered|}
+				stateClockSync = {|get_CLID_Return,Return::entered,get_CLID_Dock,Dock::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right,Go_right::entered,get_CLID_Resume,Resume::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -2007,23 +2007,23 @@ exports
 																										    const_PathPlanningSM_battery_low,
 																										    const_PathPlanningSM_sleep_time,
 																										    const_PathPlanningSM_acc_distance)
-																								[| {|get_CLID_Return,Return::entered,terminate|} |]
-																								dbisim(Clock_CLID_Return(id__,0,
+																								[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
+																								dbisim(Clock_CLID_Go_up(id__,0,
 																										          const_PathPlanningSM_cliff,
 																										          const_PathPlanningSM_nozzle,
 																										          const_PathPlanningSM_battery_low,
 																										          const_PathPlanningSM_sleep_time,
 																										          const_PathPlanningSM_acc_distance))
-																							)\{|get_CLID_Return|}
+																							)\{|get_CLID_Go_up|}
 																						)
-																						[| {|get_CLID_Sleep,Sleep::entered,terminate|} |]
-																						dbisim(Clock_CLID_Sleep(id__,0,
+																						[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
+																						dbisim(Clock_CLID_Go_down(id__,0,
 																								          const_PathPlanningSM_cliff,
 																								          const_PathPlanningSM_nozzle,
 																								          const_PathPlanningSM_battery_low,
 																								          const_PathPlanningSM_sleep_time,
 																								          const_PathPlanningSM_acc_distance))
-																					)\{|get_CLID_Sleep|}
+																					)\{|get_CLID_Go_down|}
 																				)
 																				[| {|get_CLID_Go_right_again,Go_right_again::entered,terminate|} |]
 																				dbisim(Clock_CLID_Go_right_again(id__,0,
@@ -2034,50 +2034,50 @@ exports
 																						          const_PathPlanningSM_acc_distance))
 																			)\{|get_CLID_Go_right_again|}
 																		)
-																		[| {|get_CLID_Check_battery,Check_battery::entered,terminate|} |]
-																		dbisim(Clock_CLID_Check_battery(id__,0,
+																		[| {|get_CLID_Resume,Resume::entered,terminate|} |]
+																		dbisim(Clock_CLID_Resume(id__,0,
 																				          const_PathPlanningSM_cliff,
 																				          const_PathPlanningSM_nozzle,
 																				          const_PathPlanningSM_battery_low,
 																				          const_PathPlanningSM_sleep_time,
 																				          const_PathPlanningSM_acc_distance))
-																	)\{|get_CLID_Check_battery|}
+																	)\{|get_CLID_Resume|}
 																)
-																[| {|get_CLID_Resume,Resume::entered,terminate|} |]
-																dbisim(Clock_CLID_Resume(id__,0,
+																[| {|get_CLID_Go_right,Go_right::entered,terminate|} |]
+																dbisim(Clock_CLID_Go_right(id__,0,
 																		          const_PathPlanningSM_cliff,
 																		          const_PathPlanningSM_nozzle,
 																		          const_PathPlanningSM_battery_low,
 																		          const_PathPlanningSM_sleep_time,
 																		          const_PathPlanningSM_acc_distance))
-															)\{|get_CLID_Resume|}
+															)\{|get_CLID_Go_right|}
 														)
-														[| {|get_CLID_Check_end,Check_end::entered,terminate|} |]
-														dbisim(Clock_CLID_Check_end(id__,0,
+														[| {|get_CLID_Check_battery,Check_battery::entered,terminate|} |]
+														dbisim(Clock_CLID_Check_battery(id__,0,
 																          const_PathPlanningSM_cliff,
 																          const_PathPlanningSM_nozzle,
 																          const_PathPlanningSM_battery_low,
 																          const_PathPlanningSM_sleep_time,
 																          const_PathPlanningSM_acc_distance))
-													)\{|get_CLID_Check_end|}
+													)\{|get_CLID_Check_battery|}
 												)
-												[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
-												dbisim(Clock_CLID_Go_up(id__,0,
+												[| {|get_CLID_Check_end,Check_end::entered,terminate|} |]
+												dbisim(Clock_CLID_Check_end(id__,0,
 														          const_PathPlanningSM_cliff,
 														          const_PathPlanningSM_nozzle,
 														          const_PathPlanningSM_battery_low,
 														          const_PathPlanningSM_sleep_time,
 														          const_PathPlanningSM_acc_distance))
-											)\{|get_CLID_Go_up|}
+											)\{|get_CLID_Check_end|}
 										)
-										[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
-										dbisim(Clock_CLID_Go_down(id__,0,
+										[| {|get_CLID_Sleep,Sleep::entered,terminate|} |]
+										dbisim(Clock_CLID_Sleep(id__,0,
 												          const_PathPlanningSM_cliff,
 												          const_PathPlanningSM_nozzle,
 												          const_PathPlanningSM_battery_low,
 												          const_PathPlanningSM_sleep_time,
 												          const_PathPlanningSM_acc_distance))
-									)\{|get_CLID_Go_down|}
+									)\{|get_CLID_Sleep|}
 								)
 								[| {|get_CLID_Dock,Dock::entered,terminate|} |]
 								dbisim(Clock_CLID_Dock(id__,0,
@@ -2088,14 +2088,14 @@ exports
 										          const_PathPlanningSM_acc_distance))
 							)\{|get_CLID_Dock|}
 						)
-						[| {|get_CLID_Go_right,Go_right::entered,terminate|} |]
-						dbisim(Clock_CLID_Go_right(id__,0,
+						[| {|get_CLID_Return,Return::entered,terminate|} |]
+						dbisim(Clock_CLID_Return(id__,0,
 								          const_PathPlanningSM_cliff,
 								          const_PathPlanningSM_nozzle,
 								          const_PathPlanningSM_battery_low,
 								          const_PathPlanningSM_sleep_time,
 								          const_PathPlanningSM_acc_distance))
-					)\{|get_CLID_Go_right|}
+					)\{|get_CLID_Return|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -2323,28 +2323,28 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_Go_right(id__,x__,
+		Clock_CLID_Return(id__,x__,
 				          const_PathPlanningSM_cliff,
 				          const_PathPlanningSM_nozzle,
 				          const_PathPlanningSM_battery_low,
 				          const_PathPlanningSM_sleep_time,
 				          const_PathPlanningSM_acc_distance) = 
 			TimeOut_1(
-				Go_right::entered -> Clock_CLID_Go_right(id__,0,
+				Return::entered -> Clock_CLID_Return(id__,0,
 						          const_PathPlanningSM_cliff,
 						          const_PathPlanningSM_nozzle,
 						          const_PathPlanningSM_battery_low,
 						          const_PathPlanningSM_sleep_time,
 						          const_PathPlanningSM_acc_distance)
 				[]
-				get_CLID_Go_right!x__ -> Clock_CLID_Go_right(id__,x__,
+				get_CLID_Return!x__ -> Clock_CLID_Return(id__,x__,
 						          const_PathPlanningSM_cliff,
 						          const_PathPlanningSM_nozzle,
 						          const_PathPlanningSM_battery_low,
 						          const_PathPlanningSM_sleep_time,
 						          const_PathPlanningSM_acc_distance)
 				[]
-				terminate -> SKIP,Clock_CLID_Go_right(id__,clock_type_plus(x__,1,CLID_Go_right_clock_type(id__,
+				terminate -> SKIP,Clock_CLID_Return(id__,clock_type_plus(x__,1,CLID_Return_clock_type(id__,
 						          const_PathPlanningSM_cliff,
 						          const_PathPlanningSM_nozzle,
 						          const_PathPlanningSM_battery_low,
@@ -2377,6 +2377,198 @@ exports
 						          const_PathPlanningSM_acc_distance)
 				[]
 				terminate -> SKIP,Clock_CLID_Dock(id__,clock_type_plus(x__,1,CLID_Dock_clock_type(id__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)),
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance))
+		Clock_CLID_Sleep(id__,x__,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance) = 
+			TimeOut_1(
+				Sleep::entered -> Clock_CLID_Sleep(id__,0,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				get_CLID_Sleep!x__ -> Clock_CLID_Sleep(id__,x__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_Sleep(id__,clock_type_plus(x__,1,CLID_Sleep_clock_type(id__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)),
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance))
+		Clock_CLID_Check_end(id__,x__,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance) = 
+			TimeOut_1(
+				Check_end::entered -> Clock_CLID_Check_end(id__,0,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				get_CLID_Check_end!x__ -> Clock_CLID_Check_end(id__,x__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_Check_end(id__,clock_type_plus(x__,1,CLID_Check_end_clock_type(id__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)),
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance))
+		Clock_CLID_Check_battery(id__,x__,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance) = 
+			TimeOut_1(
+				Check_battery::entered -> Clock_CLID_Check_battery(id__,0,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				get_CLID_Check_battery!x__ -> Clock_CLID_Check_battery(id__,x__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_Check_battery(id__,clock_type_plus(x__,1,CLID_Check_battery_clock_type(id__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)),
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance))
+		Clock_CLID_Go_right(id__,x__,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance) = 
+			TimeOut_1(
+				Go_right::entered -> Clock_CLID_Go_right(id__,0,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				get_CLID_Go_right!x__ -> Clock_CLID_Go_right(id__,x__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_Go_right(id__,clock_type_plus(x__,1,CLID_Go_right_clock_type(id__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)),
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance))
+		Clock_CLID_Resume(id__,x__,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance) = 
+			TimeOut_1(
+				Resume::entered -> Clock_CLID_Resume(id__,0,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				get_CLID_Resume!x__ -> Clock_CLID_Resume(id__,x__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_Resume(id__,clock_type_plus(x__,1,CLID_Resume_clock_type(id__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)),
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance))
+		Clock_CLID_Go_right_again(id__,x__,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance) = 
+			TimeOut_1(
+				Go_right_again::entered -> Clock_CLID_Go_right_again(id__,0,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				get_CLID_Go_right_again!x__ -> Clock_CLID_Go_right_again(id__,x__,
+						          const_PathPlanningSM_cliff,
+						          const_PathPlanningSM_nozzle,
+						          const_PathPlanningSM_battery_low,
+						          const_PathPlanningSM_sleep_time,
+						          const_PathPlanningSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_Go_right_again(id__,clock_type_plus(x__,1,CLID_Go_right_again_clock_type(id__,
 						          const_PathPlanningSM_cliff,
 						          const_PathPlanningSM_nozzle,
 						          const_PathPlanningSM_battery_low,
@@ -2451,205 +2643,13 @@ exports
 						          const_PathPlanningSM_battery_low,
 						          const_PathPlanningSM_sleep_time,
 						          const_PathPlanningSM_acc_distance))
-		Clock_CLID_Check_end(id__,x__,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = 
-			TimeOut_1(
-				Check_end::entered -> Clock_CLID_Check_end(id__,0,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				get_CLID_Check_end!x__ -> Clock_CLID_Check_end(id__,x__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_Check_end(id__,clock_type_plus(x__,1,CLID_Check_end_clock_type(id__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)),
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance))
-		Clock_CLID_Resume(id__,x__,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = 
-			TimeOut_1(
-				Resume::entered -> Clock_CLID_Resume(id__,0,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				get_CLID_Resume!x__ -> Clock_CLID_Resume(id__,x__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_Resume(id__,clock_type_plus(x__,1,CLID_Resume_clock_type(id__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)),
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance))
-		Clock_CLID_Check_battery(id__,x__,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = 
-			TimeOut_1(
-				Check_battery::entered -> Clock_CLID_Check_battery(id__,0,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				get_CLID_Check_battery!x__ -> Clock_CLID_Check_battery(id__,x__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_Check_battery(id__,clock_type_plus(x__,1,CLID_Check_battery_clock_type(id__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)),
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance))
-		Clock_CLID_Go_right_again(id__,x__,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = 
-			TimeOut_1(
-				Go_right_again::entered -> Clock_CLID_Go_right_again(id__,0,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				get_CLID_Go_right_again!x__ -> Clock_CLID_Go_right_again(id__,x__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_Go_right_again(id__,clock_type_plus(x__,1,CLID_Go_right_again_clock_type(id__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)),
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance))
-		Clock_CLID_Sleep(id__,x__,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = 
-			TimeOut_1(
-				Sleep::entered -> Clock_CLID_Sleep(id__,0,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				get_CLID_Sleep!x__ -> Clock_CLID_Sleep(id__,x__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_Sleep(id__,clock_type_plus(x__,1,CLID_Sleep_clock_type(id__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)),
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance))
-		Clock_CLID_Return(id__,x__,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = 
-			TimeOut_1(
-				Return::entered -> Clock_CLID_Return(id__,0,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				get_CLID_Return!x__ -> Clock_CLID_Return(id__,x__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_Return(id__,clock_type_plus(x__,1,CLID_Return_clock_type(id__,
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance)),
-						          const_PathPlanningSM_cliff,
-						          const_PathPlanningSM_nozzle,
-						          const_PathPlanningSM_battery_low,
-						          const_PathPlanningSM_sleep_time,
-						          const_PathPlanningSM_acc_distance))
 		
 		StateClocks(id__,
 				          const_PathPlanningSM_cliff,
 				          const_PathPlanningSM_nozzle,
 				          const_PathPlanningSM_battery_low,
 				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance) = dbisim(Clock_CLID_Go_right(id__,0,
+				          const_PathPlanningSM_acc_distance) = dbisim(Clock_CLID_Return(id__,0,
 				          const_PathPlanningSM_cliff,
 				          const_PathPlanningSM_nozzle,
 				          const_PathPlanningSM_battery_low,
@@ -2657,6 +2657,48 @@ exports
 				          const_PathPlanningSM_acc_distance))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_Dock(id__,0,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Sleep(id__,0,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Check_end(id__,0,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Check_battery(id__,0,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Go_right(id__,0,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Resume(id__,0,
+				          const_PathPlanningSM_cliff,
+				          const_PathPlanningSM_nozzle,
+				          const_PathPlanningSM_battery_low,
+				          const_PathPlanningSM_sleep_time,
+				          const_PathPlanningSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Go_right_again(id__,0,
 				          const_PathPlanningSM_cliff,
 				          const_PathPlanningSM_nozzle,
 				          const_PathPlanningSM_battery_low,
@@ -2676,48 +2718,6 @@ exports
 				          const_PathPlanningSM_battery_low,
 				          const_PathPlanningSM_sleep_time,
 				          const_PathPlanningSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Check_end(id__,0,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Resume(id__,0,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Check_battery(id__,0,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Go_right_again(id__,0,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Sleep(id__,0,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Return(id__,0,
-				          const_PathPlanningSM_cliff,
-				          const_PathPlanningSM_nozzle,
-				          const_PathPlanningSM_battery_low,
-				          const_PathPlanningSM_sleep_time,
-				          const_PathPlanningSM_acc_distance))
 		)
 		)
 		)
@@ -2728,7 +2728,7 @@ exports
 		)
 		)
 		
-		stateClockSync = {|get_CLID_Go_right,Go_right::entered,get_CLID_Dock,Dock::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Resume,Resume::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Return,Return::entered|}
+		stateClockSync = {|get_CLID_Return,Return::entered,get_CLID_Dock,Dock::entered,get_CLID_Sleep,Sleep::entered,get_CLID_Check_end,Check_end::entered,get_CLID_Check_battery,Check_battery::entered,get_CLID_Go_right,Go_right::entered,get_CLID_Resume,Resume::entered,get_CLID_Go_right_again,Go_right_again::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_up,Go_up::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

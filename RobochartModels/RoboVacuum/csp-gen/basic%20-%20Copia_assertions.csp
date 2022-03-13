@@ -1,0 +1,223 @@
+
+--
+-- RoboChart generator version 3.0.0.202112100958
+-- Automatically generated on 08-03-2022 11:24:27
+--
+-- Iterated compression status: true
+-- Assertions compression status: true
+--
+
+
+	include "defs/robochart_defs.csp"
+	include "defs/state_defs.csp"
+	include "defs/core_defs.csp"
+	include "instantiations.csp"
+	
+	channel r__
+	
+	Recurse(S,P) = [] ev : S @ ev -> P --Usado somente no modelo de TRACES
+		NRecurse(S, P) = |~| ev : S @ ev -> P
+		
+		Wait = Recurse({|PathPlanningSM_move_forward.out, PathPlanningSM_turn.out.Direction_left,
+						PathPlanningSM_turn.out.Direction_right, PathPlanningSM_clean.out.true, PathPlanningSM_clean.out.false,
+						PathPlanningSM_charging.in, PathPlanningSM_stop.out, PathPlanningSM_displacement.in,
+						PathPlanningSM_displacement.out, PathPlanningSM_battery_level.in|}, Wait)
+		   		[]
+		   		PathPlanningSM_ultrasonic.in?u -> CheckCliff(u)
+		CheckCliff(u) = let PathPlanningSM_cliff = 1 within
+						if u < PathPlanningSM_cliff then Wait
+						else
+							PathPlanningSM_turn.out!Direction_left -> TurnedLeft
+							[]
+							PathPlanningSM_turn.out!Direction_right -> TurnedRight
+		TurnedLeft = PathPlanningSM_move_forward.out -> Wait
+				     []
+				     PathPlanningSM_turn.out.Direction_left -> TurnedBack
+		TurnedRight = PathPlanningSM_move_forward.out -> Wait
+					  []
+					  PathPlanningSM_turn.out.Direction_right -> TurnedBack
+		TurnedBack = PathPlanningSM_move_forward.out -> Wait
+					 []
+					 PathPlanningSM_turn.out.Direction_left -> Wait
+		NoFall = Wait ||| RUN({tock})
+	
+	ReturnToCharge = WaitBattery ||| RUN({tock})
+		WaitBattery = Recurse({|PathPlanningSM_move_forward.out, PathPlanningSM_turn.out.Direction_left,
+						   	   PathPlanningSM_turn.out.Direction_right, PathPlanningSM_clean.out.true,
+						   	   PathPlanningSM_clean.out.false, PathPlanningSM_charging.in,
+						   	   PathPlanningSM_stop.out, PathPlanningSM_displacement.out,
+						   	   PathPlanningSM_displacement.in, PathPlanningSM_ultrasonic.in|},
+						   	   WaitBattery)
+				  	  []
+				  	  PathPlanningSM_battery_level.in?b -> CheckBattery(b)
+				  
+		CheckBattery(b) = let PathPlanningSM_battery_low = 0 within
+				 		  if b > PathPlanningSM_battery_low then  PathPlanningSM_turn.out!Direction_left -> Wait
+					  	  else  PathPlanningSM_turn.out!Direction_left -> Return
+	
+		Return = PathPlanningSM_turn.out!Direction_left -> PathPlanningSM_move_forward.out ->
+				 PathPlanningSM_clean.out!false -> Dock
+	
+		Dock = PathPlanningSM_ultrasonic.in?u ->
+		   	   if u < PathPlanningSM_cliff then Dock
+		   	   else PathPlanningSM_turn.out!Direction_left -> PathPlanningSM_move_forward.out ->
+		   	   PathPlanningSM_charging.in -> WaitBattery
+	
+	CycleStart(n, MAX) = Recurse({|PathPlanningSM_move_forward.out, PathPlanningSM_turn.out.Direction_left,
+						   	 PathPlanningSM_turn.out.Direction_right, PathPlanningSM_clean.out.true,
+						   	 PathPlanningSM_clean.out.false, PathPlanningSM_battery_level.in|},
+						   	 CycleStart(n, MAX))
+						   	 []
+						   	 PathPlanningSM_ultrasonic.in?u -> CycleStart(n, MAX) []  CycleEnd(n, MAX)
+						   	 []
+						   	 PathPlanningSM_displacement.out!0 -> CycleStart(n, MAX) [] CycleEnd(n, MAX)
+						   	 []
+						   	 PathPlanningSM_displacement.in?d -> CycleStart(n, MAX)
+		CycleEnd(n, MAX) = Recurse({|PathPlanningSM_move_forward.out, PathPlanningSM_turn.out.Direction_left,
+						   PathPlanningSM_turn.out.Direction_right, PathPlanningSM_clean.out.true,
+						   PathPlanningSM_clean.out.false, PathPlanningSM_displacement.out|},
+						   CycleEnd(n, MAX))
+						   []
+						   PathPlanningSM_ultrasonic.in?u -> CycleEnd(n, MAX) [] ReturnToDock(0, MAX)
+						   []
+						   PathPlanningSM_battery_level.in?b -> CycleEnd(n, MAX) [] ReturnToDock(n, MAX)
+						   []
+						   PathPlanningSM_displacement.in?d -> CycleEnd(n, MAX) [] CheckEnd(n, MAX)
+		
+		ReturnToDock(n, MAX) = Recurse({|PathPlanningSM_move_forward.out, PathPlanningSM_turn.out.Direction_left,
+						   	   PathPlanningSM_turn.out.Direction_right, PathPlanningSM_clean.out.true,
+						   	   PathPlanningSM_clean.out.false, PathPlanningSM_ultrasonic.in,
+						   	   PathPlanningSM_battery_level.in, PathPlanningSM_displacement.in,
+						   	   PathPlanningSM_displacement.out|},
+						   	   ReturnToDock(n, MAX))
+							   []
+							   PathPlanningSM_charging.in -> ExitDock(n, MAX)
+		
+	
+		CheckEnd(n, MAX) = if n < MAX then CycleStart(n+1, MAX) else ReturnToDock(0, MAX)
+		
+		channel signal
+		channel cyclecount: int
+		
+		ExitDock(n, MAX) = Recurse({|PathPlanningSM_stop.out, PathPlanningSM_turn.out|}, ExitDock(n, MAX))
+						   []
+						   PathPlanningSM_move_forward.out -> Resume(n, MAX)
+		Resume(n, MAX) = PathPlanningSM_turn.out!Direction_right -> PathPlanningSM_move_forward.out ->
+						 PathPlanningSM_displacement.out!0 -> cyclecount!n -> signal -> CycleStart(n, MAX)
+		
+		WaitForCycles = PathPlanningSM_displacement.in?d -> WaitForCycles
+						[]
+						cyclecount?x -> Measure(x)
+		Measure(x) = PathPlanningSM_displacement.in?d ->
+					 if d < x * PathPlanningSM_nozzle * 2 then Measure(x)
+					 else signal -> WaitForCycles
+		ReturnAfterCharging = (Resume(0, 1) [|{|cyclecount, signal|}|] WaitForCycles) 
+							   \ {|cyclecount, signal|} ||| RUN({tock})
+	
+	ResumeCycling = PathPlanningSM_turn.out!Direction_right -> PathPlanningSM_move_forward.out -> Cycle
+		
+		Cycle = PathPlanningSM_turn.out!Direction_left -> PathPlanningSM_move_forward.out ->
+				PathPlanningSM_turn.out!Direction_right -> PathPlanningSM_move_forward.out -> 
+				Continue
+	
+		Continue = PathPlanningSM_turn.out!Direction_right -> PathPlanningSM_move_forward.out ->
+				   PathPlanningSM_turn.out!Direction_left -> PathPlanningSM_move_forward.out ->
+				   (Cycle [] GoBack)
+		
+		GoBack = PathPlanningSM_turn.out!Direction_left -> PathPlanningSM_turn.out!Direction_left ->
+				 PathPlanningSM_move_forward.out -> PathPlanningSM_turn.out!Direction_left ->
+				 PathPlanningSM_move_forward.out -> PathPlanningSM_stop.out -> 
+				 PathPlanningSM_turn.out!Direction_left -> PathPlanningSM_turn.out!Direction_left ->
+				 PathPlanningSM_move_forward.out -> ResumeCycling
+	
+		MovementShape = ResumeCycling ||| RUN({tock})
+	
+	P_PathPlanningSM = let 
+				PathPlanningSM_cliff = 1
+				PathPlanningSM_nozzle = 1
+				PathPlanningSM_battery_low = 0
+				PathPlanningSM_sleep_time = 1
+				PathPlanningSM_acc_distance = 1
+			within PathPlanningSM_O(0, PathPlanningSM_cliff, PathPlanningSM_nozzle,
+									PathPlanningSM_battery_low, PathPlanningSM_sleep_time,
+									PathPlanningSM_acc_distance)
+			
+		PathPlanningSMMovements = P_PathPlanningSM \ {|PathPlanningSM_displacement.in, PathPlanningSM_displacement.out,
+													   PathPlanningSM_ultrasonic.in, PathPlanningSM_battery_level.in,
+													   PathPlanningSM_clean.out, PathPlanningSM_charging.in|}
+	
+	PathPlanningSMEndState = let
+				PathPlanningSM_cliff = 1
+				PathPlanningSM_nozzle = 1
+				PathPlanningSM_battery_low = 0
+				PathPlanningSM_sleep_time = 1
+				PathPlanningSM_acc_distance = 1
+			within	
+			PathPlanningSM_VS_O(0, PathPlanningSM_cliff,
+	                            PathPlanningSM_nozzle, PathPlanningSM_battery_low,
+	                            PathPlanningSM_sleep_time, PathPlanningSM_acc_distance)
+	            |\ {|PathPlanningSM_enteredV."PathPlanningSM_Go_right_again", 
+	  			     PathPlanningSM_enteredV."PathPlanningSM_Return",
+	  			     PathPlanningSM_ultrasonic.in|}
+	
+	WaitGoRightAgain = PathPlanningSM_ultrasonic.in$u -> WaitGoRightAgain
+						   |~|
+						   PathPlanningSM_enteredV."PathPlanningSM_Go_right_again" -> CheckPanelEdge
+						   |~|
+						   PathPlanningSM_enteredV."PathPlanningSM_Return" -> WaitGoRightAgain
+		CheckPanelEdge = PathPlanningSM_ultrasonic.in$u ->
+							if u < PathPlanningSM_cliff then WaitGoRightAgain
+							else PathPlanningSM_enteredV."PathPlanningSM_Return" -> WaitGoRightAgain
+		ReachEnd = WaitGoRightAgain
+	
+	FacingUp = NRecurse({|PathPlanningSM_stop.out, PathPlanningSM_move_forward.out,
+							  PathPlanningSM_ultrasonic.in, PathPlanningSM_displacement.in,
+							  PathPlanningSM_displacement.out, PathPlanningSM_battery_level.in,
+							  PathPlanningSM_charging.in, PathPlanningSM_clean.out|},
+							 FacingUp)
+					|~|
+					PathPlanningSM_turn.out.Direction_left -> FacingLeft
+					|~|
+					PathPlanningSM_turn.out.Direction_right -> FacingRight
+		
+		FacingLeft = NRecurse({|PathPlanningSM_stop.out, PathPlanningSM_move_forward.out,
+							    PathPlanningSM_ultrasonic.in, PathPlanningSM_displacement.in,
+							    PathPlanningSM_displacement.out, PathPlanningSM_battery_level.in,
+							    PathPlanningSM_charging.in, PathPlanningSM_clean.out|},
+							   FacingLeft)
+					|~|
+					PathPlanningSM_turn.out.Direction_left -> FacingDown
+					|~|
+					PathPlanningSM_turn.out.Direction_right -> FacingUp
+		
+		FacingDown = NRecurse({|PathPlanningSM_stop.out, PathPlanningSM_move_forward.out,
+							    PathPlanningSM_ultrasonic.in, PathPlanningSM_displacement.in,
+							    PathPlanningSM_displacement.out, PathPlanningSM_battery_level.in,
+							    PathPlanningSM_charging.in, PathPlanningSM_clean.out|},
+							   FacingDown)
+					|~|
+					PathPlanningSM_turn.out.Direction_left -> FacingRight
+					|~|
+					PathPlanningSM_turn.out.Direction_right -> FacingLeft
+		
+		FacingRight = NRecurse({|PathPlanningSM_stop.out, PathPlanningSM_move_forward.out,
+							     PathPlanningSM_displacement.in, PathPlanningSM_displacement.out,
+							     PathPlanningSM_battery_level.in, PathPlanningSM_charging.in,
+							     PathPlanningSM_clean.out|},
+							    FacingRight)
+					|~|
+					PathPlanningSM_turn.out.Direction_left -> FacingUp
+					|~|
+					PathPlanningSM_turn.out.Direction_right -> FacingDown
+					|~|
+					PathPlanningSM_ultrasonic.in?u -> CheckUltrasonic(u)
+		
+		CheckUltrasonic(u) = if u < PathPlanningSM_cliff then FacingRight
+							 else (
+							 	PathPlanningSM_turn.out.Direction_left -> FacingUp
+							 	|~|
+							 	PathPlanningSM_turn.out.Direction_right -> FacingDown
+							 	)
+		CleanAllPanels = FacingUp ||| CHAOS({tock})
+	
+	

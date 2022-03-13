@@ -109,11 +109,11 @@ const_Module_PathPlanningController_stm_ref8_movesp = 0
 -- generate vacuum_BOUND
 vacuum_BOUND = 2
 
--- generate const_PID_kp
-const_PID_kp = 0
-
 -- generate const_PathPlanningSM_sleep_time
 const_PathPlanningSM_sleep_time = 0
+
+-- generate const_PID_kp
+const_PID_kp = 0
 
 -- generate const_Module_PathPlanningController_stm_ref8_side_speed
 const_Module_PathPlanningController_stm_ref8_side_speed = 0

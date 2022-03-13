@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 17:58:29
+-- Automatically generated on 11-03-2022 11:44:37
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -64,8 +64,8 @@ module ChemicalDetectorSoftware
 			
 			
 			-- declaring call and ret events for undefined operations
-			channel decrCall
 			channel incrCall
+			channel decrCall
 			
 			-- declaring controller termination channel
 			channel terminate
@@ -77,8 +77,8 @@ module ChemicalDetectorSoftware
 				turn,
 				command,
 				detect
-			,	decrCall,
-				incrCall
+			,	incrCall,
+				decrCall
 			|}
 			
 			-- set of visible memory events
@@ -122,8 +122,8 @@ module ChemicalDetectorSoftware
 				channel turn: InOut.core_real
 				
 				-- Declaring call and ret events for undefined operations
-				channel decrCall
 				channel incrCall
+				channel decrCall
 				
 				enterSS = {|
 				i1::enter,
@@ -144,8 +144,8 @@ module ChemicalDetectorSoftware
 					terminate
 				,	cd,
 					turn
-				,	decrCall,
-					incrCall
+				,	incrCall,
+					decrCall
 					|}
 				
 				channel clockReset, clockResetL, clockResetR 
@@ -280,8 +280,8 @@ module ChemicalDetectorSoftware
 					-- If it is in the context of a controller, the required operations not provided by the
 					-- controller will be declared here, and the defined operations will be defined in the
 					-- context of the Controller module, and therefore within scope of the state machine module.
-					CALL__decr(id__) = EDeadline(decrCall,0)
 					CALL__incr(id__) = EDeadline(incrCall,0)
+					CALL__decr(id__) = EDeadline(decrCall,0)
 					
 					-- END of Operation calls --
 				
@@ -1221,8 +1221,8 @@ module ChemicalDetectorSoftware
 			
 			Timed(OneStep) {
 					-- undefined operations
-					CALL__decr(id__) 	= decrCall -> SKIP
 					CALL__incr(id__) 	= incrCall -> SKIP
+					CALL__decr(id__) 	= decrCall -> SKIP
 					
 					-- declaring controller memory
 					Memory(id__) = SKIP
@@ -1233,8 +1233,8 @@ module ChemicalDetectorSoftware
 									stm_ref0::terminate <- terminate,
 									stm_ref0::cd <- command,
 									stm_ref0::turn <- turn,
-									stm_ref0::decrCall <- decrCall,
-									stm_ref0::incrCall <- incrCall
+									stm_ref0::incrCall <- incrCall,
+									stm_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate|}|]
@@ -1276,8 +1276,8 @@ module ChemicalDetectorSoftware
 									stm_ref0::terminate <- terminate,
 									stm_ref0::cd <- command,
 									stm_ref0::turn <- turn,
-									stm_ref0::decrCall <- decrCall,
-									stm_ref0::incrCall <- incrCall
+									stm_ref0::incrCall <- incrCall,
+									stm_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate|}|]
@@ -1319,8 +1319,8 @@ module ChemicalDetectorSoftware
 									stm_ref0::terminate <- terminate,
 									stm_ref0::cd <- command,
 									stm_ref0::turn <- turn,
-									stm_ref0::decrCall <- decrCall,
-									stm_ref0::incrCall <- incrCall
+									stm_ref0::incrCall <- incrCall,
+									stm_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate|}|]
@@ -1362,8 +1362,8 @@ module ChemicalDetectorSoftware
 									stm_ref0::terminate <- terminate,
 									stm_ref0::cd <- command,
 									stm_ref0::turn <- turn,
-									stm_ref0::decrCall <- decrCall,
-									stm_ref0::incrCall <- incrCall
+									stm_ref0::incrCall <- incrCall,
+									stm_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate|}|]
@@ -1514,10 +1514,20 @@ module ChemicalDetectorSoftware
 				localClockResets = {||}
 				
 				
+				channel get_CLID_Waiting : core_clock_type 
 				channel get_CLID_DangerousGas : core_clock_type 
 				channel get_CLID_AnomalousGas : core_clock_type 
-				channel get_CLID_Waiting : core_clock_type 
 				--channel increment__
+				
+				CLID_Waiting_clock_type(id__,
+						          const_Signalling_flagTime) = 
+					let
+						max = (clock_type_max(Union({
+				{}
+				}))+1)
+					ctype = {0..max}
+				within
+					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 				
 				CLID_DangerousGas_clock_type(id__,
 						          const_Signalling_flagTime) = 
@@ -1530,16 +1540,6 @@ module ChemicalDetectorSoftware
 					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 				
 				CLID_AnomalousGas_clock_type(id__,
-						          const_Signalling_flagTime) = 
-					let
-						max = (clock_type_max(Union({
-				{}
-				}))+1)
-					ctype = {0..max}
-				within
-					if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-				
-				CLID_Waiting_clock_type(id__,
 						          const_Signalling_flagTime) = 
 					let
 						max = (clock_type_max(Union({
@@ -1984,7 +1984,7 @@ module ChemicalDetectorSoftware
 					Behaviour(id__,
 							    const_Signalling_flagTime) = 
 						dbisim((let
-							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 						 within
 							(MachineBody(id__,
 									    const_Signalling_flagTime) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
@@ -1995,7 +1995,7 @@ module ChemicalDetectorSoftware
 					IteratedBehaviour(id__,
 							    const_Signalling_flagTime) = 
 						dbisim((let
-							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 						 within
 							(dbisim(
 								sbisim(
@@ -2005,20 +2005,20 @@ module ChemicalDetectorSoftware
 												sbisim(
 													MachineBody(id__,
 															    const_Signalling_flagTime)
-													[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
-													dbisim(Clock_CLID_Waiting(id__,0,
+													[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
+													dbisim(Clock_CLID_AnomalousGas(id__,0,
 															          const_Signalling_flagTime))
-												)\{|get_CLID_Waiting|}
+												)\{|get_CLID_AnomalousGas|}
 											)
-											[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
-											dbisim(Clock_CLID_AnomalousGas(id__,0,
+											[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
+											dbisim(Clock_CLID_DangerousGas(id__,0,
 													          const_Signalling_flagTime))
-										)\{|get_CLID_AnomalousGas|}
+										)\{|get_CLID_DangerousGas|}
 									)
-									[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
-									dbisim(Clock_CLID_DangerousGas(id__,0,
+									[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+									dbisim(Clock_CLID_Waiting(id__,0,
 											          const_Signalling_flagTime))
-								)\{|get_CLID_DangerousGas|}
+								)\{|get_CLID_Waiting|}
 							)
 							) \ union(stateClockSync,enteredSS)
 						)
@@ -2136,7 +2136,7 @@ module ChemicalDetectorSoftware
 					Behaviour_VS_O(id__,
 							    const_Signalling_flagTime) = 
 						dbisim((let
-							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 						 within
 							(MachineBody_VS_O(id__,
 									    const_Signalling_flagTime) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
@@ -2147,7 +2147,7 @@ module ChemicalDetectorSoftware
 					IteratedBehaviour_VS_O(id__,
 							    const_Signalling_flagTime) = 
 						dbisim((let
-							stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+							stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 						 within
 							(dbisim(
 								sbisim(
@@ -2157,20 +2157,20 @@ module ChemicalDetectorSoftware
 												sbisim(
 													MachineBody_VS_O(id__,
 															    const_Signalling_flagTime)
-													[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
-													dbisim(Clock_CLID_Waiting(id__,0,
+													[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
+													dbisim(Clock_CLID_AnomalousGas(id__,0,
 															          const_Signalling_flagTime))
-												)\{|get_CLID_Waiting|}
+												)\{|get_CLID_AnomalousGas|}
 											)
-											[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
-											dbisim(Clock_CLID_AnomalousGas(id__,0,
+											[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
+											dbisim(Clock_CLID_DangerousGas(id__,0,
 													          const_Signalling_flagTime))
-										)\{|get_CLID_AnomalousGas|}
+										)\{|get_CLID_DangerousGas|}
 									)
-									[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
-									dbisim(Clock_CLID_DangerousGas(id__,0,
+									[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+									dbisim(Clock_CLID_Waiting(id__,0,
 											          const_Signalling_flagTime))
-								)\{|get_CLID_DangerousGas|}
+								)\{|get_CLID_Waiting|}
 							)
 							) \ diff(union(stateClockSync,enteredSS),enteredSS)
 						)
@@ -2254,6 +2254,18 @@ module ChemicalDetectorSoftware
 					
 					clockSync = {||}
 					
+					Clock_CLID_Waiting(id__,x__,
+							          const_Signalling_flagTime) = 
+						TimeOut_1(
+							Waiting::entered -> Clock_CLID_Waiting(id__,0,
+									          const_Signalling_flagTime)
+							[]
+							get_CLID_Waiting!x__ -> Clock_CLID_Waiting(id__,x__,
+									          const_Signalling_flagTime)
+							[]
+							terminate -> SKIP,Clock_CLID_Waiting(id__,clock_type_plus(x__,1,CLID_Waiting_clock_type(id__,
+									          const_Signalling_flagTime)),
+									          const_Signalling_flagTime))
 					Clock_CLID_DangerousGas(id__,x__,
 							          const_Signalling_flagTime) = 
 						TimeOut_1(
@@ -2278,32 +2290,20 @@ module ChemicalDetectorSoftware
 							terminate -> SKIP,Clock_CLID_AnomalousGas(id__,clock_type_plus(x__,1,CLID_AnomalousGas_clock_type(id__,
 									          const_Signalling_flagTime)),
 									          const_Signalling_flagTime))
-					Clock_CLID_Waiting(id__,x__,
-							          const_Signalling_flagTime) = 
-						TimeOut_1(
-							Waiting::entered -> Clock_CLID_Waiting(id__,0,
-									          const_Signalling_flagTime)
-							[]
-							get_CLID_Waiting!x__ -> Clock_CLID_Waiting(id__,x__,
-									          const_Signalling_flagTime)
-							[]
-							terminate -> SKIP,Clock_CLID_Waiting(id__,clock_type_plus(x__,1,CLID_Waiting_clock_type(id__,
-									          const_Signalling_flagTime)),
-									          const_Signalling_flagTime))
 					
 					StateClocks(id__,
-							          const_Signalling_flagTime) = dbisim(Clock_CLID_DangerousGas(id__,0,
+							          const_Signalling_flagTime) = dbisim(Clock_CLID_Waiting(id__,0,
+							          const_Signalling_flagTime))
+					[| { terminate } |] (
+					dbisim(Clock_CLID_DangerousGas(id__,0,
 							          const_Signalling_flagTime))
 					[| { terminate } |] (
 					dbisim(Clock_CLID_AnomalousGas(id__,0,
 							          const_Signalling_flagTime))
-					[| { terminate } |] (
-					dbisim(Clock_CLID_Waiting(id__,0,
-							          const_Signalling_flagTime))
 					)
 					)
 					
-					stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+					stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 					
 					-- Shared memory
 					-- Shared memory variables
@@ -2485,8 +2485,8 @@ module ChemicalDetectorSoftware
 									ctrl_ref0::turn <- turn,
 									ctrl_ref0::gas <- gas,
 									ctrl_ref0::command <- cd,
-									ctrl_ref0::decrCall <- decrCall,
-									ctrl_ref0::incrCall <- incrCall
+									ctrl_ref0::incrCall <- incrCall,
+									ctrl_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate, ctrl_ref0::detect|}|]
@@ -2546,8 +2546,8 @@ module ChemicalDetectorSoftware
 									ctrl_ref0::turn <- turn,
 									ctrl_ref0::gas <- gas,
 									ctrl_ref0::command <- cd,
-									ctrl_ref0::decrCall <- decrCall,
-									ctrl_ref0::incrCall <- incrCall
+									ctrl_ref0::incrCall <- incrCall,
+									ctrl_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate, ctrl_ref0::detect|}|]
@@ -2607,8 +2607,8 @@ module ChemicalDetectorSoftware
 									ctrl_ref0::turn <- turn,
 									ctrl_ref0::gas <- gas,
 									ctrl_ref0::command <- cd,
-									ctrl_ref0::decrCall <- decrCall,
-									ctrl_ref0::incrCall <- incrCall
+									ctrl_ref0::incrCall <- incrCall,
+									ctrl_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate, ctrl_ref0::detect|}|]
@@ -2668,8 +2668,8 @@ module ChemicalDetectorSoftware
 									ctrl_ref0::turn <- turn,
 									ctrl_ref0::gas <- gas,
 									ctrl_ref0::command <- cd,
-									ctrl_ref0::decrCall <- decrCall,
-									ctrl_ref0::incrCall <- incrCall
+									ctrl_ref0::incrCall <- incrCall,
+									ctrl_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate, ctrl_ref0::detect|}|]
@@ -2729,8 +2729,8 @@ module ChemicalDetectorSoftware
 									ctrl_ref0::turn <- turn,
 									ctrl_ref0::gas <- gas,
 									ctrl_ref0::command <- cd,
-									ctrl_ref0::decrCall <- decrCall,
-									ctrl_ref0::incrCall <- incrCall
+									ctrl_ref0::incrCall <- incrCall,
+									ctrl_ref0::decrCall <- decrCall
 								]]
 							)
 								[|{|terminate, ctrl_ref0::detect|}|]

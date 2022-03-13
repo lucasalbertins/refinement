@@ -1,13 +1,13 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:37
+-- Automatically generated on 08-03-2022 18:58:32
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
 --
 
--- data definitions used by /RoboVacuum/types.rct
+-- data definitions used by platform:/resource/RoboVacuum/types.rct
 datatype Direction = Direction_left | Direction_right
 Direction_is(Direction_left,Direction_left) = true
 Direction_is(_,Direction_left) = false

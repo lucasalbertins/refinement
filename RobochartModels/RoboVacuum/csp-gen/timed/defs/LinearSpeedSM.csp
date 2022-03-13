@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:35
+-- Automatically generated on 08-03-2022 18:58:29
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -82,11 +82,19 @@ exports
 	localClockResets = {||}
 	
 	
+	channel get_CLID_wait_right : core_clock_type 
 	channel get_CLID_send_output : core_clock_type 
 	channel get_CLID_wait_left : core_clock_type 
-	channel get_CLID_wait_right : core_clock_type 
 	channel get_CLID_wait_input : core_clock_type 
 	--channel increment__
+	
+	CLID_wait_right_clock_type(id__) = 
+		let
+			max = (clock_type_max(Union({
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_send_output_clock_type(id__) = 
 		let
@@ -97,14 +105,6 @@ exports
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_wait_left_clock_type(id__) = 
-		let
-			max = (clock_type_max(Union({
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_wait_right_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	}))+1)
@@ -603,7 +603,7 @@ exports
 		
 		Behaviour(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_right,wait_right::entered,get_CLID_wait_input,wait_input::entered|}
+				stateClockSync = {|get_CLID_wait_right,wait_right::entered,get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(MachineBody(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ union(stateClockSync,enteredSS)
 			)
@@ -611,7 +611,7 @@ exports
 		
 		IteratedBehaviour(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_right,wait_right::entered,get_CLID_wait_input,wait_input::entered|}
+				stateClockSync = {|get_CLID_wait_right,wait_right::entered,get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -626,17 +626,17 @@ exports
 												dbisim(Clock_CLID_wait_input(id__,0))
 											)\{|get_CLID_wait_input|}
 										)
-										[| {|get_CLID_wait_right,wait_right::entered,terminate|} |]
-										dbisim(Clock_CLID_wait_right(id__,0))
-									)\{|get_CLID_wait_right|}
+										[| {|get_CLID_wait_left,wait_left::entered,terminate|} |]
+										dbisim(Clock_CLID_wait_left(id__,0))
+									)\{|get_CLID_wait_left|}
 								)
-								[| {|get_CLID_wait_left,wait_left::entered,terminate|} |]
-								dbisim(Clock_CLID_wait_left(id__,0))
-							)\{|get_CLID_wait_left|}
+								[| {|get_CLID_send_output,send_output::entered,terminate|} |]
+								dbisim(Clock_CLID_send_output(id__,0))
+							)\{|get_CLID_send_output|}
 						)
-						[| {|get_CLID_send_output,send_output::entered,terminate|} |]
-						dbisim(Clock_CLID_send_output(id__,0))
-					)\{|get_CLID_send_output|}
+						[| {|get_CLID_wait_right,wait_right::entered,terminate|} |]
+						dbisim(Clock_CLID_wait_right(id__,0))
+					)\{|get_CLID_wait_right|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -750,7 +750,7 @@ exports
 		
 		Behaviour_VS_O(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_right,wait_right::entered,get_CLID_wait_input,wait_input::entered|}
+				stateClockSync = {|get_CLID_wait_right,wait_right::entered,get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(MachineBody_VS_O(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -758,7 +758,7 @@ exports
 		
 		IteratedBehaviour_VS_O(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_right,wait_right::entered,get_CLID_wait_input,wait_input::entered|}
+				stateClockSync = {|get_CLID_wait_right,wait_right::entered,get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -773,17 +773,17 @@ exports
 												dbisim(Clock_CLID_wait_input(id__,0))
 											)\{|get_CLID_wait_input|}
 										)
-										[| {|get_CLID_wait_right,wait_right::entered,terminate|} |]
-										dbisim(Clock_CLID_wait_right(id__,0))
-									)\{|get_CLID_wait_right|}
+										[| {|get_CLID_wait_left,wait_left::entered,terminate|} |]
+										dbisim(Clock_CLID_wait_left(id__,0))
+									)\{|get_CLID_wait_left|}
 								)
-								[| {|get_CLID_wait_left,wait_left::entered,terminate|} |]
-								dbisim(Clock_CLID_wait_left(id__,0))
-							)\{|get_CLID_wait_left|}
+								[| {|get_CLID_send_output,send_output::entered,terminate|} |]
+								dbisim(Clock_CLID_send_output(id__,0))
+							)\{|get_CLID_send_output|}
 						)
-						[| {|get_CLID_send_output,send_output::entered,terminate|} |]
-						dbisim(Clock_CLID_send_output(id__,0))
-					)\{|get_CLID_send_output|}
+						[| {|get_CLID_wait_right,wait_right::entered,terminate|} |]
+						dbisim(Clock_CLID_wait_right(id__,0))
+					)\{|get_CLID_wait_right|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -859,6 +859,13 @@ exports
 		
 		clockSync = {||}
 		
+		Clock_CLID_wait_right(id__,x__) = 
+			TimeOut_1(
+				wait_right::entered -> Clock_CLID_wait_right(id__,0)
+				[]
+				get_CLID_wait_right!x__ -> Clock_CLID_wait_right(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_wait_right(id__,clock_type_plus(x__,1,CLID_wait_right_clock_type(id__))))
 		Clock_CLID_send_output(id__,x__) = 
 			TimeOut_1(
 				send_output::entered -> Clock_CLID_send_output(id__,0)
@@ -873,13 +880,6 @@ exports
 				get_CLID_wait_left!x__ -> Clock_CLID_wait_left(id__,x__)
 				[]
 				terminate -> SKIP,Clock_CLID_wait_left(id__,clock_type_plus(x__,1,CLID_wait_left_clock_type(id__))))
-		Clock_CLID_wait_right(id__,x__) = 
-			TimeOut_1(
-				wait_right::entered -> Clock_CLID_wait_right(id__,0)
-				[]
-				get_CLID_wait_right!x__ -> Clock_CLID_wait_right(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_wait_right(id__,clock_type_plus(x__,1,CLID_wait_right_clock_type(id__))))
 		Clock_CLID_wait_input(id__,x__) = 
 			TimeOut_1(
 				wait_input::entered -> Clock_CLID_wait_input(id__,0)
@@ -888,18 +888,18 @@ exports
 				[]
 				terminate -> SKIP,Clock_CLID_wait_input(id__,clock_type_plus(x__,1,CLID_wait_input_clock_type(id__))))
 		
-		StateClocks(id__) = dbisim(Clock_CLID_send_output(id__,0))
+		StateClocks(id__) = dbisim(Clock_CLID_wait_right(id__,0))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_send_output(id__,0))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_wait_left(id__,0))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_wait_right(id__,0))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_wait_input(id__,0))
 		)
 		)
 		)
 		
-		stateClockSync = {|get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_right,wait_right::entered,get_CLID_wait_input,wait_input::entered|}
+		stateClockSync = {|get_CLID_wait_right,wait_right::entered,get_CLID_send_output,send_output::entered,get_CLID_wait_left,wait_left::entered,get_CLID_wait_input,wait_input::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

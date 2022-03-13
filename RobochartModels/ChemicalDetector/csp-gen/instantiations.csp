@@ -13,13 +13,16 @@ decr_BOUND = 2
 -- STATEMACHINE CONSTANTS
 
 -- generate string
-nametype core_string = LSeq(Char,2)
+------------------------------------
+-- nametype core_string = LSeq(Char,2)
+------------------------------------
 
 -- generate const_Signalling_flagTime
 const_Signalling_flagTime = 0
 
 -- generate real
-nametype core_real = { -2..2}
+-- nametype core_real = { -2..2}
+nametype core_real = { -180..180}
 
 -- BASIC FUNCTIONS
 

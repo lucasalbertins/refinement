@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:34
+-- Automatically generated on 08-03-2022 18:58:30
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -44,8 +44,8 @@ exports
 	channel clean: InOut.core_boolean
 	
 	-- Declaring call and ret events for undefined operations
-	channel vacuumCall: core_int
 	channel brushCall: core_int
+	channel vacuumCall: core_int
 	
 	enterSS = {|
 	i0::enter,
@@ -67,8 +67,8 @@ exports
 	sem__events = {|
 		terminate
 	,	clean
-	,	vacuumCall,
-		brushCall
+	,	brushCall,
+		vacuumCall
 		|}
 	
 	channel clockReset, clockResetL, clockResetR 
@@ -76,11 +76,11 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_clean : core_clock_type 
 	channel get_CLID_dont_clean : core_clock_type 
+	channel get_CLID_clean : core_clock_type 
 	--channel increment__
 	
-	CLID_clean_clock_type(id__,
+	CLID_dont_clean_clock_type(id__,
 			          const_CleanSM_voltage) = 
 		let
 			max = (clock_type_max(Union({
@@ -90,7 +90,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_dont_clean_clock_type(id__,
+	CLID_clean_clock_type(id__,
 			          const_CleanSM_voltage) = 
 		let
 			max = (clock_type_max(Union({
@@ -333,12 +333,12 @@ exports
 		-- If it is in the context of a controller, the required operations not provided by the
 		-- controller will be declared here, and the defined operations will be defined in the
 		-- context of the Controller module, and therefore within scope of the state machine module.
-		CALL__vacuum(id__,
-				    const_CleanSM_voltage,
-					param_x) = EDeadline(vacuumCall.param_x,0)
 		CALL__brush(id__,
 				    const_CleanSM_voltage,
 					param_x) = EDeadline(brushCall.param_x,0)
+		CALL__vacuum(id__,
+				    const_CleanSM_voltage,
+					param_x) = EDeadline(vacuumCall.param_x,0)
 		
 		-- END of Operation calls --
 	
@@ -477,7 +477,7 @@ exports
 		Behaviour(id__,
 				    const_CleanSM_voltage) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_clean,clean::entered,get_CLID_dont_clean,dont_clean::entered|}
+				stateClockSync = {|get_CLID_dont_clean,dont_clean::entered,get_CLID_clean,clean::entered|}
 			 within
 				(MachineBody(id__,
 						    const_CleanSM_voltage) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
@@ -488,7 +488,7 @@ exports
 		IteratedBehaviour(id__,
 				    const_CleanSM_voltage) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_clean,clean::entered,get_CLID_dont_clean,dont_clean::entered|}
+				stateClockSync = {|get_CLID_dont_clean,dont_clean::entered,get_CLID_clean,clean::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -496,15 +496,15 @@ exports
 							sbisim(
 								MachineBody(id__,
 										    const_CleanSM_voltage)
-								[| {|get_CLID_dont_clean,dont_clean::entered,terminate|} |]
-								dbisim(Clock_CLID_dont_clean(id__,0,
+								[| {|get_CLID_clean,clean::entered,terminate|} |]
+								dbisim(Clock_CLID_clean(id__,0,
 										          const_CleanSM_voltage))
-							)\{|get_CLID_dont_clean|}
+							)\{|get_CLID_clean|}
 						)
-						[| {|get_CLID_clean,clean::entered,terminate|} |]
-						dbisim(Clock_CLID_clean(id__,0,
+						[| {|get_CLID_dont_clean,dont_clean::entered,terminate|} |]
+						dbisim(Clock_CLID_dont_clean(id__,0,
 								          const_CleanSM_voltage))
-					)\{|get_CLID_clean|}
+					)\{|get_CLID_dont_clean|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -613,7 +613,7 @@ exports
 		Behaviour_VS_O(id__,
 				    const_CleanSM_voltage) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_clean,clean::entered,get_CLID_dont_clean,dont_clean::entered|}
+				stateClockSync = {|get_CLID_dont_clean,dont_clean::entered,get_CLID_clean,clean::entered|}
 			 within
 				(MachineBody_VS_O(id__,
 						    const_CleanSM_voltage) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
@@ -624,7 +624,7 @@ exports
 		IteratedBehaviour_VS_O(id__,
 				    const_CleanSM_voltage) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_clean,clean::entered,get_CLID_dont_clean,dont_clean::entered|}
+				stateClockSync = {|get_CLID_dont_clean,dont_clean::entered,get_CLID_clean,clean::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -632,15 +632,15 @@ exports
 							sbisim(
 								MachineBody_VS_O(id__,
 										    const_CleanSM_voltage)
-								[| {|get_CLID_dont_clean,dont_clean::entered,terminate|} |]
-								dbisim(Clock_CLID_dont_clean(id__,0,
+								[| {|get_CLID_clean,clean::entered,terminate|} |]
+								dbisim(Clock_CLID_clean(id__,0,
 										          const_CleanSM_voltage))
-							)\{|get_CLID_dont_clean|}
+							)\{|get_CLID_clean|}
 						)
-						[| {|get_CLID_clean,clean::entered,terminate|} |]
-						dbisim(Clock_CLID_clean(id__,0,
+						[| {|get_CLID_dont_clean,dont_clean::entered,terminate|} |]
+						dbisim(Clock_CLID_dont_clean(id__,0,
 								          const_CleanSM_voltage))
-					)\{|get_CLID_clean|}
+					)\{|get_CLID_dont_clean|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -724,18 +724,6 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_clean(id__,x__,
-				          const_CleanSM_voltage) = 
-			TimeOut_1(
-				clean::entered -> Clock_CLID_clean(id__,0,
-						          const_CleanSM_voltage)
-				[]
-				get_CLID_clean!x__ -> Clock_CLID_clean(id__,x__,
-						          const_CleanSM_voltage)
-				[]
-				terminate -> SKIP,Clock_CLID_clean(id__,clock_type_plus(x__,1,CLID_clean_clock_type(id__,
-						          const_CleanSM_voltage)),
-						          const_CleanSM_voltage))
 		Clock_CLID_dont_clean(id__,x__,
 				          const_CleanSM_voltage) = 
 			TimeOut_1(
@@ -748,16 +736,28 @@ exports
 				terminate -> SKIP,Clock_CLID_dont_clean(id__,clock_type_plus(x__,1,CLID_dont_clean_clock_type(id__,
 						          const_CleanSM_voltage)),
 						          const_CleanSM_voltage))
+		Clock_CLID_clean(id__,x__,
+				          const_CleanSM_voltage) = 
+			TimeOut_1(
+				clean::entered -> Clock_CLID_clean(id__,0,
+						          const_CleanSM_voltage)
+				[]
+				get_CLID_clean!x__ -> Clock_CLID_clean(id__,x__,
+						          const_CleanSM_voltage)
+				[]
+				terminate -> SKIP,Clock_CLID_clean(id__,clock_type_plus(x__,1,CLID_clean_clock_type(id__,
+						          const_CleanSM_voltage)),
+						          const_CleanSM_voltage))
 		
 		StateClocks(id__,
-				          const_CleanSM_voltage) = dbisim(Clock_CLID_clean(id__,0,
+				          const_CleanSM_voltage) = dbisim(Clock_CLID_dont_clean(id__,0,
 				          const_CleanSM_voltage))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_dont_clean(id__,0,
+		dbisim(Clock_CLID_clean(id__,0,
 				          const_CleanSM_voltage))
 		)
 		
-		stateClockSync = {|get_CLID_clean,clean::entered,get_CLID_dont_clean,dont_clean::entered|}
+		stateClockSync = {|get_CLID_dont_clean,dont_clean::entered,get_CLID_clean,clean::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

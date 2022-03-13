@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:34
+-- Automatically generated on 08-03-2022 18:58:30
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -41,8 +41,8 @@ exports
 	channel clean: InOut.core_boolean
 	
 	-- Declaring call and ret events for undefined operations
-	channel vacuumCall: core_int
 	channel brushCall: core_int
+	channel vacuumCall: core_int
 	
 	enterSS = {|
 	i0::enter,
@@ -64,8 +64,8 @@ exports
 	sem__events = {|
 		terminate
 	,	clean
-	,	vacuumCall,
-		brushCall
+	,	brushCall,
+		vacuumCall
 		|}
 
 	-- Nodes --
@@ -272,12 +272,12 @@ exports
 	-- If it is in the context of a controller, the required operations not provided by the
 	-- controller will be declared here, and the defined operations will be defined in the
 	-- context of the Controller module, and therefore within scope of the state machine module.
-	CALL__vacuum(id__,
-			    const_CleanSM_voltage,
-				param_x) 	= vacuumCall.param_x -> SKIP
 	CALL__brush(id__,
 			    const_CleanSM_voltage,
 				param_x) 	= brushCall.param_x -> SKIP
+	CALL__vacuum(id__,
+			    const_CleanSM_voltage,
+				param_x) 	= vacuumCall.param_x -> SKIP
 	
 	-- END of Operation calls --
 	

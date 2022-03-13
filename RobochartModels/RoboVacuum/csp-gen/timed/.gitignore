@@ -17,3 +17,11 @@
 /file_SpeedSM.csp
 /file_SpeedSM_coreassertions.csp
 /file_robot_coreassertions.csp
+/file_ClearSM.csp
+/file_ClearSM_coreassertions.csp
+/file_PathPlanningSM.csp
+/file_PathPlanningSM_coreassertions.csp
+/file_interfaces.csp
+/file_interfaces_coreassertions.csp
+/file_types.csp
+/file_types_coreassertions.csp

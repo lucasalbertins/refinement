@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:34
+-- Automatically generated on 08-03-2022 18:58:35
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -85,23 +85,13 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_wait_input : core_clock_type 
-	channel get_CLID_update_value : core_clock_type 
-	channel get_CLID_wait_al : core_clock_type 
 	channel get_CLID_wait_ar : core_clock_type 
+	channel get_CLID_wait_al : core_clock_type 
+	channel get_CLID_update_value : core_clock_type 
+	channel get_CLID_wait_input : core_clock_type 
 	--channel increment__
 	
-	CLID_wait_input_clock_type(id__,
-			          const_AngularSpeedSM_t,
-			          const_AngularSpeedSM_acc_distance) = 
-		let
-			max = (clock_type_max(Union({
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
-	CLID_update_value_clock_type(id__,
+	CLID_wait_ar_clock_type(id__,
 			          const_AngularSpeedSM_t,
 			          const_AngularSpeedSM_acc_distance) = 
 		let
@@ -121,7 +111,17 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_wait_ar_clock_type(id__,
+	CLID_update_value_clock_type(id__,
+			          const_AngularSpeedSM_t,
+			          const_AngularSpeedSM_acc_distance) = 
+		let
+			max = (clock_type_max(Union({
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_wait_input_clock_type(id__,
 			          const_AngularSpeedSM_t,
 			          const_AngularSpeedSM_acc_distance) = 
 		let
@@ -457,7 +457,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_al?al -> share__choice(get_ar?ar -> share__choice(get_turn_angle?turn_angle -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), no_zero_div(const_AngularSpeedSM_acc_distance), core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
+					Active 		= share__choice(share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> share__choice(get_ar?ar -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), no_zero_div(const_AngularSpeedSM_acc_distance), core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -475,7 +475,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_al?al -> share__choice(get_ar?ar -> share__choice(get_turn_angle?turn_angle -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), no_zero_div(const_AngularSpeedSM_acc_distance), core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
+					Active 		= share__choice(share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> share__choice(get_ar?ar -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), no_zero_div(const_AngularSpeedSM_acc_distance), core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -564,7 +564,7 @@ exports
 				 [] dbisim((true)&(acc_r__!NID_wait_input.in?ar:{ar|ar <- TripleAxis, true} -> share__choice(set_ar!ar -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; wait_al::enter -> SKIP)))
 				 [] dbisim((true)&(acc_r__!NID_wait_ar.in?ar:{ar|ar <- TripleAxis, true} -> share__choice(set_ar!ar -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_value::enter -> SKIP)))
 				 [] dbisim((true)&(acc_l__!NID_wait_al.in?al:{al|al <- TripleAxis, true} -> share__choice(set_al!al -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_value::enter -> SKIP)))
-				 [] dbisim((true)&(internal__!NID_update_value -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_al?al -> share__choice(get_turn_angle?turn_angle -> true&(share__choice(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP))));SHARE_WAIT(const_AngularSpeedSM_t) ; wait_input::enter -> SKIP)))
+				 [] dbisim((true)&(internal__!NID_update_value -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> true&(share__choice(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP))));SHARE_WAIT(const_AngularSpeedSM_t) ; wait_input::enter -> SKIP)))
 				 []
 				 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
 				 []
@@ -676,7 +676,7 @@ exports
 				    const_AngularSpeedSM_t,
 				    const_AngularSpeedSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_al,wait_al::entered,get_CLID_wait_ar,wait_ar::entered|}
+				stateClockSync = {|get_CLID_wait_ar,wait_ar::entered,get_CLID_wait_al,wait_al::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(MachineBody(id__,
 						    const_AngularSpeedSM_t,
@@ -690,7 +690,7 @@ exports
 				    const_AngularSpeedSM_t,
 				    const_AngularSpeedSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_al,wait_al::entered,get_CLID_wait_ar,wait_ar::entered|}
+				stateClockSync = {|get_CLID_wait_ar,wait_ar::entered,get_CLID_wait_al,wait_al::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -703,29 +703,29 @@ exports
 												MachineBody(id__,
 														    const_AngularSpeedSM_t,
 														    const_AngularSpeedSM_acc_distance)
-												[| {|get_CLID_wait_ar,wait_ar::entered,terminate|} |]
-												dbisim(Clock_CLID_wait_ar(id__,0,
+												[| {|get_CLID_wait_input,wait_input::entered,terminate|} |]
+												dbisim(Clock_CLID_wait_input(id__,0,
 														          const_AngularSpeedSM_t,
 														          const_AngularSpeedSM_acc_distance))
-											)\{|get_CLID_wait_ar|}
+											)\{|get_CLID_wait_input|}
 										)
-										[| {|get_CLID_wait_al,wait_al::entered,terminate|} |]
-										dbisim(Clock_CLID_wait_al(id__,0,
+										[| {|get_CLID_update_value,update_value::entered,terminate|} |]
+										dbisim(Clock_CLID_update_value(id__,0,
 												          const_AngularSpeedSM_t,
 												          const_AngularSpeedSM_acc_distance))
-									)\{|get_CLID_wait_al|}
+									)\{|get_CLID_update_value|}
 								)
-								[| {|get_CLID_update_value,update_value::entered,terminate|} |]
-								dbisim(Clock_CLID_update_value(id__,0,
+								[| {|get_CLID_wait_al,wait_al::entered,terminate|} |]
+								dbisim(Clock_CLID_wait_al(id__,0,
 										          const_AngularSpeedSM_t,
 										          const_AngularSpeedSM_acc_distance))
-							)\{|get_CLID_update_value|}
+							)\{|get_CLID_wait_al|}
 						)
-						[| {|get_CLID_wait_input,wait_input::entered,terminate|} |]
-						dbisim(Clock_CLID_wait_input(id__,0,
+						[| {|get_CLID_wait_ar,wait_ar::entered,terminate|} |]
+						dbisim(Clock_CLID_wait_ar(id__,0,
 								          const_AngularSpeedSM_t,
 								          const_AngularSpeedSM_acc_distance))
-					)\{|get_CLID_wait_input|}
+					)\{|get_CLID_wait_ar|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -890,7 +890,7 @@ exports
 				    const_AngularSpeedSM_t,
 				    const_AngularSpeedSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_al,wait_al::entered,get_CLID_wait_ar,wait_ar::entered|}
+				stateClockSync = {|get_CLID_wait_ar,wait_ar::entered,get_CLID_wait_al,wait_al::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(MachineBody_VS_O(id__,
 						    const_AngularSpeedSM_t,
@@ -904,7 +904,7 @@ exports
 				    const_AngularSpeedSM_t,
 				    const_AngularSpeedSM_acc_distance) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_al,wait_al::entered,get_CLID_wait_ar,wait_ar::entered|}
+				stateClockSync = {|get_CLID_wait_ar,wait_ar::entered,get_CLID_wait_al,wait_al::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_input,wait_input::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -917,29 +917,29 @@ exports
 												MachineBody_VS_O(id__,
 														    const_AngularSpeedSM_t,
 														    const_AngularSpeedSM_acc_distance)
-												[| {|get_CLID_wait_ar,wait_ar::entered,terminate|} |]
-												dbisim(Clock_CLID_wait_ar(id__,0,
+												[| {|get_CLID_wait_input,wait_input::entered,terminate|} |]
+												dbisim(Clock_CLID_wait_input(id__,0,
 														          const_AngularSpeedSM_t,
 														          const_AngularSpeedSM_acc_distance))
-											)\{|get_CLID_wait_ar|}
+											)\{|get_CLID_wait_input|}
 										)
-										[| {|get_CLID_wait_al,wait_al::entered,terminate|} |]
-										dbisim(Clock_CLID_wait_al(id__,0,
+										[| {|get_CLID_update_value,update_value::entered,terminate|} |]
+										dbisim(Clock_CLID_update_value(id__,0,
 												          const_AngularSpeedSM_t,
 												          const_AngularSpeedSM_acc_distance))
-									)\{|get_CLID_wait_al|}
+									)\{|get_CLID_update_value|}
 								)
-								[| {|get_CLID_update_value,update_value::entered,terminate|} |]
-								dbisim(Clock_CLID_update_value(id__,0,
+								[| {|get_CLID_wait_al,wait_al::entered,terminate|} |]
+								dbisim(Clock_CLID_wait_al(id__,0,
 										          const_AngularSpeedSM_t,
 										          const_AngularSpeedSM_acc_distance))
-							)\{|get_CLID_update_value|}
+							)\{|get_CLID_wait_al|}
 						)
-						[| {|get_CLID_wait_input,wait_input::entered,terminate|} |]
-						dbisim(Clock_CLID_wait_input(id__,0,
+						[| {|get_CLID_wait_ar,wait_ar::entered,terminate|} |]
+						dbisim(Clock_CLID_wait_ar(id__,0,
 								          const_AngularSpeedSM_t,
 								          const_AngularSpeedSM_acc_distance))
-					)\{|get_CLID_wait_input|}
+					)\{|get_CLID_wait_ar|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1111,36 +1111,19 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_wait_input(id__,x__,
+		Clock_CLID_wait_ar(id__,x__,
 				          const_AngularSpeedSM_t,
 				          const_AngularSpeedSM_acc_distance) = 
 			TimeOut_1(
-				wait_input::entered -> Clock_CLID_wait_input(id__,0,
+				wait_ar::entered -> Clock_CLID_wait_ar(id__,0,
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance)
 				[]
-				get_CLID_wait_input!x__ -> Clock_CLID_wait_input(id__,x__,
+				get_CLID_wait_ar!x__ -> Clock_CLID_wait_ar(id__,x__,
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance)
 				[]
-				terminate -> SKIP,Clock_CLID_wait_input(id__,clock_type_plus(x__,1,CLID_wait_input_clock_type(id__,
-						          const_AngularSpeedSM_t,
-						          const_AngularSpeedSM_acc_distance)),
-						          const_AngularSpeedSM_t,
-						          const_AngularSpeedSM_acc_distance))
-		Clock_CLID_update_value(id__,x__,
-				          const_AngularSpeedSM_t,
-				          const_AngularSpeedSM_acc_distance) = 
-			TimeOut_1(
-				update_value::entered -> Clock_CLID_update_value(id__,0,
-						          const_AngularSpeedSM_t,
-						          const_AngularSpeedSM_acc_distance)
-				[]
-				get_CLID_update_value!x__ -> Clock_CLID_update_value(id__,x__,
-						          const_AngularSpeedSM_t,
-						          const_AngularSpeedSM_acc_distance)
-				[]
-				terminate -> SKIP,Clock_CLID_update_value(id__,clock_type_plus(x__,1,CLID_update_value_clock_type(id__,
+				terminate -> SKIP,Clock_CLID_wait_ar(id__,clock_type_plus(x__,1,CLID_wait_ar_clock_type(id__,
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance)),
 						          const_AngularSpeedSM_t,
@@ -1162,19 +1145,36 @@ exports
 						          const_AngularSpeedSM_acc_distance)),
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance))
-		Clock_CLID_wait_ar(id__,x__,
+		Clock_CLID_update_value(id__,x__,
 				          const_AngularSpeedSM_t,
 				          const_AngularSpeedSM_acc_distance) = 
 			TimeOut_1(
-				wait_ar::entered -> Clock_CLID_wait_ar(id__,0,
+				update_value::entered -> Clock_CLID_update_value(id__,0,
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance)
 				[]
-				get_CLID_wait_ar!x__ -> Clock_CLID_wait_ar(id__,x__,
+				get_CLID_update_value!x__ -> Clock_CLID_update_value(id__,x__,
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance)
 				[]
-				terminate -> SKIP,Clock_CLID_wait_ar(id__,clock_type_plus(x__,1,CLID_wait_ar_clock_type(id__,
+				terminate -> SKIP,Clock_CLID_update_value(id__,clock_type_plus(x__,1,CLID_update_value_clock_type(id__,
+						          const_AngularSpeedSM_t,
+						          const_AngularSpeedSM_acc_distance)),
+						          const_AngularSpeedSM_t,
+						          const_AngularSpeedSM_acc_distance))
+		Clock_CLID_wait_input(id__,x__,
+				          const_AngularSpeedSM_t,
+				          const_AngularSpeedSM_acc_distance) = 
+			TimeOut_1(
+				wait_input::entered -> Clock_CLID_wait_input(id__,0,
+						          const_AngularSpeedSM_t,
+						          const_AngularSpeedSM_acc_distance)
+				[]
+				get_CLID_wait_input!x__ -> Clock_CLID_wait_input(id__,x__,
+						          const_AngularSpeedSM_t,
+						          const_AngularSpeedSM_acc_distance)
+				[]
+				terminate -> SKIP,Clock_CLID_wait_input(id__,clock_type_plus(x__,1,CLID_wait_input_clock_type(id__,
 						          const_AngularSpeedSM_t,
 						          const_AngularSpeedSM_acc_distance)),
 						          const_AngularSpeedSM_t,
@@ -1182,11 +1182,7 @@ exports
 		
 		StateClocks(id__,
 				          const_AngularSpeedSM_t,
-				          const_AngularSpeedSM_acc_distance) = dbisim(Clock_CLID_wait_input(id__,0,
-				          const_AngularSpeedSM_t,
-				          const_AngularSpeedSM_acc_distance))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_update_value(id__,0,
+				          const_AngularSpeedSM_acc_distance) = dbisim(Clock_CLID_wait_ar(id__,0,
 				          const_AngularSpeedSM_t,
 				          const_AngularSpeedSM_acc_distance))
 		[| { terminate } |] (
@@ -1194,14 +1190,18 @@ exports
 				          const_AngularSpeedSM_t,
 				          const_AngularSpeedSM_acc_distance))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_wait_ar(id__,0,
+		dbisim(Clock_CLID_update_value(id__,0,
+				          const_AngularSpeedSM_t,
+				          const_AngularSpeedSM_acc_distance))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_wait_input(id__,0,
 				          const_AngularSpeedSM_t,
 				          const_AngularSpeedSM_acc_distance))
 		)
 		)
 		)
 		
-		stateClockSync = {|get_CLID_wait_input,wait_input::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_al,wait_al::entered,get_CLID_wait_ar,wait_ar::entered|}
+		stateClockSync = {|get_CLID_wait_ar,wait_ar::entered,get_CLID_wait_al,wait_al::entered,get_CLID_update_value,update_value::entered,get_CLID_wait_input,wait_input::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

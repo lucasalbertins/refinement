@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 17:58:29
+-- Automatically generated on 11-03-2022 11:44:37
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -65,8 +65,8 @@ module ChemicalDetectorSoftware
 			
 			
 			-- declaring call and ret events for undefined operations
-			channel decrCall
 			channel incrCall
+			channel decrCall
 			
 			-- declaring controller termination channel
 			channel terminate
@@ -78,8 +78,8 @@ module ChemicalDetectorSoftware
 				turn,
 				command,
 				detect
-			,	decrCall,
-				incrCall
+			,	incrCall,
+				decrCall
 			|}
 	
 			-- defined operations
@@ -120,8 +120,8 @@ module ChemicalDetectorSoftware
 				channel turn: InOut.core_real
 				
 				-- Declaring call and ret events for undefined operations
-				channel decrCall
 				channel incrCall
+				channel decrCall
 				
 				enterSS = {|
 				i1::enter,
@@ -142,8 +142,8 @@ module ChemicalDetectorSoftware
 					terminate
 				,	cd,
 					turn
-				,	decrCall,
-					incrCall
+				,	incrCall,
+					decrCall
 					|}
 			
 				-- Nodes --
@@ -245,8 +245,8 @@ module ChemicalDetectorSoftware
 				-- If it is in the context of a controller, the required operations not provided by the
 				-- controller will be declared here, and the defined operations will be defined in the
 				-- context of the Controller module, and therefore within scope of the state machine module.
-				CALL__decr(id__) 	= decrCall -> SKIP
 				CALL__incr(id__) 	= incrCall -> SKIP
+				CALL__decr(id__) 	= decrCall -> SKIP
 				
 				-- END of Operation calls --
 				
@@ -973,8 +973,8 @@ module ChemicalDetectorSoftware
 			endmodule
 			
 				-- undefined operations
-				CALL__decr(id__) 	= decrCall -> SKIP
 				CALL__incr(id__) 	= incrCall -> SKIP
+				CALL__decr(id__) 	= decrCall -> SKIP
 				
 				-- declaring controller memory
 				Memory(id__) = SKIP
@@ -985,8 +985,8 @@ module ChemicalDetectorSoftware
 								stm_ref0::terminate <- terminate,
 								stm_ref0::cd <- command,
 								stm_ref0::turn <- turn,
-								stm_ref0::decrCall <- decrCall,
-								stm_ref0::incrCall <- incrCall
+								stm_ref0::incrCall <- incrCall,
+								stm_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate|}|]
@@ -1027,8 +1027,8 @@ module ChemicalDetectorSoftware
 								stm_ref0::terminate <- terminate,
 								stm_ref0::cd <- command,
 								stm_ref0::turn <- turn,
-								stm_ref0::decrCall <- decrCall,
-								stm_ref0::incrCall <- incrCall
+								stm_ref0::incrCall <- incrCall,
+								stm_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate|}|]
@@ -1069,8 +1069,8 @@ module ChemicalDetectorSoftware
 								stm_ref0::terminate <- terminate,
 								stm_ref0::cd <- command,
 								stm_ref0::turn <- turn,
-								stm_ref0::decrCall <- decrCall,
-								stm_ref0::incrCall <- incrCall
+								stm_ref0::incrCall <- incrCall,
+								stm_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate|}|]
@@ -1112,8 +1112,8 @@ module ChemicalDetectorSoftware
 								stm_ref0::terminate <- terminate,
 								stm_ref0::cd <- command,
 								stm_ref0::turn <- turn,
-								stm_ref0::decrCall <- decrCall,
-								stm_ref0::incrCall <- incrCall
+								stm_ref0::incrCall <- incrCall,
+								stm_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate|}|]
@@ -1996,8 +1996,8 @@ module ChemicalDetectorSoftware
 								ctrl_ref0::turn <- turn,
 								ctrl_ref0::gas <- gas,
 								ctrl_ref0::command <- cd,
-								ctrl_ref0::decrCall <- decrCall,
-								ctrl_ref0::incrCall <- incrCall
+								ctrl_ref0::incrCall <- incrCall,
+								ctrl_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate, ctrl_ref0::detect|}|]
@@ -2056,8 +2056,8 @@ module ChemicalDetectorSoftware
 								ctrl_ref0::turn <- turn,
 								ctrl_ref0::gas <- gas,
 								ctrl_ref0::command <- cd,
-								ctrl_ref0::decrCall <- decrCall,
-								ctrl_ref0::incrCall <- incrCall
+								ctrl_ref0::incrCall <- incrCall,
+								ctrl_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate, ctrl_ref0::detect|}|]
@@ -2116,8 +2116,8 @@ module ChemicalDetectorSoftware
 								ctrl_ref0::turn <- turn,
 								ctrl_ref0::gas <- gas,
 								ctrl_ref0::command <- cd,
-								ctrl_ref0::decrCall <- decrCall,
-								ctrl_ref0::incrCall <- incrCall
+								ctrl_ref0::incrCall <- incrCall,
+								ctrl_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate, ctrl_ref0::detect|}|]
@@ -2177,8 +2177,8 @@ module ChemicalDetectorSoftware
 								ctrl_ref0::turn <- turn,
 								ctrl_ref0::gas <- gas,
 								ctrl_ref0::command <- cd,
-								ctrl_ref0::decrCall <- decrCall,
-								ctrl_ref0::incrCall <- incrCall
+								ctrl_ref0::incrCall <- incrCall,
+								ctrl_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate, ctrl_ref0::detect|}|]
@@ -2238,8 +2238,8 @@ module ChemicalDetectorSoftware
 								ctrl_ref0::turn <- turn,
 								ctrl_ref0::gas <- gas,
 								ctrl_ref0::command <- cd,
-								ctrl_ref0::decrCall <- decrCall,
-								ctrl_ref0::incrCall <- incrCall
+								ctrl_ref0::incrCall <- incrCall,
+								ctrl_ref0::decrCall <- decrCall
 							]]
 						)
 							[|{|terminate, ctrl_ref0::detect|}|]

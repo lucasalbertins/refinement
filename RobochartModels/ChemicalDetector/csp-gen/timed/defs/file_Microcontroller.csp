@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 17:58:28
+-- Automatically generated on 11-03-2022 11:44:36
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -121,10 +121,20 @@
 			localClockResets = {||}
 			
 			
+			channel get_CLID_Waiting : core_clock_type 
 			channel get_CLID_DangerousGas : core_clock_type 
 			channel get_CLID_AnomalousGas : core_clock_type 
-			channel get_CLID_Waiting : core_clock_type 
 			--channel increment__
+			
+			CLID_Waiting_clock_type(id__,
+					          const_Signalling_flagTime) = 
+				let
+					max = (clock_type_max(Union({
+			{}
+			}))+1)
+				ctype = {0..max}
+			within
+				if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 			
 			CLID_DangerousGas_clock_type(id__,
 					          const_Signalling_flagTime) = 
@@ -137,16 +147,6 @@
 				if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 			
 			CLID_AnomalousGas_clock_type(id__,
-					          const_Signalling_flagTime) = 
-				let
-					max = (clock_type_max(Union({
-			{}
-			}))+1)
-				ctype = {0..max}
-			within
-				if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-			
-			CLID_Waiting_clock_type(id__,
 					          const_Signalling_flagTime) = 
 				let
 					max = (clock_type_max(Union({
@@ -591,7 +591,7 @@
 				Behaviour(id__,
 						    const_Signalling_flagTime) = 
 					dbisim((let
-						stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 					 within
 						(MachineBody(id__,
 								    const_Signalling_flagTime) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
@@ -602,7 +602,7 @@
 				IteratedBehaviour(id__,
 						    const_Signalling_flagTime) = 
 					dbisim((let
-						stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 					 within
 						(dbisim(
 							sbisim(
@@ -612,20 +612,20 @@
 											sbisim(
 												MachineBody(id__,
 														    const_Signalling_flagTime)
-												[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
-												dbisim(Clock_CLID_Waiting(id__,0,
+												[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
+												dbisim(Clock_CLID_AnomalousGas(id__,0,
 														          const_Signalling_flagTime))
-											)\{|get_CLID_Waiting|}
+											)\{|get_CLID_AnomalousGas|}
 										)
-										[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
-										dbisim(Clock_CLID_AnomalousGas(id__,0,
+										[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
+										dbisim(Clock_CLID_DangerousGas(id__,0,
 												          const_Signalling_flagTime))
-									)\{|get_CLID_AnomalousGas|}
+									)\{|get_CLID_DangerousGas|}
 								)
-								[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
-								dbisim(Clock_CLID_DangerousGas(id__,0,
+								[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+								dbisim(Clock_CLID_Waiting(id__,0,
 										          const_Signalling_flagTime))
-							)\{|get_CLID_DangerousGas|}
+							)\{|get_CLID_Waiting|}
 						)
 						) \ union(stateClockSync,enteredSS)
 					)
@@ -743,7 +743,7 @@
 				Behaviour_VS_O(id__,
 						    const_Signalling_flagTime) = 
 					dbisim((let
-						stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 					 within
 						(MachineBody_VS_O(id__,
 								    const_Signalling_flagTime) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
@@ -754,7 +754,7 @@
 				IteratedBehaviour_VS_O(id__,
 						    const_Signalling_flagTime) = 
 					dbisim((let
-						stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+						stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 					 within
 						(dbisim(
 							sbisim(
@@ -764,20 +764,20 @@
 											sbisim(
 												MachineBody_VS_O(id__,
 														    const_Signalling_flagTime)
-												[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
-												dbisim(Clock_CLID_Waiting(id__,0,
+												[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
+												dbisim(Clock_CLID_AnomalousGas(id__,0,
 														          const_Signalling_flagTime))
-											)\{|get_CLID_Waiting|}
+											)\{|get_CLID_AnomalousGas|}
 										)
-										[| {|get_CLID_AnomalousGas,AnomalousGas::entered,terminate|} |]
-										dbisim(Clock_CLID_AnomalousGas(id__,0,
+										[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
+										dbisim(Clock_CLID_DangerousGas(id__,0,
 												          const_Signalling_flagTime))
-									)\{|get_CLID_AnomalousGas|}
+									)\{|get_CLID_DangerousGas|}
 								)
-								[| {|get_CLID_DangerousGas,DangerousGas::entered,terminate|} |]
-								dbisim(Clock_CLID_DangerousGas(id__,0,
+								[| {|get_CLID_Waiting,Waiting::entered,terminate|} |]
+								dbisim(Clock_CLID_Waiting(id__,0,
 										          const_Signalling_flagTime))
-							)\{|get_CLID_DangerousGas|}
+							)\{|get_CLID_Waiting|}
 						)
 						) \ diff(union(stateClockSync,enteredSS),enteredSS)
 					)
@@ -861,6 +861,18 @@
 				
 				clockSync = {||}
 				
+				Clock_CLID_Waiting(id__,x__,
+						          const_Signalling_flagTime) = 
+					TimeOut_1(
+						Waiting::entered -> Clock_CLID_Waiting(id__,0,
+								          const_Signalling_flagTime)
+						[]
+						get_CLID_Waiting!x__ -> Clock_CLID_Waiting(id__,x__,
+								          const_Signalling_flagTime)
+						[]
+						terminate -> SKIP,Clock_CLID_Waiting(id__,clock_type_plus(x__,1,CLID_Waiting_clock_type(id__,
+								          const_Signalling_flagTime)),
+								          const_Signalling_flagTime))
 				Clock_CLID_DangerousGas(id__,x__,
 						          const_Signalling_flagTime) = 
 					TimeOut_1(
@@ -885,32 +897,20 @@
 						terminate -> SKIP,Clock_CLID_AnomalousGas(id__,clock_type_plus(x__,1,CLID_AnomalousGas_clock_type(id__,
 								          const_Signalling_flagTime)),
 								          const_Signalling_flagTime))
-				Clock_CLID_Waiting(id__,x__,
-						          const_Signalling_flagTime) = 
-					TimeOut_1(
-						Waiting::entered -> Clock_CLID_Waiting(id__,0,
-								          const_Signalling_flagTime)
-						[]
-						get_CLID_Waiting!x__ -> Clock_CLID_Waiting(id__,x__,
-								          const_Signalling_flagTime)
-						[]
-						terminate -> SKIP,Clock_CLID_Waiting(id__,clock_type_plus(x__,1,CLID_Waiting_clock_type(id__,
-								          const_Signalling_flagTime)),
-								          const_Signalling_flagTime))
 				
 				StateClocks(id__,
-						          const_Signalling_flagTime) = dbisim(Clock_CLID_DangerousGas(id__,0,
+						          const_Signalling_flagTime) = dbisim(Clock_CLID_Waiting(id__,0,
+						          const_Signalling_flagTime))
+				[| { terminate } |] (
+				dbisim(Clock_CLID_DangerousGas(id__,0,
 						          const_Signalling_flagTime))
 				[| { terminate } |] (
 				dbisim(Clock_CLID_AnomalousGas(id__,0,
 						          const_Signalling_flagTime))
-				[| { terminate } |] (
-				dbisim(Clock_CLID_Waiting(id__,0,
-						          const_Signalling_flagTime))
 				)
 				)
 				
-				stateClockSync = {|get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered,get_CLID_Waiting,Waiting::entered|}
+				stateClockSync = {|get_CLID_Waiting,Waiting::entered,get_CLID_DangerousGas,DangerousGas::entered,get_CLID_AnomalousGas,AnomalousGas::entered|}
 				
 				-- Shared memory
 				-- Shared memory variables

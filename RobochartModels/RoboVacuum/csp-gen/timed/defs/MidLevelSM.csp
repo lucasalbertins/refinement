@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:35
+-- Automatically generated on 08-03-2022 18:58:31
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -63,8 +63,8 @@ exports
 	channel stop: InOut
 	
 	-- Declaring call and ret events for undefined operations
-	channel output_right_motorCall: core_int
 	channel output_left_motorCall: core_int
+	channel output_right_motorCall: core_int
 	
 	enterSS = {|
 	i0::enter,
@@ -100,8 +100,8 @@ exports
 		move_forward,
 		turn,
 		stop
-	,	output_right_motorCall,
-		output_left_motorCall
+	,	output_left_motorCall,
+		output_right_motorCall
 		|}
 	
 	channel clockReset, clockResetL, clockResetR 
@@ -109,33 +109,13 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_Turn_right : core_clock_type 
 	channel get_CLID_Go_up : core_clock_type 
-	channel get_CLID_Stop : core_clock_type 
-	channel get_CLID_Turn_left : core_clock_type 
 	channel get_CLID_Go_down : core_clock_type 
+	channel get_CLID_Turn_left : core_clock_type 
+	channel get_CLID_Stop : core_clock_type 
 	channel get_CLID_Go_side : core_clock_type 
+	channel get_CLID_Turn_right : core_clock_type 
 	--channel increment__
-	
-	CLID_Turn_right_clock_type(id__,
-			          const_MidLevelSM_step,
-			          const_MidLevelSM_climb_speed,
-			          const_MidLevelSM_descent_speed,
-			          const_MidLevelSM_side_speed,
-			          const_MidLevelSM_forward_angle,
-			          const_MidLevelSM_left_angle,
-			          const_MidLevelSM_right_angle,
-			          const_MidLevelSM_turn_speed,
-			          const_MidLevelSM_movesp,
-			          const_MidLevelSM_stopsp) = 
-		let
-			max = (clock_type_max(Union({
-	{},
-	({const_MidLevelSM_step|step <- core_int})
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_Go_up_clock_type(id__,
 			          const_MidLevelSM_step,
@@ -157,7 +137,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_Stop_clock_type(id__,
+	CLID_Go_down_clock_type(id__,
 			          const_MidLevelSM_step,
 			          const_MidLevelSM_climb_speed,
 			          const_MidLevelSM_descent_speed,
@@ -198,7 +178,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_Go_down_clock_type(id__,
+	CLID_Stop_clock_type(id__,
 			          const_MidLevelSM_step,
 			          const_MidLevelSM_climb_speed,
 			          const_MidLevelSM_descent_speed,
@@ -232,6 +212,26 @@ exports
 		let
 			max = (clock_type_max(Union({
 	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Turn_right_clock_type(id__,
+			          const_MidLevelSM_step,
+			          const_MidLevelSM_climb_speed,
+			          const_MidLevelSM_descent_speed,
+			          const_MidLevelSM_side_speed,
+			          const_MidLevelSM_forward_angle,
+			          const_MidLevelSM_left_angle,
+			          const_MidLevelSM_right_angle,
+			          const_MidLevelSM_turn_speed,
+			          const_MidLevelSM_movesp,
+			          const_MidLevelSM_stopsp) = 
+		let
+			max = (clock_type_max(Union({
+	{},
+	({const_MidLevelSM_step|step <- core_int})
 	}))+1)
 		ctype = {0..max}
 	within
@@ -346,7 +346,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -398,7 +398,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -505,7 +505,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -557,7 +557,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -664,7 +664,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -716,7 +716,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -823,7 +823,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -875,7 +875,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -982,7 +982,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -1034,7 +1034,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -1141,7 +1141,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -1193,7 +1193,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+					Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 								id__,
 							    const_MidLevelSM_step,
 							    const_MidLevelSM_climb_speed,
@@ -1259,18 +1259,6 @@ exports
 		-- If it is in the context of a controller, the required operations not provided by the
 		-- controller will be declared here, and the defined operations will be defined in the
 		-- context of the Controller module, and therefore within scope of the state machine module.
-		CALL__output_right_motor(id__,
-				    const_MidLevelSM_step,
-				    const_MidLevelSM_climb_speed,
-				    const_MidLevelSM_descent_speed,
-				    const_MidLevelSM_side_speed,
-				    const_MidLevelSM_forward_angle,
-				    const_MidLevelSM_left_angle,
-				    const_MidLevelSM_right_angle,
-				    const_MidLevelSM_turn_speed,
-				    const_MidLevelSM_movesp,
-				    const_MidLevelSM_stopsp,
-					param_x) = EDeadline(output_right_motorCall.param_x,0)
 		CALL__output_left_motor(id__,
 				    const_MidLevelSM_step,
 				    const_MidLevelSM_climb_speed,
@@ -1283,6 +1271,18 @@ exports
 				    const_MidLevelSM_movesp,
 				    const_MidLevelSM_stopsp,
 					param_x) = EDeadline(output_left_motorCall.param_x,0)
+		CALL__output_right_motor(id__,
+				    const_MidLevelSM_step,
+				    const_MidLevelSM_climb_speed,
+				    const_MidLevelSM_descent_speed,
+				    const_MidLevelSM_side_speed,
+				    const_MidLevelSM_forward_angle,
+				    const_MidLevelSM_left_angle,
+				    const_MidLevelSM_right_angle,
+				    const_MidLevelSM_turn_speed,
+				    const_MidLevelSM_movesp,
+				    const_MidLevelSM_stopsp,
+					param_x) = EDeadline(output_right_motorCall.param_x,0)
 		
 		-- END of Operation calls --
 	
@@ -1389,27 +1389,7 @@ exports
 				    const_MidLevelSM_turn_speed,
 				    const_MidLevelSM_movesp,
 				    const_MidLevelSM_stopsp) = ((let
-			Trans = share__choice(get_CLID_Turn_right?Turn_right:CLID_Turn_right_clock_type(id__,
-					          const_MidLevelSM_step,
-					          const_MidLevelSM_climb_speed,
-					          const_MidLevelSM_descent_speed,
-					          const_MidLevelSM_side_speed,
-					          const_MidLevelSM_forward_angle,
-					          const_MidLevelSM_left_angle,
-					          const_MidLevelSM_right_angle,
-					          const_MidLevelSM_turn_speed,
-					          const_MidLevelSM_movesp,
-					          const_MidLevelSM_stopsp) -> get_orientation?orientation -> get_CLID_Go_up?Go_up:CLID_Go_up_clock_type(id__,
-					          const_MidLevelSM_step,
-					          const_MidLevelSM_climb_speed,
-					          const_MidLevelSM_descent_speed,
-					          const_MidLevelSM_side_speed,
-					          const_MidLevelSM_forward_angle,
-					          const_MidLevelSM_left_angle,
-					          const_MidLevelSM_right_angle,
-					          const_MidLevelSM_turn_speed,
-					          const_MidLevelSM_movesp,
-					          const_MidLevelSM_stopsp) -> get_direction?direction -> get_CLID_Stop?Stop:CLID_Stop_clock_type(id__,
+			Trans = share__choice(get_direction?direction -> get_orientation?orientation -> get_CLID_Go_up?Go_up:CLID_Go_up_clock_type(id__,
 					          const_MidLevelSM_step,
 					          const_MidLevelSM_climb_speed,
 					          const_MidLevelSM_descent_speed,
@@ -1430,6 +1410,26 @@ exports
 					          const_MidLevelSM_turn_speed,
 					          const_MidLevelSM_movesp,
 					          const_MidLevelSM_stopsp) -> get_CLID_Go_down?Go_down:CLID_Go_down_clock_type(id__,
+					          const_MidLevelSM_step,
+					          const_MidLevelSM_climb_speed,
+					          const_MidLevelSM_descent_speed,
+					          const_MidLevelSM_side_speed,
+					          const_MidLevelSM_forward_angle,
+					          const_MidLevelSM_left_angle,
+					          const_MidLevelSM_right_angle,
+					          const_MidLevelSM_turn_speed,
+					          const_MidLevelSM_movesp,
+					          const_MidLevelSM_stopsp) -> get_CLID_Stop?Stop:CLID_Stop_clock_type(id__,
+					          const_MidLevelSM_step,
+					          const_MidLevelSM_climb_speed,
+					          const_MidLevelSM_descent_speed,
+					          const_MidLevelSM_side_speed,
+					          const_MidLevelSM_forward_angle,
+					          const_MidLevelSM_left_angle,
+					          const_MidLevelSM_right_angle,
+					          const_MidLevelSM_turn_speed,
+					          const_MidLevelSM_movesp,
+					          const_MidLevelSM_stopsp) -> get_CLID_Turn_right?Turn_right:CLID_Turn_right_clock_type(id__,
 					          const_MidLevelSM_step,
 					          const_MidLevelSM_climb_speed,
 					          const_MidLevelSM_descent_speed,
@@ -1622,16 +1622,16 @@ exports
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__,setR_direction |} ]] 
-						  [[Turn_right::entered <- Turn_right::enteredL,set_orientation <- setL_orientation,Go_up::entered <- Go_up::enteredL,set_direction <- setL_direction,Stop::entered <- Stop::enteredL,Turn_left::entered <- Turn_left::enteredL,Go_down::entered <- Go_down::enteredL]]
+						  [[set_direction <- setL_direction,set_orientation <- setL_orientation,Go_up::entered <- Go_up::enteredL,Turn_left::entered <- Turn_left::enteredL,Go_down::entered <- Go_down::enteredL,Stop::entered <- Stop::enteredL,Turn_right::entered <- Turn_right::enteredL]]
 						 )
 						 [| union(union(union(flowevts,transSync),{terminate}),{|share__
-						 			,Turn_right::enteredL
+						 			,setL_direction
 						 			,setL_orientation
 						 			,Go_up::enteredL
-						 			,setL_direction
-						 			,Stop::enteredL
 						 			,Turn_left::enteredL
 						 			,Go_down::enteredL
+						 			,Stop::enteredL
+						 			,Turn_right::enteredL
 						 			,setR_direction
 						 			|}) |]
 						 ((i0::enter -> Transitions(id__,
@@ -1645,10 +1645,10 @@ exports
 						 		    const_MidLevelSM_turn_speed,
 						 		    const_MidLevelSM_movesp,
 						 		    const_MidLevelSM_stopsp))
-						  [[ share__ <- x__ | x__ <- {| share__,Turn_right::enteredL,setL_orientation,Go_up::enteredL,setL_direction,Stop::enteredL,Turn_left::enteredL,Go_down::enteredL |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_direction,setL_orientation,Go_up::enteredL,Turn_left::enteredL,Go_down::enteredL,Stop::enteredL,Turn_right::enteredL |} ]]
 						  [[set_direction <- setR_direction]]
 						 )
-						)[[Turn_right::enteredL <- Turn_right::entered,setL_orientation <- set_orientation,Go_up::enteredL <- Go_up::entered,setL_direction <- set_direction,Stop::enteredL <- Stop::entered,Turn_left::enteredL <- Turn_left::entered,Go_down::enteredL <- Go_down::entered]]
+						)[[setL_direction <- set_direction,setL_orientation <- set_orientation,Go_up::enteredL <- Go_up::entered,Turn_left::enteredL <- Turn_left::entered,Go_down::enteredL <- Go_down::entered,Stop::enteredL <- Stop::entered,Turn_right::enteredL <- Turn_right::entered]]
 						 [[setR_direction <- set_direction]]
 						)
 					)
@@ -1694,7 +1694,7 @@ exports
 				    const_MidLevelSM_movesp,
 				    const_MidLevelSM_stopsp) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Turn_right,Turn_right::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Stop,Stop::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_side,Go_side::entered|}
+				stateClockSync = {|get_CLID_Go_up,Go_up::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Stop,Stop::entered,get_CLID_Go_side,Go_side::entered,get_CLID_Turn_right,Turn_right::entered|}
 			 within
 				(MachineBody(id__,
 						    const_MidLevelSM_step,
@@ -1732,7 +1732,7 @@ exports
 				    const_MidLevelSM_movesp,
 				    const_MidLevelSM_stopsp) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Turn_right,Turn_right::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Stop,Stop::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_side,Go_side::entered|}
+				stateClockSync = {|get_CLID_Go_up,Go_up::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Stop,Stop::entered,get_CLID_Go_side,Go_side::entered,get_CLID_Turn_right,Turn_right::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1757,8 +1757,8 @@ exports
 																		    const_MidLevelSM_turn_speed,
 																		    const_MidLevelSM_movesp,
 																		    const_MidLevelSM_stopsp)
-																[| {|get_CLID_Go_side,Go_side::entered,terminate|} |]
-																dbisim(Clock_CLID_Go_side(id__,0,
+																[| {|get_CLID_Turn_right,Turn_right::entered,terminate|} |]
+																dbisim(Clock_CLID_Turn_right(id__,0,
 																		          const_MidLevelSM_step,
 																		          const_MidLevelSM_climb_speed,
 																		          const_MidLevelSM_descent_speed,
@@ -1769,10 +1769,10 @@ exports
 																		          const_MidLevelSM_turn_speed,
 																		          const_MidLevelSM_movesp,
 																		          const_MidLevelSM_stopsp))
-															)\{|get_CLID_Go_side|}
+															)\{|get_CLID_Turn_right|}
 														)
-														[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
-														dbisim(Clock_CLID_Go_down(id__,0,
+														[| {|get_CLID_Go_side,Go_side::entered,terminate|} |]
+														dbisim(Clock_CLID_Go_side(id__,0,
 																          const_MidLevelSM_step,
 																          const_MidLevelSM_climb_speed,
 																          const_MidLevelSM_descent_speed,
@@ -1783,10 +1783,10 @@ exports
 																          const_MidLevelSM_turn_speed,
 																          const_MidLevelSM_movesp,
 																          const_MidLevelSM_stopsp))
-													)\{|get_CLID_Go_down|}
+													)\{|get_CLID_Go_side|}
 												)
-												[| {|get_CLID_Turn_left,Turn_left::entered,terminate|} |]
-												dbisim(Clock_CLID_Turn_left(id__,0,
+												[| {|get_CLID_Stop,Stop::entered,terminate|} |]
+												dbisim(Clock_CLID_Stop(id__,0,
 														          const_MidLevelSM_step,
 														          const_MidLevelSM_climb_speed,
 														          const_MidLevelSM_descent_speed,
@@ -1797,10 +1797,10 @@ exports
 														          const_MidLevelSM_turn_speed,
 														          const_MidLevelSM_movesp,
 														          const_MidLevelSM_stopsp))
-											)\{|get_CLID_Turn_left|}
+											)\{|get_CLID_Stop|}
 										)
-										[| {|get_CLID_Stop,Stop::entered,terminate|} |]
-										dbisim(Clock_CLID_Stop(id__,0,
+										[| {|get_CLID_Turn_left,Turn_left::entered,terminate|} |]
+										dbisim(Clock_CLID_Turn_left(id__,0,
 												          const_MidLevelSM_step,
 												          const_MidLevelSM_climb_speed,
 												          const_MidLevelSM_descent_speed,
@@ -1811,10 +1811,10 @@ exports
 												          const_MidLevelSM_turn_speed,
 												          const_MidLevelSM_movesp,
 												          const_MidLevelSM_stopsp))
-									)\{|get_CLID_Stop|}
+									)\{|get_CLID_Turn_left|}
 								)
-								[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
-								dbisim(Clock_CLID_Go_up(id__,0,
+								[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
+								dbisim(Clock_CLID_Go_down(id__,0,
 										          const_MidLevelSM_step,
 										          const_MidLevelSM_climb_speed,
 										          const_MidLevelSM_descent_speed,
@@ -1825,10 +1825,10 @@ exports
 										          const_MidLevelSM_turn_speed,
 										          const_MidLevelSM_movesp,
 										          const_MidLevelSM_stopsp))
-							)\{|get_CLID_Go_up|}
+							)\{|get_CLID_Go_down|}
 						)
-						[| {|get_CLID_Turn_right,Turn_right::entered,terminate|} |]
-						dbisim(Clock_CLID_Turn_right(id__,0,
+						[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
+						dbisim(Clock_CLID_Go_up(id__,0,
 								          const_MidLevelSM_step,
 								          const_MidLevelSM_climb_speed,
 								          const_MidLevelSM_descent_speed,
@@ -1839,7 +1839,7 @@ exports
 								          const_MidLevelSM_turn_speed,
 								          const_MidLevelSM_movesp,
 								          const_MidLevelSM_stopsp))
-					)\{|get_CLID_Turn_right|}
+					)\{|get_CLID_Go_up|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -2107,16 +2107,16 @@ exports
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__,setR_direction |} ]] 
-						  [[Turn_right::entered <- Turn_right::enteredL,set_orientation <- setL_orientation,Go_up::entered <- Go_up::enteredL,set_direction <- setL_direction,Stop::entered <- Stop::enteredL,Turn_left::entered <- Turn_left::enteredL,Go_down::entered <- Go_down::enteredL]]
+						  [[set_direction <- setL_direction,set_orientation <- setL_orientation,Go_up::entered <- Go_up::enteredL,Turn_left::entered <- Turn_left::enteredL,Go_down::entered <- Go_down::enteredL,Stop::entered <- Stop::enteredL,Turn_right::entered <- Turn_right::enteredL]]
 						 )
 						 [| union(union(union(flowevts,transSync),{terminate}),{|share__
-						 			,Turn_right::enteredL
+						 			,setL_direction
 						 			,setL_orientation
 						 			,Go_up::enteredL
-						 			,setL_direction
-						 			,Stop::enteredL
 						 			,Turn_left::enteredL
 						 			,Go_down::enteredL
+						 			,Stop::enteredL
+						 			,Turn_right::enteredL
 						 			,setR_direction
 						 			|}) |]
 						 ((i0::enter -> Transitions(id__,
@@ -2130,10 +2130,10 @@ exports
 						 		    const_MidLevelSM_turn_speed,
 						 		    const_MidLevelSM_movesp,
 						 		    const_MidLevelSM_stopsp))
-						  [[ share__ <- x__ | x__ <- {| share__,Turn_right::enteredL,setL_orientation,Go_up::enteredL,setL_direction,Stop::enteredL,Turn_left::enteredL,Go_down::enteredL |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_direction,setL_orientation,Go_up::enteredL,Turn_left::enteredL,Go_down::enteredL,Stop::enteredL,Turn_right::enteredL |} ]]
 						  [[set_direction <- setR_direction]]
 						 )
-						)[[Turn_right::enteredL <- Turn_right::entered,setL_orientation <- set_orientation,Go_up::enteredL <- Go_up::entered,setL_direction <- set_direction,Stop::enteredL <- Stop::entered,Turn_left::enteredL <- Turn_left::entered,Go_down::enteredL <- Go_down::entered]]
+						)[[setL_direction <- set_direction,setL_orientation <- set_orientation,Go_up::enteredL <- Go_up::entered,Turn_left::enteredL <- Turn_left::entered,Go_down::enteredL <- Go_down::entered,Stop::enteredL <- Stop::entered,Turn_right::enteredL <- Turn_right::entered]]
 						 [[setR_direction <- set_direction]]
 						)
 					)
@@ -2179,7 +2179,7 @@ exports
 				    const_MidLevelSM_movesp,
 				    const_MidLevelSM_stopsp) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Turn_right,Turn_right::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Stop,Stop::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_side,Go_side::entered|}
+				stateClockSync = {|get_CLID_Go_up,Go_up::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Stop,Stop::entered,get_CLID_Go_side,Go_side::entered,get_CLID_Turn_right,Turn_right::entered|}
 			 within
 				(MachineBody_VS_O(id__,
 						    const_MidLevelSM_step,
@@ -2217,7 +2217,7 @@ exports
 				    const_MidLevelSM_movesp,
 				    const_MidLevelSM_stopsp) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Turn_right,Turn_right::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Stop,Stop::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_side,Go_side::entered|}
+				stateClockSync = {|get_CLID_Go_up,Go_up::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Stop,Stop::entered,get_CLID_Go_side,Go_side::entered,get_CLID_Turn_right,Turn_right::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -2242,8 +2242,8 @@ exports
 																		    const_MidLevelSM_turn_speed,
 																		    const_MidLevelSM_movesp,
 																		    const_MidLevelSM_stopsp)
-																[| {|get_CLID_Go_side,Go_side::entered,terminate|} |]
-																dbisim(Clock_CLID_Go_side(id__,0,
+																[| {|get_CLID_Turn_right,Turn_right::entered,terminate|} |]
+																dbisim(Clock_CLID_Turn_right(id__,0,
 																		          const_MidLevelSM_step,
 																		          const_MidLevelSM_climb_speed,
 																		          const_MidLevelSM_descent_speed,
@@ -2254,10 +2254,10 @@ exports
 																		          const_MidLevelSM_turn_speed,
 																		          const_MidLevelSM_movesp,
 																		          const_MidLevelSM_stopsp))
-															)\{|get_CLID_Go_side|}
+															)\{|get_CLID_Turn_right|}
 														)
-														[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
-														dbisim(Clock_CLID_Go_down(id__,0,
+														[| {|get_CLID_Go_side,Go_side::entered,terminate|} |]
+														dbisim(Clock_CLID_Go_side(id__,0,
 																          const_MidLevelSM_step,
 																          const_MidLevelSM_climb_speed,
 																          const_MidLevelSM_descent_speed,
@@ -2268,10 +2268,10 @@ exports
 																          const_MidLevelSM_turn_speed,
 																          const_MidLevelSM_movesp,
 																          const_MidLevelSM_stopsp))
-													)\{|get_CLID_Go_down|}
+													)\{|get_CLID_Go_side|}
 												)
-												[| {|get_CLID_Turn_left,Turn_left::entered,terminate|} |]
-												dbisim(Clock_CLID_Turn_left(id__,0,
+												[| {|get_CLID_Stop,Stop::entered,terminate|} |]
+												dbisim(Clock_CLID_Stop(id__,0,
 														          const_MidLevelSM_step,
 														          const_MidLevelSM_climb_speed,
 														          const_MidLevelSM_descent_speed,
@@ -2282,10 +2282,10 @@ exports
 														          const_MidLevelSM_turn_speed,
 														          const_MidLevelSM_movesp,
 														          const_MidLevelSM_stopsp))
-											)\{|get_CLID_Turn_left|}
+											)\{|get_CLID_Stop|}
 										)
-										[| {|get_CLID_Stop,Stop::entered,terminate|} |]
-										dbisim(Clock_CLID_Stop(id__,0,
+										[| {|get_CLID_Turn_left,Turn_left::entered,terminate|} |]
+										dbisim(Clock_CLID_Turn_left(id__,0,
 												          const_MidLevelSM_step,
 												          const_MidLevelSM_climb_speed,
 												          const_MidLevelSM_descent_speed,
@@ -2296,10 +2296,10 @@ exports
 												          const_MidLevelSM_turn_speed,
 												          const_MidLevelSM_movesp,
 												          const_MidLevelSM_stopsp))
-									)\{|get_CLID_Stop|}
+									)\{|get_CLID_Turn_left|}
 								)
-								[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
-								dbisim(Clock_CLID_Go_up(id__,0,
+								[| {|get_CLID_Go_down,Go_down::entered,terminate|} |]
+								dbisim(Clock_CLID_Go_down(id__,0,
 										          const_MidLevelSM_step,
 										          const_MidLevelSM_climb_speed,
 										          const_MidLevelSM_descent_speed,
@@ -2310,10 +2310,10 @@ exports
 										          const_MidLevelSM_turn_speed,
 										          const_MidLevelSM_movesp,
 										          const_MidLevelSM_stopsp))
-							)\{|get_CLID_Go_up|}
+							)\{|get_CLID_Go_down|}
 						)
-						[| {|get_CLID_Turn_right,Turn_right::entered,terminate|} |]
-						dbisim(Clock_CLID_Turn_right(id__,0,
+						[| {|get_CLID_Go_up,Go_up::entered,terminate|} |]
+						dbisim(Clock_CLID_Go_up(id__,0,
 								          const_MidLevelSM_step,
 								          const_MidLevelSM_climb_speed,
 								          const_MidLevelSM_descent_speed,
@@ -2324,7 +2324,7 @@ exports
 								          const_MidLevelSM_turn_speed,
 								          const_MidLevelSM_movesp,
 								          const_MidLevelSM_stopsp))
-					)\{|get_CLID_Turn_right|}
+					)\{|get_CLID_Go_up|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -2720,63 +2720,6 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_Turn_right(id__,x__,
-				          const_MidLevelSM_step,
-				          const_MidLevelSM_climb_speed,
-				          const_MidLevelSM_descent_speed,
-				          const_MidLevelSM_side_speed,
-				          const_MidLevelSM_forward_angle,
-				          const_MidLevelSM_left_angle,
-				          const_MidLevelSM_right_angle,
-				          const_MidLevelSM_turn_speed,
-				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp) = 
-			TimeOut_1(
-				Turn_right::entered -> Clock_CLID_Turn_right(id__,0,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)
-				[]
-				get_CLID_Turn_right!x__ -> Clock_CLID_Turn_right(id__,x__,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)
-				[]
-				terminate -> SKIP,Clock_CLID_Turn_right(id__,clock_type_plus(x__,1,CLID_Turn_right_clock_type(id__,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)),
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp))
 		Clock_CLID_Go_up(id__,x__,
 				          const_MidLevelSM_step,
 				          const_MidLevelSM_climb_speed,
@@ -2814,120 +2757,6 @@ exports
 						          const_MidLevelSM_stopsp)
 				[]
 				terminate -> SKIP,Clock_CLID_Go_up(id__,clock_type_plus(x__,1,CLID_Go_up_clock_type(id__,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)),
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp))
-		Clock_CLID_Stop(id__,x__,
-				          const_MidLevelSM_step,
-				          const_MidLevelSM_climb_speed,
-				          const_MidLevelSM_descent_speed,
-				          const_MidLevelSM_side_speed,
-				          const_MidLevelSM_forward_angle,
-				          const_MidLevelSM_left_angle,
-				          const_MidLevelSM_right_angle,
-				          const_MidLevelSM_turn_speed,
-				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp) = 
-			TimeOut_1(
-				Stop::entered -> Clock_CLID_Stop(id__,0,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)
-				[]
-				get_CLID_Stop!x__ -> Clock_CLID_Stop(id__,x__,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)
-				[]
-				terminate -> SKIP,Clock_CLID_Stop(id__,clock_type_plus(x__,1,CLID_Stop_clock_type(id__,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)),
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp))
-		Clock_CLID_Turn_left(id__,x__,
-				          const_MidLevelSM_step,
-				          const_MidLevelSM_climb_speed,
-				          const_MidLevelSM_descent_speed,
-				          const_MidLevelSM_side_speed,
-				          const_MidLevelSM_forward_angle,
-				          const_MidLevelSM_left_angle,
-				          const_MidLevelSM_right_angle,
-				          const_MidLevelSM_turn_speed,
-				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp) = 
-			TimeOut_1(
-				Turn_left::entered -> Clock_CLID_Turn_left(id__,0,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)
-				[]
-				get_CLID_Turn_left!x__ -> Clock_CLID_Turn_left(id__,x__,
-						          const_MidLevelSM_step,
-						          const_MidLevelSM_climb_speed,
-						          const_MidLevelSM_descent_speed,
-						          const_MidLevelSM_side_speed,
-						          const_MidLevelSM_forward_angle,
-						          const_MidLevelSM_left_angle,
-						          const_MidLevelSM_right_angle,
-						          const_MidLevelSM_turn_speed,
-						          const_MidLevelSM_movesp,
-						          const_MidLevelSM_stopsp)
-				[]
-				terminate -> SKIP,Clock_CLID_Turn_left(id__,clock_type_plus(x__,1,CLID_Turn_left_clock_type(id__,
 						          const_MidLevelSM_step,
 						          const_MidLevelSM_climb_speed,
 						          const_MidLevelSM_descent_speed,
@@ -3005,6 +2834,120 @@ exports
 						          const_MidLevelSM_turn_speed,
 						          const_MidLevelSM_movesp,
 						          const_MidLevelSM_stopsp))
+		Clock_CLID_Turn_left(id__,x__,
+				          const_MidLevelSM_step,
+				          const_MidLevelSM_climb_speed,
+				          const_MidLevelSM_descent_speed,
+				          const_MidLevelSM_side_speed,
+				          const_MidLevelSM_forward_angle,
+				          const_MidLevelSM_left_angle,
+				          const_MidLevelSM_right_angle,
+				          const_MidLevelSM_turn_speed,
+				          const_MidLevelSM_movesp,
+				          const_MidLevelSM_stopsp) = 
+			TimeOut_1(
+				Turn_left::entered -> Clock_CLID_Turn_left(id__,0,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)
+				[]
+				get_CLID_Turn_left!x__ -> Clock_CLID_Turn_left(id__,x__,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)
+				[]
+				terminate -> SKIP,Clock_CLID_Turn_left(id__,clock_type_plus(x__,1,CLID_Turn_left_clock_type(id__,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)),
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp))
+		Clock_CLID_Stop(id__,x__,
+				          const_MidLevelSM_step,
+				          const_MidLevelSM_climb_speed,
+				          const_MidLevelSM_descent_speed,
+				          const_MidLevelSM_side_speed,
+				          const_MidLevelSM_forward_angle,
+				          const_MidLevelSM_left_angle,
+				          const_MidLevelSM_right_angle,
+				          const_MidLevelSM_turn_speed,
+				          const_MidLevelSM_movesp,
+				          const_MidLevelSM_stopsp) = 
+			TimeOut_1(
+				Stop::entered -> Clock_CLID_Stop(id__,0,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)
+				[]
+				get_CLID_Stop!x__ -> Clock_CLID_Stop(id__,x__,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)
+				[]
+				terminate -> SKIP,Clock_CLID_Stop(id__,clock_type_plus(x__,1,CLID_Stop_clock_type(id__,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)),
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp))
 		Clock_CLID_Go_side(id__,x__,
 				          const_MidLevelSM_step,
 				          const_MidLevelSM_climb_speed,
@@ -3062,6 +3005,63 @@ exports
 						          const_MidLevelSM_turn_speed,
 						          const_MidLevelSM_movesp,
 						          const_MidLevelSM_stopsp))
+		Clock_CLID_Turn_right(id__,x__,
+				          const_MidLevelSM_step,
+				          const_MidLevelSM_climb_speed,
+				          const_MidLevelSM_descent_speed,
+				          const_MidLevelSM_side_speed,
+				          const_MidLevelSM_forward_angle,
+				          const_MidLevelSM_left_angle,
+				          const_MidLevelSM_right_angle,
+				          const_MidLevelSM_turn_speed,
+				          const_MidLevelSM_movesp,
+				          const_MidLevelSM_stopsp) = 
+			TimeOut_1(
+				Turn_right::entered -> Clock_CLID_Turn_right(id__,0,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)
+				[]
+				get_CLID_Turn_right!x__ -> Clock_CLID_Turn_right(id__,x__,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)
+				[]
+				terminate -> SKIP,Clock_CLID_Turn_right(id__,clock_type_plus(x__,1,CLID_Turn_right_clock_type(id__,
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp)),
+						          const_MidLevelSM_step,
+						          const_MidLevelSM_climb_speed,
+						          const_MidLevelSM_descent_speed,
+						          const_MidLevelSM_side_speed,
+						          const_MidLevelSM_forward_angle,
+						          const_MidLevelSM_left_angle,
+						          const_MidLevelSM_right_angle,
+						          const_MidLevelSM_turn_speed,
+						          const_MidLevelSM_movesp,
+						          const_MidLevelSM_stopsp))
 		
 		StateClocks(id__,
 				          const_MidLevelSM_step,
@@ -3073,43 +3073,7 @@ exports
 				          const_MidLevelSM_right_angle,
 				          const_MidLevelSM_turn_speed,
 				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp) = dbisim(Clock_CLID_Turn_right(id__,0,
-				          const_MidLevelSM_step,
-				          const_MidLevelSM_climb_speed,
-				          const_MidLevelSM_descent_speed,
-				          const_MidLevelSM_side_speed,
-				          const_MidLevelSM_forward_angle,
-				          const_MidLevelSM_left_angle,
-				          const_MidLevelSM_right_angle,
-				          const_MidLevelSM_turn_speed,
-				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Go_up(id__,0,
-				          const_MidLevelSM_step,
-				          const_MidLevelSM_climb_speed,
-				          const_MidLevelSM_descent_speed,
-				          const_MidLevelSM_side_speed,
-				          const_MidLevelSM_forward_angle,
-				          const_MidLevelSM_left_angle,
-				          const_MidLevelSM_right_angle,
-				          const_MidLevelSM_turn_speed,
-				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Stop(id__,0,
-				          const_MidLevelSM_step,
-				          const_MidLevelSM_climb_speed,
-				          const_MidLevelSM_descent_speed,
-				          const_MidLevelSM_side_speed,
-				          const_MidLevelSM_forward_angle,
-				          const_MidLevelSM_left_angle,
-				          const_MidLevelSM_right_angle,
-				          const_MidLevelSM_turn_speed,
-				          const_MidLevelSM_movesp,
-				          const_MidLevelSM_stopsp))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Turn_left(id__,0,
+				          const_MidLevelSM_stopsp) = dbisim(Clock_CLID_Go_up(id__,0,
 				          const_MidLevelSM_step,
 				          const_MidLevelSM_climb_speed,
 				          const_MidLevelSM_descent_speed,
@@ -3133,7 +3097,43 @@ exports
 				          const_MidLevelSM_movesp,
 				          const_MidLevelSM_stopsp))
 		[| { terminate } |] (
+		dbisim(Clock_CLID_Turn_left(id__,0,
+				          const_MidLevelSM_step,
+				          const_MidLevelSM_climb_speed,
+				          const_MidLevelSM_descent_speed,
+				          const_MidLevelSM_side_speed,
+				          const_MidLevelSM_forward_angle,
+				          const_MidLevelSM_left_angle,
+				          const_MidLevelSM_right_angle,
+				          const_MidLevelSM_turn_speed,
+				          const_MidLevelSM_movesp,
+				          const_MidLevelSM_stopsp))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Stop(id__,0,
+				          const_MidLevelSM_step,
+				          const_MidLevelSM_climb_speed,
+				          const_MidLevelSM_descent_speed,
+				          const_MidLevelSM_side_speed,
+				          const_MidLevelSM_forward_angle,
+				          const_MidLevelSM_left_angle,
+				          const_MidLevelSM_right_angle,
+				          const_MidLevelSM_turn_speed,
+				          const_MidLevelSM_movesp,
+				          const_MidLevelSM_stopsp))
+		[| { terminate } |] (
 		dbisim(Clock_CLID_Go_side(id__,0,
+				          const_MidLevelSM_step,
+				          const_MidLevelSM_climb_speed,
+				          const_MidLevelSM_descent_speed,
+				          const_MidLevelSM_side_speed,
+				          const_MidLevelSM_forward_angle,
+				          const_MidLevelSM_left_angle,
+				          const_MidLevelSM_right_angle,
+				          const_MidLevelSM_turn_speed,
+				          const_MidLevelSM_movesp,
+				          const_MidLevelSM_stopsp))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Turn_right(id__,0,
 				          const_MidLevelSM_step,
 				          const_MidLevelSM_climb_speed,
 				          const_MidLevelSM_descent_speed,
@@ -3150,7 +3150,7 @@ exports
 		)
 		)
 		
-		stateClockSync = {|get_CLID_Turn_right,Turn_right::entered,get_CLID_Go_up,Go_up::entered,get_CLID_Stop,Stop::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Go_side,Go_side::entered|}
+		stateClockSync = {|get_CLID_Go_up,Go_up::entered,get_CLID_Go_down,Go_down::entered,get_CLID_Turn_left,Turn_left::entered,get_CLID_Stop,Stop::entered,get_CLID_Go_side,Go_side::entered,get_CLID_Turn_right,Turn_right::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

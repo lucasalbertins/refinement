@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:36
+-- Automatically generated on 08-03-2022 18:58:33
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -67,10 +67,10 @@ module Module
 			
 			
 			-- declaring call and ret events for undefined operations
-			channel output_right_motorCall: core_int
-			channel vacuumCall: core_int
 			channel brushCall: core_int
+			channel vacuumCall: core_int
 			channel output_left_motorCall: core_int
+			channel output_right_motorCall: core_int
 			
 			-- declaring controller termination channel
 			channel terminate
@@ -83,10 +83,10 @@ module Module
 				ultrasonic,
 				battery_level,
 				charging
-			,	output_right_motorCall,
+			,	brushCall,
 				vacuumCall,
-				brushCall,
-				output_left_motorCall
+				output_left_motorCall,
+				output_right_motorCall
 			|}
 	
 			-- defined operations
@@ -1074,7 +1074,7 @@ module Module
 						    const_PathPlanningSM_battery_low,
 						    const_PathPlanningSM_sleep_time,
 						    const_PathPlanningSM_acc_distance) = ((let
-					Trans = share__choice(get_u?u -> get_cycles?cycles -> get_b?b -> get_d?d -> (
+					Trans = share__choice(get_d?d -> get_u?u -> get_cycles?cycles -> get_b?b -> (
 						((share__ -> SKIP
 						 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((share__choice(true & (share__choice(set_cycles!0 -> SKIP))) ; Resume::enter -> SKIP))))
 						 	 [] dbisim((ultrasonic__!NID_Go_up.in?u:{u|u <- core_int, (u>=const_PathPlanningSM_cliff)} -> share__choice(set_u!u -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; Go_right::enter -> SKIP)))
@@ -1243,17 +1243,17 @@ module Module
 								 [[Resume::interrupt <- x__ | x__ <- {|interrupt,displacement__.NID_Resume.in|}]]
 								 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 								 )
-								  [[ share__ <- x__ | x__ <- {| share__,setR_u,setR_b,setR_d |} ]] 
-								  [[set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b,set_d <- setL_d]]
+								  [[ share__ <- x__ | x__ <- {| share__,setR_d,setR_u,setR_b |} ]] 
+								  [[set_d <- setL_d,set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b]]
 								 )
 								 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+								 			,setL_d
 								 			,setL_u
 								 			,setL_cycles
 								 			,setL_b
-								 			,setL_d
-								 			,setR_u
+								 			,setR_d
+								 			 			,setR_u
 								 			 			,setR_b
-								 			 			,setR_d
 								 			|}) |]
 								 ((i0::enter -> Transitions(id__,
 								 		    const_PathPlanningSM_cliff,
@@ -1261,11 +1261,11 @@ module Module
 								 		    const_PathPlanningSM_battery_low,
 								 		    const_PathPlanningSM_sleep_time,
 								 		    const_PathPlanningSM_acc_distance))
-								  [[ share__ <- x__ | x__ <- {| share__,setL_u,setL_cycles,setL_b,setL_d |} ]]
-								  [[set_u <- setR_u,set_b <- setR_b,set_d <- setR_d]]
+								  [[ share__ <- x__ | x__ <- {| share__,setL_d,setL_u,setL_cycles,setL_b |} ]]
+								  [[set_d <- setR_d,set_u <- setR_u,set_b <- setR_b]]
 								 )
-								)[[setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b,setL_d <- set_d]]
-								 [[setR_u <- set_u,setR_b <- set_b,setR_d <- set_d]]
+								)[[setL_d <- set_d,setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b]]
+								 [[setR_d <- set_d,setR_u <- set_u,setR_b <- set_b]]
 								)
 							)
 							 \ hideSet)
@@ -1510,17 +1510,17 @@ module Module
 								 [[Resume::interrupt <- x__ | x__ <- {|interrupt,displacement__.NID_Resume.in|}]]
 								 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 								 )
-								  [[ share__ <- x__ | x__ <- {| share__,setR_u,setR_b,setR_d |} ]] 
-								  [[set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b,set_d <- setL_d]]
+								  [[ share__ <- x__ | x__ <- {| share__,setR_d,setR_u,setR_b |} ]] 
+								  [[set_d <- setL_d,set_u <- setL_u,set_cycles <- setL_cycles,set_b <- setL_b]]
 								 )
 								 [| union(union(union(flowevts,transSync),{terminate}),{|share__
+								 			,setL_d
 								 			,setL_u
 								 			,setL_cycles
 								 			,setL_b
-								 			,setL_d
-								 			,setR_u
+								 			,setR_d
+								 			 			,setR_u
 								 			 			,setR_b
-								 			 			,setR_d
 								 			|}) |]
 								 ((i0::enter -> Transitions(id__,
 								 		    const_PathPlanningSM_cliff,
@@ -1528,11 +1528,11 @@ module Module
 								 		    const_PathPlanningSM_battery_low,
 								 		    const_PathPlanningSM_sleep_time,
 								 		    const_PathPlanningSM_acc_distance))
-								  [[ share__ <- x__ | x__ <- {| share__,setL_u,setL_cycles,setL_b,setL_d |} ]]
-								  [[set_u <- setR_u,set_b <- setR_b,set_d <- setR_d]]
+								  [[ share__ <- x__ | x__ <- {| share__,setL_d,setL_u,setL_cycles,setL_b |} ]]
+								  [[set_d <- setR_d,set_u <- setR_u,set_b <- setR_b]]
 								 )
-								)[[setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b,setL_d <- set_d]]
-								 [[setR_u <- set_u,setR_b <- set_b,setR_d <- set_d]]
+								)[[setL_d <- set_d,setL_u <- set_u,setL_cycles <- set_cycles,setL_b <- set_b]]
+								 [[setR_d <- set_d,setR_u <- set_u,setR_b <- set_b]]
 								)
 							)
 							 \ hideSet)
@@ -3562,8 +3562,8 @@ module Module
 				channel clean: InOut.core_boolean
 				
 				-- Declaring call and ret events for undefined operations
-				channel vacuumCall: core_int
 				channel brushCall: core_int
+				channel vacuumCall: core_int
 				
 				enterSS = {|
 				i0::enter,
@@ -3585,8 +3585,8 @@ module Module
 				sem__events = {|
 					terminate
 				,	clean
-				,	vacuumCall,
-					brushCall
+				,	brushCall,
+					vacuumCall
 					|}
 			
 				-- Nodes --
@@ -3793,12 +3793,12 @@ module Module
 				-- If it is in the context of a controller, the required operations not provided by the
 				-- controller will be declared here, and the defined operations will be defined in the
 				-- context of the Controller module, and therefore within scope of the state machine module.
-				CALL__vacuum(id__,
-						    const_CleanSM_voltage,
-							param_x) 	= vacuumCall.param_x -> SKIP
 				CALL__brush(id__,
 						    const_CleanSM_voltage,
 							param_x) 	= brushCall.param_x -> SKIP
+				CALL__vacuum(id__,
+						    const_CleanSM_voltage,
+							param_x) 	= vacuumCall.param_x -> SKIP
 				
 				-- END of Operation calls --
 				
@@ -4466,7 +4466,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(share__choice(get_al?al -> share__choice(get_ar?ar -> share__choice(get_turn_angle?turn_angle -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
+						Active 		= share__choice(share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> share__choice(get_ar?ar -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -4484,7 +4484,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(share__choice(get_al?al -> share__choice(get_ar?ar -> share__choice(get_turn_angle?turn_angle -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
+						Active 		= share__choice(share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> share__choice(get_ar?ar -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -4561,7 +4561,7 @@ module Module
 						 	 [] dbisim((true)&(acc_r__!NID_wait_input.in?ar:{ar|ar <- TripleAxis, true} -> share__choice(set_ar!ar -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; wait_al::enter -> SKIP)))
 						 	 [] dbisim((true)&(acc_r__!NID_wait_ar.in?ar:{ar|ar <- TripleAxis, true} -> share__choice(set_ar!ar -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_value::enter -> SKIP)))
 						 	 [] dbisim((true)&(acc_l__!NID_wait_al.in?al:{al|al <- TripleAxis, true} -> share__choice(set_al!al -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_value::enter -> SKIP)))
-						 	 [] dbisim((true)&(internal__!NID_update_value -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_al?al -> share__choice(get_turn_angle?turn_angle -> true&(share__choice(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP))));SKIP ; wait_input::enter -> SKIP)))
+						 	 [] dbisim((true)&(internal__!NID_update_value -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> true&(share__choice(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP))));SKIP ; wait_input::enter -> SKIP)))
 						 ) ; Trans)
 						 []
 						 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))
@@ -5141,7 +5141,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(share__choice(get_actual_value?actual_value -> share__choice(get_target_value?target_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_prior_error?prior_error -> share__choice(get_error?error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> share__choice(get_error?error -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
+						Active 		= share__choice(share__choice(get_target_value?target_value -> share__choice(get_actual_value?actual_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_prior_error?prior_error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -5161,7 +5161,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(share__choice(get_actual_value?actual_value -> share__choice(get_target_value?target_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_prior_error?prior_error -> share__choice(get_error?error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> share__choice(get_error?error -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
+						Active 		= share__choice(share__choice(get_target_value?target_value -> share__choice(get_actual_value?actual_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_prior_error?prior_error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -6220,7 +6220,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(share__choice(get_actual_value?actual_value -> share__choice(get_target_value?target_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_prior_error?prior_error -> share__choice(get_error?error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> share__choice(get_error?error -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
+						Active 		= share__choice(share__choice(get_target_value?target_value -> share__choice(get_actual_value?actual_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_prior_error?prior_error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -6240,7 +6240,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(share__choice(get_actual_value?actual_value -> share__choice(get_target_value?target_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_prior_error?prior_error -> share__choice(get_error?error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> share__choice(get_error?error -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
+						Active 		= share__choice(share__choice(get_target_value?target_value -> share__choice(get_actual_value?actual_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_prior_error?prior_error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), const_PID_step, core_real)) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -7202,8 +7202,8 @@ module Module
 				channel stop: InOut
 				
 				-- Declaring call and ret events for undefined operations
-				channel output_right_motorCall: core_int
 				channel output_left_motorCall: core_int
+				channel output_right_motorCall: core_int
 				
 				enterSS = {|
 				i0::enter,
@@ -7239,8 +7239,8 @@ module Module
 					move_forward,
 					turn,
 					stop
-				,	output_right_motorCall,
-					output_left_motorCall
+				,	output_left_motorCall,
+					output_right_motorCall
 					|}
 			
 				-- Nodes --
@@ -7344,7 +7344,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7396,7 +7396,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_climb_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7482,7 +7482,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7534,7 +7534,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_right_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7620,7 +7620,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7672,7 +7672,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_descent_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7758,7 +7758,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7810,7 +7810,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_left_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7896,7 +7896,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -7948,7 +7948,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_side_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -8034,7 +8034,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -8086,7 +8086,7 @@ module Module
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_angle_adj?angle_adj -> share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
+						Active 		= true&(share__choice(target_speed.out!const_MidLevelSM_turn_speed -> SKIP));true&(share__choice(speed_adjustment.in?speed_adj -> (SStop /\ set_speed_adj!speed_adj -> SKIP)));true&(share__choice(target_angle.out!const_MidLevelSM_forward_angle -> SKIP));true&(share__choice(angle_adjustment.in?angle_adj -> (SStop /\ set_angle_adj!angle_adj -> SKIP)));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_angle_adj?angle_adj -> share__choice(get_lspeed?lspeed -> true & (share__choice(set_lspeed!Minus(Minus(lspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(share__choice(get_speed_adj?speed_adj -> share__choice(get_rspeed?rspeed -> share__choice(get_angle_adj?angle_adj -> true & (share__choice(set_rspeed!Plus(Minus(rspeed, speed_adj, core_int), angle_adj, core_int) -> SKIP))))));share__choice(get_lspeed?lspeed -> true&CALL__output_left_motor(
 									id__,
 								    const_MidLevelSM_step,
 								    const_MidLevelSM_climb_speed,
@@ -8134,18 +8134,6 @@ module Module
 				-- If it is in the context of a controller, the required operations not provided by the
 				-- controller will be declared here, and the defined operations will be defined in the
 				-- context of the Controller module, and therefore within scope of the state machine module.
-				CALL__output_right_motor(id__,
-						    const_MidLevelSM_step,
-						    const_MidLevelSM_climb_speed,
-						    const_MidLevelSM_descent_speed,
-						    const_MidLevelSM_side_speed,
-						    const_MidLevelSM_forward_angle,
-						    const_MidLevelSM_left_angle,
-						    const_MidLevelSM_right_angle,
-						    const_MidLevelSM_turn_speed,
-						    const_MidLevelSM_movesp,
-						    const_MidLevelSM_stopsp,
-							param_x) 	= output_right_motorCall.param_x -> SKIP
 				CALL__output_left_motor(id__,
 						    const_MidLevelSM_step,
 						    const_MidLevelSM_climb_speed,
@@ -8158,6 +8146,18 @@ module Module
 						    const_MidLevelSM_movesp,
 						    const_MidLevelSM_stopsp,
 							param_x) 	= output_left_motorCall.param_x -> SKIP
+				CALL__output_right_motor(id__,
+						    const_MidLevelSM_step,
+						    const_MidLevelSM_climb_speed,
+						    const_MidLevelSM_descent_speed,
+						    const_MidLevelSM_side_speed,
+						    const_MidLevelSM_forward_angle,
+						    const_MidLevelSM_left_angle,
+						    const_MidLevelSM_right_angle,
+						    const_MidLevelSM_turn_speed,
+						    const_MidLevelSM_movesp,
+						    const_MidLevelSM_stopsp,
+							param_x) 	= output_right_motorCall.param_x -> SKIP
 				
 				-- END of Operation calls --
 				
@@ -8262,7 +8262,7 @@ module Module
 						    const_MidLevelSM_turn_speed,
 						    const_MidLevelSM_movesp,
 						    const_MidLevelSM_stopsp) = ((let
-					Trans = share__choice(get_orientation?orientation -> get_direction?direction -> (
+					Trans = share__choice(get_direction?direction -> get_orientation?orientation -> (
 						((share__ -> SKIP
 						 [] dbisim((turn__!NID_Go_up.in?direction:{direction|direction <- Direction, (direction==Direction_right)} -> share__choice(set_direction!direction -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(share__choice(get_orientation?orientation -> true & (share__choice(set_orientation!turn_right(orientation) -> SKIP))));share__choice(true & (share__choice(set_lspeed!const_MidLevelSM_stopsp -> SKIP)));share__choice(true & (share__choice(set_rspeed!const_MidLevelSM_stopsp -> SKIP))) ; Turn_right::enter -> SKIP)))
 						 	 [] dbisim((((orientation==Orientation_left) or (orientation==Orientation_right)))&(move_forward__!NID_Turn_right.in -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(true & (share__choice(set_rspeed!const_MidLevelSM_movesp -> SKIP)));share__choice(true & (share__choice(set_lspeed!const_MidLevelSM_movesp -> SKIP))) ; Go_side::enter -> SKIP)))
@@ -8445,11 +8445,11 @@ module Module
 								 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 								 )
 								  [[ share__ <- x__ | x__ <- {| share__,setR_direction |} ]] 
-								  [[set_orientation <- setL_orientation,set_direction <- setL_direction]]
+								  [[set_direction <- setL_direction,set_orientation <- setL_orientation]]
 								 )
 								 [| union(union(union(flowevts,transSync),{terminate}),{|share__
-								 			,setL_orientation
 								 			,setL_direction
+								 			,setL_orientation
 								 			,setR_direction
 								 			|}) |]
 								 ((i0::enter -> Transitions(id__,
@@ -8463,10 +8463,10 @@ module Module
 								 		    const_MidLevelSM_turn_speed,
 								 		    const_MidLevelSM_movesp,
 								 		    const_MidLevelSM_stopsp))
-								  [[ share__ <- x__ | x__ <- {| share__,setL_orientation,setL_direction |} ]]
+								  [[ share__ <- x__ | x__ <- {| share__,setL_direction,setL_orientation |} ]]
 								  [[set_direction <- setR_direction]]
 								 )
-								)[[setL_orientation <- set_orientation,setL_direction <- set_direction]]
+								)[[setL_direction <- set_direction,setL_orientation <- set_orientation]]
 								 [[setR_direction <- set_direction]]
 								)
 							)
@@ -8775,11 +8775,11 @@ module Module
 								 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 								 )
 								  [[ share__ <- x__ | x__ <- {| share__,setR_direction |} ]] 
-								  [[set_orientation <- setL_orientation,set_direction <- setL_direction]]
+								  [[set_direction <- setL_direction,set_orientation <- setL_orientation]]
 								 )
 								 [| union(union(union(flowevts,transSync),{terminate}),{|share__
-								 			,setL_orientation
 								 			,setL_direction
+								 			,setL_orientation
 								 			,setR_direction
 								 			|}) |]
 								 ((i0::enter -> Transitions(id__,
@@ -8793,10 +8793,10 @@ module Module
 								 		    const_MidLevelSM_turn_speed,
 								 		    const_MidLevelSM_movesp,
 								 		    const_MidLevelSM_stopsp))
-								  [[ share__ <- x__ | x__ <- {| share__,setL_orientation,setL_direction |} ]]
+								  [[ share__ <- x__ | x__ <- {| share__,setL_direction,setL_orientation |} ]]
 								  [[set_direction <- setR_direction]]
 								 )
-								)[[setL_orientation <- set_orientation,setL_direction <- set_direction]]
+								)[[setL_direction <- set_direction,setL_orientation <- set_orientation]]
 								 [[setR_direction <- set_direction]]
 								)
 							)
@@ -11368,14 +11368,14 @@ module Module
 			endmodule
 			
 				-- undefined operations
-				CALL__output_right_motor(id__,
-						    param_x) 	= output_right_motorCall.param_x -> SKIP
-				CALL__vacuum(id__,
-						    param_x) 	= vacuumCall.param_x -> SKIP
 				CALL__brush(id__,
 						    param_x) 	= brushCall.param_x -> SKIP
+				CALL__vacuum(id__,
+						    param_x) 	= vacuumCall.param_x -> SKIP
 				CALL__output_left_motor(id__,
 						    param_x) 	= output_left_motorCall.param_x -> SKIP
+				CALL__output_right_motor(id__,
+						    param_x) 	= output_right_motorCall.param_x -> SKIP
 				
 				-- declaring controller memory
 				Memory(id__) = SKIP
@@ -11482,8 +11482,8 @@ module Module
 												stm_ref4::terminate <- terminate,
 												stm_ref4::clean.in <- stm_ref0::clean.out,
 												stm_ref4::clean.out <- stm_ref0::clean.in,
-												stm_ref4::vacuumCall <- vacuumCall,
-												stm_ref4::brushCall <- brushCall
+												stm_ref4::brushCall <- brushCall,
+												stm_ref4::vacuumCall <- vacuumCall
 											]]
 										)
 											[|{|terminate|}|]
@@ -11582,8 +11582,8 @@ module Module
 																stm_ref8::turn.out <- stm_ref0::turn.in,
 																stm_ref8::stop.in <- stm_ref0::stop.out,
 																stm_ref8::stop.out <- stm_ref0::stop.in,
-																stm_ref8::output_right_motorCall <- output_right_motorCall,
-																stm_ref8::output_left_motorCall <- output_left_motorCall
+																stm_ref8::output_left_motorCall <- output_left_motorCall,
+																stm_ref8::output_right_motorCall <- output_right_motorCall
 															]]
 														)
 															[|{|terminate|}|]
@@ -11802,8 +11802,8 @@ module Module
 												stm_ref4::terminate <- terminate,
 												stm_ref4::clean.in <- stm_ref0::clean.out,
 												stm_ref4::clean.out <- stm_ref0::clean.in,
-												stm_ref4::vacuumCall <- vacuumCall,
-												stm_ref4::brushCall <- brushCall
+												stm_ref4::brushCall <- brushCall,
+												stm_ref4::vacuumCall <- vacuumCall
 											]]
 										)
 											[|{|terminate|}|]
@@ -11902,8 +11902,8 @@ module Module
 																stm_ref8::turn.out <- stm_ref0::turn.in,
 																stm_ref8::stop.in <- stm_ref0::stop.out,
 																stm_ref8::stop.out <- stm_ref0::stop.in,
-																stm_ref8::output_right_motorCall <- output_right_motorCall,
-																stm_ref8::output_left_motorCall <- output_left_motorCall
+																stm_ref8::output_left_motorCall <- output_left_motorCall,
+																stm_ref8::output_right_motorCall <- output_right_motorCall
 															]]
 														)
 															[|{|terminate|}|]
@@ -12122,8 +12122,8 @@ module Module
 												stm_ref4::terminate <- terminate,
 												stm_ref4::clean.in <- stm_ref0::clean.out,
 												stm_ref4::clean.out <- stm_ref0::clean.in,
-												stm_ref4::vacuumCall <- vacuumCall,
-												stm_ref4::brushCall <- brushCall
+												stm_ref4::brushCall <- brushCall,
+												stm_ref4::vacuumCall <- vacuumCall
 											]]
 										)
 											[|{|terminate|}|]
@@ -12222,8 +12222,8 @@ module Module
 																stm_ref8::turn.out <- stm_ref0::turn.in,
 																stm_ref8::stop.in <- stm_ref0::stop.out,
 																stm_ref8::stop.out <- stm_ref0::stop.in,
-																stm_ref8::output_right_motorCall <- output_right_motorCall,
-																stm_ref8::output_left_motorCall <- output_left_motorCall
+																stm_ref8::output_left_motorCall <- output_left_motorCall,
+																stm_ref8::output_right_motorCall <- output_right_motorCall
 															]]
 														)
 															[|{|terminate|}|]
@@ -12443,8 +12443,8 @@ module Module
 												stm_ref4::terminate <- terminate,
 												stm_ref4::clean.in <- stm_ref0::clean.out,
 												stm_ref4::clean.out <- stm_ref0::clean.in,
-												stm_ref4::vacuumCall <- vacuumCall,
-												stm_ref4::brushCall <- brushCall
+												stm_ref4::brushCall <- brushCall,
+												stm_ref4::vacuumCall <- vacuumCall
 											]]
 										)
 											[|{|terminate|}|]
@@ -12543,8 +12543,8 @@ module Module
 																stm_ref8::turn.out <- stm_ref0::turn.in,
 																stm_ref8::stop.in <- stm_ref0::stop.out,
 																stm_ref8::stop.out <- stm_ref0::stop.in,
-																stm_ref8::output_right_motorCall <- output_right_motorCall,
-																stm_ref8::output_left_motorCall <- output_left_motorCall
+																stm_ref8::output_left_motorCall <- output_left_motorCall,
+																stm_ref8::output_right_motorCall <- output_right_motorCall
 															]]
 														)
 															[|{|terminate|}|]
@@ -12797,10 +12797,10 @@ module Module
 							PathPlanningController::battery_level <- battery_level,
 							PathPlanningController::charging <- charging,
 							PathPlanningController::ultrasonic <- ultrasonic,
-							PathPlanningController::output_right_motorCall <- output_right_motorCall,
-							PathPlanningController::vacuumCall <- vacuumCall,
 							PathPlanningController::brushCall <- brushCall,
-							PathPlanningController::output_left_motorCall <- output_left_motorCall
+							PathPlanningController::vacuumCall <- vacuumCall,
+							PathPlanningController::output_left_motorCall <- output_left_motorCall,
+							PathPlanningController::output_right_motorCall <- output_right_motorCall
 						]]
 					)
 						[|
@@ -12899,10 +12899,10 @@ module Module
 							PathPlanningController::battery_level <- battery_level,
 							PathPlanningController::charging <- charging,
 							PathPlanningController::ultrasonic <- ultrasonic,
-							PathPlanningController::output_right_motorCall <- output_right_motorCall,
-							PathPlanningController::vacuumCall <- vacuumCall,
 							PathPlanningController::brushCall <- brushCall,
-							PathPlanningController::output_left_motorCall <- output_left_motorCall
+							PathPlanningController::vacuumCall <- vacuumCall,
+							PathPlanningController::output_left_motorCall <- output_left_motorCall,
+							PathPlanningController::output_right_motorCall <- output_right_motorCall
 						]]
 					)
 						[|
@@ -13001,10 +13001,10 @@ module Module
 							PathPlanningController::battery_level <- battery_level,
 							PathPlanningController::charging <- charging,
 							PathPlanningController::ultrasonic <- ultrasonic,
-							PathPlanningController::output_right_motorCall <- output_right_motorCall,
-							PathPlanningController::vacuumCall <- vacuumCall,
 							PathPlanningController::brushCall <- brushCall,
-							PathPlanningController::output_left_motorCall <- output_left_motorCall
+							PathPlanningController::vacuumCall <- vacuumCall,
+							PathPlanningController::output_left_motorCall <- output_left_motorCall,
+							PathPlanningController::output_right_motorCall <- output_right_motorCall
 						]]
 					)
 						[|
@@ -13104,10 +13104,10 @@ module Module
 							PathPlanningController::battery_level <- battery_level,
 							PathPlanningController::charging <- charging,
 							PathPlanningController::ultrasonic <- ultrasonic,
-							PathPlanningController::output_right_motorCall <- output_right_motorCall,
-							PathPlanningController::vacuumCall <- vacuumCall,
 							PathPlanningController::brushCall <- brushCall,
-							PathPlanningController::output_left_motorCall <- output_left_motorCall
+							PathPlanningController::vacuumCall <- vacuumCall,
+							PathPlanningController::output_left_motorCall <- output_left_motorCall,
+							PathPlanningController::output_right_motorCall <- output_right_motorCall
 						]]
 					)
 						[|
@@ -13207,10 +13207,10 @@ module Module
 							PathPlanningController::battery_level <- battery_level,
 							PathPlanningController::charging <- charging,
 							PathPlanningController::ultrasonic <- ultrasonic,
-							PathPlanningController::output_right_motorCall <- output_right_motorCall,
-							PathPlanningController::vacuumCall <- vacuumCall,
 							PathPlanningController::brushCall <- brushCall,
-							PathPlanningController::output_left_motorCall <- output_left_motorCall
+							PathPlanningController::vacuumCall <- vacuumCall,
+							PathPlanningController::output_left_motorCall <- output_left_motorCall,
+							PathPlanningController::output_right_motorCall <- output_right_motorCall
 						]]
 					)
 						[|

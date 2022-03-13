@@ -10,6 +10,13 @@ namespace robocalc
 {
 	namespace functions
 	{
+		Orientation turn_left(Orientation x);
+		double sqrt(double a);
+		Orientation turn_right(Orientation x);
+		int get_sign(int a);
+		int get_linear_speed(int spl, int spr);
+		double abs(double a);
+		int floor(double x);
 		
 		template<typename T>
 		std::set<T> set_union(std::set<T> s1, std::set<T> s2)

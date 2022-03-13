@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 17:58:29
+-- Automatically generated on 11-03-2022 11:44:37
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -45,8 +45,8 @@ exports
 	channel turn: InOut.core_real
 	
 	-- Declaring call and ret events for undefined operations
-	channel decrCall
 	channel incrCall
+	channel decrCall
 	
 	enterSS = {|
 	i1::enter,
@@ -67,8 +67,8 @@ exports
 		terminate
 	,	cd,
 		turn
-	,	decrCall,
-		incrCall
+	,	incrCall,
+		decrCall
 		|}
 	
 	channel clockReset, clockResetL, clockResetR 
@@ -203,8 +203,8 @@ exports
 		-- If it is in the context of a controller, the required operations not provided by the
 		-- controller will be declared here, and the defined operations will be defined in the
 		-- context of the Controller module, and therefore within scope of the state machine module.
-		CALL__decr(id__) = EDeadline(decrCall,0)
 		CALL__incr(id__) = EDeadline(incrCall,0)
+		CALL__decr(id__) = EDeadline(decrCall,0)
 		
 		-- END of Operation calls --
 	

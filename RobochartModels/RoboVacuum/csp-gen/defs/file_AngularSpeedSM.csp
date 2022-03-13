@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:33
+-- Automatically generated on 08-03-2022 18:58:34
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -362,7 +362,7 @@ exports
 			
 			Termination = terminate -> SKIP
 			
-			Active 		= share__choice(share__choice(get_al?al -> share__choice(get_ar?ar -> share__choice(get_turn_angle?turn_angle -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
+			Active 		= share__choice(share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> share__choice(get_ar?ar -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
 					 	  Behaviour ; 
 					 	  share__choice(exit -> SKIP) ; SKIP ; 
 					 	  share__choice(exited -> SKIP) ; Inactive
@@ -380,7 +380,7 @@ exports
 			
 			Termination = terminate -> SKIP
 			
-			Active 		= share__choice(share__choice(get_al?al -> share__choice(get_ar?ar -> share__choice(get_turn_angle?turn_angle -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
+			Active 		= share__choice(share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> share__choice(get_ar?ar -> true & (share__choice(set_turn_angle!Plus(turn_angle, Mult(sqrt(Div(abs(Minus(TripleAxis_Y(al), TripleAxis_Y(ar), core_int)), const_AngularSpeedSM_acc_distance, core_real)), const_AngularSpeedSM_t, core_real), core_real) -> SKIP)))))) ; 
 					 	  Behaviour ; 
 					 	  share__choice(exit -> SKIP) ; SKIP ; 
 					 	  share__choice(exited -> SKIP) ; Inactive
@@ -457,7 +457,7 @@ exports
 			 	 [] dbisim((true)&(acc_r__!NID_wait_input.in?ar:{ar|ar <- TripleAxis, true} -> share__choice(set_ar!ar -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; wait_al::enter -> SKIP)))
 			 	 [] dbisim((true)&(acc_r__!NID_wait_ar.in?ar:{ar|ar <- TripleAxis, true} -> share__choice(set_ar!ar -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_value::enter -> SKIP)))
 			 	 [] dbisim((true)&(acc_l__!NID_wait_al.in?al:{al|al <- TripleAxis, true} -> share__choice(set_al!al -> SKIP) ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; SKIP ; update_value::enter -> SKIP)))
-			 	 [] dbisim((true)&(internal__!NID_update_value -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_al?al -> share__choice(get_turn_angle?turn_angle -> true&(share__choice(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP))));SKIP ; wait_input::enter -> SKIP)))
+			 	 [] dbisim((true)&(internal__!NID_update_value -> SKIP ;  share__choice(exit -> SKIP) ; (share__choice(exited -> SKIP) ; share__choice(get_turn_angle?turn_angle -> share__choice(get_al?al -> true&(share__choice(angle.out!(Mult(get_sign(TripleAxis_Y(al)), floor(turn_angle), core_int)) -> SKIP))));SKIP ; wait_input::enter -> SKIP)))
 			 ) ; Trans)
 			 []
 			 (interrupt -> share__choice(exit -> SKIP) ; share__choice(exited -> terminate -> SKIP))

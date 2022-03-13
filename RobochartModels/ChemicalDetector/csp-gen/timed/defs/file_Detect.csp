@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 17:58:28
+-- Automatically generated on 11-03-2022 11:45:42
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -74,11 +74,11 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_CleanAir : core_clock_type 
 	channel get_CLID_GasPresent : core_clock_type 
+	channel get_CLID_CleanAir : core_clock_type 
 	--channel increment__
 	
-	CLID_CleanAir_clock_type(id__) = 
+	CLID_GasPresent_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	}))+1)
@@ -86,7 +86,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_GasPresent_clock_type(id__) = 
+	CLID_CleanAir_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	}))+1)
@@ -407,7 +407,7 @@ exports
 		
 		Behaviour(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+				stateClockSync = {|get_CLID_GasPresent,GasPresent::entered,get_CLID_CleanAir,CleanAir::entered|}
 			 within
 				(MachineBody(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ union(stateClockSync,enteredSS)
 			)
@@ -415,20 +415,20 @@ exports
 		
 		IteratedBehaviour(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+				stateClockSync = {|get_CLID_GasPresent,GasPresent::entered,get_CLID_CleanAir,CleanAir::entered|}
 			 within
 				(dbisim(
 					sbisim(
 						dbisim(
 							sbisim(
 								MachineBody(id__)
-								[| {|get_CLID_GasPresent,GasPresent::entered,terminate|} |]
-								dbisim(Clock_CLID_GasPresent(id__,0))
-							)\{|get_CLID_GasPresent|}
+								[| {|get_CLID_CleanAir,CleanAir::entered,terminate|} |]
+								dbisim(Clock_CLID_CleanAir(id__,0))
+							)\{|get_CLID_CleanAir|}
 						)
-						[| {|get_CLID_CleanAir,CleanAir::entered,terminate|} |]
-						dbisim(Clock_CLID_CleanAir(id__,0))
-					)\{|get_CLID_CleanAir|}
+						[| {|get_CLID_GasPresent,GasPresent::entered,terminate|} |]
+						dbisim(Clock_CLID_GasPresent(id__,0))
+					)\{|get_CLID_GasPresent|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -513,7 +513,7 @@ exports
 		
 		Behaviour_VS_O(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+				stateClockSync = {|get_CLID_GasPresent,GasPresent::entered,get_CLID_CleanAir,CleanAir::entered|}
 			 within
 				(MachineBody_VS_O(id__) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -521,20 +521,20 @@ exports
 		
 		IteratedBehaviour_VS_O(id__) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+				stateClockSync = {|get_CLID_GasPresent,GasPresent::entered,get_CLID_CleanAir,CleanAir::entered|}
 			 within
 				(dbisim(
 					sbisim(
 						dbisim(
 							sbisim(
 								MachineBody_VS_O(id__)
-								[| {|get_CLID_GasPresent,GasPresent::entered,terminate|} |]
-								dbisim(Clock_CLID_GasPresent(id__,0))
-							)\{|get_CLID_GasPresent|}
+								[| {|get_CLID_CleanAir,CleanAir::entered,terminate|} |]
+								dbisim(Clock_CLID_CleanAir(id__,0))
+							)\{|get_CLID_CleanAir|}
 						)
-						[| {|get_CLID_CleanAir,CleanAir::entered,terminate|} |]
-						dbisim(Clock_CLID_CleanAir(id__,0))
-					)\{|get_CLID_CleanAir|}
+						[| {|get_CLID_GasPresent,GasPresent::entered,terminate|} |]
+						dbisim(Clock_CLID_GasPresent(id__,0))
+					)\{|get_CLID_GasPresent|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -581,13 +581,6 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_CleanAir(id__,x__) = 
-			TimeOut_1(
-				CleanAir::entered -> Clock_CLID_CleanAir(id__,0)
-				[]
-				get_CLID_CleanAir!x__ -> Clock_CLID_CleanAir(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_CleanAir(id__,clock_type_plus(x__,1,CLID_CleanAir_clock_type(id__))))
 		Clock_CLID_GasPresent(id__,x__) = 
 			TimeOut_1(
 				GasPresent::entered -> Clock_CLID_GasPresent(id__,0)
@@ -595,13 +588,20 @@ exports
 				get_CLID_GasPresent!x__ -> Clock_CLID_GasPresent(id__,x__)
 				[]
 				terminate -> SKIP,Clock_CLID_GasPresent(id__,clock_type_plus(x__,1,CLID_GasPresent_clock_type(id__))))
+		Clock_CLID_CleanAir(id__,x__) = 
+			TimeOut_1(
+				CleanAir::entered -> Clock_CLID_CleanAir(id__,0)
+				[]
+				get_CLID_CleanAir!x__ -> Clock_CLID_CleanAir(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_CleanAir(id__,clock_type_plus(x__,1,CLID_CleanAir_clock_type(id__))))
 		
-		StateClocks(id__) = dbisim(Clock_CLID_CleanAir(id__,0))
+		StateClocks(id__) = dbisim(Clock_CLID_GasPresent(id__,0))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_GasPresent(id__,0))
+		dbisim(Clock_CLID_CleanAir(id__,0))
 		)
 		
-		stateClockSync = {|get_CLID_CleanAir,CleanAir::entered,get_CLID_GasPresent,GasPresent::entered|}
+		stateClockSync = {|get_CLID_GasPresent,GasPresent::entered,get_CLID_CleanAir,CleanAir::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

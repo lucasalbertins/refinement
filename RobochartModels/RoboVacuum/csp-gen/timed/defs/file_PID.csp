@@ -1,7 +1,7 @@
 
 --
 -- RoboChart generator version 3.0.0.202112100958
--- Automatically generated on 04-03-2022 10:59:35
+-- Automatically generated on 08-03-2022 18:58:32
 --
 -- Iterated compression status: true
 -- Assertions compression status: true
@@ -91,24 +91,11 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_Update : core_clock_type 
 	channel get_CLID_Reset : core_clock_type 
 	channel get_CLID_Wait_actual : core_clock_type 
+	channel get_CLID_Update : core_clock_type 
 	channel get_CLID_Wait_target : core_clock_type 
 	--channel increment__
-	
-	CLID_Update_clock_type(id__,
-			          const_PID_kp,
-			          const_PID_ki,
-			          const_PID_kd,
-			          const_PID_step) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_Reset_clock_type(id__,
 			          const_PID_kp,
@@ -124,6 +111,19 @@ exports
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_Wait_actual_clock_type(id__,
+			          const_PID_kp,
+			          const_PID_ki,
+			          const_PID_kd,
+			          const_PID_step) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Update_clock_type(id__,
 			          const_PID_kp,
 			          const_PID_ki,
 			          const_PID_kd,
@@ -234,7 +234,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_actual_value?actual_value -> share__choice(get_target_value?target_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_prior_error?prior_error -> share__choice(get_error?error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), no_zero_div(const_PID_step), core_real)) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> share__choice(get_error?error -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
+					Active 		= share__choice(share__choice(get_target_value?target_value -> share__choice(get_actual_value?actual_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_prior_error?prior_error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), no_zero_div(const_PID_step), core_real)) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -254,7 +254,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_actual_value?actual_value -> share__choice(get_target_value?target_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_prior_error?prior_error -> share__choice(get_error?error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), no_zero_div(const_PID_step), core_real)) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> share__choice(get_error?error -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
+					Active 		= share__choice(share__choice(get_target_value?target_value -> share__choice(get_actual_value?actual_value -> true & (share__choice(set_error!Minus(actual_value, target_value, core_int) -> SKIP)))));share__choice(share__choice(get_integral?integral -> share__choice(get_error?error -> true & (share__choice(set_integral!Plus(integral, (Mult(error, const_PID_step, core_int)), core_int) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_prior_error?prior_error -> const_PID_step != 0 & (share__choice(set_derivative!floor(Div((Minus(error, prior_error, core_int)), no_zero_div(const_PID_step), core_real)) -> SKIP)))));share__choice(share__choice(get_error?error -> share__choice(get_integral?integral -> share__choice(get_derivative?derivative -> true & (share__choice(set_output!Plus(Plus(Mult(const_PID_kp, error, core_int), Mult(const_PID_ki, integral, core_int), core_int), Mult(const_PID_kd, derivative, core_int), core_int) -> SKIP))))));share__choice(share__choice(get_error?error -> true & (share__choice(set_prior_error!error -> SKIP))));share__choice(get_output?output -> true&(share__choice(err_output.out!output -> SKIP)));share__choice(share__choice(get_target_value?target_value -> true & (share__choice(set_old_target!target_value -> SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -760,7 +760,7 @@ exports
 				    const_PID_kd,
 				    const_PID_step) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Update,Update::entered,get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Wait_target,Wait_target::entered|}
+				stateClockSync = {|get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Update,Update::entered,get_CLID_Wait_target,Wait_target::entered|}
 			 within
 				(MachineBody(id__,
 						    const_PID_kp,
@@ -780,7 +780,7 @@ exports
 				    const_PID_kd,
 				    const_PID_step) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Update,Update::entered,get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Wait_target,Wait_target::entered|}
+				stateClockSync = {|get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Update,Update::entered,get_CLID_Wait_target,Wait_target::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -803,29 +803,29 @@ exports
 														          const_PID_step))
 											)\{|get_CLID_Wait_target|}
 										)
-										[| {|get_CLID_Wait_actual,Wait_actual::entered,terminate|} |]
-										dbisim(Clock_CLID_Wait_actual(id__,0,
+										[| {|get_CLID_Update,Update::entered,terminate|} |]
+										dbisim(Clock_CLID_Update(id__,0,
 												          const_PID_kp,
 												          const_PID_ki,
 												          const_PID_kd,
 												          const_PID_step))
-									)\{|get_CLID_Wait_actual|}
+									)\{|get_CLID_Update|}
 								)
-								[| {|get_CLID_Reset,Reset::entered,terminate|} |]
-								dbisim(Clock_CLID_Reset(id__,0,
+								[| {|get_CLID_Wait_actual,Wait_actual::entered,terminate|} |]
+								dbisim(Clock_CLID_Wait_actual(id__,0,
 										          const_PID_kp,
 										          const_PID_ki,
 										          const_PID_kd,
 										          const_PID_step))
-							)\{|get_CLID_Reset|}
+							)\{|get_CLID_Wait_actual|}
 						)
-						[| {|get_CLID_Update,Update::entered,terminate|} |]
-						dbisim(Clock_CLID_Update(id__,0,
+						[| {|get_CLID_Reset,Reset::entered,terminate|} |]
+						dbisim(Clock_CLID_Reset(id__,0,
 								          const_PID_kp,
 								          const_PID_ki,
 								          const_PID_kd,
 								          const_PID_step))
-					)\{|get_CLID_Update|}
+					)\{|get_CLID_Reset|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -1044,7 +1044,7 @@ exports
 				    const_PID_kd,
 				    const_PID_step) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Update,Update::entered,get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Wait_target,Wait_target::entered|}
+				stateClockSync = {|get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Update,Update::entered,get_CLID_Wait_target,Wait_target::entered|}
 			 within
 				(MachineBody_VS_O(id__,
 						    const_PID_kp,
@@ -1064,7 +1064,7 @@ exports
 				    const_PID_kd,
 				    const_PID_step) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Update,Update::entered,get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Wait_target,Wait_target::entered|}
+				stateClockSync = {|get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Update,Update::entered,get_CLID_Wait_target,Wait_target::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1087,29 +1087,29 @@ exports
 														          const_PID_step))
 											)\{|get_CLID_Wait_target|}
 										)
-										[| {|get_CLID_Wait_actual,Wait_actual::entered,terminate|} |]
-										dbisim(Clock_CLID_Wait_actual(id__,0,
+										[| {|get_CLID_Update,Update::entered,terminate|} |]
+										dbisim(Clock_CLID_Update(id__,0,
 												          const_PID_kp,
 												          const_PID_ki,
 												          const_PID_kd,
 												          const_PID_step))
-									)\{|get_CLID_Wait_actual|}
+									)\{|get_CLID_Update|}
 								)
-								[| {|get_CLID_Reset,Reset::entered,terminate|} |]
-								dbisim(Clock_CLID_Reset(id__,0,
+								[| {|get_CLID_Wait_actual,Wait_actual::entered,terminate|} |]
+								dbisim(Clock_CLID_Wait_actual(id__,0,
 										          const_PID_kp,
 										          const_PID_ki,
 										          const_PID_kd,
 										          const_PID_step))
-							)\{|get_CLID_Reset|}
+							)\{|get_CLID_Wait_actual|}
 						)
-						[| {|get_CLID_Update,Update::entered,terminate|} |]
-						dbisim(Clock_CLID_Update(id__,0,
+						[| {|get_CLID_Reset,Reset::entered,terminate|} |]
+						dbisim(Clock_CLID_Reset(id__,0,
 								          const_PID_kp,
 								          const_PID_ki,
 								          const_PID_kd,
 								          const_PID_step))
-					)\{|get_CLID_Update|}
+					)\{|get_CLID_Reset|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1377,33 +1377,6 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_Update(id__,x__,
-				          const_PID_kp,
-				          const_PID_ki,
-				          const_PID_kd,
-				          const_PID_step) = 
-			TimeOut_1(
-				Update::entered -> Clock_CLID_Update(id__,0,
-						          const_PID_kp,
-						          const_PID_ki,
-						          const_PID_kd,
-						          const_PID_step)
-				[]
-				get_CLID_Update!x__ -> Clock_CLID_Update(id__,x__,
-						          const_PID_kp,
-						          const_PID_ki,
-						          const_PID_kd,
-						          const_PID_step)
-				[]
-				terminate -> SKIP,Clock_CLID_Update(id__,clock_type_plus(x__,1,CLID_Update_clock_type(id__,
-						          const_PID_kp,
-						          const_PID_ki,
-						          const_PID_kd,
-						          const_PID_step)),
-						          const_PID_kp,
-						          const_PID_ki,
-						          const_PID_kd,
-						          const_PID_step))
 		Clock_CLID_Reset(id__,x__,
 				          const_PID_kp,
 				          const_PID_ki,
@@ -1458,6 +1431,33 @@ exports
 						          const_PID_ki,
 						          const_PID_kd,
 						          const_PID_step))
+		Clock_CLID_Update(id__,x__,
+				          const_PID_kp,
+				          const_PID_ki,
+				          const_PID_kd,
+				          const_PID_step) = 
+			TimeOut_1(
+				Update::entered -> Clock_CLID_Update(id__,0,
+						          const_PID_kp,
+						          const_PID_ki,
+						          const_PID_kd,
+						          const_PID_step)
+				[]
+				get_CLID_Update!x__ -> Clock_CLID_Update(id__,x__,
+						          const_PID_kp,
+						          const_PID_ki,
+						          const_PID_kd,
+						          const_PID_step)
+				[]
+				terminate -> SKIP,Clock_CLID_Update(id__,clock_type_plus(x__,1,CLID_Update_clock_type(id__,
+						          const_PID_kp,
+						          const_PID_ki,
+						          const_PID_kd,
+						          const_PID_step)),
+						          const_PID_kp,
+						          const_PID_ki,
+						          const_PID_kd,
+						          const_PID_step))
 		Clock_CLID_Wait_target(id__,x__,
 				          const_PID_kp,
 				          const_PID_ki,
@@ -1490,19 +1490,19 @@ exports
 				          const_PID_kp,
 				          const_PID_ki,
 				          const_PID_kd,
-				          const_PID_step) = dbisim(Clock_CLID_Update(id__,0,
-				          const_PID_kp,
-				          const_PID_ki,
-				          const_PID_kd,
-				          const_PID_step))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_Reset(id__,0,
+				          const_PID_step) = dbisim(Clock_CLID_Reset(id__,0,
 				          const_PID_kp,
 				          const_PID_ki,
 				          const_PID_kd,
 				          const_PID_step))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_Wait_actual(id__,0,
+				          const_PID_kp,
+				          const_PID_ki,
+				          const_PID_kd,
+				          const_PID_step))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Update(id__,0,
 				          const_PID_kp,
 				          const_PID_ki,
 				          const_PID_kd,
@@ -1517,7 +1517,7 @@ exports
 		)
 		)
 		
-		stateClockSync = {|get_CLID_Update,Update::entered,get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Wait_target,Wait_target::entered|}
+		stateClockSync = {|get_CLID_Reset,Reset::entered,get_CLID_Wait_actual,Wait_actual::entered,get_CLID_Update,Update::entered,get_CLID_Wait_target,Wait_target::entered|}
 		
 		-- Shared memory
 		-- Shared memory variables

@@ -19,7 +19,6 @@ event detect : Chemical
 		from GasPresent
 		to CleanAir
 //		trigger	
-//		detect . Chemical :: innocuousgt
 		action detect . Chemical :: innocuous
 	}
 	transition t4 {
