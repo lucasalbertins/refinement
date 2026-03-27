@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Astah-Edition: all
+Astah-Version: 6.7
+Bnd-LastModified: 1707222037730
+Build-Jdk: 1.8.0_372
+Built-By: sergi
+Bundle-Activator: com.validator.Activator
+Bundle-Description: %bundle.description
+Bundle-ManifestVersion: 2
+Bundle-Name: %bundle.name
+Bundle-SymbolicName: com.validator.validator; singleton:=true
+Bundle-Version: 1.0
+Created-By: Apache Maven Bundle Plugin
+Embed-Dependency: *;scope=compile|runtime;type=!pom
+Embed-Transitive: true
+Import-Package: com.validator
+Tool: Bnd-3.3.0.201609221906

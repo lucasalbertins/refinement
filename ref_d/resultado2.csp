@@ -1,0 +1,25 @@
+datatype COM = s | r
+datatype ID = lf1id|lf2id
+datatype ID_SD = sd1id|sd2id
+datatype MSG = m2|m0
+subtype A_SIG = m2
+subtype B_SIG = m0
+get_id(m2) = m2
+get_id(m0) = m0
+channel beginInteraction,endInteraction
+channel A_mSIG: COM.ID.ID.A_SIG
+channel B_mSIG: COM.ID.ID.B_SIG
+CounterExample_x_A(sd_id,lf1_id,lf2_id) =(B_mSIG.s!lf1_id!lf2_id.m0 -> SKIP);(A_mSIG.r!lf2_id!lf1_id?signal:{x | x <- A_SIG,(get_id(x) == m2)} -> SKIP)
+CounterExample_y_B(sd_id,lf1_id,lf2_id) =(B_mSIG.r!lf1_id!lf2_id?signal:{x | x <- B_SIG,(get_id(x) == m0)} -> SKIP);(A_mSIG.s!lf2_id!lf1_id.m2 -> SKIP)
+CounterExample_x_A_y_B_m0(sd_id,lf1_id,lf2_id) = B_mSIG.s.lf1_id.lf2_id?x:{x | x<-B_SIG,get_id(x) == m0} -> B_mSIG.r.lf1_id.lf2_id!x -> CounterExample_x_A_y_B_m0(sd_id,lf1_id,lf2_id)
+CounterExample_y_B_x_A_m2(sd_id,lf2_id,lf1_id) = A_mSIG.s.lf2_id.lf1_id?x:{x | x<-A_SIG,get_id(x) == m2} -> A_mSIG.r.lf2_id.lf1_id!x -> CounterExample_y_B_x_A_m2(sd_id,lf2_id,lf1_id)
+CounterExample_MessagesBuffer(sd_id,lf1_id,lf2_id) = (CounterExample_x_A_y_B_m0(sd_id,lf1_id,lf2_id) ||| CounterExample_y_B_x_A_m2(sd_id,lf2_id,lf1_id))/\endInteraction -> SKIP
+CounterExampleParallel(sd_id,lf1_id,lf2_id) = CounterExample_x_A(sd_id,lf1_id,lf2_id)[ {|B_mSIG.s.lf1_id.lf2_id.m0, A_mSIG.r.lf2_id.lf1_id.m2|} || {|B_mSIG.r.lf1_id.lf2_id.m0, A_mSIG.s.lf2_id.lf1_id.m2|} ]CounterExample_y_B(sd_id,lf1_id,lf2_id)
+SD_CounterExample(sd_id,lf1_id,lf2_id) = beginInteraction ->((CounterExampleParallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)[|{|B_mSIG.s.lf1_id.lf2_id.m0,B_mSIG.r.lf1_id.lf2_id.m0,A_mSIG.s.lf2_id.lf1_id.m2,A_mSIG.r.lf2_id.lf1_id.m2,endInteraction|}|]CounterExample_MessagesBuffer(sd_id,lf1_id,lf2_id))
+CounterExample_x_A(sd_id,lf1_id,lf2_id) =(B_mSIG.s!lf1_id!lf2_id.m0 -> SKIP);(A_mSIG.r!lf2_id!lf1_id?signal:{x | x <- A_SIG,(get_id(x) == m2)} -> SKIP)
+CounterExample_y_B(sd_id,lf1_id,lf2_id) =(B_mSIG.r!lf1_id!lf2_id?signal:{x | x <- B_SIG,(get_id(x) == m0)} -> SKIP);(A_mSIG.s!lf2_id!lf1_id.m2 -> SKIP)
+CounterExample_MessagesBuffer(sd_id,lf1_id,lf2_id) = (CounterExample_x_A_y_B_m0(sd_id,lf1_id,lf2_id) ||| CounterExample_y_B_x_A_m2(sd_id,lf2_id,lf1_id))/\endInteraction -> SKIP
+CounterExampleParallel(sd_id,lf1_id,lf2_id) = CounterExample_x_A(sd_id,lf1_id,lf2_id)[ {|null|} || {|null|} ]CounterExample_y_B(sd_id,lf1_id,lf2_id)
+SD_CounterExample(sd_id,lf1_id,lf2_id) = beginInteraction ->((CounterExampleParallel(sd_id,lf1_id,lf2_id); endInteraction -> SKIP)[|{,endInteraction|}|]CounterExample_MessagesBuffer(sd_id,lf1_id,lf2_id))
+assert SD_CounterExample(sd2id,lf1id,lf2id) [T= SD_CounterExample(sd1id,lf1id,lf2id)
+assert SD_CounterExample(sd2id,lf1id,lf2id)\{||} [T= SD_CounterExample(sd1id,lf1id,lf2id)

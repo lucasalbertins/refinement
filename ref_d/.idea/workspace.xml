@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="DefaultGradleProjectSettings">
+    <option name="isMigrated" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>checkCountCallInitial</find>
+      <find>adUtils</find>
+      <find>System</find>
+      <find>path</find>
+      <find>build</find>
+      <find>directory</find>
+      <find>com</find>
+      <find>SKIP</find>
+      <find>dProcessSync</find>
+      <find>localSignalChannelsSync</find>
+      <find>signalChannels</find>
+      <find>signalChannelsLocal</find>
+      <find>eve</find>
+      <find>signal</find>
+      <find>alphabet</find>
+      <find>countAccept</find>
+      <find>plugin</find>
+      <find>edition</find>
+      <find>com.change_vision.astah</find>
+      <find>endDiagram</find>
+      <find>typeObj</find>
+      <find>getInitialAndFinalParameterValue</find>
+      <find>nameObject</find>
+      <find>objectEdges</find>
+      <find>initialAndFinalParameterValue</find>
+      <find>oe</find>
+      <find>Syste</find>
+      <find>{|dc|}</find>
+      <find>dc</find>
+      <find>decisionInputType</find>
+    </findStrings>
+    <dirStrings>
+      <dir>C:\Users\Amaury\git\refinement\ref\src\main\java\com\ref\ui\icons</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1TtTyGkFa5FhwxfSk7x18RF34Dm" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1560749417905" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.ref" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\amaur\Desktop\Amaury\Projetos\refinement\ref\src\test\resources\activityDiagram" />
+      <recent name="C:\Users\Amaury\git\refinement\ref\src\test\resources\activityDiagram" />
+      <recent name="C:\Users\Amaury\git\refinement\ref\src\main\java\com\ref\ui\icons" />
+      <recent name="C:\Users\Amaury\git\refinement\ref\src\main\java\com\ref\ui\Icons" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.ref.activityDiagram" />
+      <recent name="com.ref.refinement.activityDiagram" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Amaury\git\refinement\ref\src\main\java\com\ref\ui\images" />
+      <recent name="C:\Users\Amaury\git\refinement\ref\src\main\java\com\ref\ui" />
+      <recent name="C:\Users\Amaury\git\refinement\ref\src\main\resources" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="JUnit.AllTests">
+    <configuration name="ADParserTestActionNode" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTestActionNode" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ADParserTestBehaviourCall" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTestBehaviourCall" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ADParserTestCheckDeadlock" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTestCheckDeadlock" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ADParserTestCheckDeterminism" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTestCheckDeterminism" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ADParserTestSignal" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTestSignal" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ADParserTesteDecisionNode" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.ADParserTesteDecisionNode" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AdParserTestMemory" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.AdParserTestMemory" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AdParserTestObjectNode" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.AdParserTestObjectNode" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AllTests" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.activityDiagram.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref.activityDiagram" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.activityDiagram.AllTests" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="PARAMETERS" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.FileTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ReflectionTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.ReflectionTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SDGeneratorTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.SDGeneratorTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SDParserTest" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.SDParserTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SDParserTest.testDefineTypes" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="ref" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.ref.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.ref" />
+      <option name="MAIN_CLASS_NAME" value="com.ref.SDParserTest" />
+      <option name="METHOD_NAME" value="testDefineTypes" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="JUnit.ADParserTestActionNode" />
+      <item itemvalue="JUnit.ADParserTestBehaviourCall" />
+      <item itemvalue="JUnit.ADParserTestCheckDeadlock" />
+      <item itemvalue="JUnit.ADParserTestCheckDeterminism" />
+      <item itemvalue="JUnit.ADParserTestSignal" />
+      <item itemvalue="JUnit.ADParserTesteDecisionNode" />
+      <item itemvalue="JUnit.AdParserTestMemory" />
+      <item itemvalue="JUnit.AdParserTestObjectNode" />
+      <item itemvalue="JUnit.AllTests" />
+      <item itemvalue="JUnit.SDParserTest" />
+      <item itemvalue="JUnit.FileTest" />
+      <item itemvalue="JUnit.ReflectionTest" />
+      <item itemvalue="JUnit.SDGeneratorTest" />
+      <item itemvalue="JUnit.SDParserTest.testDefineTypes" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.FileTest" />
+        <item itemvalue="JUnit.SDGeneratorTest" />
+        <item itemvalue="JUnit.ReflectionTest" />
+        <item itemvalue="JUnit.SDParserTest.testDefineTypes" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9ea5b206-4678-43ea-ac06-4a84cf3d56e3" name="Default Changelist" comment="" />
+      <created>1537788608579</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1537788608579</updated>
+      <workItem from="1537788610110" duration="3925000" />
+      <workItem from="1537793975819" duration="746000" />
+      <workItem from="1537806216637" duration="1477000" />
+      <workItem from="1537808802494" duration="706000" />
+      <workItem from="1537960323335" duration="2215000" />
+      <workItem from="1538058041211" duration="3814000" />
+      <workItem from="1538150190277" duration="3200000" />
+      <workItem from="1538348371995" duration="25000" />
+      <workItem from="1538483127396" duration="3474000" />
+      <workItem from="1548626706341" duration="4888000" />
+      <workItem from="1548641057555" duration="5488000" />
+      <workItem from="1548703927318" duration="6564000" />
+      <workItem from="1548723561641" duration="472000" />
+      <workItem from="1548878987331" duration="4229000" />
+      <workItem from="1548897784708" duration="5089000" />
+      <workItem from="1548980343101" duration="2243000" />
+      <workItem from="1549305490445" duration="5600000" />
+      <workItem from="1549311272823" duration="6396000" />
+      <workItem from="1549393585585" duration="29379000" />
+      <workItem from="1549426118662" duration="203000" />
+      <workItem from="1549546116221" duration="340000" />
+      <workItem from="1549547618429" duration="1325000" />
+      <workItem from="1549915286336" duration="22747000" />
+      <workItem from="1550004969822" duration="14630000" />
+      <workItem from="1550020663040" duration="1109000" />
+      <workItem from="1552155296116" duration="439000" />
+      <workItem from="1552174754441" duration="946000" />
+      <workItem from="1552178651148" duration="12331000" />
+      <workItem from="1552248205872" duration="31697000" />
+      <workItem from="1552281577723" duration="513000" />
+      <workItem from="1552341900005" duration="473000" />
+      <workItem from="1552343228422" duration="2481000" />
+      <workItem from="1552367067882" duration="186000" />
+      <workItem from="1552782972178" duration="16464000" />
+      <workItem from="1552862942109" duration="5050000" />
+      <workItem from="1553047184090" duration="216000" />
+      <workItem from="1553999247204" duration="70000" />
+      <workItem from="1553999322712" duration="3000" />
+      <workItem from="1553999407165" duration="62000" />
+      <workItem from="1556251137045" duration="287000" />
+      <workItem from="1556408216957" duration="2761000" />
+      <workItem from="1556413833038" duration="505000" />
+      <workItem from="1557194626107" duration="2028000" />
+      <workItem from="1557197667105" duration="7079000" />
+      <workItem from="1557628657892" duration="7719000" />
+      <workItem from="1557702205990" duration="341000" />
+      <workItem from="1557702700907" duration="1162000" />
+      <workItem from="1557704348930" duration="4577000" />
+      <workItem from="1557796184082" duration="11446000" />
+      <workItem from="1557889901332" duration="1847000" />
+      <workItem from="1558306194459" duration="7378000" />
+      <workItem from="1558319509869" duration="1738000" />
+      <workItem from="1558897072639" duration="8863000" />
+      <workItem from="1559010315950" duration="10999000" />
+      <workItem from="1559022165986" duration="196000" />
+      <workItem from="1559503651082" duration="9123000" />
+      <workItem from="1559517311714" duration="717000" />
+      <workItem from="1559518242169" duration="4688000" />
+      <workItem from="1559527409144" duration="3982000" />
+      <workItem from="1559758321903" duration="1762000" />
+      <workItem from="1559761276010" duration="19923000" />
+      <workItem from="1559869952613" duration="2160000" />
+      <workItem from="1559875973012" duration="68000" />
+      <workItem from="1560108066294" duration="3852000" />
+      <workItem from="1560116491573" duration="17940000" />
+      <workItem from="1560388032244" duration="4913000" />
+      <workItem from="1560729307769" duration="15002000" />
+    </task>
+    <task id="LOCAL-00001" summary="Criação de função de nao-determinismo, correção no contra-exemplo e correção na tradução dos textos de nomes do nós do diagrama">
+      <created>1549938404869</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1549938404869</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Correção de testes">
+      <created>1549939351177</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1549939351177</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Criação de intervalos de tipos de dados">
+      <created>1550018894793</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1550018894794</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Correção de texto na tradução do diagrama (nome do diagrama)">
+      <created>1550021749310</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1550021749310</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Atualização de repositório GitHub">
+      <created>1552155555507</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1552155555507</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Tradução do Parametro de Saída e do CallBehaviour">
+      <created>1552367205825</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1552367205825</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Correção Callbehaviour, Correção Decision sem guarda, Criação ObjectNode, Correção Contra exemplos">
+      <created>1552868104045</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1552868104045</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Correção de não-determinismo no decision node com mais de uma guarda true">
+      <created>1556414252744</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1556414252745</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Modificação do update, nome dos nós e canais lock em diagramas isolados.">
+      <created>1557204643725</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1557204643725</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Criação de tradutores de send signal e accept event, e modificação do processo de sincronização">
+      <created>1558321149598</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1558321149598</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Verificação de licença e criação de barra de progresso">
+      <created>1559022336837</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1559022336837</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Modificaçã decisionNode (Ce)">
+      <created>1559530744076</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1559530744076</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Refatoração de código e modificação de ProgressBar">
+      <created>1560392852667</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1560392852667</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Correção decisionNode e mergeNode">
+      <created>1569777887839</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1569777887839</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Correção actionNode e decisionNode">
+      <created>1570322146821</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1570322146822</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="AllTests - 2019.10.05 at 21h 11m 02s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.05 at 21h 12m 14s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.05 at 21h 15m 51s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.05 at 21h 21m 16s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.05 at 21h 35m 00s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.19 at 13h 07m 32s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.19 at 13h 14m 02s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.19 at 13h 21m 14s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.19 at 13h 21m 48s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="AllTests - 2019.10.19 at 13h 25m 19s.xml">
+      <configuration name="AllTests" configurationId="JUnit" />
+    </history-entry>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="354271000" />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Criação de função de nao-determinismo, correção no contra-exemplo e correção na tradução dos textos de nomes do nós do diagrama" />
+    <MESSAGE value="Correção de testes" />
+    <MESSAGE value="Criação de intervalos de tipos de dados" />
+    <MESSAGE value="Correção de texto na tradução do diagrama (nome do diagrama)" />
+    <MESSAGE value="Atualização de repositório GitHub" />
+    <MESSAGE value="Tradução do Parametro de Saída e do CallBehaviour" />
+    <MESSAGE value="Correção Callbehaviour, Correção Decision sem guarda, Criação ObjectNode, Correção Contra exemplos" />
+    <MESSAGE value="Correção de não-determinismo no decision node com mais de uma guarda true" />
+    <MESSAGE value="Modificação do update, nome dos nós e canais lock em diagramas isolados." />
+    <MESSAGE value="Criação de tradutores de send signal e accept event, e modificação do processo de sincronização" />
+    <MESSAGE value="Verificação de licença e criação de barra de progresso" />
+    <MESSAGE value="Modificaçã decisionNode (Ce)" />
+    <MESSAGE value="Refatoração de código e modificação de ProgressBar" />
+    <MESSAGE value="Correção decisionNode e mergeNode" />
+    <MESSAGE value="Correção actionNode e decisionNode" />
+    <option name="LAST_COMMIT_MESSAGE" value="Correção actionNode e decisionNode" />
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>No facets are configured</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>11</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>ref</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.6" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectJDKs.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: junit:junit:4.10</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

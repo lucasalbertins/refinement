@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+   <extension point="com.change_vision.astah.ui.actionSets">
+      <actionSet
+            label="%action_set_label"
+            visible="true"
+            id="com.ref.ref.actionSet">
+         <menu
+               id="ref"
+               label="%menu_group"
+               path="tool/ref">
+         </menu>
+         <action
+			   label="%menu_label"
+               icon="icons/sample.gif"
+               class="com.ref.astah.ui.FDRLocationAction"
+               tooltip="%menu_tooltip"
+               menubarPath="tool/ref/"
+               id="ref">
+         </action>
+         <action
+			   label="%menu_label2"
+               icon="icons/sample.gif"
+               class="com.ref.astah.ui.RobochartLocationAction"
+               tooltip="%menu_tooltip2"
+               menubarPath="tool/ref/"
+               id="ref">
+         </action>
+     </actionSet>
+   </extension>
+   <extension point="com.change_vision.astah.ui.actionSets">
+      <actionSet
+            label="%AD_set_label"
+            visible="true"
+            id="com.ref.ref.actionSet">
+         <menu
+               id="AD"
+               label="%AD_menu_group"
+               path="tool/AD">
+         </menu>
+         <menu
+               id="verification"
+               label="%AD2_menu_group"
+               path="tool/AD/verification">
+         </menu>
+         <!--
+         <action
+			   label="%AD_menu_label"
+               icon="icons/sample.gif"
+               class="com.ref.astah.ui.TemplateDeadlockActionAD"
+               tooltip="%menu_tooltip"
+               menubarPath="tool/AD/verification/"
+               id="verificationDeadlock">
+         </action>
+         <action
+                 label="%AD_menu_label2"
+                 icon="icons/sample.gif"
+                 class="com.ref.astah.ui.TemplateDeterminismActionAD"
+                 tooltip="%menu_tooltip"
+                 menubarPath="tool/AD/verification/"
+                 id="verificationDeterminism">
+         </action>
+         -->
+         <action
+                 label="%AD_menu_label3"
+                 icon="icons/sample.gif"
+                 class="com.ref.astah.ui.TemplateRobochartActionAD"
+                 tooltip="%menu_tooltip"
+                 menubarPath="tool/AD/verification/"
+                 id="verificationRobochart">
+         </action>
+     </actionSet>
+   </extension>
+   <extension point="com.change_vision.astah.ui.view">
+        <view
+            id="com.ref.ui.RefinementView"
+            type="extraTab"
+            class="com.ref.ui.RefinementView" />
+   </extension>
+</plugin>
