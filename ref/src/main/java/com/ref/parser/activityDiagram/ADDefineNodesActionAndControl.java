@@ -129,10 +129,12 @@ public class ADDefineNodesActionAndControl {
                      nodes.append(defineCallBehaviour(activityNode));
                  } else if (((IAction) activityNode).isSendSignalAction()) {
                      nodes.append(defineSignal(activityNode));
-                 } else if (((IAction) activityNode).isAcceptEventAction()) {
-                     nodes.append(defineAccept(activityNode));
-                 } else {//TODO else if value specification(new class)
-                     nodes.append(defineAction(activityNode));    // create action node and set next action node
+                 //} else if (((IAction) activityNode).isAcceptTimeEventAction()) {
+                     //nodes.append(defineAccept(activityNode));
+                 } else if (((IAction) activityNode).isAcceptEventAction() || ((IAction) activityNode).isAcceptTimeEventAction()){//TODO else if value specification(new class)
+                     nodes.append(defineAccept(activityNode));    // create action node and set next action node
+                 } else {
+                	 nodes.append(defineAction(activityNode));
                  }
              } else if (activityNode instanceof IControlNode) {
                  if (((IControlNode) activityNode).isFinalNode()) {

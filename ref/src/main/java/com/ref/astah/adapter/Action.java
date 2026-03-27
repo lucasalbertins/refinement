@@ -81,6 +81,12 @@ public class Action extends ActivityNode implements IAction {
 	public boolean isAcceptEventAction() {
 		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isAcceptEventAction();
 	}
+	// adicionado o AcceptTimeEventAction
+	@Override
+	public boolean isAcceptTimeEventAction() {
+		return ((com.change_vision.jude.api.inf.model.IAction) activityNode).isAcceptTimeEventAction();
+	}
+	
 
 	@Override
 	public String getName() {

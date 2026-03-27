@@ -51,7 +51,7 @@ public class ADDefineMerge {
 			throw new ParsingException("Merge node must have exactly one outgoing edge.");
 		}
 
-		merge.append(nameMerge + "(id) = (");
+		merge.append("	" + nameMerge + "(id) = (");
 
 		if (outFlows[0] instanceof IObjectFlow) {
 			for (int i = 0; i < inFlows.length; i++) {
@@ -218,7 +218,7 @@ public class ADDefineMerge {
 			adUtils.ce(alphabet, merge, ce, " -> ");
 
 			merge.append(nameMerge + "(id)\n");
-			merge.append(nameMergeTermination + "(id) = ");
+			merge.append("	" + nameMergeTermination + "(id) = ");
 			merge.append(nameMerge + "(id) /\\ " + endDiagram + "(id)\n");
 		}
 

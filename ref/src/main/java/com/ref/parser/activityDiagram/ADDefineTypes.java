@@ -53,7 +53,7 @@ public class ADDefineTypes {
         if (firstDiagram.equals(ad.getId())) { //If is the first occurrence
 
             for (String id : countCall.keySet()) {
-                types.append("ID_" + id + " = {1.." + countCall.get(id) + "}\n");
+                types.append("	ID_" + id + " = {1.." + countCall.get(id) + "}\n");
             }
             
             boolean flag = false;
@@ -114,16 +114,26 @@ public class ADDefineTypes {
 
         if (alphabetNode.size() > 0) {
             String termination = "_" + nameDiagram + "_t_alphabet";
-            types.append("datatype alphabet_" + nameDiagram + " = ");
+            types.append("	datatype alphabet_" + nameDiagram + " = ");
             boolean first = true;
             Set<Pair<IActivity, String>> keys = alphabetNode.keySet();
             
             for (Pair<IActivity, String> node : keys) {
                 if (first) {
-                    types.append(node.getValue() + termination + " ");
+                	if ((node.getValue()).substring(0,1).equals("_")) {
+                		types.append("P" + (node.getValue()).substring(1) + termination);
+                		
+                	}else {
+                		types.append(node.getValue() + termination + " ");
+                	}	
+                    
                     first = false;
                 } else {
-                    types.append("| " + node.getValue() + termination);
+                	if (node.getValue().substring(0,1).equals("_")) {
+                		types.append("| P" + (node.getValue()).substring(1) + termination);
+                   	}else {
+                  		types.append("| " + node.getValue() + termination);
+                   	}
                 }
             }
             types.append("\n");
@@ -155,7 +165,7 @@ public class ADDefineTypes {
                 }
 
                 if (!buffer.contains(objectUnion)) {
-                    types.append(objectUnion + "_" + nameDiagram + " = ");
+                    types.append("	" + objectUnion + "_" + nameDiagram + " = ");
                     types.append(typesParameter.get(parameterNodesInput.get(nameLast)) + "\n");
                     buffer.add(objectUnion);
                 }
@@ -164,7 +174,7 @@ public class ADDefineTypes {
 
             for (String definitionName : typesParameter.keySet()) {
 //            	types.append("--" + definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
-                types.append(definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
+                types.append("	" + definitionName + "_" + nameDiagram + " = " + typesParameter.get(definitionName) + "\n");
             }
 
 
@@ -172,31 +182,31 @@ public class ADDefineTypes {
 
         if (adParser.countGet_ad > 1 || adParser.countSet_ad > 1) {
             if (adParser.countGet_ad == 1) {
-                types.append("countGet_" + nameDiagram + " = {1.." + adParser.countGet_ad + "}\n");
+                types.append("	countGet_" + nameDiagram + " = {1.." + adParser.countGet_ad + "}\n");
             } else {
-                types.append("countGet_" + nameDiagram + " = {1.." + (adParser.countGet_ad - 1) + "}\n");
+                types.append("	countGet_" + nameDiagram + " = {1.." + (adParser.countGet_ad - 1) + "}\n");
             }
 
             if (adParser.countSet_ad == 1) {
-                types.append("countSet_" + nameDiagram + " = {1.." + adParser.countSet_ad + "}\n");
+                types.append("	countSet_" + nameDiagram + " = {1.." + adParser.countSet_ad + "}\n");
             } else {
-                types.append("countSet_" + nameDiagram + " = {1.." + (adParser.countSet_ad - 1) + "}\n");
+                types.append("	countSet_" + nameDiagram + " = {1.." + (adParser.countSet_ad - 1) + "}\n");
             }
         }
 
         if (adParser.countCe_ad > 1) {
-            types.append("countCe_" + nameDiagram + " = {1.." + (adParser.countCe_ad - 1) + "}\n");
+            types.append("	countCe_" + nameDiagram + " = {1.." + (adParser.countCe_ad - 1) + "}\n");
         }
 
         if (adParser.countOe_ad > 1) {
-            types.append("countOe_" + nameDiagram + " = {1.." + (adParser.countOe_ad - 1) + "}\n");
+            types.append("	countOe_" + nameDiagram + " = {1.." + (adParser.countOe_ad - 1) + "}\n");
         }
 
-        types.append("countUpdate_" + nameDiagram + " = {1.." + (adParser.countUpdate_ad - 1) + "}\n");
+        types.append("	countUpdate_" + nameDiagram + " = {1.." + (adParser.countUpdate_ad - 1) + "}\n");
 
-        types.append("countClear_" + nameDiagram + " = {1.." + (adParser.countClear_ad - 1) + "}\n");
+        types.append("	countClear_" + nameDiagram + " = {1.." + (adParser.countClear_ad - 1) + "}\n");
 
-        types.append("limiteUpdate_" + nameDiagram + " = {(" + adParser.limiteInf + ")..(" + adParser.limiteSup + ")}\n");
+        types.append("	limiteUpdate_" + nameDiagram + " = {(" + adParser.limiteInf + ")..(" + adParser.limiteSup + ")}\n");
 
         return types.toString();
     }

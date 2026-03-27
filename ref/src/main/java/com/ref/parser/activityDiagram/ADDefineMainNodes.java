@@ -39,14 +39,14 @@ public class ADDefineMainNodes {
 
         if (firstDiagram.equals(ad.getId())) {
 ////////////////////////////////////////////////////////////////////////////////////////        	
-        	mainNode.append("MAIN = normal(" + nameDiagram + "(1))\n");
+        	mainNode.append("	MAIN = wbisim(" + nameDiagram + "(1))\n");
 ////////////////////////////////////////////////////////////////////////////////////////        	
 //            mainNode.append("MAIN = normal(" + nameDiagram + "(1)); LOOP\n");
 //            mainNode.append("LOOP = loop -> LOOP\n");
         }
 
-        mainNode.append("END_DIAGRAM_" + nameDiagram + "(id) = endDiagram_" + nameDiagram + ".id -> SKIP\n");
-        mainNode.append(nameDiagram + "(ID_" + nameDiagram + ") = ");
+        mainNode.append("	END_DIAGRAM_" + nameDiagram + "(id) = endDiagram_" + nameDiagram + ".id -> SKIP\n");
+        mainNode.append("	" + nameDiagram + "(ID_" + nameDiagram + ") = ");
 
         if (parameterNodesInput.size() + parameterNodesOutput.size() > 0) {
             mainNode.append("(");
@@ -66,7 +66,7 @@ public class ADDefineMainNodes {
         mainNode.append("Internal_" + nameDiagram + "(ID_" + nameDiagram + ")");
 
         mainNode.append(" [|{|update_" + nameDiagram + ",clear_" + nameDiagram + ",endDiagram_" + nameDiagram + "|}|] ");
-        mainNode.append("TokenManager_" + nameDiagram + "_t(ID_"+nameDiagram+",0,0))");
+        mainNode.append("	TokenManager_" + nameDiagram + "_t(ID_"+nameDiagram+",0,0))");
         
 //        if(firstDiagram.equals(ad.getId()) && ADParser.alphabetPool.size() > 0) {//If is the first diagram
 //        	mainNode.append("[|AlphabetPool|]pools(ID_"+nameDiagram+"))");
@@ -113,11 +113,11 @@ public class ADDefineMainNodes {
             mainNode.append("\n");
         }
 
-        mainNode.append("Internal_" + nameDiagram + "(id) = ");
+        mainNode.append("	Internal_" + nameDiagram + "(id) = ");
         mainNode.append("StartActivity_" + nameDiagram + "(id); Node_" + nameDiagram + "(id); EndActivity_" + nameDiagram + "(id)\n");
 
 
-        mainNode.append("StartActivity_" + nameDiagram + "(id) = ");
+        mainNode.append("	StartActivity_" + nameDiagram + "(id) = ");
         mainNode.append("startActivity_" + nameDiagram + ".id");
 
         if (parameterNodesInput.size() > 0) {
@@ -150,7 +150,7 @@ public class ADDefineMainNodes {
         }
 
 
-        mainNode.append("EndActivity_" + nameDiagram + "(id) = ");
+        mainNode.append("	EndActivity_" + nameDiagram + "(id) = ");
 
         if (parameterNodesOutput.size() > 0) {
             for (String input : parameterNodesOutput.keySet()) {

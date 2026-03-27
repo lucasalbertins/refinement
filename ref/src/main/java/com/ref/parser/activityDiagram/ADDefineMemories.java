@@ -66,7 +66,7 @@ public class ADDefineMemories {
                     }
                 } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                    memory.append("Mem_" + nameDiagram + "_" + input + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(input)) + "))");
+                    memory.append("	Mem_" + nameDiagram + "_" + input + "_t(id," + adUtils.getDefaultValue(parameterNodesInput.get(input)) + "))");
                 }
 
                 i++;
@@ -83,7 +83,7 @@ public class ADDefineMemories {
                     }
                 } else {
                     memory.append(" [|{|endActivity_" + nameDiagram + "|}|] ");
-                    memory.append("Mem_" + nameDiagram + "_" + output + "_t(id," + adUtils.getDefaultValue(parameterNodesOutput.get(output)) + "))");
+                    memory.append("	Mem_" + nameDiagram + "_" + output + "_t(id," + adUtils.getDefaultValue(parameterNodesOutput.get(output)) + "))");
                 }
 
                 i++;
@@ -102,9 +102,9 @@ public class ADDefineMemories {
 //    	//		[] set_accept_ultrasonic_u_P_Teste?u_ -> Mem_accept_ultrasonic_u_P_Teste(u_)
 //    	
 //     	for (Pair<String, String> pair : memoryLocal.keySet()) {
-//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
+//            memory.append("" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
 //            memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c!" + pair.getValue() + " -> ");
-//            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");
+//            memory.append("" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");
 //            memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c?" + pair.getValue() + " -> ");
 //            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ")\n");
 //            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(id," + pair.getValue() + ") = ");
@@ -134,12 +134,12 @@ public class ADDefineMemories {
         }
         
     	for (Pair<String, String> pair : memoryLocal.keySet()) {
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
+            memory.append("	Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") = ");
             memory.append("get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c!" + pair.getValue() + " -> ");
             memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") [] ");
             memory.append("set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ".id?c?" + pair.getValue() + " -> ");
             memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ")\n");
-            memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(id," + pair.getValue() + ") = ");
+            memory.append("	Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "_t" + "(id," + pair.getValue() + ") = ");
             memory.append("Mem_" + pair.getKey() + "_" + nameDiagram + "_" + pair.getValue() + "(id," + pair.getValue() + ") /\\ END_DIAGRAM_" + nameDiagram + "(id)\n");
             
             if(callBehaviors.containsKey(pair.getKey())) {
@@ -155,7 +155,7 @@ public class ADDefineMemories {
     	
     	Set<String> keys = callBehaviors.keySet();
     	for(String CBAs : keys) {
-    		memory.append("AlphabetMem"+CBAs+"_"+nameDiagram+"(id) = {|"+alphabetMemory+"endDiagram_"+nameDiagram+".id|}\n");
+    		memory.append("	AlphabetMem"+CBAs+"_"+nameDiagram+"(id) = {|"+alphabetMemory+"endDiagram_"+nameDiagram+".id|}\n");
     		List<Pair<String,String>> memories = callBehaviors.get(CBAs);
     		StringBuilder CSPCode = new StringBuilder();
     		CSPCode.append("Mem_"+CBAs+"_"+nameDiagram+"(id) =");
@@ -171,12 +171,12 @@ public class ADDefineMemories {
 
     private void defineMemoryGlobal(StringBuilder memory, String nameDiagram, HashMap<String, String> memoryGlobal, boolean outputParam) {
     	for (String value : memoryGlobal.keySet()) {
-            memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") = ");
+            memory.append("	Mem_" + nameDiagram + "_" + value + "(id," + value + ") = ");
             memory.append("get_" + value + "_" + nameDiagram + ".id?c!" + value + " -> ");
             memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") [] ");
             memory.append("set_" + value + "_" + nameDiagram + ".id?c?" + value + " -> ");
             memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ")\n");
-            memory.append("Mem_" + nameDiagram + "_" + value + "_t" + "(id," + value + ") = ");
+            memory.append("	Mem_" + nameDiagram + "_" + value + "_t" + "(id," + value + ") = ");
             
             memory.append("Mem_" + nameDiagram + "_" + value + "(id," + value + ") /\\ (endActivity_" + nameDiagram + ".id"+(outputParam?"?" + value:"") + " -> SKIP)\n");
             //TODO verify the endActivity

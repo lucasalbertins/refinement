@@ -3,6 +3,7 @@ package com.ref.parser.activityDiagram;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
@@ -20,6 +21,11 @@ public class ADDefineAccept {
 	private List<Pair<String, Integer>> countAccept;
     private List<String> createdAccept;
     private ADUtils adUtils;
+    
+    private static final Pattern DEADLINE_PATTERN =
+			Pattern.compile("^(?:[A-Za-z_][A-Za-z0-9_]*\\(\\s*(?:[^(),]+\\s*(?:,\\s*[^(),]+\\s*)*)?\\)|[A-Za-z_][A-Za-z0-9_]*)\\s*<\\{\\s*(?:0|[1-9]\\d*)\\s*\\}$c");
+
+    
 
     public ADDefineAccept(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2,
     		List<Pair<String, Integer>> countAccept, List<String> createdAccept, ADUtils adUtils) {
@@ -66,7 +72,7 @@ public class ADDefineAccept {
             definitionFinal = definition.replace(" ", "").split(";");
         }
         
-        accept.append(nameAccept + "(id) = ");
+        accept.append("	" + nameAccept + "(id) = ");
 
         adUtils.incomingEdges(activityNode, accept, alphabet, inFlows, inPins, namesMemoryLocal, typeMemoryLocal);
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -79,6 +85,7 @@ public class ADDefineAccept {
 						" -> SKIP; ");
 			}
 		} else {
+			
 			adUtils.accept(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".in"), accept, outPins);
 		}
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +142,7 @@ public class ADDefineAccept {
 
         accept.append(nameAccept + "(id)\n");
 
-        accept.append(nameAcceptTermination + "(id) = ");
+        accept.append("	" + nameAcceptTermination + "(id) = ");
         
         if (namesMemoryLocal.size() > 0) {
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
@@ -152,7 +159,7 @@ public class ADDefineAccept {
 
                 String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));                   
 
-                accept.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
+                accept.append("	Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
             }
 
             accept.append("\\{|");

@@ -52,7 +52,7 @@ public class ADDefineJoin {
 			throw new ParsingException("Join node must have exactly one outgoing edge.");
 		}
 
-		joinNode.append(nameJoin + "(id) = (");
+		joinNode.append("	" + nameJoin + "(id) = (");
 
 		ArrayList<String> ceInitials = new ArrayList<>();
 		for (int i = 0; i < inFlows.length; i++) {
@@ -180,7 +180,7 @@ public class ADDefineJoin {
 
 		joinNode.append(nameJoin + "(id)\n");
 
-		joinNode.append(nameJoinTermination + "(id) = ");
+		joinNode.append("	" + nameJoinTermination + "(id) = ");
 
 		for (int i = 0; i < nameObjects.keySet().size(); i++) {
 			joinNode.append("(");

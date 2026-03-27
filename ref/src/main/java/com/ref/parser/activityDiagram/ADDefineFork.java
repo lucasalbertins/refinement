@@ -47,7 +47,7 @@ public class ADDefineFork {
 			throw new ParsingException("Fork node must have exactly one incoming edge.");
 		}
 
-		forkNode.append(nameFork + "(id) = ");
+		forkNode.append("	" + nameFork + "(id) = ");
 
 		IFlow inEdge = inFlows[0];
 		Pair<IActivity, String> key = new Pair<IActivity, String>(ad, inEdge.getId());
@@ -152,7 +152,7 @@ public class ADDefineFork {
 
 		forkNode.append(nameFork + "(id)\n");
 
-		forkNode.append(nameForkTermination + "(id) = ");
+		forkNode.append("	" + nameForkTermination + "(id) = ");
 		forkNode.append(nameFork + "(id) /\\ " + endDiagram + "(id)\n");
 
 		alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()) + ".id");

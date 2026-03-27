@@ -24,7 +24,7 @@ public class TemplateRobochartActionAD implements IPluginActionDelegate {
 
 			if (diagram instanceof IActivityDiagram) {
 				CheckingProgressBar progressBar = new CheckingProgressBar();
-				progressBar.setNewTitle("Checking Robochart Property");
+				progressBar.setNewTitle("Checking RoboChart Property");
 				progressBar.setAssertion(0);
 
 				new Thread(new Runnable() {

@@ -29,7 +29,7 @@ public class PinTest {
 		try {
 			ProjectAccessor projectAccessor = AstahAPI.getAstahAPI().getProjectAccessor();
 			projectAccessor.open("src/test/resources/activityDiagram/action5.asta");
-			INamedElement[] findElements = TestUtils.findElements(projectAccessor);
+			INamedElement[] findElements = (INamedElement[]) TestUtils.findElements(projectAccessor);
 
 			ad = (IActivityDiagram) findElements[0];
 			pin = ((com.change_vision.jude.api.inf.model.IAction) ad.getActivity().getActivityNodes()[4]).getInputs()[0];

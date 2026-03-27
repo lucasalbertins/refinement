@@ -34,7 +34,7 @@ public class ADDefineProcessSync {
             ArrayList<String> alphabet = alphabetNode.get(node);
             IActivityNode Activitynode = findCBANode(node.getValue());
             if(Activitynode != null && !((IAction) Activitynode).hasStereotype("ANY")) {
-        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
+        		processSync.append("	AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
 //        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = union({|");
                 alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
                 for (int i = 0; i < alphabet.size(); i++) {
@@ -56,9 +56,14 @@ public class ADDefineProcessSync {
             	// linha comentada
                 //processSync.append("|},AlphabetDiagram_"+ADUtils.nameResolver(((IAction)Activitynode).getCallingActivity().getName())+"_t("+index+"))\n");
         	}else {
-        		processSync.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
-                alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
-                for (int i = 0; i < alphabet.size(); i++) {
+        		if (node.getValue().substring(0,1).equals("_")) {
+        			processSync.append("	AlphabetDiagram_" + nameDiagram + "(id,P" + node.getValue().substring(1) + terminationAlphabet + ") = {|");
+        			alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id,P" + node.getValue().substring(1) + terminationAlphabet + ")"+"SUB");
+        		}else {
+        			processSync.append("	AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = {|");
+        			alphabetDiagram.append("AlphabetDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ")"+"SUB");
+         		}
+        		for (int i = 0; i < alphabet.size(); i++) {
                     processSync.append(alphabet.get(i));
                     if (i < alphabet.size() - 1) {
                         processSync.append(",");
@@ -69,7 +74,7 @@ public class ADDefineProcessSync {
              
         }
    
-        processSync.append("AlphabetDiagram_" + nameDiagram +"_t(id) = ");
+        processSync.append("	AlphabetDiagram_" + nameDiagram +"_t(id) = ");
         for(int i = 1; i< alphabetNode.size();i++) {
         	processSync.append("union(");
         }
@@ -80,8 +85,14 @@ public class ADDefineProcessSync {
         
         
         for(Pair<IActivity, String> node : keys) {
-            processSync.append("ProcessDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = normal(");
-            processSync.append(node.getValue() + termination + "(id))\n");
+        	if (node.getValue().substring(0,1).equals("_")) {
+        		processSync.append("	ProcessDiagram_" + nameDiagram + "(id,P" + (node.getValue()).substring(1) + terminationAlphabet + ") = wbisim(");
+                processSync.append("P" + (node.getValue()).substring(1) + termination + "(id))\n");
+        	}else {
+        		processSync.append("	ProcessDiagram_" + nameDiagram + "(id," + node.getValue() + terminationAlphabet + ") = wbisim(");
+                processSync.append(node.getValue() + termination + "(id))\n");
+        	
+        	}
         }
 //        if (!adUtils.hasPins()) {
 //        	processSync.append("\nNode_" + nameDiagram + "(id) = || x:alphabet_" + nameDiagram + " @ [AlphabetDiagram_" + nameDiagram + "(id,x)] ProcessDiagram_" + nameDiagram + "(id,x)\n\n");			

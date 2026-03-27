@@ -50,7 +50,7 @@ public class ADDefineDecision {
         IFlow inEdge = inFlows[0];
         Pair<IActivity,String> key = new Pair<IActivity, String>(ad,inEdge.getId());
         
-        decision.append(nameDecision + "(id) = ");
+        decision.append("	" + nameDecision + "(id) = ");
         
         // case input is object
         if (inEdge instanceof IObjectFlow) {
@@ -159,9 +159,9 @@ public class ADDefineDecision {
 
             decision.append("); ");
 
-            decision.append(nameDecision + "(id)\n");
+            decision.append("	" + nameDecision + "(id)\n");
 
-            decision.append(nameDecisionTermination + "(id) = ");
+            decision.append("	" + nameDecisionTermination + "(id) = ");
             decision.append("(" + nameDecision + "(id) /\\ " + endDiagram + "(id)) \\{|dc|}\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
@@ -199,7 +199,7 @@ public class ADDefineDecision {
             }
 
             if (countGuards > 0) {
-                decision.append(nameDecision + "_guard" + allGuards + " -> ");
+                decision.append("	" + nameDecision + "_guard" + allGuards + " -> ");
                 alphabet.add(nameDecision + "_guard");
             }
 
@@ -249,9 +249,9 @@ public class ADDefineDecision {
 
             decision.append("); ");
 
-            decision.append(nameDecision + "(id)\n");
+            decision.append("	" + nameDecision + "(id)\n");
 
-            decision.append(nameDecisionTermination + "(id) = ");
+            decision.append("	" + nameDecisionTermination + "(id) = ");
             decision.append(nameDecision + "(id) /\\ " + endDiagram + "(id) \\{|dc|}\n");
 
             alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");

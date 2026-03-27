@@ -19,6 +19,8 @@ public class ADDefineCallBehavior {
     private HashMap<Pair<IActivity,String>, ArrayList<String>> alphabetNode;
     private ADUtils adUtils;
 
+	//private String nameAccept;
+
     public ADDefineCallBehavior(IActivity ad, HashMap<Pair<IActivity, String>, ArrayList<String>> alphabetNode2, 
                              ADUtils adUtils) {
         this.ad = ad;
@@ -32,7 +34,7 @@ public class ADDefineCallBehavior {
         String nameCallBehaviour = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
         String namCallBehaviourTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
-        IFlow[] outFlows = activityNode.getOutgoings();
+        IFlow[] outFlows = activityNode.getOutgoings(); //adUtils.nameDiagramResolver(ad.getName())
         IFlow[] inFlows = activityNode.getIncomings();
         IOutputPin[] outPins = ((IAction) activityNode).getOutputs();
         IInputPin[] inPins = ((IAction) activityNode).getInputs();
@@ -43,14 +45,21 @@ public class ADDefineCallBehavior {
         int countOutFlowPin = 0;
     	
         ADDefineMemories.CBAMemAlphabet.put(activityNode,(IActivity) ((IAction)activityNode).getCallingActivity());
-        
+    	
         for (int i = 0; i < outPins.length; i++) {
             namesOutpins.add(outPins[i].getName());
         }
+           
         
-        callBehaviour.append(nameCallBehaviour + "(id) = ");
-
+        if (((IAction) activityNode).hasStereotype("ANY")) {
+        	callBehaviour.append("	P" + nameCallBehaviour.substring(1) + "(id) = ");
+        }else {
+        	callBehaviour.append("	" + nameCallBehaviour + "(id) = ");
+        }
+        
+            
         adUtils.incomingEdges(activityNode, callBehaviour, alphabet, inFlows, inPins, namesMemoryLocal, typeMemoryLocal);
+        
         
         for (String nameObj : namesMemoryLocal) {
             adUtils.getLocal(alphabet, callBehaviour, nameObj, adUtils.nameDiagramResolver(activityNode.getName()), nameObj, typeMemoryLocal.get(nameObj));
@@ -95,44 +104,69 @@ public class ADDefineCallBehavior {
 	    	for (int i = 0; i < activityNode.getStereotypes().length; i++) {
 	    		if (activityNode.getStereotypes()[i].equals("ANY")) {
 		        	String stereotype = activityNode.getStereotypes()[i];
-		        	adUtils.createAny(alphabet, callBehaviour);
-		        	callBehaviour.append(nameCallBehaviour+"(id)\n");
-		        	callBehaviour.append(namCallBehaviourTermination + "(id) = ");
-		        	callBehaviour.append(nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)\n");
+		        	//alphabet.add(nameCallBehaviour); // teste
+		        	
+		        	adUtils.createAny(alphabet, callBehaviour, nameCallBehaviour);
+		        	callBehaviour.append("P" + nameCallBehaviour.substring(1)+"(id)\n");
+		        	callBehaviour.append("	P" + namCallBehaviourTermination.substring(1) + "(id) = ");
+		        	callBehaviour.append("P"+nameCallBehaviour.substring(1) + "(id) /\\ " + endDiagram + "(id)\n");
 		        	alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
-		            Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
+		        	alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()));		        	
+		        	Pair<IActivity,String> key = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));
 		            alphabetNode.put(key, alphabet);
 //		            nodes.append(callBehaviour.toString());
 		        	
 	    			return callBehaviour.toString();
-	    		} 
+	            
+	        	
 				
 			}
 			
 		}
+	  }
 ////////////////////////////////////////////////////////////////////////////////////////        
 	    callBehavior(alphabet, callBehaviour, ((IAction) activityNode).getCallingActivity().getActivityDiagram().getName(), namesMemoryLocal, namesOutpins,activityNode);
         adUtils.update(alphabet, callBehaviour, inFlows.length + countInFlowPin, outFlows.length + countOutFlowPin, false);
         
         adUtils.outgoingEdges(callBehaviour, alphabet, outFlows, outPins, null,false);
         
-        callBehaviour.append(nameCallBehaviour+"(id)\n");
-
-        callBehaviour.append(namCallBehaviourTermination + "(id) = ");
+        if (((IAction) activityNode).hasStereotype("ANY")) {
+        	callBehaviour.append("P" + nameCallBehaviour.substring(1) + "(id)\n");
+        }else {
+        	callBehaviour.append(nameCallBehaviour+"(id)\n");
+        }
+        
+        callBehaviour.append("	" + namCallBehaviourTermination + "(id) = ");
 
         if (namesMemoryLocal.size() > 0) {
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
                 callBehaviour.append("(");
             }
-            callBehaviour.append("("+nameCallBehaviour+"(id)) ");
+            if (((IAction) activityNode).hasStereotype("ANY")) {
+            	callBehaviour.append("(P" + nameCallBehaviour.substring(1) + "(id)) ");
+            }else {
+            	callBehaviour.append("("+nameCallBehaviour+"(id)) ");
+            }
+            
+            
             for(int i = 0; i < namesMemoryLocal.size(); i++) {
-            	callBehaviour.append("[|AlphabetMem"+nameCallBehaviour+"(id)|] "
-            						+"Mem_"+nameCallBehaviour+"(id)) \\diff(AlphabetMem"+nameCallBehaviour
+            	 if (((IAction) activityNode).hasStereotype("ANY")) {
+            		 callBehaviour.append("[|AlphabetMem" + "P" + nameCallBehaviour.substring(1) + "(id)|] "
+            						+"Mem_" + "P" + nameCallBehaviour.substring(1) + "(id)) \\diff(AlphabetMem" + "P" + nameCallBehaviour.substring(1)
             						+"(id),{|endDiagram_"+adUtils.nameDiagramResolver(ad.getName())+".id|}) /\\ "+ endDiagram+ "(id)\n");
+            	 }else {
+            		 callBehaviour.append("[|AlphabetMem"+nameCallBehaviour+"(id)|] "
+     						+"Mem_"+nameCallBehaviour+"(id)) \\diff(AlphabetMem"+nameCallBehaviour
+     						+"(id),{|endDiagram_"+adUtils.nameDiagramResolver(ad.getName())+".id|}) /\\ "+ endDiagram+ "(id)\n");
+            	 }
             }
      
         } else {
-            callBehaviour.append(nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)\n");
+        	 if (((IAction) activityNode).hasStereotype("ANY")) {
+        		 callBehaviour.append("P" + nameCallBehaviour.substring(1) + "(id) /\\ " + endDiagram + "(id)\n");
+        	 }else {
+        		 callBehaviour.append(nameCallBehaviour + "(id) /\\ " + endDiagram + "(id)\n");
+        	 }
         }
 
         alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
@@ -177,9 +211,11 @@ public class ADDefineCallBehavior {
                 pinsUsed = true;   
             }
         	action.append("(");
-            action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
+            action.append("wbisim("+adUtils.nameDiagramResolver(nameAD)+"("+index+")) [|{|"+startAct+","+endAct+"|}|] (");
         }else {
-        	action.append("normal("+adUtils.nameDiagramResolver(nameAD)+"("+index+"))");
+        	//action.append(adUtils.nameDiagramResolver(ad.getName()) + "; ");
+        	//action.append("wbisim("+adUtils.nameDiagramResolver(nameAD)+"("+index+"))");
+        	action.append("("+adUtils.nameDiagramResolver(nameAD)+"("+index+"))");
         }
 
         
@@ -209,4 +245,5 @@ public class ADDefineCallBehavior {
         action.append(!setMem.equals("setMemOutParam"+adUtils.nameDiagramResolver(nameAD))?"SKIP));":";");
         
     }
+
 }

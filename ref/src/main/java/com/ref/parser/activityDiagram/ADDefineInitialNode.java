@@ -42,7 +42,7 @@ public class ADDefineInitialNode {
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
 
-        initialNode.append(nameInitialNode + "(id) = ");
+        initialNode.append("	" + nameInitialNode + "(id) = ");
 
         adUtils.update(alphabet, initialNode, inFlows.length, outFlows.length, false);
 
@@ -73,7 +73,7 @@ public class ADDefineInitialNode {
 
         initialNode.append(")\n");
         
-        initialNode.append(nameInitialNodeTermination + "(id) = ");
+        initialNode.append("	" + nameInitialNodeTermination + "(id) = ");
         initialNode.append(nameInitialNode + "(id) /\\ END_DIAGRAM_"+ diagram +"(id)\n");
         alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");
         Pair<IActivity,String> pair = new Pair<IActivity, String>(ad,adUtils.nameDiagramResolver(activityNode.getName()));

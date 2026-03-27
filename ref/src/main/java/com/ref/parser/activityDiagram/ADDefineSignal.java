@@ -46,7 +46,7 @@ public class ADDefineSignal {
         HashMap<String, String> typeMemoryLocal = new HashMap<>();
         int countInFlowPin = 0;
         int countOutFlowPin = 0;
-
+        String outSignal = "";
 ////////////////////////////////////////////////////////////////////////////////////////
         int idSignal = 1;
 		for (int i = 0; i < countSignal.size(); i++) {
@@ -81,14 +81,15 @@ public class ADDefineSignal {
             definitionFinal = definition.replace(" ", "").split(";");
         }
         
-        signal.append(nameSignal + "(id) = ");
+        signal.append("	" + nameSignal + "(id) = ");
         adUtils.incomingEdges(activityNode, signal, alphabet, inFlows, inPins, namesMemoryLocal, typeMemoryLocal);
 ////////////////////////////////////////////////////////////////////////////////////////
 		if (inFlows.length == 1 && inFlows[0].getStereotypes().length > 0
 				&& inFlows[0].getStereotypes()[0].equals("UNTIL")) {
 			adUtils.until(alphabet, signal, adUtils.nameRobochartResolver(activityNode.getName(), ".out"),
 					" -> SKIP; ");
-		} else {
+		}else {
+			
 			adUtils.signal(alphabet, adUtils.nameRobochartResolver(activityNode.getName(), ".out"), signal, inPins);
 		}
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -131,9 +132,9 @@ public class ADDefineSignal {
         
         adUtils.outgoingEdges(signal, alphabet, outFlows, outPins, definitionFinal, false);
         
-        signal.append(nameSignal + "(id)\n");
+        signal.append("	" + nameSignal + "(id)\n");
 
-        signal.append(nameSignalTermination + "(id) = ");
+        signal.append("	" + nameSignalTermination + "(id) = ");
         if (namesMemoryLocal.size() > 0) {
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
             	signal.append("(");
@@ -149,7 +150,7 @@ public class ADDefineSignal {
 
                 String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));                   
 
-                signal.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
+                signal.append("	Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
             }
 
             signal.append("\\{|");

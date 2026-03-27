@@ -112,7 +112,7 @@ public class ADDefineFlowFinal {
 
         flowFinal.append(nameFlowFinal + "(id)\n");
 
-        flowFinal.append(nameFlowFinalTermination + "(id) = ");
+        flowFinal.append("	" + nameFlowFinalTermination + "(id) = ");
         flowFinal.append(nameFlowFinal + "(id) /\\ " + endDiagram + "(id)\n");
 
         alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName())+".id");

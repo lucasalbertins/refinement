@@ -51,7 +51,7 @@ public class ADDefineChannels {
         String nameDiagram = adUtils.nameDiagramResolver(ad.getName());
 
         for (String guard : allGuards.keySet()) {
-            channels.append("channel " + guard + ": ");
+            channels.append("	channel " + guard + ": ");
             for (int i = 0; i < allGuards.get(guard); i++) {
                 if (i > 0) {
                     channels.append(".Bool");
@@ -63,7 +63,7 @@ public class ADDefineChannels {
         }
 
         if (parameterNodesInput.size() > 0) {
-            channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
+            channels.append("	channel startActivity_" + nameDiagram + ": ID_" + nameDiagram);
 
             for (String input : parameterNodesInput.values()) {
                 channels.append("." + input + "_" + nameDiagram);
@@ -72,14 +72,14 @@ public class ADDefineChannels {
             channels.append("\n");
 
         } else {
-            channels.append("channel startActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
+            channels.append("	channel startActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
         }
 		////////////////////////////////////////////////////////////////////////////////////////
 		alphabetAstah.add("startActivity_" + nameDiagram);
 		////////////////////////////////////////////////////////////////////////////////////////
 
         if (parameterNodesOutput.size() > 0) {
-            channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram);
+            channels.append("	channel endActivity_" + nameDiagram + ": ID_" + nameDiagram);
 
             for (String output : parameterNodesOutput.values()) {
                 channels.append("." + output + "_" + nameDiagram);
@@ -88,7 +88,7 @@ public class ADDefineChannels {
             channels.append("\n");
 
         } else {
-            channels.append("channel endActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
+            channels.append("	channel endActivity_" + nameDiagram + ": ID_" + nameDiagram + "\n");
         }
 		////////////////////////////////////////////////////////////////////////////////////////
 		alphabetAstah.add("endActivity_" + nameDiagram);
@@ -97,8 +97,8 @@ public class ADDefineChannels {
         if (parameterNodesInput.size() > 0 || parameterNodesOutput.size() > 0 || memoryLocal.size() > 0) {
 
             for (String in : parameterNodesInput.keySet()) {
-                channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
+                channels.append("	channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
+                channels.append("	channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "_" + nameDiagram + "\n");
 //                channels.append("channel get_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + parameterNodesInput.get(in) + "\n");
 //                channels.append("channel set_" + in + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + parameterNodesInput.get(in) + "\n");
             }
@@ -110,15 +110,15 @@ public class ADDefineChannels {
                     throw new ParsingException("Parameter node " + out + " is untyped.");
                 }
 
-                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
-                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("	channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
+                channels.append("	channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "_" + nameDiagram + "\n");
 //                channels.append("channel get_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + object + "\n");
 //                channels.append("channel set_" + out + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + object + "\n");
             }
 
             for (Pair<String, String> pair : memoryLocal.keySet()) {
-            	channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
-            	channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+            	channels.append("	channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
+            	channels.append("	channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "_" + nameDiagram + "\n");
 //                channels.append("channel get_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countGet_" + nameDiagram + "." + memoryLocal.get(pair) + "\n");
 //                channels.append("channel set_" + pair.getValue() + "_" + pair.getKey() + "_" + nameDiagram + ": ID_"+nameDiagram +".countSet_" + nameDiagram + "." + memoryLocal.get(pair) + "\n");
             }
@@ -126,7 +126,7 @@ public class ADDefineChannels {
         }
 
         if (adParser.countCe_ad > 1) {
-            channels.append("channel ce_" + nameDiagram + ": ID_"+nameDiagram +".countCe_" + nameDiagram + "\n");
+            channels.append("	channel ce_" + nameDiagram + ": ID_"+nameDiagram +".countCe_" + nameDiagram + "\n");
         }
         
 		////////////////////////////////////////////////////////////////////////////////////////
@@ -144,18 +144,18 @@ public class ADDefineChannels {
                 if (!allObjectEdges.contains(type)) {
                     allObjectEdges.add(type);
                 }
-                channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "_" + nameDiagram + "\n");
+                channels.append("	channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "_" + nameDiagram + "\n");
 //                channels.append("channel " + objectEdge + ": ID_"+nameDiagram +"." + type + "\n");
                 alphabetAstah.add(objectEdge);
             }
 
         }
 
-        channels.append("channel clear_" + nameDiagram + ": ID_"+nameDiagram +".countClear_" + nameDiagram + "\n");
+        channels.append("	channel clear_" + nameDiagram + ": ID_"+nameDiagram +".countClear_" + nameDiagram + "\n");
 
-        channels.append("channel update_" + nameDiagram + ": ID_"+nameDiagram +".countUpdate_" + nameDiagram + ".limiteUpdate_" + nameDiagram + "\n");
+        channels.append("	channel update_" + nameDiagram + ": ID_"+nameDiagram +".countUpdate_" + nameDiagram + ".limiteUpdate_" + nameDiagram + "\n");
 
-        channels.append("channel endDiagram_" + nameDiagram +": ID_"+nameDiagram +"\n");
+        channels.append("	channel endDiagram_" + nameDiagram +": ID_"+nameDiagram +"\n");
         
 		////////////////////////////////////////////////////////////////////////////////////////
 		alphabetAstah.add("clear_" + nameDiagram);
@@ -164,7 +164,7 @@ public class ADDefineChannels {
 		////////////////////////////////////////////////////////////////////////////////////////
 
         if (eventChannel.size() > 0) {
-            channels.append("channel ");
+            channels.append("	channel ");
 
             for (int i = 0; i < eventChannel.size(); i++) {
                 channels.append(eventChannel.get(i));
@@ -200,7 +200,7 @@ public class ADDefineChannels {
 //            }
 
 //            channels.append("channel loop\n");
-            channels.append("channel dc\n");
+            channels.append("	channel dc\n");
     
 ////////////////////////////////////////////////////////////////////////////////////////
     	String partitionName;            
@@ -213,14 +213,14 @@ public class ADDefineChannels {
     	alphabetAstah.add("dc");  
 
     	if (adParser.countUntil_ad > 0) {
-    		channels.append("channel begin, end:  {1.." + adParser.countUntil_ad + "}\n");				
+    		channels.append("	channel begin, end:  {1.." + adParser.countUntil_ad + "}\n");				
     	}
     	if (adParser.countAny_ad > 0) {
-    		channels.append("channel chaos:  {1.." + adParser.countAny_ad + "}\n");				
+    		channels.append("	channel chaos:  {1.." + adParser.countAny_ad + "}\n");				
 		}
     }
 //        if (firstDiagram.equals(ad.getId())) {
-        	channels.append("\nalphabet_Astah_" + ADUtils.nameResolver(ad.getName()) + " = {| ");
+        	channels.append("\n	alphabet_Astah_" + ADUtils.nameResolver(ad.getName()) + " = {| ");
         	for (int i = 0; i < alphabetAstah.size(); i++) {
         		channels.append(alphabetAstah.get(i));
         		

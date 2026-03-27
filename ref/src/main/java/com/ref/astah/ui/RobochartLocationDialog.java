@@ -33,7 +33,7 @@ public class RobochartLocationDialog extends JDialog {
 	public RobochartLocationDialog(JFrame frame, boolean modal) throws IOException, ClassNotFoundException {
 		super(frame, modal);
 		initComponents();
-		this.setTitle("Select Robochart File");
+		this.setTitle("Select RoboChart File");
 		this.setLocation(new Point(276, 182));
 		this.setSize(new Dimension(450, 150));
 		this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
@@ -48,7 +48,7 @@ public class RobochartLocationDialog extends JDialog {
 		gbc.gridx = 0;
 		gbc.gridy = 0;
 
-		add(new JLabel("Robochart folder:"), gbc);
+		add(new JLabel("RoboChart folder:"), gbc);
 		gbc.gridx++;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.weightx = 100;
@@ -58,7 +58,7 @@ public class RobochartLocationDialog extends JDialog {
 		try {
 			tf.setText(ActivityController.getInstance().getRobochartLocation());
 		} catch (IOException e1) {
-			msg.setText("Error: could not retrieve Robochart Location from property file.");
+			msg.setText("Error: could not retrieve RoboChart Location from property file.");
 		}
 		tf.setSize(300, tf.getHeight());
 		add(tf, gbc);

@@ -5,6 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.ArrayList;
+
 import com.ref.astah.adapter.ActivityNode;
 import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
@@ -16,14 +20,33 @@ import com.ref.interfaces.activityDiagram.IControlFlow;
 import com.ref.interfaces.activityDiagram.IFlow;
 import com.ref.interfaces.activityDiagram.IInputPin;
 import com.ref.interfaces.activityDiagram.IObjectFlow;
+import com.ref.interfaces.activityDiagram.IObjectNode;
 import com.ref.interfaces.activityDiagram.IOutputPin;
+import com.ref.interfaces.activityDiagram.IPin;
 import com.sun.tools.doclets.internal.toolkit.util.DocFinder.Output;
+import java.util.Optional;
+
 
 public class ADUtils {
 
 	private IActivity ad;
 	private IActivityDiagram adDiagram;
+	
+	//private static final Pattern EVS_PATTERN =
+	        //Pattern.compile("^__evs_([A-Za-z0-9_]+)_$");
+	private static final Pattern EVS_PATTERN =
+		    Pattern.compile("__+evs_+([A-Za-z0-9_]+)_*");
+	
+	private static final Pattern UNION_PATTERN =
+		    Pattern.compile("_U+evs_+([A-Za-z0-9_]+)_*");
+	
+	private static final Pattern DEADLINE_PATTERN =
+			//Pattern.compile("^(?:[A-Za-z_][A-Za-z0-9_]*\\(\\s*(?:[^(),]+\\s*(?:,\\s*[^(),]+\\s*)*)?\\)|[A-Za-z_][A-Za-z0-9_]*)\\s*<\\{\\s*(?:0|[1-9]\\d*)\\s*\\}$c");
+			// light(color_red) <{t}
+			Pattern.compile("^[A-Za-z_][A-Za-z0-9_]*(\\(\\d+(,\\d+)*\\))?(\\s*<\\{(0|[1-9]\\d*)\\})?$");
+			// group(3) <{t}
 
+			//Pattern.compile("^(?:[A-Za-z][A-Za-z0-9_]*\\((?:[A-Za-z][A-Za-z0-9_]*(?:,[A-Za-z][A-Za-z0-9_]*)*)?\\)|[A-Za-z][A-Za-z0-9_]*)\\s*<\\{\\s*(?:0|[1-9][0-9]*)\\s*\\}$");
 	public HashMap<String, Integer> countCall;
 	private List<String> eventChannel;
 	private List<String> lockChannel;
@@ -97,7 +120,7 @@ public class ADUtils {
 	public String createOE() {
 		return "oe_" + adParser.countOe_ad++ + "_" + nameDiagramResolver(ad.getName()) + ".id" ;
 	}
-
+	
 	public int startActivity(ArrayList<String> alphabetNode, StringBuilder action, String nameAD, List<String> inputPins) {
 		int count = 0;
 		count = addCountCall(nameDiagramResolver(nameAD));
@@ -143,6 +166,7 @@ public class ADUtils {
 		action.append(get + "?" + nameObject + " -> ");
 	}
 
+	
 	public void set(ArrayList<String> alphabetNode, StringBuilder action, String nameMemory, String nameObject) {
 		String set = "set_" + nameMemory + "_" + nameDiagramResolver(ad.getName()) + ".id." + adParser.countSet_ad++;
 		//        alphabetNode.add(set);
@@ -199,16 +223,24 @@ public class ADUtils {
 	public void event(ArrayList<String> alphabet, String nameAction, StringBuilder action)
 			throws ParsingException {
 		String partitionName;
+		Matcher dead = DEADLINE_PATTERN.matcher(nameAction);
 		try {
 			partitionName = this.ad.getPartitions()[0].getSubPartitions()[0].getName();
 		} catch (Exception e) {
 			throw new ParsingException(
 					"The module should have a partition. \n Please, insert and try again.");
 		}
-
-		//		eventChannel.add(partitionName + "::" + nameAction);
-		action.append(partitionName + "::" + nameAction + " -> ");
-		robo.add(partitionName + "::" + nameAction);
+		
+		
+		if(nameAction.substring(nameAction.length()-1).equals("_")) {
+		//if(dead.matches()) {
+			
+			action.append("EDeadline("+ partitionName + "::" + nameAction.replace(".",",").replace("_","")+") ;");
+		}else {
+			action.append(partitionName + "::" + nameAction + " -> ");
+		}
+		//action.append(partitionName + "::" + nameAction + " ------> ");
+		//robo.add(partitionName + "::" + nameAction);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////
 	//    public void event(ArrayList<String> alphabet, String nameAction, StringBuilder action) {
@@ -216,7 +248,8 @@ public class ADUtils {
 	//        eventChannel.add("event_" + nameAction);
 	//        action.append("event_" + nameAction + ".id -> ");
 	//    }
-
+	
+	
 	public void ce(ArrayList<String> alphabetNode, StringBuilder action, String ce, String posCe) {
 		alphabetNode.add(ce);
 		action.append(ce + posCe);
@@ -262,20 +295,20 @@ public class ADUtils {
 		//		waitAccept.add(partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in"));
 
 		// WAIT_accept_ultrasonic_1(alphabet) = 
-		waitAccept.add("\n\nWAIT_accept_" + nameRobochartResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet) = \n");
+		waitAccept.add("\n\n	WAIT_accept_" + nameRobochartResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet) = \n");
 		// NRecurse(diff(alphabet, {| PathPlanningSM::ultrasonic.in |}), WAIT_accept_ultrasonic_1(alphabet)) 
-		waitAccept.add("NRecurse(diff(alphabet, {|" + partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in") + "|}), WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet))\n |~| \n");
+		waitAccept.add("	NRecurse(diff(alphabet, {|" + partitionName + "::" + nameRobochartResolver(activityNode.getName(), ".in") + "|}), WAIT_accept_" + nameDiagramResolver(activityNode.getName()) + "_" + idAccept + "(id, alphabet))\n	|~| \n");
 
 
-		accept.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName())+"_" + idAccept+"(id, alphabet_robochart_"+ 
+		accept.append("WAIT_accept_" + nameDiagramResolver(activityNode.getName())+"_" + idAccept+"(id, alpha_system_"+ 
 				nameDiagramResolver(ad.getName()) + ") [| {|");
-		int c = 0;
+		//int c = 0;
 		for (int i = 0; i < outPins.length; i++) {
 			// set_u_ultrasonic_P_Teste.id
 			accept.append("set_"+nameDiagramResolver(outPins[i].getName())+"_"+nameDiagramResolver(activityNode.getName())+
 					"_"+nameDiagramResolver(ad.getName())+".id"+",");
 			// PathPlanningSM::ultrasonic.in?u -> set_u_ultrasonic_P_Teste.id?c!u -> SKIP
-			waitAccept.add(partitionName + "::" + nAccept + "?" + nameDiagramResolver(outPins[i].getName()) + " -> set_" + nameDiagramResolver(outPins[i].getName()) 
+			waitAccept.add("	" + partitionName + "::" + nAccept + "?" + nameDiagramResolver(outPins[i].getName()) + " -> set_" + nameDiagramResolver(outPins[i].getName()) 
 			+ "_" + nameDiagramResolver(activityNode.getName()) + "_" + nameDiagramResolver(ad.getName()) + ".id?c!" + outPins[i].getName() + " -> SKIP");
 		}
 		accept.setCharAt(accept.length()-1, ' ');
@@ -289,7 +322,7 @@ public class ADUtils {
 				nameDiagramResolver(ad.getName());
 		//        alphabetNode.add(get);
 		action.append(get + "?" + data + " -> ");
-		Pair<String, String> memoryLocalPair = new Pair<String, String>(nameObject+"_"+nameNode, data);
+		//Pair<String, String> memoryLocalPair = new Pair<String, String>(nameObject+"_"+nameNode, data);
 		//        if (!memoryPinLocal.keySet().contains(memoryLocalPair)) {
 		//        	memoryPinLocal.put(memoryLocalPair,datatype);
 		//        }
@@ -404,6 +437,11 @@ public class ADUtils {
 		if (!signalChannels.containsKey(nameSignal)) {// TODO local onde modifica o signal channels
 			List<IActivity> list = new ArrayList<>();
 			list.add(ad);
+			//if(nameSignal.substring(nameSignal.length()-nameSignal.indexOf('}')+1).equals("}")) {
+				//signalChannels.put("EDeadline" +nameSignal, list);
+			//}else {
+				//signalChannels.put(nameSignal, list);
+			//}
 			signalChannels.put(nameSignal, list);
 		}
 
@@ -422,21 +460,54 @@ public class ADUtils {
 			}
 		}
 
-		//		signal.append(partitionName + "::" + nameSignal + " -> ");		
-		signal.append(partitionName + "::" + nameSignal);
+		//		signal.append(partitionName + "::" + nameSignal + " -> ");
+		// 		EDeadline(partitionName::nameSignal,t);
+		if(nameSignal.substring(nameSignal.length()-1).equals("}")) {
+			signal.append(" EDeadline(" + partitionName + "::" + nameSignal.substring(0,(nameSignal.indexOf('<'))) +
+					"," + nameSignal.substring((nameSignal.indexOf('{')+1),(nameSignal.indexOf('}'))) + ")");
+		}else {
+			if (nameSignal.indexOf('<') == -1) {
+				signal.append(partitionName + "::" + nameSignal);
+			}else {
+				signal.append("EDeadline(" + partitionName + "::" + nameSignal.substring(0,nameSignal.indexOf('<')-1)
+				+ nameSignal.substring(nameSignal.indexOf('.'),nameSignal.length())+ ","
+				+ nameSignal.substring(nameSignal.indexOf('{')+1,nameSignal.indexOf('}')) + ")");
+			}
+		}
+		//signal.append(partitionName + "::" + nameSignal);
 		for (int i = 0; i < inPins.length; i++) {
 			signal.append("?"+inPins[i].getName());
 		}
-		signal.append(" -> ");
-
-		robo.add(partitionName + "::" + nameSignal);
-
+		//if(nameSignal.substring((nameSignal.length()-4),nameSignal.length()-2).equals("<{")) {
+		if(nameSignal.substring(nameSignal.length()-1).equals("}") || (nameSignal.indexOf('<') != -1)) {
+			signal.append(" ; ");
+		}else {
+			signal.append(" -> ");
+		}
+		if(nameSignal.substring(nameSignal.length()-1).equals("}")) {
+			//robo.add(partitionName + "::" + nameSignal.substring(0,(nameSignal.indexOf('<')-1)));
+			robo.add(" EDeadline(" + partitionName + "::" + nameSignal.substring(0,(nameSignal.indexOf('<'))) +
+					"," + nameSignal.substring(nameSignal.indexOf('{'),(nameSignal.indexOf('}'))) + ")");
+		}else {
+			robo.add(partitionName + "::" + nameSignal);
+		}
 		if (index >= 0) {
-			countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
-			//			ADParser.IdSignals.put(activityNode.getId(),idSignal);
+			//if(nameSignal.substring(nameSignal.length()-1).equals("}")) {
+				//countSignal.set(index, new Pair<String, Integer>(nameSignal.substring(0,(nameSignal.indexOf('<')-1)), idSignal + 1));
+			//}else {
+				countSignal.set(index, new Pair<String, Integer>(nameSignal, idSignal + 1));
+				//			ADParser.IdSignals.put(activityNode.getId(),idSignal);
+			//}
+			
 		} else {
-			countSignal.add(new Pair<String, Integer>(nameSignal, idSignal + 1));
-			//			ADParser.IdSignals.put(activityNode.getId(),idSignal);
+			//if(nameSignal.substring(nameSignal.length()-1).equals("}")) {
+				//countSignal.add(new Pair<String, Integer>(nameSignal.substring(0,(nameSignal.indexOf('<')-1)), idSignal + 1));
+				//			ADParser.IdSignals.put(activityNode.getId(),idSignal);
+			//}else {
+				countSignal.add(new Pair<String, Integer>(nameSignal, idSignal + 1));
+				//			ADParser.IdSignals.put(activityNode.getId(),idSignal);
+		//}
+			
 		}
 
 	}
@@ -465,14 +536,24 @@ public class ADUtils {
 				break;
 			}
 		}
-		//		accept.append(partitionName + "::" + nameAccept + " -> ");
-		accept.append(partitionName + "::" + nameAccept);
-		for (int i = 0; i < outPins.length; i++) {
-			accept.append("?"+outPins[i].getName());
-		}
-		accept.append(" -> ");
-
-		robo.add(partitionName + "::" + nameAccept);
+		
+		
+	
+		String acceptTime = ADDefineTimeAction.wait(partitionName, nameAccept, ad, outPins);
+				
+		accept.append(acceptTime);
+		
+/////////////////////////////////////////////		
+		//ADAstahAlphabet alphabetExtractor = new ADAstahAlphabet(partitionName, acceptTime, ad, outPins);
+		//String AlphabetAstah = alphabetExtractor.getAlphabetCSP(ad);
+		//StringBuilder alpha = new StringBuilder();
+		//String astah = "	alpha_propert_" + ADUtils.nameResolver(partitionName) + "=" + AlphabetAstah;
+		//accept.append(astah);
+		
+		
+		
+/////////////////////////////////////////////		
+		
 
 		if (index >= 0) {
 			countAccept.set(index, new Pair<String, Integer>(nameAccept, idAccept + 1));
@@ -483,7 +564,12 @@ public class ADUtils {
 		}
 	}
 
-	public String nameDiagramResolver(String name) {
+	private void alphabetdiagram(String alphabetAstah, String acceptTime, IActivity ad2, IOutputPin[] outPins) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public  String nameDiagramResolver(String name) {
 		return name.replace(" ", "").replace("!", "_").replace("@", "_")
 				.replace("%", "_").replace("&", "_").replace("*", "_")
 				.replace("(", "_").replace(")", "_").replace("+", "_")
@@ -506,13 +592,22 @@ public class ADUtils {
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////
-	public String nameRobochartResolver(String name) {
-		return name.replace(" ", "").replace("!", "_").replace("@", "_").replace("%", "_")
-				.replace("&", "_").replace("*", "_").replace("(", "Call.").replace(")", "")
-				.replace("+", "_").replace("-", "_").replace("=", "_").replace("?", "_")
-				.replace(":", "_").replace("/", "_").replace(";", "_").replace(">", "_")
-				.replace("<", "_").replace(",", ".").replace("{", "_").replace("}", "_")
-				.replace("|", "_").replace("\\", "_").replace("\n", "_");
+	public static String nameRobochartResolver(String name) {
+		if(name.endsWith("()")) {
+			return name.replace(" ", "").replace("!", "_").replace("@", "_").replace("%", "_")
+					.replace("&", "_").replace("*", "_").replace("(", "Call").replace(")", "")
+					.replace("+", "_").replace("-", "_").replace("=", "_").replace("?", "_")
+					.replace(":", "_").replace("/", "_").replace(";", "_").replace(">", "_")
+					.replace("<", "_").replace(",", ".").replace("{", "_").replace("}", "_")
+					.replace("|", "_").replace("\\", "_").replace("\n", "_");
+		}else {
+			return name.replace(" ", "").replace("!", "_").replace("@", "_").replace("%", "_")
+					.replace("&", "_").replace("*", "_").replace("(", "Call.").replace(")", "")
+					.replace("+", "_").replace("-", "_").replace("=", "_").replace("?", "_")
+					.replace(":", "_").replace("/", "_").replace(";", "_").replace(">", "_")
+					.replace("<", "_").replace(",", ".").replace("{", "_").replace("}", "_")
+					.replace("|", "_").replace("\\", "_").replace("\n", "_");
+		}
 	}
 
 	public String nameRobochartResolver(String name, String inOut) {
@@ -977,18 +1072,26 @@ public class ADUtils {
 		}
 	}
 
+	
+	
+	
+	
+	
+	
+	
 	////////////////////////////////////////////////////////////////////////////////////////
 	public String alphabetRobo(String alphabet) {
 		StringBuilder channels = new StringBuilder();
-		channels.append("alphabet_robochart_" + ADUtils.nameResolver(ad.getName()) + " = ");
+		channels.append("	alpha_system_" + ADUtils.nameResolver(ad.getName()) + " = ");
 		channels.append(alphabet);
 		return channels.toString();
 	}
-
+	
+	
 	public String alphabetUntil() {
 		StringBuilder channels = new StringBuilder();
 
-		channels.append("Wait_" + ad.getName() + " = WAIT(alphabet_robochart_"
+		channels.append("	Wait_" + ad.getName() + " = PWAIT(alpha_system_"
 				+ ADUtils.nameResolver(ad.getName()) + ", ");
 		for (int i = 0; i < untilEvents.size(); i++) {
 			channels.append(untilEvents.get(i));
@@ -1006,10 +1109,10 @@ public class ADUtils {
 	public String printUntils() {
 		StringBuilder channels = new StringBuilder();
 		for (String i : untilList.keySet()) {
-			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_" + i
-					+ " = WAIT(alphabet_robochart_" + ADUtils.nameResolver(ad.getName()) + ", "
+			channels.append("	Wait_" + ADUtils.nameResolver(ad.getName()) + "_" + i
+					+ " = PWAIT(alpha_system_" + ADUtils.nameResolver(ad.getName()) + ", "
 					+ untilList.get(i) + ")\n\n");
-			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i
+			channels.append("	Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i
 					+ " = begin." + i + " -> Wait_" + ADUtils.nameResolver(ad.getName()) + "_" + i
 					+ "; end." + i + " -> Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_"
 					+ i + "\n\n");
@@ -1045,8 +1148,9 @@ public class ADUtils {
 	public String printAny() {
 		StringBuilder channels = new StringBuilder();
 		for (int i = 1; i <= adParser.countAny_ad; i++) {
-			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i
-					+ " = chaos." + i + " -> CHAOS(alphabet_robochart_" + ad.getName() + ")\n\n");
+			channels.append("	Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i
+					+ " = chaos." + i + " -> CHAOS(alpha_system_" + ad.getName() + ")\n\n");
+			
 		}
 		return channels.toString();
 	}
@@ -1055,7 +1159,7 @@ public class ADUtils {
 		StringBuilder channels = new StringBuilder();
 		// channels.append("Wait_control_processes = {Wait_" + ad.getName() + "_control_" + i +
 		// "}\n");
-		channels.append("Wait_control_processes_" + ADUtils.nameResolver(ad.getName()) + " = {");
+		channels.append("	Wait_control_processes_" + ADUtils.nameResolver(ad.getName()) + " = {");
 		int c = 0;		
 		for (int i = 1; i <= adParser.countUntil_ad; i++) {
 			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_control_" + i);
@@ -1067,7 +1171,7 @@ public class ADUtils {
 
 		c = 0;
 		for (int i = 1; i <= adParser.countAny_ad; i++) {
-			channels.append("Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i);
+			channels.append("	Wait_" + ADUtils.nameResolver(ad.getName()) + "_chaos_" + i);
 			if ((c + 1) < adParser.countAny_ad) {
 				channels.append(", ");
 			}
@@ -1077,14 +1181,60 @@ public class ADUtils {
 		channels.append("}\n");
 		return channels.toString();
 	}
-
-	public void createAny(ArrayList<String> alphabet, StringBuilder callBehaviour) {
+	
+	public void createAny(ArrayList<String> alphabet, StringBuilder callBehaviour, String nameCallBehaviour) {
 		int index = ++adParser.countAny_ad;
-		//		alphabet.add("chaos." + index);
-		callBehaviour.append("chaos." + index + " -> SKIP;");
+		
+		Matcher m = EVS_PATTERN.matcher(nameCallBehaviour);
+		Matcher mm = UNION_PATTERN.matcher(nameCallBehaviour);
+		//alphabet.add("chaos." + index);
+		//callBehaviour.append(alphabet);
+		//callBehaviour.append("chaos." + index + " -> SKIP;");
+		
+		// Declaração no inicio da class 
+		//private static final Pattern CHAOS_PATTERN =
+	            //Pattern.compile("^\\*(\\\\)+evs\\([A-Za-z0-9_]+\\)$");// Pattern.CASE_INSENSITIVE);
+		//nameCallBehaviour = callAction.getBehavior().getName();
+		
+		//String expDiff = "^\\*(\\\\)+evs\\([A-Za-z0-9_]+\\)$";
+		//Pattern p = Pattern.compile(REGEX);
+		//Matcher matcher = CHAOS_PATTERN.matcher(nameCallBehaviour);
+		//if (nameCallBehaviour.indexOf("__evs_") != -1) {
+		//Matcher matcher = CHAOS_PATTERN.matcher(nameCallBehaviour);
+		
+		if (m.matches()) {
+			callBehaviour.append("CHAOS(diff(alpha_system_" + nameDiagramResolver(ad.getName()) + ", alpha_property_" + ADUtils.nameResolver(ad.getName()) + " )); ");
+			
+		//}else if (nameCallBehaviour.indexOf("__union_") != -1){
+		}else if(mm.matches()) {	
+				//callBehaviour.append("CHAOS(union(diff(Events,{|ChemicalDetectorSoftware::light,ChemicalDetectorSoftware::gas,ChemicalDetectorSoftware::siren,ChemicalDetectorSoftware::flag|}),{tock}))");
+				 callBehaviour.append("CHAOS(union(diff(alpha_system_" + nameDiagramResolver(ad.getName()) + ", alpha_property_" + ADUtils.nameResolver(ad.getName()) + " ),{tock})); ");
+		}
+		
+		//callBehaviour.append("CHAOS(diff(alpha_system_" + nameDiagramResolver(ad.getName()) + ", alpha_property_" + ADUtils.nameResolver(ad.getName()) + " )); ");
 	}
-
+	
 	public boolean hasPins() {
 		return hasPins;
 	}
 }
+	
+	//public String timeEventAction(String partitionName, String nameAccept) {
+		//String nameAcceptTime;
+		//boolean timeevent = false;
+		//for (IActivityNode activityNode : ad.getActivityNodes()) {
+			//if ((activityNode instanceof IAction)) {
+				//if (((IAction) activityNode).isAcceptTimeEventAction()) {
+					//timeevent = true;
+				//}
+			 //}
+		//}
+		//if ((nameAccept.substring(0,nameAccept.indexOf('e')+1).equals("time")) && (timeevent == true)){
+			//nameAcceptTime = "WAIT(" + nameAccept.substring(nameAccept.indexOf('e')+5,nameAccept.length()) + "); ";
+		//}else {
+			//nameAcceptTime = partitionName + "::" + nameAccept + " -> ";
+		//}
+		//return nameAcceptTime;
+	//}
+		
+

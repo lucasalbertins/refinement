@@ -15,6 +15,15 @@ public interface IAction extends IActivityNode{
 
 	boolean isAcceptEventAction();
 	
+	boolean isAcceptTimeEventAction();
+	
+				
 	void addPin(IPin pin);
+
+	
+
+	
+
+	
 	
 }

@@ -1,7 +1,7 @@
 package com.ref.parser.activityDiagram;
-
-import com.ref.exceptions.ParsingException;
 import com.ref.interfaces.activityDiagram.IAction;
+import com.ref.exceptions.ParsingException;
+
 import com.ref.interfaces.activityDiagram.IActivity;
 import com.ref.interfaces.activityDiagram.IActivityNode;
 import com.ref.interfaces.activityDiagram.IFlow;
@@ -34,8 +34,8 @@ public class ADDefineAction {
     public String defineAction(IActivityNode activityNode) throws ParsingException {
     	StringBuilder action = new StringBuilder();
         ArrayList<String> alphabet = new ArrayList<>();
-//        String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
-//        String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
+        //String nameAction = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName());
+        //String nameActionTermination = adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_t";
         String endDiagram = "END_DIAGRAM_" + adUtils.nameDiagramResolver(ad.getName());
         IFlow[] outFlows = activityNode.getOutgoings();
         IFlow[] inFlows = activityNode.getIncomings();
@@ -70,7 +70,7 @@ public class ADDefineAction {
         }
 
         //name of the csp process
-        action.append(nameAction + "(id) = ");
+        action.append("	" + nameAction + "(id) = ");
 
         //inputs of the action
         adUtils.incomingEdges(activityNode, action, alphabet, inFlows, inPins, namesMemoryLocal, typeMemoryLocal);
@@ -91,20 +91,18 @@ public class ADDefineAction {
 
         //treating expressions inside opaque actions
         for (int i = 0; i < namesMemoryLocal.size(); i++) {
-            for (int j = 0; j < definitionFinal.length; j++) {
-                String[] expression = definitionFinal[j].split("=");
+        	for (int j = 0; j < definitionFinal.length; j++) {
+            	String[] expression = definitionFinal[j].split("=");
                 if (expression[0].equals(namesMemoryLocal.get(i))) {
                     List<String> expReplaced = adUtils.replaceExpression(expression[1]);    //get expression replace '+','-','*','/'
                     for (String value : expReplaced) {                //get all parts
                         for (int x = 0; x < namesMemoryLocal.size(); x++) {
                             if (value.equals(namesMemoryLocal.get(x))) {
-                                adUtils.getLocal(alphabet, action, namesMemoryLocal.get(x), adUtils.nameDiagramResolver(activityNode.getName()), namesMemoryLocal.get(x),typeMemoryLocal.get(namesMemoryLocal.get(x)));
+                            	adUtils.getLocal(alphabet, action, namesMemoryLocal.get(x), adUtils.nameDiagramResolver(activityNode.getName()), namesMemoryLocal.get(x),typeMemoryLocal.get(namesMemoryLocal.get(x)));
                             }
                         }
                     }
-
                     adUtils.setLocal(alphabet, action, expression[0], adUtils.nameDiagramResolver(activityNode.getName()), "(" + expression[1] + ")",expression[0]);
-
                 }
             }
         }
@@ -130,7 +128,7 @@ public class ADDefineAction {
         action.append(nameAction + "(id)\n");
 
         // defining the terminating process for this action
-        action.append(nameActionTermination + "(id) = ");
+        action.append("	" + nameActionTermination + "(id) = ");
 
         if (namesMemoryLocal.size() > 0) {
             for (int i = 0; i < namesMemoryLocal.size(); i++) {
@@ -148,7 +146,7 @@ public class ADDefineAction {
 
                 String typeObj = typeMemoryLocal.get(namesMemoryLocal.get(i));
 
-                action.append("Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
+                action.append("	Mem_" + adUtils.nameDiagramResolver(activityNode.getName()) + "_" + adUtils.nameDiagramResolver(ad.getName()) + "_" + namesMemoryLocal.get(i) + "_t(id," + adUtils.getDefaultValue(typeObj) + ")) ");
             }
 
             action.append("\\{|");
@@ -166,7 +164,7 @@ public class ADDefineAction {
             action.append("|}\n");
 
         } else {
-            action.append(nameAction + "(id) /\\ " + endDiagram + "(id)\n");
+            action.append("	" + nameAction + "(id) /\\ " + endDiagram + "(id)\n");
         }
 
         alphabet.add("endDiagram_" + adUtils.nameDiagramResolver(ad.getName()+".id"));
