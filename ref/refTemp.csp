@@ -1,4 +1,4 @@
 channel a,b
 P = a -> b -> P
-Q = a -> Q
+Q = a -> b -> a ->b -> Q
 assert Q [T= P
